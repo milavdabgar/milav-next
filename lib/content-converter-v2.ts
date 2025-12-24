@@ -2174,17 +2174,16 @@ ${presentationContent}`;
     private generateProfessionalLatexTemplate(title: string, author: string, date: string, options: ConversionOptions = {}): string {
         const isGujarati = options.language === 'gu' || options.language === 'gujarati';
 
-        // Font configuration based on language
-        // For Gujarati, we need Script=Gujarati for correct shaping of conjuncts
+        // Font configuration
+        // We use Noto Sans Gujarati for Monospace globally to ensure mixed-language code blocks
+        // (e.g. Gujarati comments in English code) render correctly without "tofu" boxes.
         const fontConfig = isGujarati ? `
-% Gujarati Fonts
+% Gujarati Fonts (Main Text)
 \\setmainfont{Noto Sans Gujarati}[Script=Gujarati, Scale=1.0]
-\\setsansfont{Noto Sans Gujarati}[Script=Gujarati, Scale=1.0]
-\\setmonofont{Noto Sans Gujarati}[Script=Gujarati, Scale=0.9]` : `
-% English/Default Fonts
+\\setsansfont{Noto Sans Gujarati}[Script=Gujarati, Scale=1.0]` : `
+% English Fonts (Main Text)
 \\setmainfont{Times New Roman}[Scale=1.0]
-\\setsansfont{Helvetica}[Scale=1.0]
-\\setmonofont{Courier}[Scale=1.0]`;
+\\setsansfont{Helvetica}[Scale=1.0]`;
 
         return `%-------------------------
 % Professional Document Template
@@ -2201,6 +2200,8 @@ ${presentationContent}`;
 
 % Fonts
 ${fontConfig}
+% Global Monospace Font (supports both English and Gujarati)
+\\setmonofont{Noto Sans Gujarati}[Script=Gujarati, Scale=0.9]
 
 % Packages
 \\usepackage[top=1in, bottom=1in, left=1in, right=1in]{geometry}
