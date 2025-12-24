@@ -104,7 +104,7 @@ export function BlogPostTemplate({
       </article>
       
       {/* Right Sidebar - TOC (Desktop only, mobile uses floating button) */}
-      <ResponsiveToc className="w-64 flex-shrink-0" />
+      <ResponsiveToc className="w-64 flex-shrink-0" locale={locale} />
     </div>
   );
 }

@@ -15,9 +15,10 @@ interface TocItem {
 
 interface ResponsiveTocProps {
   className?: string;
+  locale?: string; // Add locale to trigger re-render on language change
 }
 
-export function ResponsiveToc({ className }: ResponsiveTocProps) {
+export function ResponsiveToc({ className, locale }: ResponsiveTocProps) {
   const [toc, setToc] = useState<TocItem[]>([]);
   const [activeId, setActiveId] = useState<string>("");
   const [isOpen, setIsOpen] = useState(false);
@@ -63,7 +64,7 @@ export function ResponsiveToc({ className }: ResponsiveTocProps) {
     return () => {
       headings.forEach((heading) => observer.unobserve(heading));
     };
-  }, []);
+  }, [locale]); // Re-run when locale changes
 
   const scrollToHeading = (id: string) => {
     const element = document.getElementById(id);
