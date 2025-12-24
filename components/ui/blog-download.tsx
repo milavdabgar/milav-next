@@ -27,11 +27,16 @@ interface DownloadFormat {
   category: string;
 }
 
-export function BlogDownload({ title, slug }: BlogDownloadProps) {
+import { Suspense } from "react";
+// ... imports
+
+// ... interfaces
+
+function BlogDownloadContent({ title, slug }: BlogDownloadProps) {
   const [copied, setCopied] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [formats, setFormats] = useState<DownloadFormat[]>([]);
-  const { toast } = useToast();
+  const { toast: toastFn, ...toast } = useToast();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const locale = searchParams.get('lang') || 'en';
@@ -82,13 +87,13 @@ export function BlogDownload({ title, slug }: BlogDownloadProps) {
       a.click();
       URL.revokeObjectURL(url);
 
-      toast({
+      toastFn({
         title: "Download Complete",
         description: `${format?.name || formatId} file downloaded successfully`,
       });
     } catch (error) {
       console.error('Download error:', error);
-      toast({
+      toastFn({
         variant: "destructive",
         title: "Download Failed",
         description: "Could not download the file. Please try again.",
@@ -138,7 +143,7 @@ export function BlogDownload({ title, slug }: BlogDownloadProps) {
     a.click();
     URL.revokeObjectURL(url);
 
-    toast({
+    toastFn({
       title: "Download Complete",
       description: `File downloaded successfully`,
     });
@@ -146,7 +151,7 @@ export function BlogDownload({ title, slug }: BlogDownloadProps) {
 
   const handlePrint = () => {
     window.print();
-    toast({
+    toastFn({
       title: "Print",
       description: "Opening print dialog...",
     });
@@ -160,13 +165,13 @@ export function BlogDownload({ title, slug }: BlogDownloadProps) {
       await navigator.clipboard.writeText(article.innerText);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-      
-      toast({
+
+      toastFn({
         title: "Copied!",
         description: "Article content copied to clipboard",
       });
     } catch (err) {
-      toast({
+      toastFn({
         variant: "destructive",
         title: "Error",
         description: "Failed to copy to clipboard",
@@ -202,7 +207,7 @@ export function BlogDownload({ title, slug }: BlogDownloadProps) {
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel>Export Formats</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        
+
         {formats.map((format) => {
           const Icon = getIcon(format.id);
           return (
@@ -215,7 +220,7 @@ export function BlogDownload({ title, slug }: BlogDownloadProps) {
             </DropdownMenuItem>
           );
         })}
-        
+
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handlePrint}>
           <Printer className="h-4 w-4 mr-2" />
@@ -231,5 +236,18 @@ export function BlogDownload({ title, slug }: BlogDownloadProps) {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
+  );
+}
+
+export function BlogDownload(props: BlogDownloadProps) {
+  return (
+    <Suspense fallback={
+      <Button variant="outline" size="sm" disabled>
+        <Download className="h-4 w-4 mr-2" />
+        Loading...
+      </Button>
+    }>
+      <BlogDownloadContent {...props} />
+    </Suspense>
   );
 }

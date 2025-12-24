@@ -1,5 +1,6 @@
 'use client';
 
+import { Suspense } from 'react';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -16,10 +17,37 @@ const navigation = [
   { name: 'Media', href: '/media' },
 ];
 
-export function Header() {
+function LanguageSwitcher() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const currentLang = searchParams.get('lang') || 'en';
+
+  return (
+    <div className="flex gap-1">
+      <Link href={`${pathname}?lang=en`}>
+        <Button
+          variant={currentLang === 'en' ? 'default' : 'ghost'}
+          size="sm"
+          className="h-9 px-3"
+        >
+          EN
+        </Button>
+      </Link>
+      <Link href={`${pathname}?lang=gu`}>
+        <Button
+          variant={currentLang === 'gu' ? 'default' : 'ghost'}
+          size="sm"
+          className="h-9 px-3"
+        >
+          ગુ
+        </Button>
+      </Link>
+    </div>
+  );
+}
+
+export function Header() {
+  const pathname = usePathname();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -47,7 +75,7 @@ export function Header() {
               </Link>
             ))}
           </nav>
-          
+
           <div className="flex items-center gap-2 ml-4">
             <Button
               variant="ghost"
@@ -56,28 +84,11 @@ export function Header() {
             >
               <Search className="h-5 w-5" />
             </Button>
-            
-            <div className="flex gap-1">
-              <Link href={`${pathname}?lang=en`}>
-                <Button
-                  variant={currentLang === 'en' ? 'default' : 'ghost'}
-                  size="sm"
-                  className="h-9 px-3"
-                >
-                  EN
-                </Button>
-              </Link>
-              <Link href={`${pathname}?lang=gu`}>
-                <Button
-                  variant={currentLang === 'gu' ? 'default' : 'ghost'}
-                  size="sm"
-                  className="h-9 px-3"
-                >
-                  ગુ
-                </Button>
-              </Link>
-            </div>
-            
+
+            <Suspense fallback={<div className="w-[88px] h-9" />}>
+              <LanguageSwitcher />
+            </Suspense>
+
             <ThemeToggle />
           </div>
         </div>

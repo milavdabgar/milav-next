@@ -99,7 +99,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       </pre>
     ),
     a: ({ href, children }) => (
-      <a 
+      <a
         href={href}
         className="font-medium text-primary underline underline-offset-4 hover:text-primary/80 transition-colors"
         target={href?.startsWith('http') ? '_blank' : undefined}
@@ -121,18 +121,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
         {children}
       </em>
     ),
-      </th>
-    ),
-    td: ({ children }) => (
-      <td className="border px-4 py-2 text-left [&[align=center]]:text-center [&[align=right]]:text-right">
-        {children}
-      </td>
-    ),
-    code: ({ children }) => (
-      <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold">
-        {children}
-      </code>
-    ),
+
     img: (props) => (
       <Image
         sizes="100vw"

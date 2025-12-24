@@ -11,9 +11,9 @@ import {
 } from "@/components/ui/toast"
 
 export function Toaster() {
-  const { toast } = useToast()
+  const { toast: toastFunction, ...toast } = useToast()
 
-  if (!toast) {
+  if (!toast.id) {
     return (
       <ToastProvider>
         <ToastViewport />

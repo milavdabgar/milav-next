@@ -30,15 +30,15 @@ export function getContentBySlug(
   try {
     const fileName = locale ? `${slug}.${locale}.mdx` : `${slug}.mdx`;
     const fallbackFileName = `${slug}.mdx`;
-    
+
     const contentPath = path.join(contentDirectory, folder);
-    
+
     // Try locale-specific file first, then fall back to default
     let fullPath = path.join(contentPath, fileName);
     if (!fs.existsSync(fullPath) && locale) {
       fullPath = path.join(contentPath, fallbackFileName);
     }
-    
+
     if (!fs.existsSync(fullPath)) {
       return null;
     }
@@ -57,23 +57,23 @@ export function getContentBySlug(
   }
 }
 
-export function getAllContent(folder: string): ContentItem[] {
+export function getAllContent(folder: string, locale?: string): ContentItem[] {
   try {
     const contentPath = path.join(contentDirectory, folder);
-    
+
     if (!fs.existsSync(contentPath)) {
       return [];
     }
 
     const files = fs.readdirSync(contentPath);
-    const mdxFiles = files.filter((file) => 
+    const mdxFiles = files.filter((file) =>
       file.endsWith('.mdx') && !file.includes('.gu.')
     );
 
     const allContent = mdxFiles
       .map((file) => {
         const slug = file.replace(/\.mdx$/, '');
-        return getContentBySlug(folder, slug);
+        return getContentBySlug(folder, slug, locale);
       })
       .filter((item): item is ContentItem => item !== null);
 
@@ -93,14 +93,14 @@ export function getAvailableLocales(folder: string, slug: string): string[] {
   try {
     const contentPath = path.join(contentDirectory, folder);
     const files = fs.readdirSync(contentPath);
-    
+
     const locales = ['en']; // Default English
-    
+
     // Check for Gujarati version
     if (files.includes(`${slug}.gu.mdx`)) {
       locales.push('gu');
     }
-    
+
     return locales;
   } catch (error) {
     return ['en'];
