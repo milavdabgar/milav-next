@@ -1,13 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Milav.in - Personal Portfolio & Blog
 
-## Getting Started
+A modern, fast, and bilingual (English/Gujarati) personal portfolio and blog built with Next.js 15, TypeScript, and shadcn/ui.
 
-First, run the development server:
+## 🚀 Features
+
+- **Modern Tech Stack**: Built with Next.js 15, React, TypeScript, and Tailwind CSS
+- **MDX Support**: Write content in MDX with full React component support
+- **Bilingual**: Full support for English and Gujarati content
+- **shadcn/ui Components**: Beautiful, accessible UI components
+- **Responsive Design**: Mobile-first responsive design
+- **SEO Optimized**: Built-in SEO optimization with metadata
+- **Fast Performance**: Optimized for speed with Next.js App Router
+
+## 📦 Tech Stack
+
+- **Framework**: Next.js 15 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS v4
+- **UI Components**: shadcn/ui
+- **Content**: MDX (Markdown + JSX)
+- **Fonts**: Geist Sans & Geist Mono
+
+## 🛠️ Installation
+
+First, install dependencies:
+
+```bash
+npm install
+```
+
+Then run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
 # or
 pnpm dev
 # or
