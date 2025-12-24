@@ -33,15 +33,9 @@ export function SinglePageLayout({
       <div className="max-w-[1600px] mx-auto mb-8">
         {/* Navigation Row */}
         <div className="flex items-center justify-between mb-6">
-          {backLink ? (
-            <Link href={backLink.href}>
-              <Button variant="ghost" size="sm">
-                ← {backLink.label}
-              </Button>
-            </Link>
-          ) : (
-            <div />
-          )}
+          <div className="flex-1">
+            {/* Removed back link - now using breadcrumbs in template */}
+          </div>
           
           <div className="flex items-center gap-2">
             {actions}

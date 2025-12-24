@@ -6,6 +6,7 @@ import { formatDate } from '@/lib/utils';
 import { ResponsiveToc } from '@/components/ui/responsive-toc';
 import { BlogDownload } from '@/components/ui/blog-download';
 import { ArticleNavigation } from '@/components/ui/article-navigation';
+import { Breadcrumbs } from '@/components/ui/breadcrumbs';
 
 interface BlogPostTemplateProps {
   title: string;
@@ -34,10 +35,18 @@ export function BlogPostTemplate({
   nextPost,
   children,
 }: BlogPostTemplateProps) {
+  const breadcrumbItems = [
+    { label: 'Blog', href: '/blog' },
+    { label: title, href: `/blog/${slug}` },
+  ];
+
   return (
     <div className="flex gap-6 max-w-[1600px] mx-auto">
       {/* Main Content Area - Flexible width */}
-      <article className="flex-1 min-w-0 space-y-8 pb-12">
+      <article className="flex-1 min-w-0 space-y-6 pb-12">
+        {/* Breadcrumbs */}
+        <Breadcrumbs items={breadcrumbItems} />
+        
         {/* Article Header */}
         <header className="space-y-4">
           <div className="flex items-start justify-between gap-4 flex-wrap">
