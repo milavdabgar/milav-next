@@ -78,7 +78,9 @@ function BlogDownloadContent({ title, slug }: BlogDownloadProps) {
 
       const blob = await response.blob();
       const format = formats.find(f => f.id === formatId);
-      const filename = `${title.replace(/[^a-z0-9]/gi, "-").toLowerCase()}.${format?.extension || 'txt'}`;
+      const filename = slug
+        ? `${slug}.${format?.extension || 'txt'}`
+        : `${title.replace(/\s+/g, '-').replace(/[^\p{L}\p{N}-]/gu, '').toLowerCase()}.${format?.extension || 'txt'}`;
 
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -139,7 +141,11 @@ function BlogDownloadContent({ title, slug }: BlogDownloadProps) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${title.replace(/[^a-z0-9]/gi, "-").toLowerCase()}.${extension}`;
+    const filename = slug
+      ? `${slug}.${extension}`
+      : `${title.replace(/\s+/g, '-').replace(/[^\p{L}\p{N}-]/gu, '').toLowerCase()}.${extension}`;
+    a.href = url;
+    a.download = filename;
     a.click();
     URL.revokeObjectURL(url);
 

@@ -24,10 +24,10 @@ export async function POST(request: NextRequest) {
     }
 
     const converter = new ContentConverterV2();
-    
+
     // Get content from MDX
     const post = getContentBySlug('blog', slug, locale === 'gu' ? 'gu' : undefined);
-    
+
     if (!post) {
       return NextResponse.json(
         { error: 'Blog post not found' },
@@ -45,7 +45,7 @@ author: Milav Dabgar
 ---
 
 `;
-    
+
     const markdownContent = frontmatter + post.content;
 
     // Add enhanced options for conversion
@@ -53,28 +53,29 @@ author: Milav Dabgar
       ...options,
       title: post.metadata.title,
       author: 'Milav Dabgar',
-      contentPath: `blog/${slug}.md`
+      contentPath: `blog/${slug}.md`,
+      language: locale || 'en'
     };
-    
+
     // Convert content based on format
     const result = await converter.convert(markdownContent, format, enhancedOptions);
-    
+
     // Get the appropriate filename and content type
     const baseFilename = slug;
     const { filename, contentType } = getFileDetails(baseFilename, format);
-    
+
     // Create response
     const response = new NextResponse(result as BodyInit);
     response.headers.set('Content-Type', contentType);
     response.headers.set('Content-Disposition', `attachment; filename="${filename}"`);
-    
+
     return response;
 
   } catch (error) {
     console.error('Download conversion error:', error);
     return NextResponse.json(
-      { 
-        error: 'Failed to convert content', 
+      {
+        error: 'Failed to convert content',
         details: error instanceof Error ? error.message : String(error)
       },
       { status: 500 }
@@ -169,8 +170,8 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('API error:', error);
     return NextResponse.json(
-      { 
-        error: 'API request failed', 
+      {
+        error: 'API request failed',
         details: error instanceof Error ? error.message : String(error)
       },
       { status: 500 }
@@ -180,55 +181,55 @@ export async function GET(request: NextRequest) {
 
 function getFileDetails(baseFilename: string, format: string) {
   const formatMap: Record<string, { extension: string; contentType: string; isBuffer: boolean }> = {
-    'md': { 
-      extension: 'md', 
-      contentType: 'text/markdown', 
-      isBuffer: false 
+    'md': {
+      extension: 'md',
+      contentType: 'text/markdown',
+      isBuffer: false
     },
-    'html': { 
-      extension: 'html', 
-      contentType: 'text/html', 
-      isBuffer: false 
+    'html': {
+      extension: 'html',
+      contentType: 'text/html',
+      isBuffer: false
     },
-    'pdf': { 
-      extension: 'pdf', 
-      contentType: 'application/pdf', 
-      isBuffer: true 
+    'pdf': {
+      extension: 'pdf',
+      contentType: 'application/pdf',
+      isBuffer: true
     },
-    'pdf-pandoc': { 
-      extension: 'pdf', 
-      contentType: 'application/pdf', 
-      isBuffer: true 
+    'pdf-pandoc': {
+      extension: 'pdf',
+      contentType: 'application/pdf',
+      isBuffer: true
     },
-    'txt': { 
-      extension: 'txt', 
-      contentType: 'text/plain', 
-      isBuffer: false 
+    'txt': {
+      extension: 'txt',
+      contentType: 'text/plain',
+      isBuffer: false
     },
-    'rtf': { 
-      extension: 'rtf', 
-      contentType: 'application/rtf', 
-      isBuffer: false 
+    'rtf': {
+      extension: 'rtf',
+      contentType: 'application/rtf',
+      isBuffer: false
     },
-    'docx': { 
-      extension: 'docx', 
-      contentType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 
-      isBuffer: true 
+    'docx': {
+      extension: 'docx',
+      contentType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      isBuffer: true
     },
-    'odt': { 
-      extension: 'odt', 
-      contentType: 'application/vnd.oasis.opendocument.text', 
-      isBuffer: true 
+    'odt': {
+      extension: 'odt',
+      contentType: 'application/vnd.oasis.opendocument.text',
+      isBuffer: true
     },
-    'epub': { 
-      extension: 'epub', 
-      contentType: 'application/epub+zip', 
-      isBuffer: true 
+    'epub': {
+      extension: 'epub',
+      contentType: 'application/epub+zip',
+      isBuffer: true
     },
-    'latex': { 
-      extension: 'tex', 
-      contentType: 'application/x-latex', 
-      isBuffer: false 
+    'latex': {
+      extension: 'tex',
+      contentType: 'application/x-latex',
+      isBuffer: false
     }
   };
 

@@ -973,7 +973,7 @@ ${processedContent}`;
             try {
                 // Create enhanced LaTeX template based on reference templates
                 const dateString: string = typeof date === 'string' ? date : String(date);
-                const latexTemplate = this.generateProfessionalLatexTemplate(title, author, dateString);
+                const latexTemplate = this.generateProfessionalLatexTemplate(title, author, dateString, options);
                 fs.writeFileSync(tempTexPath, latexTemplate);
 
                 // Try XeLaTeX first, fallback to pdfLaTeX if XeLaTeX fails
@@ -990,7 +990,8 @@ ${processedContent}`;
                     '--variable=urlcolor:blue',
                     '--variable=toccolor:blue',
                     '--variable=fontsize:11pt',
-                    '--variable=geometry:margin=1in'
+                    '--variable=geometry:margin=1in',
+                    '--shift-heading-level-by=-1'
                 ].join(' ');
 
                 try {
@@ -1017,7 +1018,8 @@ ${processedContent}`;
                         '--variable=urlcolor:blue',
                         '--variable=toccolor:blue',
                         '--variable=fontsize:11pt',
-                        '--variable=geometry:margin=1in'
+                        '--variable=geometry:margin=1in',
+                        '--shift-heading-level-by=-1'
                     ].join(' ');
 
                     await execAsync(pandocCommand);
@@ -1047,7 +1049,8 @@ ${processedContent}`;
                     '--variable=urlcolor:blue',
                     '--variable=toccolor:blue',
                     '--variable=fontsize:11pt',
-                    '--variable=geometry:margin=1in'
+                    '--variable=geometry:margin=1in',
+                    '--shift-heading-level-by=-1'
                 ].join(' ');
 
                 await execAsync(basicPandocCommand);
@@ -2168,7 +2171,21 @@ ${presentationContent}`;
         return processedContent;
     }
 
-    private generateProfessionalLatexTemplate(title: string, author: string, date: string): string {
+    private generateProfessionalLatexTemplate(title: string, author: string, date: string, options: ConversionOptions = {}): string {
+        const isGujarati = options.language === 'gu' || options.language === 'gujarati';
+
+        // Font configuration based on language
+        // For Gujarati, we need Script=Gujarati for correct shaping of conjuncts
+        const fontConfig = isGujarati ? `
+% Gujarati Fonts
+\\setmainfont{Noto Sans Gujarati}[Script=Gujarati, Scale=1.0]
+\\setsansfont{Noto Sans Gujarati}[Script=Gujarati, Scale=1.0]
+\\setmonofont{Noto Sans Gujarati}[Script=Gujarati, Scale=0.9]` : `
+% English/Default Fonts
+\\setmainfont{Times New Roman}[Scale=1.0]
+\\setsansfont{Helvetica}[Scale=1.0]
+\\setmonofont{Courier}[Scale=1.0]`;
+
         return `%-------------------------
 % Professional Document Template
 % Based on reference templates with enhanced styling
@@ -2182,11 +2199,8 @@ ${presentationContent}`;
 \\usepackage{xunicode}
 \\usepackage{xltxtra}
 
-% Modern fonts - use system default fonts for better compatibility
-% On macOS, use system fonts that are guaranteed to exist
-\\setmainfont{Times New Roman}[Scale=1.0]
-\\setsansfont{Helvetica}[Scale=1.0]
-\\setmonofont{Courier}[Scale=1.0]
+% Fonts
+${fontConfig}
 
 % Packages
 \\usepackage[top=1in, bottom=1in, left=1in, right=1in]{geometry}
@@ -2262,6 +2276,9 @@ ${presentationContent}`;
 % Pandoc compatibility
 \\providecommand{\\tightlist}{\\setlength{\\itemsep}{0pt}\\setlength{\\parskip}{0pt}}
 
+% Highlight macros for Pandoc (Fixes 'Environment Shaded undefined' error)
+$highlighting-macros$
+
 % Code block formatting
 \\usepackage{listings}
 \\lstset{
@@ -2313,11 +2330,9 @@ ${presentationContent}`;
 
 % Table of contents with professional styling
 $if(toc)$
-\\begin{center}
-\\color{primary}\\Large\\sffamily\\bfseries Contents
-\\end{center}
 \\vspace{0.3cm}
-$toc$
+\\renewcommand\\contentsname{\\centering\\color{primary}\\Large\\sffamily\\bfseries Contents}
+\\tableofcontents
 \\newpage
 $endif$
 
