@@ -14,11 +14,7 @@ export default async function VideosPage({
   const availableLocales = await getAvailableLocales('media', 'videos');
 
   return (
-    <SinglePageLayout
-      backLink={{ href: '/media', label: 'Back to Media' }}
-      locale={locale}
-      availableLocales={availableLocales}
-    >
+    <SinglePageLayout>
       <SingleContentTemplate
         title={content.metadata.title}
         description={content.metadata.description}

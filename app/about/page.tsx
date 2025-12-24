@@ -26,10 +26,7 @@ export default async function AboutPage({
   const availableLocales = await getAvailableLocales('about', 'index');
 
   return (
-    <SinglePageLayout
-      locale={locale}
-      availableLocales={availableLocales}
-    >
+    <SinglePageLayout>
       <div className="space-y-8 -mt-4">
         {/* Hero Section */}
         <Card className="border-2">

@@ -14,11 +14,7 @@ export default async function MusicPage({
   const availableLocales = await getAvailableLocales('media', 'music');
 
   return (
-    <SinglePageLayout
-      backLink={{ href: '/media', label: 'Back to Media' }}
-      locale={locale}
-      availableLocales={availableLocales}
-    >
+    <SinglePageLayout>
       <SingleContentTemplate
         title={content.metadata.title}
         description={content.metadata.description}

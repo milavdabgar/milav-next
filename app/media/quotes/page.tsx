@@ -14,11 +14,7 @@ export default async function QuotesPage({
   const availableLocales = await getAvailableLocales('media', 'quotes');
 
   return (
-    <SinglePageLayout
-      backLink={{ href: '/media', label: 'Back to Media' }}
-      locale={locale}
-      availableLocales={availableLocales}
-    >
+    <SinglePageLayout>
       <SingleContentTemplate
         title={content.metadata.title}
         description={content.metadata.description}

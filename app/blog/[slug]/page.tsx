@@ -30,11 +30,7 @@ export default async function BlogPostPage({
   const nextPost = currentIndex < allPosts.length - 1 ? allPosts[currentIndex + 1] : undefined;
 
   return (
-    <SinglePageLayout
-      backLink={{ href: '/blog', label: 'Back to Blog' }}
-      locale={locale}
-      availableLocales={availableLocales}
-    >
+    <SinglePageLayout>
       <BlogPostTemplate
         title={post.metadata.title}
         description={post.metadata.description}
