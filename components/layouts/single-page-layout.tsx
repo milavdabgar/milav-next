@@ -28,9 +28,9 @@ export function SinglePageLayout({
   showLanguageSwitcher = true,
 }: SinglePageLayoutProps) {
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
       {/* Header Section */}
-      <div className="mb-8">
+      <div className="max-w-[1600px] mx-auto mb-8">
         {/* Navigation Row */}
         <div className="flex items-center justify-between mb-6">
           {backLink ? (
@@ -76,8 +76,10 @@ export function SinglePageLayout({
         )}
       </div>
 
-      {/* Content */}
-      {children}
+      {/* Content - Full width with max-width handled by child components */}
+      <div className="w-full">
+        {children}
+      </div>
     </div>
   );
 }

@@ -3,8 +3,9 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Calendar, Clock } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
-import { TableOfContents } from '@/components/ui/table-of-contents';
+import { ResponsiveToc } from '@/components/ui/responsive-toc';
 import { BlogDownload } from '@/components/ui/blog-download';
+import { ArticleNavigation } from '@/components/ui/article-navigation';
 
 interface BlogPostTemplateProps {
   title: string;
@@ -14,6 +15,9 @@ interface BlogPostTemplateProps {
   tags?: string[];
   author?: string;
   slug?: string;
+  locale?: string;
+  previousPost?: { slug: string; title: string };
+  nextPost?: { slug: string; title: string };
   children: ReactNode;
 }
 
@@ -25,22 +29,26 @@ export function BlogPostTemplate({
   tags,
   author,
   slug,
+  locale,
+  previousPost,
+  nextPost,
   children,
 }: BlogPostTemplateProps) {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[1fr_250px] gap-8">
-      <article className="space-y-8 min-w-0">
+    <div className="flex gap-6 max-w-[1600px] mx-auto">
+      {/* Main Content Area - Flexible width */}
+      <article className="flex-1 min-w-0 space-y-8 pb-12">
         {/* Article Header */}
         <header className="space-y-4">
-          <div className="flex items-start justify-between gap-4">
-            <h1 className="text-4xl font-bold tracking-tight lg:text-5xl flex-1">
+          <div className="flex items-start justify-between gap-4 flex-wrap">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight flex-1 min-w-0">
               {title}
             </h1>
             <BlogDownload title={title} slug={slug} />
           </div>
           
           {description && (
-            <p className="text-xl text-muted-foreground leading-relaxed">
+            <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
               {description}
             </p>
           )}
@@ -83,17 +91,20 @@ export function BlogPostTemplate({
         <Separator />
         
         {/* Article Content - automatically styled by globals.css */}
-        <div>
+        <div className="prose-content">
           {children}
         </div>
+
+        {/* Previous/Next Navigation */}
+        <ArticleNavigation
+          previousPost={previousPost}
+          nextPost={nextPost}
+          locale={locale}
+        />
       </article>
       
-      {/* Sidebar with TOC */}
-      <aside className="hidden lg:block">
-        <div className="sticky top-24 space-y-4">
-          <TableOfContents />
-        </div>
-      </aside>
+      {/* Right Sidebar - TOC (Desktop only, mobile uses floating button) */}
+      <ResponsiveToc className="w-64 flex-shrink-0" />
     </div>
   );
 }

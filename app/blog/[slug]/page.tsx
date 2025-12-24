@@ -23,6 +23,12 @@ export default async function BlogPostPage({
 
   const availableLocales = await getAvailableLocales('blog', slug);
 
+  // Get all posts for navigation
+  const allPosts = getAllContent('blog', locale === 'gu' ? 'gu' : undefined);
+  const currentIndex = allPosts.findIndex(p => p.slug === slug);
+  const previousPost = currentIndex > 0 ? allPosts[currentIndex - 1] : undefined;
+  const nextPost = currentIndex < allPosts.length - 1 ? allPosts[currentIndex + 1] : undefined;
+
   return (
     <SinglePageLayout
       backLink={{ href: '/blog', label: 'Back to Blog' }}
@@ -36,6 +42,9 @@ export default async function BlogPostPage({
         tags={post.metadata.tags}
         author="Milav Dabgar"
         slug={slug}
+        locale={locale}
+        previousPost={previousPost ? { slug: previousPost.slug, title: previousPost.metadata.title } : undefined}
+        nextPost={nextPost ? { slug: nextPost.slug, title: nextPost.metadata.title } : undefined}
       >
         <MDXRemote source={post.content} />
       </BlogPostTemplate>
