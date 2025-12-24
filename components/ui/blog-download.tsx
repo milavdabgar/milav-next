@@ -79,8 +79,8 @@ function BlogDownloadContent({ title, slug }: BlogDownloadProps) {
       const blob = await response.blob();
       const format = formats.find(f => f.id === formatId);
       const filename = slug
-        ? `${slug}.${format?.extension || 'txt'}`
-        : `${title.replace(/\s+/g, '-').replace(/[^\p{L}\p{N}-]/gu, '').toLowerCase()}.${format?.extension || 'txt'}`;
+        ? `${slug}${locale === 'gu' ? '.gu' : ''}.${format?.extension || 'txt'}`
+        : `${title.replace(/\s+/g, '-').replace(/[^\p{L}\p{N}-]/gu, '').toLowerCase()}${locale === 'gu' ? '.gu' : ''}.${format?.extension || 'txt'}`;
 
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -142,8 +142,8 @@ function BlogDownloadContent({ title, slug }: BlogDownloadProps) {
     const a = document.createElement("a");
     a.href = url;
     const filename = slug
-      ? `${slug}.${extension}`
-      : `${title.replace(/\s+/g, '-').replace(/[^\p{L}\p{N}-]/gu, '').toLowerCase()}.${extension}`;
+      ? `${slug}${locale === 'gu' ? '.gu' : ''}.${extension}`
+      : `${title.replace(/\s+/g, '-').replace(/[^\p{L}\p{N}-]/gu, '').toLowerCase()}${locale === 'gu' ? '.gu' : ''}.${extension}`;
     a.href = url;
     a.download = filename;
     a.click();
