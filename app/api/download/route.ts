@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { ContentConverterV2 } from '@/lib/content-converter-v2';
+import { detectContentType } from '@/lib/content-types';
 import { getContentBySlug } from '@/lib/mdx';
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
 
 export async function POST(request: NextRequest) {
   try {
-    const { slug, locale, format, title } = await request.json();
+    const { slug, locale, format, options = {} } = await request.json();
 
     if (!slug) {
       return NextResponse.json(
@@ -21,123 +23,58 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get the content
+    const converter = new ContentConverterV2();
+    
+    // Get content from MDX
     const post = getContentBySlug('blog', slug, locale === 'gu' ? 'gu' : undefined);
     
     if (!post) {
       return NextResponse.json(
-        { error: 'Content not found' },
+        { error: 'Blog post not found' },
         { status: 404 }
       );
     }
 
-    const baseFilename = title || slug;
-    let result: string | Buffer;
-    let contentType: string;
-    let filename: string;
-
-    switch (format) {
-      case 'md':
-        result = `---
-title: ${post.metadata.title}
-description: ${post.metadata.description || ''}
+    // Construct full markdown content with frontmatter
+    const frontmatter = `---
+title: "${post.metadata.title}"
+description: "${post.metadata.description || ''}"
 date: ${post.metadata.date || ''}
-tags: ${post.metadata.tags?.join(', ') || ''}
+tags: ${post.metadata.tags ? post.metadata.tags.join(', ') : ''}
+author: Milav Dabgar
 ---
 
-# ${post.metadata.title}
+`;
+    
+    const markdownContent = frontmatter + post.content;
 
-${post.content}`;
-        contentType = 'text/markdown';
-        filename = `${baseFilename.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.md`;
-        break;
-
-      case 'txt':
-        // Strip markdown formatting for plain text
-        result = `${post.metadata.title}\n\n${post.metadata.description || ''}\n\n${post.content}`;
-        contentType = 'text/plain';
-        filename = `${baseFilename.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.txt`;
-        break;
-
-      case 'html':
-        result = `<!DOCTYPE html>
-<html lang="${locale || 'en'}">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${post.metadata.title}</title>
-  <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 2rem;
-      line-height: 1.6;
-      color: #333;
-    }
-    h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
-    h2 { font-size: 2rem; margin-top: 2rem; border-bottom: 2px solid #eee; padding-bottom: 0.5rem; }
-    h3 { font-size: 1.5rem; margin-top: 1.5rem; }
-    pre { background: #f5f5f5; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; }
-    code { background: #f5f5f5; padding: 0.2rem 0.4rem; border-radius: 0.25rem; font-size: 0.9em; }
-    blockquote { border-left: 4px solid #ddd; margin-left: 0; padding-left: 1rem; color: #666; }
-    a { color: #0066cc; text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    .metadata { color: #666; font-size: 0.9rem; margin-bottom: 2rem; }
-    @media print {
-      body { padding: 0; }
-    }
-  </style>
-</head>
-<body>
-  <article>
-    <h1>${post.metadata.title}</h1>
-    ${post.metadata.description ? `<p class="description">${post.metadata.description}</p>` : ''}
-    <div class="metadata">
-      ${post.metadata.date ? `<time>${new Date(post.metadata.date).toLocaleDateString()}</time>` : ''}
-      ${post.metadata.tags ? ` · ${post.metadata.tags.join(', ')}` : ''}
-    </div>
-    <div class="content">
-      ${post.content}
-    </div>
-  </article>
-</body>
-</html>`;
-        contentType = 'text/html';
-        filename = `${baseFilename.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.html`;
-        break;
-
-      case 'json':
-        result = JSON.stringify({
-          title: post.metadata.title,
-          description: post.metadata.description,
-          date: post.metadata.date,
-          tags: post.metadata.tags,
-          content: post.content,
-          metadata: post.metadata
-        }, null, 2);
-        contentType = 'application/json';
-        filename = `${baseFilename.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.json`;
-        break;
-
-      default:
-        return NextResponse.json(
-          { error: 'Unsupported format' },
-          { status: 400 }
-        );
-    }
-
-    const response = new NextResponse(result);
+    // Add enhanced options for conversion
+    const enhancedOptions = {
+      ...options,
+      title: post.metadata.title,
+      author: 'Milav Dabgar',
+      contentPath: `blog/${slug}.md`
+    };
+    
+    // Convert content based on format
+    const result = await converter.convert(markdownContent, format, enhancedOptions);
+    
+    // Get the appropriate filename and content type
+    const baseFilename = slug;
+    const { filename, contentType } = getFileDetails(baseFilename, format);
+    
+    // Create response
+    const response = new NextResponse(result as BodyInit);
     response.headers.set('Content-Type', contentType);
     response.headers.set('Content-Disposition', `attachment; filename="${filename}"`);
     
     return response;
 
   } catch (error) {
-    console.error('Download error:', error);
+    console.error('Download conversion error:', error);
     return NextResponse.json(
       { 
-        error: 'Failed to generate download', 
+        error: 'Failed to convert content', 
         details: error instanceof Error ? error.message : String(error)
       },
       { status: 500 }
@@ -156,45 +93,161 @@ export async function GET(request: NextRequest) {
           {
             id: 'md',
             name: 'Markdown',
-            description: 'Original markdown format with frontmatter',
+            description: 'Original markdown format',
             extension: 'md',
             category: 'text'
           },
           {
             id: 'html',
             name: 'HTML',
-            description: 'Standalone HTML file ready to view',
+            description: 'Web-ready HTML with Mermaid diagrams and math',
             extension: 'html',
             category: 'web'
           },
           {
+            id: 'pdf',
+            name: 'PDF (Puppeteer)',
+            description: 'High-quality PDF with diagrams and math support',
+            extension: 'pdf',
+            category: 'document'
+          },
+          {
+            id: 'pdf-chrome',
+            name: 'PDF (Chrome)',
+            description: 'PDF generated using Chrome headless',
+            extension: 'pdf',
+            category: 'document'
+          },
+          {
+            id: 'pdf-pandoc',
+            name: 'PDF (Pandoc/XeLaTeX)',
+            description: 'Professional PDF using Pandoc with XeLaTeX engine',
+            extension: 'pdf',
+            category: 'document'
+          },
+          {
             id: 'txt',
             name: 'Plain Text',
-            description: 'Simple plain text without formatting',
+            description: 'Clean plain text format',
             extension: 'txt',
             category: 'text'
           },
           {
-            id: 'json',
-            name: 'JSON',
-            description: 'Structured data with metadata',
-            extension: 'json',
-            category: 'data'
+            id: 'rtf',
+            name: 'Rich Text Format',
+            description: 'RTF format for word processors',
+            extension: 'rtf',
+            category: 'document'
+          },
+          {
+            id: 'docx',
+            name: 'Word Document',
+            description: 'Microsoft Word DOCX format',
+            extension: 'docx',
+            category: 'document'
+          },
+          {
+            id: 'odt',
+            name: 'OpenDocument Text',
+            description: 'LibreOffice/OpenOffice text document format',
+            extension: 'odt',
+            category: 'document'
+          },
+          {
+            id: 'epub',
+            name: 'EPUB',
+            description: 'Electronic book format for e-readers',
+            extension: 'epub',
+            category: 'ebook'
+          },
+          {
+            id: 'latex',
+            name: 'LaTeX',
+            description: 'LaTeX typesetting format for academic documents',
+            extension: 'tex',
+            category: 'document'
           }
         ]
       });
     }
 
-    return NextResponse.json(
-      { error: 'Invalid action' },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
 
   } catch (error) {
-    console.error('Download API error:', error);
+    console.error('API error:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { 
+        error: 'API request failed', 
+        details: error instanceof Error ? error.message : String(error)
+      },
       { status: 500 }
     );
   }
+}
+
+function getFileDetails(baseFilename: string, format: string) {
+  const formatMap: Record<string, { extension: string; contentType: string; isBuffer: boolean }> = {
+    'md': { 
+      extension: 'md', 
+      contentType: 'text/markdown', 
+      isBuffer: false 
+    },
+    'html': { 
+      extension: 'html', 
+      contentType: 'text/html', 
+      isBuffer: false 
+    },
+    'pdf': { 
+      extension: 'pdf', 
+      contentType: 'application/pdf', 
+      isBuffer: true 
+    },
+    'pdf-chrome': { 
+      extension: 'pdf', 
+      contentType: 'application/pdf', 
+      isBuffer: true 
+    },
+    'pdf-pandoc': { 
+      extension: 'pdf', 
+      contentType: 'application/pdf', 
+      isBuffer: true 
+    },
+    'txt': { 
+      extension: 'txt', 
+      contentType: 'text/plain', 
+      isBuffer: false 
+    },
+    'rtf': { 
+      extension: 'rtf', 
+      contentType: 'application/rtf', 
+      isBuffer: false 
+    },
+    'docx': { 
+      extension: 'docx', 
+      contentType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 
+      isBuffer: true 
+    },
+    'odt': { 
+      extension: 'odt', 
+      contentType: 'application/vnd.oasis.opendocument.text', 
+      isBuffer: true 
+    },
+    'epub': { 
+      extension: 'epub', 
+      contentType: 'application/epub+zip', 
+      isBuffer: true 
+    },
+    'latex': { 
+      extension: 'tex', 
+      contentType: 'application/x-latex', 
+      isBuffer: false 
+    }
+  };
+
+  const details = formatMap[format] || formatMap['html'];
+  return {
+    filename: `${baseFilename}.${details.extension}`,
+    contentType: details.contentType,
+    isBuffer: details.isBuffer
+  };
 }

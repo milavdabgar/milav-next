@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Download, FileText, Printer, Copy, Check, Globe, Code } from "lucide-react";
+import { Download, FileText, Printer, Copy, Check, Globe, Code, FileCode, BookOpen, File } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { usePathname, useSearchParams } from "next/navigation";
 
@@ -178,6 +178,16 @@ export function BlogDownload({ title, slug }: BlogDownloadProps) {
     switch (formatId) {
       case 'html': return Globe;
       case 'json': return Code;
+      case 'pdf':
+      case 'pdf-chrome':
+      case 'pdf-pandoc': return File;
+      case 'docx':
+      case 'odt':
+      case 'rtf': return FileText;
+      case 'latex': return FileCode;
+      case 'epub': return BookOpen;
+      case 'md':
+      case 'txt':
       default: return FileText;
     }
   };
