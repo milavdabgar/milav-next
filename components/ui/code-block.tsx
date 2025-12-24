@@ -9,15 +9,21 @@ import { Copy, Check } from 'lucide-react';
 interface CodeBlockProps {
   children: string;
   className?: string;
+  inline?: boolean;
 }
 
-export function CodeBlock({ children, className = '' }: CodeBlockProps) {
+export function CodeBlock({ children, className = '', inline }: CodeBlockProps) {
   const [highlightedCode, setHighlightedCode] = useState<string>('');
   const [copied, setCopied] = useState(false);
   const { theme } = useTheme();
   
   // Extract language from className (format: language-xxx)
   const language = className.replace(/language-/, '') || 'text';
+  
+  // If inline code, render as simple code tag
+  if (inline) {
+    return <code className={className}>{children}</code>;
+  }
 
   useEffect(() => {
     const highlightCode = async () => {

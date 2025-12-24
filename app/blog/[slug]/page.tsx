@@ -46,8 +46,17 @@ export default async function BlogPostPage({
         <MDXRemote 
           source={post.content}
           components={{
-            pre: ({ children }) => <>{children}</>,
-            code: CodeBlock as any
+            code: ({ inline, className, children, ...props }: any) => {
+              // Check if it's a code block (has className starting with language-) or inline
+              const isCodeBlock = className && className.startsWith('language-');
+              
+              if (isCodeBlock) {
+                return <CodeBlock className={className}>{String(children).replace(/\n$/, '')}</CodeBlock>;
+              }
+              
+              // Inline code
+              return <code className={className} {...props}>{children}</code>;
+            }
           }}
         />
       </BlogPostTemplate>
