@@ -368,15 +368,8 @@ export class ContentConverterV2 {
                 return await this.convertToHtml(content, frontmatter, options);
             
             case 'pdf':
-                // Use Puppeteer by default, fallback to Chrome if not available
-                return await this.convertToPdfPuppeteer(content, frontmatter, options);
-            
-            case 'pdf-chrome':
-                // Explicitly use Chrome headless
-                return await this.convertToPdfChrome(content, frontmatter, options);
-            
             case 'pdf-puppeteer':
-                // Explicitly use Puppeteer
+                // Use Puppeteer for high-quality PDF with full rendering
                 return await this.convertToPdfPuppeteer(content, frontmatter, options);
             
             case 'pdf-pandoc':

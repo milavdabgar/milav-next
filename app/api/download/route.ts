@@ -112,13 +112,6 @@ export async function GET(request: NextRequest) {
             category: 'document'
           },
           {
-            id: 'pdf-chrome',
-            name: 'PDF (Chrome)',
-            description: 'PDF generated using Chrome headless',
-            extension: 'pdf',
-            category: 'document'
-          },
-          {
             id: 'pdf-pandoc',
             name: 'PDF (Pandoc/XeLaTeX)',
             description: 'Professional PDF using Pandoc with XeLaTeX engine',
@@ -198,11 +191,6 @@ function getFileDetails(baseFilename: string, format: string) {
       isBuffer: false 
     },
     'pdf': { 
-      extension: 'pdf', 
-      contentType: 'application/pdf', 
-      isBuffer: true 
-    },
-    'pdf-chrome': { 
       extension: 'pdf', 
       contentType: 'application/pdf', 
       isBuffer: true 

@@ -179,7 +179,6 @@ export function BlogDownload({ title, slug }: BlogDownloadProps) {
       case 'html': return Globe;
       case 'json': return Code;
       case 'pdf':
-      case 'pdf-chrome':
       case 'pdf-pandoc': return File;
       case 'docx':
       case 'odt':
