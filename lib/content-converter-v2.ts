@@ -42,9 +42,10 @@ try {
     puppeteer = require('puppeteer');
     // For production environments, also try chromium
     try {
-        chromium = require('@sparticuz/chromium-min');
+        // @ts-ignore - Optional dependency for production
+        chromium = eval("require('@sparticuz/chromium-min')");
     } catch {
-        console.log('Chromium package not available, using default Puppeteer');
+        // Chromium package is optional
     }
 } catch {
     console.log('Puppeteer not available, PDF generation will use Chrome headless fallback');
@@ -1521,8 +1522,12 @@ ${presentationContent}`;
             // Try to use fetch - handle both browser and Node.js environments
             let fetchFunction: typeof fetch;
             try {
-                // In Node.js 18+ or when node-fetch is available
-                fetchFunction = typeof fetch !== 'undefined' ? fetch : require('node-fetch');
+                // Use built-in fetch (available in Next.js/Node 18+)
+                fetchFunction = fetch;
+                if (typeof fetchFunction === 'undefined') {
+                    console.warn('fetch not available, skipping API call');
+                    return null;
+                }
             } catch {
                 // Fallback for environments without fetch
                 console.warn('fetch not available, skipping API call');
