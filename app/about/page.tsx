@@ -78,26 +78,3 @@ export const metadata = {
   title: 'About - Milav Dabgar',
   description: 'Learn more about Milav Dabgar',
 };
-  );
-}
-
-export async function generateMetadata({
-  searchParams,
-}: {
-  searchParams: Promise<{ lang?: string }>;
-}) {
-  const { lang } = await searchParams;
-  const locale = lang === 'gu' ? 'gu' : undefined;
-  const about = getContentBySlug('about', 'index', locale);
-
-  if (!about) {
-    return {
-      title: 'About Not Found',
-    };
-  }
-
-  return {
-    title: about.metadata.title,
-    description: about.metadata.description || about.metadata.summary,
-  };
-}
