@@ -77,9 +77,7 @@ export function SinglePageLayout({
       </div>
 
       {/* Content */}
-      <article className="prose prose-neutral dark:prose-invert max-w-none">
-        {children}
-      </article>
+      {children}
     </div>
   );
 }
