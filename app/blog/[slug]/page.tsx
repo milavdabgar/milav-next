@@ -1,12 +1,11 @@
-import { getContentBySlug, getAllContent } from '@/lib/mdx';
+import { getContentBySlug, getAllContent, getAvailableLocales } from '@/lib/mdx';
 import { notFound } from 'next/navigation';
 import { MDXRemote } from 'next-mdx-remote/rsc';
+import { SinglePageLayout } from '@/components/layouts';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { Calendar, Clock, ArrowLeft } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
-import Link from 'next/link';
 
 export default async function BlogPostPage({
   params,
@@ -16,53 +15,40 @@ export default async function BlogPostPage({
   searchParams: Promise<{ lang?: string }>;
 }) {
   const { slug } = await params;
-  const { lang } = await searchParams;
-  const locale = lang === 'gu' ? 'gu' : undefined;
+  const searchParamsData = await searchParams;
+  const locale = searchParamsData.lang || 'en';
   
-  const post = getContentBySlug('blog', slug, locale);
+  const post = getContentBySlug('blog', slug, locale === 'gu' ? 'gu' : undefined);
 
   if (!post) {
     notFound();
   }
 
-  const isGujarati = locale === 'gu';
+  const availableLocales = await getAvailableLocales('blog', slug);
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
-      {/* Back Button */}
-      <Link href="/blog">
-        <Button variant="ghost" size="sm" className="mb-6">
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          {isGujarati ? 'બ્લોગ પર પાછા જાઓ' : 'Back to Blog'}
-        </Button>
-      </Link>
-
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex-1">
-            <h1 className="text-4xl font-bold tracking-tight mb-4">
-              {post.metadata.title}
-            </h1>
-            {post.metadata.description && (
-              <p className="text-xl text-muted-foreground mb-4">
-                {post.metadata.description}
-              </p>
-            )}
-            <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-              {post.metadata.date && (
-                <div className="flex items-center">
-                  <Calendar className="mr-2 h-4 w-4" />
-                  {formatDate(post.metadata.date)}
-                </div>
-              )}
+    <SinglePageLayout
+      backLink={{ href: '/blog', label: 'Back to Blog' }}
+      locale={locale}
+      availableLocales={availableLocales}
+    >
+      {/* Post Header */}
+      <div className="mb-8 -mt-4">
+        <h1 className="text-4xl font-bold tracking-tight mb-4">
+          {post.metadata.title}
+        </h1>
+        {post.metadata.description && (
+          <p className="text-xl text-muted-foreground mb-4">
+            {post.metadata.description}
+          </p>
+        )}
+        <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+          {post.metadata.date && (
+            <div className="flex items-center">
+              <Calendar className="mr-2 h-4 w-4" />
+              {formatDate(post.metadata.date)}
             </div>
-          </div>
-          <Button asChild variant="ghost" size="sm">
-            <a href={`/blog/${slug}${isGujarati ? '' : '?lang=gu'}`}>
-              {isGujarati ? 'English' : 'ગુજરાતી'}
-            </a>
-          </Button>
+          )}
         </div>
 
         {post.metadata.tags && post.metadata.tags.length > 0 && (
@@ -78,23 +64,10 @@ export default async function BlogPostPage({
 
       <Separator className="my-8" />
 
-      {/* Content */}
-      <article className="prose prose-neutral dark:prose-invert max-w-none">
-        <MDXRemote source={post.content} />
-      </article>
-
-      <Separator className="my-8" />
-
-      {/* Footer */}
-      <div className="flex justify-between items-center">
-        <Link href="/blog">
-          <Button variant="outline">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            {isGujarati ? 'બધી પોસ્ટ્સ' : 'All Posts'}
-          </Button>
-        </Link>
-      </div>
-    </div>
+      
+      {/* Article Content */}
+      <MDXRemote source={post.content} />
+    </SinglePageLayout>
   );
 }
 
@@ -113,8 +86,8 @@ export async function generateMetadata({
   searchParams: Promise<{ lang?: string }>;
 }) {
   const { slug } = await params;
-  const { lang } = await searchParams;
-  const locale = lang === 'gu' ? 'gu' : undefined;
+  const searchParamsData = await searchParams;
+  const locale = searchParamsData.lang === 'gu' ? 'gu' : undefined;
   const post = getContentBySlug('blog', slug, locale);
 
   if (!post) {

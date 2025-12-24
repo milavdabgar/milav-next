@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { GridPageLayout } from '@/components/layouts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Music, Quote, Video } from 'lucide-react';
 
@@ -31,28 +32,23 @@ export default function MediaPage() {
   ];
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-6xl">
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold tracking-tight mb-2">Media</h1>
-        <p className="text-lg text-muted-foreground">
-          Music, quotes, and videos collection
-        </p>
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-3">
-        {mediaPages.map((page) => (
-          <Link key={page.href} href={page.href}>
-            <Card className="h-full hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <page.icon className="h-12 w-12 mb-4 text-primary" />
-                <CardTitle>{page.title}</CardTitle>
-                <CardDescription>{page.description}</CardDescription>
-              </CardHeader>
-            </Card>
-          </Link>
-        ))}
-      </div>
-    </div>
+    <GridPageLayout
+      title="Media"
+      description="Music, quotes, and videos collection"
+      columns={{ default: 1, md: 3 }}
+    >
+      {mediaPages.map((page) => (
+        <Link key={page.href} href={page.href}>
+          <Card className="h-full hover:shadow-lg transition-shadow">
+            <CardHeader>
+              <page.icon className="h-12 w-12 mb-4 text-primary" />
+              <CardTitle>{page.title}</CardTitle>
+              <CardDescription>{page.description}</CardDescription>
+            </CardHeader>
+          </Card>
+        </Link>
+      ))}
+    </GridPageLayout>
   );
 }
 
