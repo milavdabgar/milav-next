@@ -1,4 +1,5 @@
 import { getContentBySlug, getAllContent, getAvailableLocales } from '@/lib/mdx';
+import { mdxOptions } from '@/lib/mdx-options';
 import { notFound } from 'next/navigation';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import { SinglePageLayout } from '@/components/layouts';
@@ -42,7 +43,7 @@ export default async function BlogPostPage({
         previousPost={previousPost ? { slug: previousPost.slug, title: previousPost.metadata.title } : undefined}
         nextPost={nextPost ? { slug: nextPost.slug, title: nextPost.metadata.title } : undefined}
       >
-        <MDXRemote source={post.content} />
+        <MDXRemote source={post.content} options={mdxOptions} />
       </BlogPostTemplate>
     </SinglePageLayout>
   );
