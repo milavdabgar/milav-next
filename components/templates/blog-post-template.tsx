@@ -13,6 +13,7 @@ interface BlogPostTemplateProps {
   readingTime?: string;
   tags?: string[];
   author?: string;
+  slug?: string;
   children: ReactNode;
 }
 
@@ -23,6 +24,7 @@ export function BlogPostTemplate({
   readingTime,
   tags,
   author,
+  slug,
   children,
 }: BlogPostTemplateProps) {
   return (
@@ -34,7 +36,7 @@ export function BlogPostTemplate({
             <h1 className="text-4xl font-bold tracking-tight lg:text-5xl flex-1">
               {title}
             </h1>
-            <BlogDownload title={title} />
+            <BlogDownload title={title} slug={slug} />
           </div>
           
           {description && (

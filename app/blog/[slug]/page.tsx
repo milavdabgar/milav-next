@@ -35,6 +35,7 @@ export default async function BlogPostPage({
         date={post.metadata.date}
         tags={post.metadata.tags}
         author="Milav Dabgar"
+        slug={slug}
       >
         <MDXRemote source={post.content} />
       </BlogPostTemplate>
