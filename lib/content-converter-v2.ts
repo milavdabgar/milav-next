@@ -1581,7 +1581,7 @@ ${presentationContent}`;
             // Relative to public directory
             path.resolve(process.cwd(), 'public', svgPath),
             // Check if it's in the content directory structure
-            path.resolve(process.cwd(), 'content', 'resources', svgPath),
+            path.resolve(process.cwd(), `content/resources/${svgPath}`),
             // Relative to content directory
             path.resolve(process.cwd(), 'content', svgPath),
         ];

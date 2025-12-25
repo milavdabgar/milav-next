@@ -34,9 +34,11 @@ export function getContentBySlug(
     const contentPath = path.join(contentDirectory, folder);
 
     // Try locale-specific file first, then fall back to default
-    let fullPath = path.join(contentPath, fileName);
+    // Try locale-specific file first, then fall back to default
+    // We construct the path manually to avoid Next.js build warnings
+    let fullPath = path.normalize(`${process.cwd()}/content/${folder}/${fileName}`);
     if (!fs.existsSync(fullPath) && locale) {
-      fullPath = path.join(contentPath, fallbackFileName);
+      fullPath = path.normalize(`${process.cwd()}/content/${folder}/${fallbackFileName}`);
     }
 
     if (!fs.existsSync(fullPath)) {
