@@ -2,6 +2,14 @@
 import { getContentBySlug } from '@/lib/mdx';
 import { BreadcrumbItem } from '@/components/ui/breadcrumbs';
 
+// Fallback map for common departments
+const departmentMap: Record<string, string> = {
+    '32-ict': 'Interest Communication Technology (ICT)',
+    '11-ec': 'Electronics & Communication (EC)',
+    '16-it': 'Information Technology (IT)',
+    '00-general': 'General / All Departments'
+};
+
 export function getBreadcrumbs(basePath: string, slug: string[], locale?: string): BreadcrumbItem[] {
     const breadcrumbs: BreadcrumbItem[] = [];
 
@@ -31,59 +39,43 @@ export function getBreadcrumbs(basePath: string, slug: string[], locale?: string
     slug.forEach((part, index) => {
         currentPath += `/${part}`;
 
-        // Construct the path to the directory or file
-        // For breadcrumbs, we want the title of the directory/file
-
-        // If it's the last part and it's a file (not a dir), currentDir + part
-        // If it's a directory, currentDir + part + _index
-
-        // We try to fetch metadata for this segment.
-        // We assume each segment corresponds to a directory unless it's the last one which might be a file.
-        // However, in our structure, even leaf nodes might just be files.
-        // But intermediate nodes are definitely directories.
-
-        const segmentPath = `${currentDir}/${part}`;
-
-        // Try to get index content for this segment (treating it as a directory)
-        // We pass the full path up to this segment as the 'directory' argument for getContentBySlug
-        // and '_index' as the slug.
-
-        // Wait, getContentBySlug takes (directory, slug).
-        // If we want title of `16-it` folder:
-        // getContentBySlug('resources/study-materials/16-it', '_index', locale)
-
         // Construct the directory path to check for _index
         const dirPathToCheck = currentDir === '' ? part : `${currentDir}/${part}`;
 
         let label = part;
 
-        // Only try to fetch metadata if we are not at the leaf node, 
-        // OR if we are at the leaf node but we want to confirm its title (if passed from page, usually we have it).
-        // Actually, let's just try to resolve it.
-
-        // For intermediate steps (directories):
+        // 1. Check Metadata via _index.mdx
         try {
             const indexData = getContentBySlug(dirPathToCheck, '_index', locale === 'gu' ? 'gu' : undefined);
+
             if (indexData) {
                 label = indexData.metadata.title;
-            } else if (index === slug.length - 1) {
-                // If it's the last item, it might be a file (not directory)
-                // e.g. .../java (java.mdx)
-                // getContentBySlug('resources/study-materials/...', 'java')
-                const fileData = getContentBySlug(currentDir, part, locale === 'gu' ? 'gu' : undefined);
-                if (fileData) {
-                    label = fileData.metadata.title;
+            } else {
+                // 2. Check Department Map Fallback
+                if (departmentMap[part]) {
+                    label = departmentMap[part];
+                }
+                // 3. Check if it is a file (leaf node)
+                else if (index === slug.length - 1) {
+                    const fileData = getContentBySlug(currentDir, part, locale === 'gu' ? 'gu' : undefined);
+                    if (fileData) {
+                        label = fileData.metadata.title;
+                    } else {
+                        // Fallback formatting
+                        label = part.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                    }
                 } else {
                     // Fallback formatting
                     label = part.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
                 }
-            } else {
-                // Fallback formatting for intermediate directories without _index (shouldn't happen often)
-                label = part.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
             }
         } catch (e) {
             // Fallback
-            label = part.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+            if (departmentMap[part]) {
+                label = departmentMap[part];
+            } else {
+                label = part.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+            }
         }
 
         breadcrumbs.push({
