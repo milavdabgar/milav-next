@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import { getContentBySlug, getAvailableLocales } from '@/lib/mdx';
 import { SinglePageLayout } from '@/components/layouts';
-import { SingleContentTemplate } from '@/components/templates';
+import { ContentTemplate as SingleContentTemplate } from '@/components/templates';
 
 export default async function QuotesPage({
   searchParams,

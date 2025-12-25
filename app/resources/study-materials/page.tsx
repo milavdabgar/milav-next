@@ -2,7 +2,7 @@ import { getContentBySlug } from '@/lib/mdx';
 import { notFound } from 'next/navigation';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import { SinglePageLayout } from '@/components/layouts';
-import { SingleContentTemplate as PageTemplate } from '@/components/templates';
+import { ContentTemplate as PageTemplate } from '@/components/templates';
 import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import fs from 'fs';
@@ -47,11 +47,12 @@ export default async function StudyMaterialsPage({
     return (
         <SinglePageLayout>
             <PageTemplate
-                title={page.metadata.title}
-                description={page.metadata.description}
+                title={page?.metadata.title || 'Study Materials'}
+                description={page?.metadata.description}
+                contentType="resource"
             >
                 <div className="prose dark:prose-invert max-w-none mb-8">
-                    <MDXRemote source={page.content} />
+                    {page && <MDXRemote source={page.content} />}
                 </div>
 
                 <div className="grid gap-6 md:grid-cols-2">

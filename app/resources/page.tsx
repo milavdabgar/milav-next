@@ -2,7 +2,7 @@ import { getContentBySlug } from '@/lib/mdx';
 import { notFound } from 'next/navigation';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import { SinglePageLayout } from '@/components/layouts';
-import { SingleContentTemplate as PageTemplate } from '@/components/templates';
+import { ContentTemplate as PageTemplate } from '@/components/templates';
 import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import remarkMath from 'remark-math';
@@ -42,6 +42,7 @@ export default async function ResourcesPage({
             <PageTemplate
                 title={page.metadata.title}
                 description={page.metadata.description}
+                contentType="resource"
             >
                 <div className="prose dark:prose-invert max-w-none mb-8">
                     <MDXRemote
