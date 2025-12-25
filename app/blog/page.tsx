@@ -6,6 +6,9 @@ import { ResourceCard } from '@/components/ui/resource-card';
 import { Card } from '@/components/ui/card';
 import { formatDate } from '@/lib/utils';
 
+import { MDXRemote } from 'next-mdx-remote/rsc';
+import { mdxComponents } from '@/components/mdx-components';
+
 export default async function BlogPage({
   searchParams,
 }: {
@@ -20,12 +23,18 @@ export default async function BlogPage({
 
   const breadcrumbItems = getBreadcrumbs('blog', [], locale);
 
+  const descriptionContent = indexContent?.content ? (
+    <MDXRemote source={indexContent.content} components={mdxComponents} />
+  ) : (
+    indexContent?.metadata.description || (isGujarati
+      ? 'ટ્યુટોરિયલ, ગાઇડ્સ અને ટેકનિકલ આર્ટિકલ્સ'
+      : 'Tutorials, guides, and technical articles')
+  );
+
   return (
     <GridPageLayout
       title={indexContent?.metadata.title || (isGujarati ? 'બ્લોગ' : 'Blog')}
-      description={indexContent?.metadata.description || (isGujarati
-        ? 'ટ્યુટોરિયલ, ગાઇડ્સ અને ટેકનિકલ આર્ટિકલ્સ'
-        : 'Tutorials, guides, and technical articles')}
+      description={descriptionContent}
       columns={{ default: 1, md: 2, lg: 3 }}
       breadcrumbs={breadcrumbItems}
     >

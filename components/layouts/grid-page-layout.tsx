@@ -7,7 +7,7 @@ import { Breadcrumbs, BreadcrumbItem } from '@/components/ui/breadcrumbs';
 interface GridPageLayoutProps {
   children: ReactNode;
   title: string;
-  description?: string;
+  description?: ReactNode;
   backLink?: {
     href: string;
     label: string;
@@ -99,10 +99,12 @@ export function GridPageLayout({
         )}
 
         {/* Title Section */}
-        <div className="space-y-2">
+        <div className="space-y-4">
           <h1 className="text-4xl font-bold tracking-tight">{title}</h1>
           {description && (
-            <p className="text-lg text-muted-foreground">{description}</p>
+            <div className="text-lg text-muted-foreground max-w-none prose dark:prose-invert">
+              {description}
+            </div>
           )}
         </div>
       </div>
