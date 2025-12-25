@@ -26,7 +26,24 @@ export async function POST(request: NextRequest) {
     const converter = new ContentConverterV2();
 
     // Get content from MDX
-    const post = getContentBySlug('blog', slug, locale === 'gu' ? 'gu' : undefined);
+    // Slug can be a string or array, we need to handle both
+    const slugStr = Array.isArray(slug) ? slug.join('/') : slug;
+
+    // Check if it exists in blog first
+    let post = getContentBySlug('blog', slugStr, locale === 'gu' ? 'gu' : undefined);
+
+    // If not found in blog, try resolving as a resource path
+    if (!post) {
+      // Try resources/study-materials
+      // The slug passed might be "11-ec/sem-2/..."
+      // We typically call getContentBySlug('resources/study-materials/11-ec/sem-2/...', 'filename')
+      const parts = slugStr.split('/');
+      const fileName = parts.pop();
+      if (fileName) {
+        const folderPath = `resources/study-materials/${parts.join('/')}`;
+        post = getContentBySlug(folderPath, fileName, locale === 'gu' ? 'gu' : undefined);
+      }
+    }
 
     if (!post) {
       return NextResponse.json(

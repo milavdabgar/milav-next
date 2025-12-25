@@ -2,7 +2,7 @@ import { getContentBySlug, getAllContent, getAvailableLocales } from '@/lib/mdx'
 import { notFound } from 'next/navigation';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import { SinglePageLayout } from '@/components/layouts';
-import { BlogPostTemplate } from '@/components/templates';
+import { ContentTemplate } from '@/components/templates';
 import { CodeBlock } from '@/components/ui/code-block';
 import remarkMath from 'remark-math';
 import remarkGfm from 'remark-gfm';
@@ -35,16 +35,18 @@ export default async function BlogPostPage({
 
   return (
     <SinglePageLayout>
-      <BlogPostTemplate
+      <ContentTemplate
         title={post.metadata.title}
         description={post.metadata.description}
         date={post.metadata.date}
+        readingTime={post.metadata.readingTime}
         tags={post.metadata.tags}
         author="Milav Dabgar"
         slug={slug}
         locale={locale}
         previousPost={previousPost ? { slug: previousPost.slug, title: previousPost.metadata.title } : undefined}
         nextPost={nextPost ? { slug: nextPost.slug, title: nextPost.metadata.title } : undefined}
+        contentType="blog"
       >
         <MDXRemote
           source={post.content}
@@ -68,7 +70,7 @@ export default async function BlogPostPage({
             }
           }}
         />
-      </BlogPostTemplate>
+      </ContentTemplate>
     </SinglePageLayout>
   );
 }

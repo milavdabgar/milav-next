@@ -3,7 +3,7 @@ import { getDirectoryContent } from '@/lib/directory-utils';
 import { notFound } from 'next/navigation';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import { SinglePageLayout, GridPageLayout } from '@/components/layouts';
-import { SingleContentTemplate as PageTemplate } from '@/components/templates';
+import { ContentTemplate as PageTemplate } from '@/components/templates';
 import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Folder, FileText } from 'lucide-react';
@@ -42,6 +42,10 @@ export default async function StudyMaterialDynamicPage({
                 <PageTemplate
                     title={fileContent.metadata.title}
                     description={fileContent.metadata.description}
+                    date={fileContent.metadata.date}
+                    tags={fileContent.metadata.tags}
+                    slug={slugPath}
+                    contentType="resource"
                 >
                     <div className="prose dark:prose-invert max-w-none">
                         <MDXRemote
