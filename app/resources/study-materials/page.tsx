@@ -7,6 +7,7 @@ import { ResourceCard } from '@/components/ui/resource-card';
 import Link from 'next/link';
 import fs from 'fs';
 import path from 'path';
+import { mdxComponents } from '@/components/mdx-components';
 
 export default async function StudyMaterialsPage({
     searchParams,
@@ -59,7 +60,9 @@ export default async function StudyMaterialsPage({
                         remarkPlugins: [],
                         rehypePlugins: [],
                     }
-                }} />}
+                }}
+                    components={mdxComponents}
+                />}
             </div>
 
             {departments.map((dept) => (
