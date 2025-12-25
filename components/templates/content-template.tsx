@@ -6,7 +6,7 @@ import { formatDate } from '@/lib/utils';
 import { ResponsiveToc } from '@/components/ui/responsive-toc';
 import { BlogDownload } from '@/components/ui/blog-download';
 import { ArticleNavigation } from '@/components/ui/article-navigation';
-import { Breadcrumbs } from '@/components/ui/breadcrumbs';
+import { Breadcrumbs, BreadcrumbItem } from '@/components/ui/breadcrumbs';
 
 interface ContentTemplateProps {
   title: string;
@@ -21,6 +21,7 @@ interface ContentTemplateProps {
   nextPost?: { slug: string; title: string };
   children: ReactNode;
   contentType?: 'blog' | 'resource';
+  breadcrumbs?: BreadcrumbItem[];
 }
 
 export function ContentTemplate({
@@ -36,70 +37,21 @@ export function ContentTemplate({
   nextPost,
   children,
   contentType = 'blog',
+  breadcrumbs,
 }: ContentTemplateProps) {
-  // Helper function to format slug into readable label
-  const formatLabel = (slug: string) => {
-    return slug
-      .split('-')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
-  };
-
-  const getBreadcrumbs = () => {
-    if (contentType === 'blog') {
-      return [
-        { label: 'Blog', href: '/blog' },
-        { label: title, href: `/blog/${slug}` },
-      ];
-    }
-
-    // Resources breadcrumbs
-    const items = [
-      { label: 'Resources', href: '/resources' },
-      { label: 'Study Materials', href: '/resources/study-materials' },
-    ];
-
-    if (slug) {
-      // If slug contains 'study-materials', we should probably strip it if it's at the start
-      // But based on usage, slug usually starts after study-materials
-      // Let's handle the slug segments
-      const parts = slug.split('/');
-
-      // Build up the path
-      let currentPath = '/resources/study-materials';
-
-      parts.forEach((part, index) => {
-        // Skip if part is empty
-        if (!part) return;
-
-        currentPath += `/${part}`;
-
-        // Use the title for the last item (the current page), otherwise format the slug
-        const isLast = index === parts.length - 1;
-        const label = isLast ? title : formatLabel(part);
-
-        // If it's the last item, we can use '#' or the current path
-        // Using '#' for the last item is common in breadcrumbs to indicate "current page" 
-        // but passing the full path is also fine as Breadcrumbs component handles styling 
-        // for the last item (non-clickable).
-        items.push({
-          label,
-          href: currentPath
-        });
-      });
-    }
-
-    return items;
-  };
-
-  const breadcrumbItems = getBreadcrumbs();
+  // Use passed breadcrumbs or default minimal ones if not provided
+  const items = breadcrumbs || [
+    { label: 'Home', href: '/' },
+    { label: contentType === 'blog' ? 'Blog' : 'Resources', href: contentType === 'blog' ? '/blog' : '/resources' },
+    { label: title, href: '#' }
+  ];
 
   return (
     <div className="flex gap-6 max-w-[1600px] mx-auto">
       {/* Main Content Area - Flexible width */}
       <article className="flex-1 min-w-0 space-y-6 pb-12">
         {/* Breadcrumbs */}
-        <Breadcrumbs items={breadcrumbItems} />
+        <Breadcrumbs items={items} />
 
         {/* Article Header */}
         <header className="space-y-4">

@@ -15,6 +15,7 @@ import path from 'path';
 import remarkMath from 'remark-math';
 import remarkGfm from 'remark-gfm';
 import rehypeKatex from 'rehype-katex';
+import { getBreadcrumbs } from '@/lib/breadcrumbs';
 
 type Params = Promise<{ slug: string[]; lang?: string }>;
 
@@ -39,6 +40,8 @@ export default async function StudyMaterialDynamicPage({
     const fullFilePath = path.join('resources/study-materials', slugPath);
     const fileContent = getContentBySlug('resources/study-materials', slugPath, locale === 'gu' ? 'gu' : undefined);
 
+    const breadcrumbItems = getBreadcrumbs('resources/study-materials', slug, locale);
+
     if (fileContent) {
         return (
             <SinglePageLayout>
@@ -49,6 +52,7 @@ export default async function StudyMaterialDynamicPage({
                     tags={fileContent.metadata.tags}
                     slug={slugPath}
                     contentType="resource"
+                    breadcrumbs={breadcrumbItems}
                 >
                     <div className="prose dark:prose-invert max-w-none">
                         <MDXRemote
@@ -97,24 +101,7 @@ export default async function StudyMaterialDynamicPage({
     }
 
     // Generate breadcrumbs
-    const breadcrumbItems = [
-        { label: 'Resources', href: '/resources' },
-        { label: 'Study Materials', href: '/resources/study-materials' }
-    ];
-
-    let currentPath = '/resources/study-materials';
-    slug.forEach((part, index) => {
-        currentPath += `/${part}`;
-        const isLast = index === slug.length - 1;
-
-        // Format label: "4300001-maths1" -> "4300001 Maths1"
-        const label = part.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-
-        breadcrumbItems.push({
-            label: isLast ? (indexContent?.metadata.title || label) : label,
-            href: currentPath
-        });
-    });
+    // Breadcrumbs already generated above
 
     return (
         <GridPageLayout

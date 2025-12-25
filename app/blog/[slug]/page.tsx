@@ -8,6 +8,7 @@ import { Mermaid } from '@/components/ui/mermaid';
 import remarkMath from 'remark-math';
 import remarkGfm from 'remark-gfm';
 import rehypeKatex from 'rehype-katex';
+import { getBreadcrumbs } from '@/lib/breadcrumbs';
 
 export default async function BlogPostPage({
   params,
@@ -34,6 +35,8 @@ export default async function BlogPostPage({
   const previousPost = currentIndex > 0 ? allPosts[currentIndex - 1] : undefined;
   const nextPost = currentIndex < allPosts.length - 1 ? allPosts[currentIndex + 1] : undefined;
 
+  const breadcrumbItems = getBreadcrumbs('blog', [slug], locale);
+
   return (
     <SinglePageLayout>
       <ContentTemplate
@@ -48,6 +51,7 @@ export default async function BlogPostPage({
         previousPost={previousPost ? { slug: previousPost.slug, title: previousPost.metadata.title } : undefined}
         nextPost={nextPost ? { slug: nextPost.slug, title: nextPost.metadata.title } : undefined}
         contentType="blog"
+        breadcrumbs={breadcrumbItems}
       >
         <MDXRemote
           source={post.content}

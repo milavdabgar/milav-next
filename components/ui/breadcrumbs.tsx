@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ChevronRight, Home } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-interface BreadcrumbItem {
+export interface BreadcrumbItem {
   label: string;
   href: string;
 }
@@ -24,10 +24,10 @@ export function Breadcrumbs({ items, className }: BreadcrumbsProps) {
       >
         <Home className="h-4 w-4" />
       </Link>
-      
+
       {items.map((item, index) => {
         const isLast = index === items.length - 1;
-        
+
         return (
           <div key={item.href} className="flex items-center gap-2">
             <ChevronRight className="h-4 w-4" />
