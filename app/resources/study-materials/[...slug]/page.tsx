@@ -108,7 +108,7 @@ export default async function StudyMaterialDynamicPage({
             title={indexContent?.metadata.title || slug[slug.length - 1]}
             description={indexContent?.metadata.description}
             columns={{ default: 1, md: 2 }}
-            breadcrumbs={<Breadcrumbs items={breadcrumbItems} />}
+            breadcrumbs={breadcrumbItems}
         >
             {indexContent && (
                 <div className="col-span-full prose dark:prose-invert max-w-none mb-8">

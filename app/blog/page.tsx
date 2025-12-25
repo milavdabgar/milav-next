@@ -1,4 +1,5 @@
 import { getAllContent } from '@/lib/mdx';
+import { getBreadcrumbs } from '@/lib/breadcrumbs';
 import Link from 'next/link';
 import { GridPageLayout } from '@/components/layouts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,16 +15,19 @@ export default async function BlogPage({
   const params = await searchParams;
   const locale = params.lang || 'en';
   const isGujarati = locale === 'gu';
-  
+
   const posts = getAllContent('blog');
+
+  const breadcrumbItems = getBreadcrumbs('blog', [], locale);
 
   return (
     <GridPageLayout
       title={isGujarati ? 'બ્લોગ' : 'Blog'}
-      description={isGujarati 
-        ? 'ટ્યુટોરિયલ, ગાઇડ્સ અને ટેકનિકલ આર્ટિકલ્સ' 
+      description={isGujarati
+        ? 'ટ્યુટોરિયલ, ગાઇડ્સ અને ટેકનિકલ આર્ટિકલ્સ'
         : 'Tutorials, guides, and technical articles'}
       columns={{ default: 1, md: 2, lg: 3 }}
+      breadcrumbs={breadcrumbItems}
     >
       {posts.map((post) => (
         <Link key={post.slug} href={`/blog/${post.slug}${isGujarati ? '?lang=gu' : ''}`}>
@@ -42,28 +46,28 @@ export default async function BlogPage({
                   <div className="flex items-center text-sm text-muted-foreground">
                     <Calendar className="mr-2 h-4 w-4" />
                     {formatDate(post.metadata.date)}
-                    </div>
-                  )}
-                  {post.metadata.tags && post.metadata.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-1">
-                      {post.metadata.tags.slice(0, 3).map((tag: string) => (
-                        <Badge key={tag} variant="secondary" className="text-xs">
-                          {tag}
-                        </Badge>
-                      ))}
-                      {post.metadata.tags.length > 3 && (
-                        <Badge variant="outline" className="text-xs">
-                          +{post.metadata.tags.length - 3}
-                        </Badge>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
-      
+                  </div>
+                )}
+                {post.metadata.tags && post.metadata.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-1">
+                    {post.metadata.tags.slice(0, 3).map((tag: string) => (
+                      <Badge key={tag} variant="secondary" className="text-xs">
+                        {tag}
+                      </Badge>
+                    ))}
+                    {post.metadata.tags.length > 3 && (
+                      <Badge variant="outline" className="text-xs">
+                        +{post.metadata.tags.length - 3}
+                      </Badge>
+                    )}
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
+      ))}
+
       {posts.length === 0 && (
         <Card className="col-span-full p-12 text-center">
           <p className="text-muted-foreground">

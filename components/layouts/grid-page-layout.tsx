@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { Breadcrumbs, BreadcrumbItem } from '@/components/ui/breadcrumbs';
 
 interface GridPageLayoutProps {
   children: ReactNode;
@@ -22,7 +23,7 @@ interface GridPageLayoutProps {
     lg?: number;
     xl?: number;
   };
-  breadcrumbs?: ReactNode;
+  breadcrumbs?: BreadcrumbItem[];
 }
 
 export function GridPageLayout({
@@ -57,7 +58,7 @@ export function GridPageLayout({
         {/* Breadcrumbs */}
         {breadcrumbs && (
           <div className="mb-4">
-            {breadcrumbs}
+            <Breadcrumbs items={breadcrumbs} />
           </div>
         )}
 

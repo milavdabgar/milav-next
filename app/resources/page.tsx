@@ -1,4 +1,5 @@
 import { getContentBySlug } from '@/lib/mdx';
+import { getBreadcrumbs } from '@/lib/breadcrumbs';
 import { notFound } from 'next/navigation';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import { SinglePageLayout } from '@/components/layouts';
@@ -37,12 +38,15 @@ export default async function ResourcesPage({
         // Add more sections as they are migrated
     ];
 
+    const breadcrumbItems = getBreadcrumbs('resources', [], locale);
+
     return (
         <SinglePageLayout>
             <PageTemplate
                 title={page.metadata.title}
                 description={page.metadata.description}
                 contentType="resource"
+                breadcrumbs={breadcrumbItems}
             >
                 <div className="prose dark:prose-invert max-w-none mb-8">
                     <MDXRemote
