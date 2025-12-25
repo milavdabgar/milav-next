@@ -1378,10 +1378,10 @@ ${presentationContent}`;
 
     /**
      * Process SVG images in markdown content for Pandoc formats
-     * Converts SVG file references to base64 data URLs in markdown syntax
+     * Converts relative SVG paths to absolute file paths for Pandoc processing
      */
     private async processSvgForPandoc(content: string, options: ConversionOptions = {}): Promise<string> {
-        // Find all markdown image references with SVG sources, including title
+        // Find all markdown image references with SVG sources
         const imgRegex = /!\[([^\]]*)\]\(([^)]*\.svg)(?:\s+"([^"]*)")?\)/g;
         const matches = Array.from(content.matchAll(imgRegex));
 
@@ -1393,59 +1393,61 @@ ${presentationContent}`;
 
         // Process each SVG image
         for (const match of matches) {
-            const [fullMatch, , svgPath] = match;
+            const [fullMatch, altText, svgPath] = match;
 
             try {
-                let svgContent: string | null = null;
+                let absolutePath: string | null = null;
 
-                // Resolve SVG path using the same logic as HTML processing
-                if (svgPath.startsWith('/api/content-images/')) {
-                    svgContent = await this.fetchSvgFromApi(svgPath);
-                } else if (svgPath.startsWith('/')) {
-                    const apiPath = `/api/content-images${svgPath}`;
-                    svgContent = await this.fetchSvgFromApi(apiPath);
-                    if (!svgContent) {
-                        const resolvedPath = this.resolveSvgPath(svgPath);
-                        if (fs.existsSync(resolvedPath)) {
-                            svgContent = fs.readFileSync(resolvedPath, 'utf8');
+                // 1. If absolute path, check existence
+                if (path.isAbsolute(svgPath)) {
+                    if (fs.existsSync(svgPath)) {
+                        absolutePath = svgPath;
+                    }
+                }
+                // 2. Resolve relative to contentPath (most likely scenario)
+                else if (options.contentPath) {
+                    const contentDir = path.dirname(options.contentPath);
+                    const resolved = path.resolve(contentDir, svgPath);
+                    if (fs.existsSync(resolved)) {
+                        absolutePath = resolved;
+                    } else {
+                        // Try looking in public dir if not found in content dir
+                        const publicPath = path.resolve(process.cwd(), 'public', svgPath.replace(/^\//, ''));
+                        if (fs.existsSync(publicPath)) {
+                            absolutePath = publicPath;
                         }
                     }
-                } else {
-                    // Relative path - resolve using content path context
-                    const resolvedApiPath = this.resolveRelativeSvgPath(svgPath, options.contentPath);
-                    if (resolvedApiPath) {
-                        svgContent = await this.fetchSvgFromApi(resolvedApiPath);
-                    }
-
-                    // Fallback to filesystem resolution
-                    if (!svgContent) {
-                        const resolvedPath = this.resolveSvgPath(svgPath);
-                        if (fs.existsSync(resolvedPath)) {
-                            svgContent = fs.readFileSync(resolvedPath, 'utf8');
+                }
+                // 3. Fallback: try resolving from cwd or common folders
+                else {
+                    const possiblePaths = [
+                        path.resolve(process.cwd(), svgPath),
+                        path.resolve(process.cwd(), 'public', svgPath.replace(/^\//, '')),
+                        path.resolve(process.cwd(), 'content', svgPath)
+                    ];
+                    for (const p of possiblePaths) {
+                        if (fs.existsSync(p)) {
+                            absolutePath = p;
+                            break;
                         }
                     }
                 }
 
-                if (svgContent) {
-                    // For Pandoc processing, we want to embed the SVG directly in HTML
-                    // Note: title attribute preserved in match for potential future use
-                    const htmlReplacement = `<div class="svg-container"><svg>${svgContent}</svg></div>`;
-                    processedContent = processedContent.replace(fullMatch, htmlReplacement);
+                if (absolutePath) {
+                    // Replace with absolute path for Pandoc
+                    // Keep markdown syntax: ![alt](/abs/path/to.svg)
+                    const replacement = `![${altText || ''}](${absolutePath})`;
+                    processedContent = processedContent.replace(fullMatch, replacement);
 
-                    console.log(`Converted SVG to base64 for Pandoc: ${svgPath}`);
+                    console.log(`Resolved SVG for Pandoc: ${svgPath} -> ${absolutePath}`);
                 } else {
-                    // Replace with error message
-                    const errorReplacement = `[SVG Not Found: ${svgPath}]`;
-                    processedContent = processedContent.replace(fullMatch, errorReplacement);
                     console.warn(`SVG file not found for Pandoc: ${svgPath}`);
+                    // Replace with text indicating missing image
+                    processedContent = processedContent.replace(fullMatch, `[Image not found: ${svgPath}]`);
                 }
             } catch (error) {
-                // Replace with error message
-                const errorReplacement = `[SVG Error: ${svgPath}]`;
-                processedContent = processedContent.replace(fullMatch, errorReplacement);
-                if (process.env.NODE_ENV !== 'test') {
-                    console.error(`Error processing SVG for Pandoc ${svgPath}:`, error);
-                }
+                console.error(`Error processing SVG for Pandoc ${svgPath}:`, error);
+                processedContent = processedContent.replace(fullMatch, `[SVG Error: ${svgPath}]`);
             }
         }
 
@@ -2211,12 +2213,17 @@ ${fontConfig}
 \\usepackage{multicol}
 \\usepackage{hyperref}
 \\usepackage{tikz}
+\\usepackage{graphicx}
+\\usepackage{adjustbox}
 \\usepackage{array}
 \\usepackage{tabularx}
 \\usepackage{ragged2e}
 \\usepackage{setspace}
 \\usepackage{fancyhdr}
 \\usepackage{changepage}
+\\usepackage{longtable}
+\\usepackage{calc}
+\\usepackage{booktabs}
 
 % Colors - Professional palette
 \\definecolor{primary}{RGB}{0, 79, 144}
@@ -2276,6 +2283,11 @@ ${fontConfig}
 
 % Pandoc compatibility
 \\providecommand{\\tightlist}{\\setlength{\\itemsep}{0pt}\\setlength{\\parskip}{0pt}}
+
+% Define \pandocbounded for image sizing (used by Pandoc)
+\\makeatletter
+\\def\\pandocbounded#1{\\adjustbox{max width=\\linewidth, max height=0.75\\textheight, keepaspectratio}{#1}}
+\\makeatother
 
 % Highlight macros for Pandoc (Fixes 'Environment Shaded undefined' error)
 $highlighting-macros$

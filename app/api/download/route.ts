@@ -70,7 +70,7 @@ author: Milav Dabgar
       ...options,
       title: post.metadata.title,
       author: 'Milav Dabgar',
-      contentPath: `blog/${slug}.md`,
+      contentPath: post.filePath,
       language: locale || 'en'
     };
 

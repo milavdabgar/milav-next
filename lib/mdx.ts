@@ -22,6 +22,7 @@ export interface ContentItem {
   slug: string;
   metadata: ContentMetadata;
   content: string;
+  filePath: string;
 }
 
 export function getContentBySlug(
@@ -64,6 +65,7 @@ export function getContentBySlug(
       slug,
       metadata: data as ContentMetadata,
       content,
+      filePath: fullPath,
     };
   } catch (error) {
     console.error(`Error reading content: ${folder}/${slug}`, error);
