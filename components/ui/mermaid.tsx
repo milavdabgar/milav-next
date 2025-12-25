@@ -22,9 +22,20 @@ export function Mermaid({ children }: MermaidProps) {
                 const currentTheme = theme === 'system' ? systemTheme : theme;
                 const mermaidTheme = currentTheme === 'dark' ? 'dark' : 'default';
 
+                // Define theme variables to ensure high contrast in dark mode
+                const themeVariables = currentTheme === 'dark' ? {
+                    primaryColor: '#3b82f6', // blue-500
+                    primaryTextColor: '#f8fafc', // slate-50
+                    primaryBorderColor: '#94a3b8', // slate-400
+                    lineColor: '#cbd5e1', // slate-300 (Visible arrows)
+                    secondaryColor: '#0f172a', // slate-900
+                    tertiaryColor: '#1e293b', // slate-800
+                } : undefined;
+
                 mermaid.initialize({
                     startOnLoad: false,
                     theme: mermaidTheme,
+                    themeVariables,
                     securityLevel: 'loose',
                     fontFamily: 'inherit',
                 });
