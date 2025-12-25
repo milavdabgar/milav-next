@@ -163,11 +163,14 @@ def refactor_latex(file_path):
             stripped.startswith(r"\subparagraph")
         )
         
+        # Detect horizontal rule (from MDX ---) which should close boxes
+        is_horizontal_rule = r"\begin{center}\rule{" in line
+        
         is_mnemonic_start = mnemonic_start_re.search(line)
         is_answer_start = answer_start_re.search(line)
 
         # Logic to CLOSE boxes if we hit a break point
-        if is_section_break or is_mnemonic_start or is_answer_start:
+        if is_section_break or is_mnemonic_start or is_answer_start or is_horizontal_rule:
             # Flush pending caption if we hit a section break (unlikely table follows)
             if pending_caption:
                 new_lines.append(r"\textbf{Table: %s}" % pending_caption)
