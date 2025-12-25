@@ -16,6 +16,7 @@ import remarkMath from 'remark-math';
 import remarkGfm from 'remark-gfm';
 import rehypeKatex from 'rehype-katex';
 import { getBreadcrumbs } from '@/lib/breadcrumbs';
+import { mdxComponents } from '@/components/mdx-components';
 
 type Params = Promise<{ slug: string[]; lang?: string }>;
 
@@ -63,42 +64,7 @@ export default async function StudyMaterialDynamicPage({
                                     rehypePlugins: [rehypeKatex],
                                 }
                             }}
-                            components={{
-                                code: ({ inline, className, children, ...props }: any) => {
-                                    const isCodeBlock = className && className.startsWith('language-');
-                                    const language = className ? className.replace('language-', '') : '';
-
-                                    if (language === 'mermaid') {
-                                        return <Mermaid>{String(children)}</Mermaid>;
-                                    }
-
-                                    if (isCodeBlock) {
-                                        return <CodeBlock className={className}>{String(children).replace(/\n$/, '')}</CodeBlock>;
-                                    }
-
-                                    return <code className={className} {...props}>{children}</code>;
-                                },
-                                table: ({ className, ...props }: React.HTMLAttributes<HTMLTableElement>) => (
-                                    <div className="my-6 w-full overflow-y-auto">
-                                        <table className={cn("w-full caption-bottom text-sm", className)} {...props} />
-                                    </div>
-                                ),
-                                thead: ({ className, ...props }: React.HTMLAttributes<HTMLTableSectionElement>) => (
-                                    <thead className={cn("[&_tr]:border-b", className)} {...props} />
-                                ),
-                                tbody: ({ className, ...props }: React.HTMLAttributes<HTMLTableSectionElement>) => (
-                                    <tbody className={cn("[&_tr:last-child]:border-0", className)} {...props} />
-                                ),
-                                tr: ({ className, ...props }: React.HTMLAttributes<HTMLTableRowElement>) => (
-                                    <tr className={cn("border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted", className)} {...props} />
-                                ),
-                                th: ({ className, ...props }: React.ThHTMLAttributes<HTMLTableCellElement>) => (
-                                    <th className={cn("h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0", className)} {...props} />
-                                ),
-                                td: ({ className, ...props }: React.TdHTMLAttributes<HTMLTableCellElement>) => (
-                                    <td className={cn("p-4 align-middle [&:has([role=checkbox])]:pr-0", className)} {...props} />
-                                ),
-                            }}
+                            components={mdxComponents}
                         />
                     </div>
                 </PageTemplate>
@@ -140,42 +106,7 @@ export default async function StudyMaterialDynamicPage({
                                 rehypePlugins: [rehypeKatex],
                             }
                         }}
-                        components={{
-                            code: ({ inline, className, children, ...props }: any) => {
-                                const isCodeBlock = className && className.startsWith('language-');
-                                const language = className ? className.replace('language-', '') : '';
-
-                                if (language === 'mermaid') {
-                                    return <Mermaid>{String(children)}</Mermaid>;
-                                }
-
-                                if (isCodeBlock) {
-                                    return <CodeBlock className={className}>{String(children).replace(/\n$/, '')}</CodeBlock>;
-                                }
-
-                                return <code className={className} {...props}>{children}</code>;
-                            },
-                            table: ({ className, ...props }: React.HTMLAttributes<HTMLTableElement>) => (
-                                <div className="my-6 w-full overflow-y-auto">
-                                    <table className={cn("w-full caption-bottom text-sm", className)} {...props} />
-                                </div>
-                            ),
-                            thead: ({ className, ...props }: React.HTMLAttributes<HTMLTableSectionElement>) => (
-                                <thead className={cn("[&_tr]:border-b", className)} {...props} />
-                            ),
-                            tbody: ({ className, ...props }: React.HTMLAttributes<HTMLTableSectionElement>) => (
-                                <tbody className={cn("[&_tr:last-child]:border-0", className)} {...props} />
-                            ),
-                            tr: ({ className, ...props }: React.HTMLAttributes<HTMLTableRowElement>) => (
-                                <tr className={cn("border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted", className)} {...props} />
-                            ),
-                            th: ({ className, ...props }: React.ThHTMLAttributes<HTMLTableCellElement>) => (
-                                <th className={cn("h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0", className)} {...props} />
-                            ),
-                            td: ({ className, ...props }: React.TdHTMLAttributes<HTMLTableCellElement>) => (
-                                <td className={cn("p-4 align-middle [&:has([role=checkbox])]:pr-0", className)} {...props} />
-                            ),
-                        }}
+                        components={mdxComponents}
                     />
                 </div>
             )}
