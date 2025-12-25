@@ -14,6 +14,7 @@ const navigation = [
   { name: 'Portfolio', href: '/portfolio' },
   { name: 'Blog', href: '/blog' },
   { name: 'Projects', href: '/projects' },
+  { name: 'Resources', href: '/resources' },
   { name: 'Media', href: '/media' },
 ];
 
