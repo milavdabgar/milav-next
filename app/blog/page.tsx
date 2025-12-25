@@ -1,10 +1,12 @@
 import { getAllContent, getContentBySlug } from '@/lib/mdx';
+import { getDirectoryContent } from '@/lib/directory-utils';
 import { getBreadcrumbs } from '@/lib/breadcrumbs';
 import Link from 'next/link';
 import { GridPageLayout } from '@/components/layouts';
 import { ResourceCard } from '@/components/ui/resource-card';
-import { Card } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { formatDate } from '@/lib/utils';
+import { FileText } from 'lucide-react';
 
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import { mdxComponents } from '@/components/mdx-components';
@@ -20,6 +22,9 @@ export default async function BlogPage({
 
   const posts = getAllContent('blog');
   const indexContent = getContentBySlug('blog', '_index', isGujarati ? 'gu' : undefined);
+
+  const { files: dirFiles } = getDirectoryContent('blog', locale === 'gu' ? 'gu' : undefined);
+  const staticFiles = dirFiles.filter((f: any) => f.type !== 'mdx');
 
   const breadcrumbItems = getBreadcrumbs('blog', [], locale);
 
@@ -51,7 +56,40 @@ export default async function BlogPage({
         />
       ))}
 
-      {posts.length === 0 && (
+      {staticFiles.length > 0 && (
+        <div className="col-span-full mt-12">
+          <h2 className="text-2xl font-bold mb-6">Files</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {staticFiles.map((file: any) => {
+              // Construct the path for the API
+              // content/blog/filename.pdf -> /api/file?path=blog/filename.pdf
+              // The 'slug' from getDirectoryContent for files is just filename without ext, or filename?
+              // lib/directory-utils says: filename: file
+              const filePath = `blog/${file.filename}`;
+              const fileUrl = `/api/file?path=${encodeURIComponent(filePath)}`;
+
+              return (
+                <Link key={file.filename} href={fileUrl} target="_blank" rel="noopener noreferrer">
+                  <Card className="h-full hover:bg-muted/50 transition-colors">
+                    <CardHeader className="flex flex-row items-center gap-4">
+                      <FileText className="h-8 w-8 text-red-500" />
+                      <div>
+                        <CardTitle className="text-lg truncate max-w-[200px]" title={file.title as string}>{file.title as string}</CardTitle>
+                        <CardDescription>{file.extension?.toUpperCase().replace('.', '') || 'FILE'}</CardDescription>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <span className="text-sm font-medium text-blue-600 dark:text-blue-400">View File &rarr;</span>
+                    </CardContent>
+                  </Card>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {posts.length === 0 && staticFiles.length === 0 && (
         <Card className="col-span-full p-12 text-center">
           <p className="text-muted-foreground">
             {isGujarati ? 'કોઈ બ્લોગ પોસ્ટ્સ મળી નથી' : 'No blog posts found'}
