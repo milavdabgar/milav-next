@@ -3,6 +3,8 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { Folder, FileText, BookOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ReactNode } from 'react';
+import Link from 'next/link';
+import { Badge } from '@/components/ui/badge';
 
 interface ResourceCardProps {
     title: string;
@@ -25,6 +27,7 @@ export function ResourceCard({
     date,
     tags,
     readingTime,
+    href,
 }: ResourceCardProps) {
 
     // Determine default icon and color based on type
@@ -46,15 +49,23 @@ export function ResourceCard({
             break;
     }
 
-    return (
-        <Card className={cn("h-full hover:shadow-lg transition-all duration-200 hover:bg-muted/30 group", className)}>
+    // Common content rendering
+    const cardContent = (
+        <>
             <CardHeader className="flex flex-row items-start gap-4 space-y-0 pb-3">
                 <div className={cn("mt-1 shrink-0 p-2 rounded-lg bg-background/50 group-hover:bg-background/80 transition-colors", iconColorClass)}>
                     {icon || <DefaultIcon className="h-6 w-6" />}
                 </div>
                 <div className="space-y-1 min-w-0 flex-1">
                     <CardTitle className="text-lg leading-tight line-clamp-2 group-hover:text-primary transition-colors">
-                        {title}
+                        {href ? (
+                            <Link href={href} className="focus:outline-none">
+                                <span className="absolute inset-0" aria-hidden="true" />
+                                {title}
+                            </Link>
+                        ) : (
+                            title
+                        )}
                     </CardTitle>
                     {description && (
                         <CardDescription className="line-clamp-2 text-sm">
@@ -74,11 +85,13 @@ export function ResourceCard({
                             <span>{readingTime}</span>
                         )}
                         {tags && tags.length > 0 && (
-                            <div className="flex gap-1 flex-wrap">
+                            <div className="flex gap-1 flex-wrap relative z-10">
                                 {tags.slice(0, 3).map(tag => (
-                                    <span key={tag} className="inline-flex px-1.5 py-0.5 rounded-full bg-secondary/50 text-secondary-foreground">
-                                        #{tag}
-                                    </span>
+                                    <Link key={tag} href={`/tags/${tag}`}>
+                                        <span className="inline-flex px-1.5 py-0.5 rounded-full bg-secondary/50 text-secondary-foreground hover:bg-secondary/80 transition-colors">
+                                            #{tag}
+                                        </span>
+                                    </Link>
                                 ))}
                                 {tags.length > 3 && (
                                     <span className="inline-flex px-1.5 py-0.5 rounded-full bg-secondary/50 text-secondary-foreground">+{tags.length - 3}</span>
@@ -88,6 +101,12 @@ export function ResourceCard({
                     </div>
                 </CardContent>
             )}
+        </>
+    );
+
+    return (
+        <Card className={cn("h-full hover:shadow-lg transition-all duration-200 hover:bg-muted/30 group relative", className)}>
+            {cardContent}
         </Card>
     );
 }

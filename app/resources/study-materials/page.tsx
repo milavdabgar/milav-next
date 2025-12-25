@@ -61,14 +61,14 @@ export default async function StudyMaterialsPage({
 
                 <div className="grid gap-6 md:grid-cols-2">
                     {departments.map((dept) => (
-                        <Link key={dept.slug} href={`/resources/study-materials/${dept.slug}${isGujarati ? '?lang=gu' : ''}`} className="block h-full">
-                            <ResourceCard
-                                title={dept.title}
-                                description={dept.description}
-                                type="folder"
-                                className="h-full"
-                            />
-                        </Link>
+                        <ResourceCard
+                            key={dept.slug}
+                            title={dept.title}
+                            description={dept.description}
+                            type="folder"
+                            className="h-full"
+                            href={`/resources/study-materials/${dept.slug}${isGujarati ? '?lang=gu' : ''}`}
+                        />
                     ))}
                 </div>
             </PageTemplate>

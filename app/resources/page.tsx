@@ -62,14 +62,14 @@ export default async function ResourcesPage({
 
                 <div className="grid gap-6 md:grid-cols-2">
                     {sections.map((section) => (
-                        <Link key={section.slug} href={`/resources/${section.slug}${isGujarati ? '?lang=gu' : ''}`} className="block h-full">
-                            <ResourceCard
-                                title={section.title}
-                                description={section.description}
-                                type="folder"
-                                className="h-full"
-                            />
-                        </Link>
+                        <ResourceCard
+                            key={section.slug}
+                            title={section.title}
+                            description={section.description}
+                            type="folder"
+                            className="h-full"
+                            href={`/resources/${section.slug}${isGujarati ? '?lang=gu' : ''}`}
+                        />
                     ))}
                 </div>
             </PageTemplate>
