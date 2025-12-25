@@ -4,6 +4,8 @@ import { notFound } from 'next/navigation';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import { SinglePageLayout, GridPageLayout } from '@/components/layouts';
 import { ContentTemplate as PageTemplate } from '@/components/templates';
+import { CodeBlock } from '@/components/ui/code-block';
+import { Mermaid } from '@/components/ui/mermaid';
 import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Folder, FileText } from 'lucide-react';
@@ -56,6 +58,22 @@ export default async function StudyMaterialDynamicPage({
                                     rehypePlugins: [rehypeKatex],
                                 }
                             }}
+                            components={{
+                                code: ({ inline, className, children, ...props }: any) => {
+                                    const isCodeBlock = className && className.startsWith('language-');
+                                    const language = className ? className.replace('language-', '') : '';
+
+                                    if (language === 'mermaid') {
+                                        return <Mermaid>{String(children)}</Mermaid>;
+                                    }
+
+                                    if (isCodeBlock) {
+                                        return <CodeBlock className={className}>{String(children).replace(/\n$/, '')}</CodeBlock>;
+                                    }
+
+                                    return <code className={className} {...props}>{children}</code>;
+                                }
+                            }}
                         />
                     </div>
                 </PageTemplate>
@@ -88,6 +106,22 @@ export default async function StudyMaterialDynamicPage({
                             mdxOptions: {
                                 remarkPlugins: [remarkMath, remarkGfm],
                                 rehypePlugins: [rehypeKatex],
+                            }
+                        }}
+                        components={{
+                            code: ({ inline, className, children, ...props }: any) => {
+                                const isCodeBlock = className && className.startsWith('language-');
+                                const language = className ? className.replace('language-', '') : '';
+
+                                if (language === 'mermaid') {
+                                    return <Mermaid>{String(children)}</Mermaid>;
+                                }
+
+                                if (isCodeBlock) {
+                                    return <CodeBlock className={className}>{String(children).replace(/\n$/, '')}</CodeBlock>;
+                                }
+
+                                return <code className={className} {...props}>{children}</code>;
                             }
                         }}
                     />

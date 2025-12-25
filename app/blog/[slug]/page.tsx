@@ -4,6 +4,7 @@ import { MDXRemote } from 'next-mdx-remote/rsc';
 import { SinglePageLayout } from '@/components/layouts';
 import { ContentTemplate } from '@/components/templates';
 import { CodeBlock } from '@/components/ui/code-block';
+import { Mermaid } from '@/components/ui/mermaid';
 import remarkMath from 'remark-math';
 import remarkGfm from 'remark-gfm';
 import rehypeKatex from 'rehype-katex';
@@ -60,6 +61,11 @@ export default async function BlogPostPage({
             code: ({ inline, className, children, ...props }: any) => {
               // Check if it's a code block (has className starting with language-) or inline
               const isCodeBlock = className && className.startsWith('language-');
+              const language = className ? className.replace('language-', '') : '';
+
+              if (language === 'mermaid') {
+                return <Mermaid>{String(children)}</Mermaid>;
+              }
 
               if (isCodeBlock) {
                 return <CodeBlock className={className}>{String(children).replace(/\n$/, '')}</CodeBlock>;
