@@ -5,6 +5,8 @@ import { SinglePageLayout } from '@/components/layouts';
 import { SingleContentTemplate as PageTemplate } from '@/components/templates';
 import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 
 export default async function ResourcesPage({
     searchParams,
@@ -41,7 +43,15 @@ export default async function ResourcesPage({
                 description={page.metadata.description}
             >
                 <div className="prose dark:prose-invert max-w-none mb-8">
-                    <MDXRemote source={page.content} />
+                    <MDXRemote
+                        source={page.content}
+                        options={{
+                            mdxOptions: {
+                                remarkPlugins: [remarkMath],
+                                rehypePlugins: [rehypeKatex],
+                            }
+                        }}
+                    />
                 </div>
 
                 <div className="grid gap-6 md:grid-cols-2">

@@ -9,6 +9,8 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { Folder, FileText } from 'lucide-react';
 import fs from 'fs';
 import path from 'path';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 
 type Params = Promise<{ slug: string[]; lang?: string }>;
 
@@ -41,7 +43,15 @@ export default async function StudyMaterialDynamicPage({
                     description={fileContent.metadata.description}
                 >
                     <div className="prose dark:prose-invert max-w-none">
-                        <MDXRemote source={fileContent.content} />
+                        <MDXRemote
+                            source={fileContent.content}
+                            options={{
+                                mdxOptions: {
+                                    remarkPlugins: [remarkMath],
+                                    rehypePlugins: [rehypeKatex],
+                                }
+                            }}
+                        />
                     </div>
                 </PageTemplate>
             </SinglePageLayout>
@@ -67,7 +77,15 @@ export default async function StudyMaterialDynamicPage({
         >
             {indexContent && (
                 <div className="col-span-full prose dark:prose-invert max-w-none mb-8">
-                    <MDXRemote source={indexContent.content} />
+                    <MDXRemote
+                        source={indexContent.content}
+                        options={{
+                            mdxOptions: {
+                                remarkPlugins: [remarkMath],
+                                rehypePlugins: [rehypeKatex],
+                            }
+                        }}
+                    />
                 </div>
             )}
 
