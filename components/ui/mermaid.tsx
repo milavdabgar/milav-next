@@ -23,20 +23,22 @@ export function Mermaid({ children }: MermaidProps) {
                 const mermaidTheme = currentTheme === 'dark' ? 'dark' : 'default';
 
                 // Define theme variables to ensure high contrast in dark mode
+                // User requested lighter background colors to make things easier
                 const themeVariables = currentTheme === 'dark' ? {
-                    primaryColor: '#1e293b', // slate-800 - darker background for nodes
-                    primaryTextColor: '#f8fafc', // slate-50
+                    primaryColor: '#e2e8f0', // slate-200 (Light nodes)
+                    primaryTextColor: '#0f172a', // slate-900 (Dark text)
                     primaryBorderColor: '#94a3b8', // slate-400
-                    lineColor: '#cbd5e1', // slate-300 (Visible arrows)
-                    secondaryColor: '#0f172a', // slate-900
-                    tertiaryColor: '#1e293b', // slate-800
-                    mainBkg: '#1e293b', // slate-800
+                    lineColor: '#ffffff', // White (High contrast lines)
+                    secondaryColor: '#f1f5f9', // slate-100
+                    tertiaryColor: '#ffffff', // white
+                    mainBkg: 'transparent', // Transparent background
                     nodeBorder: '#94a3b8', // slate-400
-                    clusterBkg: '#020617', // slate-950
+                    clusterBkg: '#1e293b', // slate-800
                     clusterBorder: '#cbd5e1', // slate-300
-                    defaultLinkColor: '#cbd5e1',
-                    titleColor: '#f8fafc',
-                    edgeLabelBackground: '#0f172a',
+                    defaultLinkColor: '#ffffff', // White links
+                    arrowheadColor: '#ffffff', // White arrowheads
+                    titleColor: '#f8fafc', // Light title
+                    edgeLabelBackground: '#1e293b', // Dark background for edge labels
                 } : undefined;
 
                 mermaid.initialize({
