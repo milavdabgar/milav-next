@@ -70,7 +70,7 @@ export function getAllContent(folder: string, locale?: string): ContentItem[] {
 
     const files = fs.readdirSync(contentPath);
     const mdxFiles = files.filter((file) =>
-      file.endsWith('.mdx') && !file.includes('.gu.')
+      file.endsWith('.mdx') && !file.includes('.gu.') && !file.startsWith('_index')
     );
 
     const allContent = mdxFiles

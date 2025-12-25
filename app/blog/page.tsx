@@ -1,4 +1,4 @@
-import { getAllContent } from '@/lib/mdx';
+import { getAllContent, getContentBySlug } from '@/lib/mdx';
 import { getBreadcrumbs } from '@/lib/breadcrumbs';
 import Link from 'next/link';
 import { GridPageLayout } from '@/components/layouts';
@@ -16,15 +16,16 @@ export default async function BlogPage({
   const isGujarati = locale === 'gu';
 
   const posts = getAllContent('blog');
+  const indexContent = getContentBySlug('blog', '_index', isGujarati ? 'gu' : undefined);
 
   const breadcrumbItems = getBreadcrumbs('blog', [], locale);
 
   return (
     <GridPageLayout
-      title={isGujarati ? 'બ્લોગ' : 'Blog'}
-      description={isGujarati
+      title={indexContent?.metadata.title || (isGujarati ? 'બ્લોગ' : 'Blog')}
+      description={indexContent?.metadata.description || (isGujarati
         ? 'ટ્યુટોરિયલ, ગાઇડ્સ અને ટેકનિકલ આર્ટિકલ્સ'
-        : 'Tutorials, guides, and technical articles'}
+        : 'Tutorials, guides, and technical articles')}
       columns={{ default: 1, md: 2, lg: 3 }}
       breadcrumbs={breadcrumbItems}
     >
