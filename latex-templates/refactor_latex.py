@@ -151,9 +151,13 @@ def refactor_latex(file_path):
             line = line.replace(r"\section{", r"\section*{")
 
         # Break Point Detection (New Section, Subsection, or Mnemonic Start)
+        # We need to cover \section, \subsection, \subsubsection, \paragraph, \subparagraph
         is_section_break = (
-            stripped.startswith(r"\subsection") or 
-            stripped.startswith(r"\section")
+            stripped.startswith(r"\section") or 
+            stripped.startswith(r"\subsection") or
+            stripped.startswith(r"\subsubsection") or
+            stripped.startswith(r"\paragraph") or
+            stripped.startswith(r"\subparagraph")
         )
         
         is_mnemonic_start = mnemonic_start_re.search(line)
