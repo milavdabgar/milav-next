@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Lecture 11 - Polymorphism and Abstract Classes</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/theme/white.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/highlight/monokai.css">
+    <style>
+        .reveal h1, .reveal h2, .reveal h3 { color: #2c3e50; }
+        .reveal .slides section { text-align: left; padding: 10px 30px; height: 90vh; box-sizing: border-box; overflow: hidden; }
+        .reveal .title-slide { text-align: center; }
+        .reveal .center { text-align: center; }
+        .reveal pre code { font-size: 0.7em; line-height: 1.1; max-height: 300px; overflow-y: auto; }
+        .reveal h2 { font-size: 1.6em; margin-bottom: 0.4em; }
+        .reveal h3 { font-size: 1.3em; margin-bottom: 0.3em; }
+        .reveal ul, .reveal ol { font-size: 0.85em; margin: 0.4em 0; }
+        .reveal li { margin: 0.2em 0; }
+        .highlight { background-color: #fff3cd; padding: 6px; border-left: 4px solid #ffc107; margin: 6px 0; font-size: 0.85em; }
+        .poly-box { background-color: #e8f4f8; padding: 8px; border-radius: 5px; margin: 6px 0; font-size: 0.8em; }
+        .two-column { display: flex; gap: 15px; font-size: 0.8em; }
+        .column { flex: 1; }
+        .abstract-box { background: #f0f8ff; padding: 8px; margin: 6px 0; border-left: 4px solid #007bff; font-size: 0.8em; }
+        .exam-question { background: #e8f5e9; padding: 8px; border-left: 4px solid #28a745; margin: 8px 0; font-size: 0.8em; }
+        .solution-box { background: #f8f9fa; padding: 8px; border: 1px solid #dee2e6; border-radius: 4px; margin: 6px 0; }
+        .table-style { font-size: 0.65em; width: 100%; border-collapse: collapse; }
+        .table-style th, .table-style td { border: 1px solid #ddd; padding: 4px; text-align: center; }
+        .runtime-box { background: #fff0f5; padding: 8px; border-left: 4px solid #d63384; margin: 6px 0; font-size: 0.8em; }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- Title Slide -->
+            <section class="title-slide">
+                <h1>Java Programming</h1>
+                <h2>Lecture 11: Polymorphism and Abstract Classes</h2>
+                <p>Course: 4343203 - Java Programming</p>
+                <p><small>GTU Semester 4 | Unit 2</small></p>
+                <br>
+                <p><em>Learning Objectives:</em></p>
+                <ul style="font-size: 0.8em; text-align: left; display: inline-block;">
+                    <li>Master runtime and compile-time polymorphism</li>
+                    <li>Understand abstract classes and abstract methods</li>
+                    <li>Implement dynamic method dispatch</li>
+                    <li>Design flexible object-oriented systems</li>
+                    <li>Apply polymorphic patterns in real applications</li>
+                </ul>
+            </section>
+
+            <!-- What is Polymorphism? -->
+            <section>
+                <h2>Understanding Polymorphism</h2>
+                
+                <div class="highlight">
+                    <p><strong>Polymorphism</strong> means "many forms" - it's the ability of a single interface to represent different underlying forms (data types). In OOP, it allows objects of different types to be treated as objects of a common base type.</p>
+                </div>
+                
+                <div class="two-column">
+                    <div class="column">
+                        <div class="poly-box">
+                            <h3>Types of Polymorphism:</h3>
+                            <ol>
+                                <li><strong>Compile-time Polymorphism:</strong>
+                                    <ul>
+                                        <li>Method overloading</li>
+                                        <li>Operator overloading (not in Java)</li>
+                                        <li>Static binding/Early binding</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Runtime Polymorphism:</strong>
+                                    <ul>
+                                        <li>Method overriding</li>
+                                        <li>Dynamic binding/Late binding</li>
+                                        <li>Virtual method invocation</li>
+                                    </ul>
+                                </li>
+                            </ol>
+                        </div>
+                        
+                        <div class="runtime-box">
+                            <h3>Benefits of Polymorphism:</h3>
+                            <ul>
+                                <li>Code flexibility and reusability</li>
+                                <li>Easier maintenance and extension</li>
+                                <li>Loose coupling between objects</li>
+                                <li>Simplified code with unified interface</li>
+                                <li>Support for future enhancements</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="poly-box">
+                            <h3>Real-world Analogy:</h3>
+                            <div style="background: #f7f7f7; padding: 8px; border-radius: 4px; margin: 8px 0;">
+                                <p><strong>Example: Universal Remote Control</strong></p>
+                                <ul>
+                                    <li>One remote (interface) works with different devices</li>
+                                    <li>TV, DVD player, Sound system (different implementations)</li>
+                                    <li>Same "PLAY" button behaves differently on each device</li>
+                                    <li>Remote doesn't need to know specific device details</li>
+                                </ul>
+                            </div>
+                            
+                            <h3>Simple Java Example:</h3>
+                            <pre><code data-trim>
+// Common interface
+Animal animal1 = new Dog();
+Animal animal2 = new Cat();
+Animal animal3 = new Bird();
+
+// Same method call, different behavior
+animal1.makeSound(); // "Woof!"
+animal2.makeSound(); // "Meow!"
+animal3.makeSound(); // "Tweet!"
+
+// Array of different animals
+Animal[] zoo = {animal1, animal2, animal3};
+for (Animal animal : zoo) {
+    animal.makeSound(); // Polymorphic behavior
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Runtime Polymorphism -->
+            <section>
+                <h2>Runtime Polymorphism (Dynamic Method Dispatch)</h2>
+                
+                <div class="two-column">
+                    <div class="column">
+                        <div class="runtime-box">
+                            <h3>How Runtime Polymorphism Works:</h3>
+                            <ol>
+                                <li>Reference variable of parent type</li>
+                                <li>Object of child type</li>
+                                <li>Method call resolved at runtime</li>
+                                <li>JVM determines actual object type</li>
+                                <li>Calls overridden method in child class</li>
+                            </ol>
+                            
+                            <h3>Dynamic Method Dispatch:</h3>
+                            <pre><code data-trim>
+class Shape {
+    public void draw() {
+        System.out.println("Drawing a shape");
+    }
+    
+    public double getArea() {
+        return 0.0;
+    }
+}
+
+class Circle extends Shape {
+    private double radius;
+    
+    public Circle(double radius) {
+        this.radius = radius;
+    }
+    
+    @Override
+    public void draw() {
+        System.out.println("Drawing a circle");
+    }
+    
+    @Override
+    public double getArea() {
+        return Math.PI * radius * radius;
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="runtime-box">
+                            <h3>Polymorphism in Action:</h3>
+                            <pre><code data-trim>
+public class PolymorphismDemo {
+    public static void main(String[] args) {
+        // Runtime polymorphism
+        Shape shape1 = new Circle(5.0);
+        Shape shape2 = new Rectangle(4.0, 6.0);
+        Shape shape3 = new Triangle(3.0, 4.0);
+        
+        // Method calls resolved at runtime
+        displayShapeInfo(shape1); // Circle's methods called
+        displayShapeInfo(shape2); // Rectangle's methods called
+        displayShapeInfo(shape3); // Triangle's methods called
+        
+        // Array of shapes with different implementations
+        Shape[] shapes = {
+            new Circle(3.0),
+            new Rectangle(5.0, 7.0),
+            new Triangle(6.0, 8.0),
+            new Circle(2.5)
+        };
+        
+        System.out.println("Total area of all shapes:");
+        double totalArea = 0;
+        
+        for (Shape shape : shapes) {
+            shape.draw();           // Polymorphic method call
+            double area = shape.getArea(); // Polymorphic method call
+            totalArea += area;
+            System.out.println("Area: " + area);
+            System.out.println("---");
+        }
+        
+        System.out.println("Total Area: " + totalArea);
+    }
+    
+    // Method accepts Shape, works with any subclass
+    public static void displayShapeInfo(Shape shape) {
+        System.out.println("Shape Information:");
+        shape.draw();               // Calls appropriate subclass method
+        System.out.println("Area: " + shape.getArea());
+        System.out.println();
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Abstract Classes -->
+            <section>
+                <h2>Abstract Classes</h2>
+                
+                <div class="two-column">
+                    <div class="column">
+                        <div class="abstract-box">
+                            <h3>What are Abstract Classes?</h3>
+                            <p>An abstract class is a class that cannot be instantiated and may contain abstract methods (methods without implementation) that must be implemented by subclasses.</p>
+                            
+                            <h3>Abstract Class Features:</h3>
+                            <ul>
+                                <li>Cannot create objects directly</li>
+                                <li>Can have abstract and concrete methods</li>
+                                <li>Can have instance variables and constructors</li>
+                                <li>Subclasses must implement all abstract methods</li>
+                                <li>Provides partial implementation</li>
+                            </ul>
+                            
+                            <h3>When to Use Abstract Classes:</h3>
+                            <ul>
+                                <li>Common functionality among related classes</li>
+                                <li>Some methods need different implementations</li>
+                                <li>Want to force certain methods to be implemented</li>
+                                <li>Need to provide default behavior</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="abstract-box">
+                            <h3>Abstract Class Syntax:</h3>
+                            <pre><code data-trim>
+// Abstract class
+public abstract class Animal {
+    protected String name;
+    protected int age;
+    
+    // Constructor in abstract class
+    public Animal(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+    
+    // Concrete method (has implementation)
+    public void sleep() {
+        System.out.println(name + " is sleeping");
+    }
+    
+    // Abstract method (no implementation)
+    public abstract void makeSound();
+    public abstract void move();
+    
+    // Concrete method
+    public void displayInfo() {
+        System.out.println("Name: " + name);
+        System.out.println("Age: " + age);
+        makeSound(); // Will call subclass implementation
+    }
+}
+
+// Concrete subclass must implement abstract methods
+public class Dog extends Animal {
+    private String breed;
+    
+    public Dog(String name, int age, String breed) {
+        super(name, age);  // Call parent constructor
+        this.breed = breed;
+    }
+    
+    // Must implement abstract method
+    @Override
+    public void makeSound() {
+        System.out.println(name + " barks: Woof! Woof!");
+    }
+    
+    // Must implement abstract method
+    @Override
+    public void move() {
+        System.out.println(name + " runs on four legs");
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Abstract Methods -->
+            <section>
+                <h2>Abstract Methods and Implementation</h2>
+                
+                <div class="two-column">
+                    <div class="column">
+                        <div class="abstract-box">
+                            <h3>Abstract Method Rules:</h3>
+                            <ul>
+                                <li>Must be declared with <code>abstract</code> keyword</li>
+                                <li>Cannot have a method body</li>
+                                <li>Must be implemented in concrete subclasses</li>
+                                <li>Cannot be static, private, or final</li>
+                                <li>Can have any access modifier (public, protected)</li>
+                            </ul>
+                            
+                            <h3>Vehicle Example:</h3>
+                            <pre><code data-trim>
+public abstract class Vehicle {
+    protected String brand;
+    protected int year;
+    protected double fuelCapacity;
+    
+    public Vehicle(String brand, int year, double fuelCapacity) {
+        this.brand = brand;
+        this.year = year;
+        this.fuelCapacity = fuelCapacity;
+    }
+    
+    // Concrete methods
+    public void displayBasicInfo() {
+        System.out.println("Brand: " + brand);
+        System.out.println("Year: " + year);
+        System.out.println("Fuel Capacity: " + fuelCapacity + " liters");
+    }
+    
+    public void honk() {
+        System.out.println("Vehicle is honking!");
+    }
+    
+    // Abstract methods - must be implemented by subclasses
+    public abstract void start();
+    public abstract void stop();
+    public abstract double calculateFuelEfficiency();
+    public abstract String getVehicleType();
+}</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="abstract-box">
+                            <h3>Concrete Implementations:</h3>
+                            <pre><code data-trim>
+public class Car extends Vehicle {
+    private int doors;
+    private String transmission;
+    
+    public Car(String brand, int year, double fuelCapacity, 
+               int doors, String transmission) {
+        super(brand, year, fuelCapacity);
+        this.doors = doors;
+        this.transmission = transmission;
+    }
+    
+    @Override
+    public void start() {
+        System.out.println("Car engine started with key ignition");
+    }
+    
+    @Override
+    public void stop() {
+        System.out.println("Car engine stopped");
+    }
+    
+    @Override
+    public double calculateFuelEfficiency() {
+        // Car-specific calculation
+        return 15.5; // km per liter
+    }
+    
+    @Override
+    public String getVehicleType() {
+        return "Car";
+    }
+    
+    // Additional car-specific methods
+    public void openTrunk() {
+        System.out.println("Car trunk opened");
+    }
+}
+
+public class Motorcycle extends Vehicle {
+    private String engineType;
+    
+    public Motorcycle(String brand, int year, double fuelCapacity, 
+                     String engineType) {
+        super(brand, year, fuelCapacity);
+        this.engineType = engineType;
+    }
+    
+    @Override
+    public void start() {
+        System.out.println("Motorcycle started with kick/button");
+    }
+    
+    @Override
+    public void stop() {
+        System.out.println("Motorcycle engine stopped");
+    }
+    
+    @Override
+    public double calculateFuelEfficiency() {
+        // Motorcycle-specific calculation
+        return 35.0; // km per liter
+    }
+    
+    @Override
+    public String getVehicleType() {
+        return "Motorcycle";
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Polymorphic Arrays and Collections -->
+            <section>
+                <h2>Polymorphic Arrays and Collections</h2>
+                
+                <div class="two-column">
+                    <div class="column">
+                        <div class="poly-box">
+                            <h3>Polymorphic Arrays:</h3>
+                            <pre><code data-trim>
+public class VehicleFleet {
+    public static void main(String[] args) {
+        // Polymorphic array - different vehicle types
+        Vehicle[] fleet = {
+            new Car("Toyota", 2022, 45.0, 4, "Automatic"),
+            new Motorcycle("Honda", 2021, 12.0, "4-Stroke"),
+            new Car("BMW", 2023, 50.0, 2, "Manual"),
+            new Motorcycle("Yamaha", 2020, 15.0, "2-Stroke")
+        };
+        
+        System.out.println("=== Fleet Management System ===");
+        
+        double totalFuelCapacity = 0;
+        double totalEfficiency = 0;
+        
+        for (Vehicle vehicle : fleet) {
+            System.out.println("\n" + vehicle.getVehicleType() + ":");
+            vehicle.displayBasicInfo();
+            
+            vehicle.start();  // Polymorphic method call
+            
+            double efficiency = vehicle.calculateFuelEfficiency();
+            System.out.println("Fuel Efficiency: " + efficiency + " km/l");
+            
+            vehicle.stop();   // Polymorphic method call
+            
+            totalFuelCapacity += vehicle.fuelCapacity;
+            totalEfficiency += efficiency;
+            
+            System.out.println("---");
+        }
+        
+        System.out.println("Fleet Summary:");
+        System.out.println("Total vehicles: " + fleet.length);
+        System.out.println("Total fuel capacity: " + totalFuelCapacity + " liters");
+        System.out.println("Average efficiency: " + 
+                          (totalEfficiency / fleet.length) + " km/l");
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="poly-box">
+                            <h3>Dynamic Type Checking:</h3>
+                            <pre><code data-trim>
+public class DynamicTypeDemo {
+    public static void processVehicle(Vehicle vehicle) {
+        // Common behavior
+        vehicle.displayBasicInfo();
+        vehicle.start();
+        
+        // Type-specific behavior using instanceof
+        if (vehicle instanceof Car) {
+            Car car = (Car) vehicle;  // Downcasting
+            car.openTrunk();
+            System.out.println("Processing as a car");
+            
+        } else if (vehicle instanceof Motorcycle) {
+            Motorcycle bike = (Motorcycle) vehicle;
+            System.out.println("Processing as a motorcycle");
+            // Could add motorcycle-specific operations
+        }
+        
+        // Back to common behavior
+        vehicle.stop();
+    }
+    
+    public static void main(String[] args) {
+        Vehicle[] vehicles = {
+            new Car("Ford", 2021, 40.0, 4, "Manual"),
+            new Motorcycle("Suzuki", 2022, 10.0, "4-Stroke")
+        };
+        
+        for (Vehicle vehicle : vehicles) {
+            processVehicle(vehicle);
+            System.out.println("---");
+        }
+        
+        // Demonstrate polymorphic method calls
+        demonstratePolymorphism(vehicles);
+    }
+    
+    public static void demonstratePolymorphism(Vehicle[] vehicles) {
+        System.out.println("\n=== Polymorphism Demo ===");
+        
+        for (Vehicle v : vehicles) {
+            // Same method call, different implementations
+            System.out.println("Vehicle type: " + v.getVehicleType());
+            System.out.println("Fuel efficiency: " + v.calculateFuelEfficiency());
+            v.start();
+            v.honk();  // Common method
+            v.stop();
+            System.out.println();
+        }
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Method Binding -->
+            <section>
+                <h2>Method Binding: Static vs Dynamic</h2>
+                
+                <div class="two-column">
+                    <div class="column">
+                        <div class="runtime-box">
+                            <h3>Static Binding (Early Binding):</h3>
+                            <ul>
+                                <li>Method call resolved at compile time</li>
+                                <li>Used for private, static, and final methods</li>
+                                <li>Method overloading uses static binding</li>
+                                <li>Faster execution</li>
+                            </ul>
+                            
+                            <pre><code data-trim>
+class StaticBindingDemo {
+    public static void display() {
+        System.out.println("Static method");
+    }
+    
+    private void privateMethod() {
+        System.out.println("Private method");
+    }
+    
+    public final void finalMethod() {
+        System.out.println("Final method");
+    }
+    
+    // Method overloading - static binding
+    public void print(int x) {
+        System.out.println("Integer: " + x);
+    }
+    
+    public void print(String x) {
+        System.out.println("String: " + x);
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="runtime-box">
+                            <h3>Dynamic Binding (Late Binding):</h3>
+                            <ul>
+                                <li>Method call resolved at runtime</li>
+                                <li>Used for overridden methods</li>
+                                <li>JVM determines actual object type</li>
+                                <li>Slightly slower due to runtime lookup</li>
+                            </ul>
+                            
+                            <pre><code data-trim>
+class Parent {
+    public void show() {
+        System.out.println("Parent's show()");
+    }
+    
+    public static void display() {
+        System.out.println("Parent's static display()");
+    }
+}
+
+class Child extends Parent {
+    @Override
+    public void show() {  // Dynamic binding
+        System.out.println("Child's show()");
+    }
+    
+    public static void display() {  // Static binding
+        System.out.println("Child's static display()");
+    }
+}
+
+// Demo
+public class BindingDemo {
+    public static void main(String[] args) {
+        Parent obj = new Child();
+        
+        obj.show();     // Dynamic binding - "Child's show()"
+        obj.display();  // Static binding - "Parent's static display()"
+        
+        Child.display(); // Static binding - "Child's static display()"
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+                
+                <table class="table-style">
+                    <tr>
+                        <th>Aspect</th>
+                        <th>Static Binding</th>
+                        <th>Dynamic Binding</th>
+                    </tr>
+                    <tr>
+                        <td>Resolution Time</td>
+                        <td>Compile time</td>
+                        <td>Runtime</td>
+                    </tr>
+                    <tr>
+                        <td>Method Types</td>
+                        <td>private, static, final</td>
+                        <td>Overridden methods</td>
+                    </tr>
+                    <tr>
+                        <td>Performance</td>
+                        <td>Faster</td>
+                        <td>Slightly slower</td>
+                    </tr>
+                    <tr>
+                        <td>Polymorphism</td>
+                        <td>Compile-time</td>
+                        <td>Runtime</td>
+                    </tr>
+                    <tr>
+                        <td>Flexibility</td>
+                        <td>Less flexible</td>
+                        <td>More flexible</td>
+                    </tr>
+                </table>
+            </section>
+
+            <!-- Previous Year Questions -->
+            <section>
+                <h2>Previous Year Exam Questions</h2>
+                
+                <div class="exam-question">
+                    <p><strong>Q1. (GTU Summer 2022)</strong> Explain polymorphism in Java with its types. Write a program demonstrating runtime polymorphism using abstract classes.</p>
+                </div>
+                
+                <div class="solution-box">
+                    <p><strong>Solution:</strong></p>
+                    
+                    <h4>Polymorphism in Java:</h4>
+                    <p>Polymorphism means "many forms" - it's the ability of a single interface to represent different underlying forms. It allows objects of different types to be treated as objects of a common base type.</p>
+                    
+                    <h4>Types of Polymorphism:</h4>
+                    
+                    <h4>1. Compile-time Polymorphism (Static):</h4>
+                    <ul>
+                        <li><strong>Method Overloading:</strong> Multiple methods with same name but different parameters</li>
+                        <li><strong>Resolved at compile time</strong></li>
+                        <li><strong>Example:</strong> print(int x), print(String x), print(double x)</li>
+                    </ul>
+                    
+                    <h4>2. Runtime Polymorphism (Dynamic):</h4>
+                    <ul>
+                        <li><strong>Method Overriding:</strong> Subclass provides specific implementation of parent method</li>
+                        <li><strong>Resolved at runtime based on actual object type</strong></li>
+                        <li><strong>Achieved through inheritance and method overriding</strong></li>
+                    </ul>
+                    
+                    <h4>Runtime Polymorphism Program with Abstract Classes:</h4>
+                    
+                    <pre><code>// Abstract base class
+abstract class Employee {
+    protected String name;
+    protected int empId;
+    protected String department;
+    
+    public Employee(String name, int empId, String department) {
+        this.name = name;
+        this.empId = empId;
+        this.department = department;
+    }
+    
+    // Concrete method - common to all employees
+    public void displayBasicInfo() {
+        System.out.println("=== Employee Information ===");
+        System.out.println("Name: " + name);
+        System.out.println("ID: " + empId);
+        System.out.println("Department: " + department);
+    }
+    
+    // Abstract methods - must be implemented by subclasses
+    public abstract double calculateSalary();
+    public abstract void performDuties();
+    public abstract String getEmployeeType();
+    
+    // Concrete method that uses abstract methods (polymorphism)
+    public final void generatePaySlip() {
+        displayBasicInfo();
+        System.out.println("Employee Type: " + getEmployeeType());
+        System.out.println("Monthly Salary: $" + calculateSalary());
+        System.out.println("Duties: ");
+        performDuties();
+        System.out.println("============================");
+    }
+}
+
+// Concrete subclass 1
+class FullTimeEmployee extends Employee {
+    private double baseSalary;
+    private double bonus;
+    
+    public FullTimeEmployee(String name, int empId, String department, 
+                           double baseSalary, double bonus) {
+        super(name, empId, department);
+        this.baseSalary = baseSalary;
+        this.bonus = bonus;
+    }
+    
+    @Override
+    public double calculateSalary() {
+        return baseSalary + bonus;
+    }
+    
+    @Override
+    public void performDuties() {
+        System.out.println("- Full-time work (40 hours/week)");
+        System.out.println("- Project leadership");
+        System.out.println("- Team collaboration");
+        System.out.println("- Strategic planning");
+    }
+    
+    @Override
+    public String getEmployeeType() {
+        return "Full-Time Employee";
+    }
+}
+
+// Concrete subclass 2
+class PartTimeEmployee extends Employee {
+    private double hourlyRate;
+    private int hoursWorked;
+    
+    public PartTimeEmployee(String name, int empId, String department, 
+                           double hourlyRate, int hoursWorked) {
+        super(name, empId, department);
+        this.hourlyRate = hourlyRate;
+        this.hoursWorked = hoursWorked;
+    }
+    
+    @Override
+    public double calculateSalary() {
+        return hourlyRate * hoursWorked;
+    }
+    
+    @Override
+    public void performDuties() {
+        System.out.println("- Part-time work (" + hoursWorked + " hours/month)");
+        System.out.println("- Task-specific responsibilities");
+        System.out.println("- Flexible schedule support");
+    }
+    
+    @Override
+    public String getEmployeeType() {
+        return "Part-Time Employee";
+    }
+}
+
+// Concrete subclass 3
+class Contractor extends Employee {
+    private double contractAmount;
+    private String projectName;
+    private int contractDuration; // in months
+    
+    public Contractor(String name, int empId, String department, 
+                     double contractAmount, String projectName, int contractDuration) {
+        super(name, empId, department);
+        this.contractAmount = contractAmount;
+        this.projectName = projectName;
+        this.contractDuration = contractDuration;
+    }
+    
+    @Override
+    public double calculateSalary() {
+        return contractAmount / contractDuration; // Monthly payment
+    }
+    
+    @Override
+    public void performDuties() {
+        System.out.println("- Contract project: " + projectName);
+        System.out.println("- Specialized expertise delivery");
+        System.out.println("- Duration: " + contractDuration + " months");
+        System.out.println("- Milestone-based deliverables");
+    }
+    
+    @Override
+    public String getEmployeeType() {
+        return "Contractor";
+    }
+}
+
+// Demo class showing runtime polymorphism
+public class PolymorphismDemo {
+    
+    // Method that accepts any Employee type (polymorphic parameter)
+    public static void processEmployee(Employee emp) {
+        System.out.println("Processing employee: " + emp.name);
+        emp.generatePaySlip();  // Polymorphic method call
+        System.out.println();
+    }
+    
+    // Method demonstrating polymorphic array processing
+    public static void calculateTotalPayroll(Employee[] employees) {
+        double totalPayroll = 0;
+        
+        System.out.println("=== Payroll Calculation ===");
+        
+        for (Employee emp : employees) {
+            double salary = emp.calculateSalary(); // Polymorphic call
+            totalPayroll += salary;
+            
+            System.out.println(emp.getEmployeeType() + " - " + emp.name + 
+                             ": $" + salary);
+        }
+        
+        System.out.println("Total Monthly Payroll: $" + totalPayroll);
+        System.out.println();
+    }
+    
+    public static void main(String[] args) {
+        System.out.println("=== Runtime Polymorphism with Abstract Classes ===\n");
+        
+        // Create different employee types
+        Employee emp1 = new FullTimeEmployee("Alice Johnson", 101, "Engineering", 5000, 1000);
+        Employee emp2 = new PartTimeEmployee("Bob Smith", 102, "Marketing", 25, 80);
+        Employee emp3 = new Contractor("Carol Brown", 103, "Consulting", 15000, "Web Development", 3);
+        
+        // Polymorphic method calls - same interface, different behavior
+        System.out.println("=== Individual Employee Processing ===");
+        processEmployee(emp1);  // Calls FullTimeEmployee methods
+        processEmployee(emp2);  // Calls PartTimeEmployee methods
+        processEmployee(emp3);  // Calls Contractor methods
+        
+        // Polymorphic array
+        Employee[] company = {emp1, emp2, emp3};
+        
+        // Calculate total payroll using polymorphism
+        calculateTotalPayroll(company);
+        
+        // Demonstrate dynamic method dispatch
+        System.out.println("=== Dynamic Method Dispatch Demo ===");
+        
+        for (Employee employee : company) {
+            System.out.println("Employee: " + employee.name);
+            System.out.println("Type: " + employee.getEmployeeType()); // Polymorphic
+            System.out.println("Salary: $" + employee.calculateSalary()); // Polymorphic
+            employee.performDuties(); // Polymorphic
+            System.out.println("---");
+        }
+        
+        System.out.println("=== Key Polymorphism Benefits Demonstrated ===");
+        System.out.println("1. Same interface (Employee) for different implementations");
+        System.out.println("2. Runtime method resolution based on actual object type");
+        System.out.println("3. Code flexibility - easy to add new employee types");
+        System.out.println("4. Unified processing through common interface");
+        System.out.println("5. Abstract class enforces implementation of required methods");
+    }
+}</code></pre>
+                </div>
+            </section>
+
+            <section>
+                <div class="exam-question">
+                    <p><strong>Q2. (GTU Winter 2021)</strong> What are abstract classes in Java? Explain with examples. How do abstract classes differ from concrete classes?</p>
+                </div>
+                
+                <div class="solution-box">
+                    <p><strong>Solution:</strong></p>
+                    
+                    <h4>Abstract Classes in Java:</h4>
+                    <p>An abstract class is a class that cannot be instantiated directly and may contain abstract methods (methods without implementation) that must be implemented by its subclasses.</p>
+                    
+                    <h4>Key Features of Abstract Classes:</h4>
+                    <ul>
+                        <li><strong>Cannot be instantiated:</strong> You cannot create objects directly</li>
+                        <li><strong>May contain abstract methods:</strong> Methods without body</li>
+                        <li><strong>May contain concrete methods:</strong> Methods with implementation</li>
+                        <li><strong>Can have constructors:</strong> Called when subclass object is created</li>
+                        <li><strong>Can have instance variables:</strong> Both static and non-static</li>
+                        <li><strong>Inheritance required:</strong> Subclasses must implement abstract methods</li>
+                    </ul>
+                    
+                    <h4>Abstract Class Example - Banking System:</h4>
+                    
+                    <pre><code>// Abstract class
+public abstract class BankAccount {
+    protected String accountNumber;
+    protected String holderName;
+    protected double balance;
+    protected String accountType;
+    
+    // Constructor in abstract class
+    public BankAccount(String accountNumber, String holderName, String accountType) {
+        this.accountNumber = accountNumber;
+        this.holderName = holderName;
+        this.accountType = accountType;
+        this.balance = 0.0;
+        System.out.println("Bank account created: " + accountNumber);
+    }
+    
+    // Concrete methods (have implementation)
+    public void deposit(double amount) {
+        if (amount > 0) {
+            balance += amount;
+            System.out.println("Deposited: $" + amount);
+            System.out.println("New balance: $" + balance);
+        } else {
+            System.out.println("Invalid deposit amount!");
+        }
+    }
+    
+    public void displayAccountInfo() {
+        System.out.println("=== Account Information ===");
+        System.out.println("Account Number: " + accountNumber);
+        System.out.println("Holder Name: " + holderName);
+        System.out.println("Account Type: " + accountType);
+        System.out.println("Balance: $" + balance);
+        System.out.println("Interest Rate: " + getInterestRate() + "%");
+        System.out.println("============================");
+    }
+    
+    // Abstract methods (must be implemented by subclasses)
+    public abstract boolean withdraw(double amount);
+    public abstract double calculateInterest();
+    public abstract double getInterestRate();
+    public abstract String getAccountFeatures();
+    
+    // Getters
+    public double getBalance() { return balance; }
+    public String getAccountNumber() { return accountNumber; }
+    public String getHolderName() { return holderName; }
+}
+
+// Concrete subclass 1 - Savings Account
+class SavingsAccount extends BankAccount {
+    private double interestRate;
+    private double minimumBalance;
+    
+    public SavingsAccount(String accountNumber, String holderName, 
+                         double interestRate, double minimumBalance) {
+        super(accountNumber, holderName, "Savings");
+        this.interestRate = interestRate;
+        this.minimumBalance = minimumBalance;
+    }
+    
+    // Implementation of abstract method
+    @Override
+    public boolean withdraw(double amount) {
+        if (amount <= 0) {
+            System.out.println("Invalid withdrawal amount!");
+            return false;
+        }
+        
+        if ((balance - amount) >= minimumBalance) {
+            balance -= amount;
+            System.out.println("Withdrawn: $" + amount);
+            System.out.println("Remaining balance: $" + balance);
+            return true;
+        } else {
+            System.out.println("Insufficient funds! Minimum balance required: $" + minimumBalance);
+            return false;
+        }
+    }
+    
+    @Override
+    public double calculateInterest() {
+        return balance * interestRate / 100;
+    }
+    
+    @Override
+    public double getInterestRate() {
+        return interestRate;
+    }
+    
+    @Override
+    public String getAccountFeatures() {
+        return "High interest rate, Minimum balance requirement, No overdraft";
+    }
+    
+    public void applyMonthlyInterest() {
+        double interest = calculateInterest();
+        balance += interest;
+        System.out.println("Monthly interest applied: $" + interest);
+        System.out.println("Updated balance: $" + balance);
+    }
+}
+
+// Concrete subclass 2 - Current Account
+class CurrentAccount extends BankAccount {
+    private double overdraftLimit;
+    private double overdraftRate;
+    
+    public CurrentAccount(String accountNumber, String holderName, 
+                         double overdraftLimit) {
+        super(accountNumber, holderName, "Current");
+        this.overdraftLimit = overdraftLimit;
+        this.overdraftRate = 12.0; // 12% overdraft interest
+    }
+    
+    @Override
+    public boolean withdraw(double amount) {
+        if (amount <= 0) {
+            System.out.println("Invalid withdrawal amount!");
+            return false;
+        }
+        
+        if ((balance + overdraftLimit) >= amount) {
+            balance -= amount;
+            System.out.println("Withdrawn: $" + amount);
+            System.out.println("Current balance: $" + balance);
+            
+            if (balance < 0) {
+                System.out.println("Account overdrawn by: $" + Math.abs(balance));
+                System.out.println("Overdraft interest will apply");
+            }
+            return true;
+        } else {
+            System.out.println("Withdrawal exceeds overdraft limit!");
+            System.out.println("Available limit: $" + (balance + overdraftLimit));
+            return false;
+        }
+    }
+    
+    @Override
+    public double calculateInterest() {
+        if (balance < 0) {
+            return Math.abs(balance) * overdraftRate / 100; // Overdraft interest
+        }
+        return 0.0; // No interest on positive balance
+    }
+    
+    @Override
+    public double getInterestRate() {
+        return balance < 0 ? overdraftRate : 0.0;
+    }
+    
+    @Override
+    public String getAccountFeatures() {
+        return "Overdraft facility, No minimum balance, Business transactions";
+    }
+    
+    public void checkOverdraftStatus() {
+        if (balance < 0) {
+            double overdraftUsed = Math.abs(balance);
+            double remainingLimit = overdraftLimit - overdraftUsed;
+            System.out.println("Overdraft used: $" + overdraftUsed);
+            System.out.println("Remaining overdraft: $" + remainingLimit);
+            System.out.println("Monthly overdraft interest: $" + calculateInterest());
+        } else {
+            System.out.println("No overdraft used");
+        }
+    }
+}
+
+// Concrete subclass 3 - Fixed Deposit Account
+class FixedDepositAccount extends BankAccount {
+    private double interestRate;
+    private int termMonths;
+    private boolean isMatured;
+    
+    public FixedDepositAccount(String accountNumber, String holderName, 
+                              double interestRate, int termMonths) {
+        super(accountNumber, holderName, "Fixed Deposit");
+        this.interestRate = interestRate;
+        this.termMonths = termMonths;
+        this.isMatured = false;
+    }
+    
+    @Override
+    public boolean withdraw(double amount) {
+        if (!isMatured) {
+            System.out.println("Cannot withdraw! Fixed deposit not yet matured.");
+            System.out.println("Term: " + termMonths + " months");
+            return false;
+        } else {
+            if (amount <= balance) {
+                balance -= amount;
+                System.out.println("Withdrawn from matured FD: $" + amount);
+                return true;
+            } else {
+                System.out.println("Insufficient funds!");
+                return false;
+            }
+        }
+    }
+    
+    @Override
+    public double calculateInterest() {
+        return balance * interestRate / 100 * termMonths / 12;
+    }
+    
+    @Override
+    public double getInterestRate() {
+        return interestRate;
+    }
+    
+    @Override
+    public String getAccountFeatures() {
+        return "High interest rate, Fixed term, No premature withdrawal";
+    }
+    
+    public void matureFD() {
+        if (!isMatured) {
+            double interest = calculateInterest();
+            balance += interest;
+            isMatured = true;
+            System.out.println("Fixed Deposit matured!");
+            System.out.println("Interest earned: $" + interest);
+            System.out.println("Maturity amount: $" + balance);
+        }
+    }
+}
+
+// Demo class
+public class AbstractClassDemo {
+    public static void main(String[] args) {
+        System.out.println("=== Abstract Class Demonstration ===\n");
+        
+        // Cannot create abstract class object
+        // BankAccount account = new BankAccount(); // ❌ Compilation error
+        
+        // Create concrete objects
+        SavingsAccount savings = new SavingsAccount("SAV001", "Alice Johnson", 4.5, 1000);
+        CurrentAccount current = new CurrentAccount("CUR001", "Bob Smith", 5000);
+        FixedDepositAccount fd = new FixedDepositAccount("FD001", "Carol Brown", 8.5, 12);
+        
+        // Store in polymorphic array
+        BankAccount[] accounts = {savings, current, fd};
+        
+        // Deposit money in all accounts
+        System.out.println("=== Initial Deposits ===");
+        savings.deposit(5000);
+        current.deposit(3000);
+        fd.deposit(10000);
+        System.out.println();
+        
+        // Polymorphic method calls
+        System.out.println("=== Account Information (Polymorphism) ===");
+        for (BankAccount account : accounts) {
+            account.displayAccountInfo(); // Same method, different behavior
+            System.out.println("Features: " + account.getAccountFeatures());
+            System.out.println();
+        }
+        
+        // Test withdrawal (different behavior for each type)
+        System.out.println("=== Withdrawal Tests ===");
+        savings.withdraw(2000);  // Normal withdrawal
+        current.withdraw(7000);  // Overdraft withdrawal
+        fd.withdraw(1000);       // Should fail - not matured
+        System.out.println();
+        
+        // Mature FD and try withdrawal again
+        System.out.println("=== FD Maturity ===");
+        fd.matureFD();
+        fd.withdraw(5000);
+        System.out.println();
+        
+        // Calculate interests
+        System.out.println("=== Interest Calculations ===");
+        for (BankAccount account : accounts) {
+            double interest = account.calculateInterest();
+            System.out.println(account.getHolderName() + " - Interest: $" + interest);
+        }
+    }
+}</code></pre>
+                    
+                    <h4>Abstract vs Concrete Classes:</h4>
+                    
+                    <table class="table-style">
+                        <tr>
+                            <th>Aspect</th>
+                            <th>Abstract Class</th>
+                            <th>Concrete Class</th>
+                        </tr>
+                        <tr>
+                            <td>Instantiation</td>
+                            <td>Cannot create objects</td>
+                            <td>Can create objects</td>
+                        </tr>
+                        <tr>
+                            <td>Abstract Methods</td>
+                            <td>Can have abstract methods</td>
+                            <td>Cannot have abstract methods</td>
+                        </tr>
+                        <tr>
+                            <td>Implementation</td>
+                            <td>Partial implementation</td>
+                            <td>Complete implementation</td>
+                        </tr>
+                        <tr>
+                            <td>Inheritance</td>
+                            <td>Must be extended</td>
+                            <td>Optional to extend</td>
+                        </tr>
+                        <tr>
+                            <td>Purpose</td>
+                            <td>Template for subclasses</td>
+                            <td>Ready-to-use class</td>
+                        </tr>
+                    </table>
+                </div>
+            </section>
+
+            <section>
+                <div class="exam-question">
+                    <p><strong>Q3. (GTU Summer 2020)</strong> Explain dynamic method dispatch in Java with a suitable example. How does it support polymorphism?</p>
+                </div>
+                
+                <div class="solution-box">
+                    <p><strong>Solution:</strong></p>
+                    
+                    <h4>Dynamic Method Dispatch:</h4>
+                    <p>Dynamic Method Dispatch is the mechanism by which a call to an overridden method is resolved at runtime rather than compile time. It's the mechanism that enables runtime polymorphism in Java.</p>
+                    
+                    <h4>How Dynamic Method Dispatch Works:</h4>
+                    <ol>
+                        <li><strong>Reference Variable:</strong> Parent class reference variable is created</li>
+                        <li><strong>Object Creation:</strong> Child class object is assigned to parent reference</li>
+                        <li><strong>Method Call:</strong> When a method is called through the reference</li>
+                        <li><strong>Runtime Resolution:</strong> JVM determines the actual object type</li>
+                        <li><strong>Method Execution:</strong> Calls the overridden method in the child class</li>
+                    </ol>
+                    
+                    <h4>Example - Media Player System:</h4>
+                    
+                    <pre><code>// Base class
+class MediaPlayer {
+    protected String name;
+    protected String format;
+    
+    public MediaPlayer(String name, String format) {
+        this.name = name;
+        this.format = format;
+    }
+    
+    // Method to be overridden
+    public void play() {
+        System.out.println("Playing media file: " + name);
+    }
+    
+    public void stop() {
+        System.out.println("Stopping media: " + name);
+    }
+    
+    public void displayInfo() {
+        System.out.println("Media: " + name + " (Format: " + format + ")");
+        play(); // This will call the overridden version at runtime
+    }
+    
+    // Common method
+    public void showControls() {
+        System.out.println("Controls: Play, Pause, Stop");
+    }
+}
+
+// Child class 1
+class AudioPlayer extends MediaPlayer {
+    private int bitrate;
+    
+    public AudioPlayer(String name, String format, int bitrate) {
+        super(name, format);
+        this.bitrate = bitrate;
+    }
+    
+    // Override play method - dynamic dispatch will call this
+    @Override
+    public void play() {
+        System.out.println("🎵 Playing audio: " + name);
+        System.out.println("Format: " + format + " | Bitrate: " + bitrate + " kbps");
+        System.out.println("Audio visualization active");
+    }
+    
+    // Audio-specific method
+    public void adjustVolume(int volume) {
+        System.out.println("Volume adjusted to: " + volume + "%");
+    }
+}
+
+// Child class 2
+class VideoPlayer extends MediaPlayer {
+    private String resolution;
+    private int fps;
+    
+    public VideoPlayer(String name, String format, String resolution, int fps) {
+        super(name, format);
+        this.resolution = resolution;
+        this.fps = fps;
+    }
+    
+    // Override play method - dynamic dispatch will call this
+    @Override
+    public void play() {
+        System.out.println("🎬 Playing video: " + name);
+        System.out.println("Format: " + format + " | Resolution: " + resolution);
+        System.out.println("Frame rate: " + fps + " fps");
+        System.out.println("Video rendering started");
+    }
+    
+    // Video-specific method
+    public void adjustBrightness(int brightness) {
+        System.out.println("Brightness adjusted to: " + brightness + "%");
+    }
+}
+
+// Child class 3
+class StreamingPlayer extends MediaPlayer {
+    private String streamUrl;
+    private int bufferSize;
+    
+    public StreamingPlayer(String name, String format, String streamUrl, int bufferSize) {
+        super(name, format);
+        this.streamUrl = streamUrl;
+        this.bufferSize = bufferSize;
+    }
+    
+    // Override play method - dynamic dispatch will call this
+    @Override
+    public void play() {
+        System.out.println("📡 Streaming: " + name);
+        System.out.println("URL: " + streamUrl);
+        System.out.println("Buffer size: " + bufferSize + " MB");
+        System.out.println("Buffering... Stream started");
+    }
+    
+    @Override
+    public void stop() {
+        super.stop();
+        System.out.println("Stream connection closed");
+    }
+}
+
+// Demo class showing dynamic method dispatch
+public class DynamicMethodDispatchDemo {
+    
+    // Method that demonstrates polymorphism
+    public static void playMedia(MediaPlayer player) {
+        System.out.println("=== Media Player Interface ===");
+        player.displayInfo();    // Calls overridden play() method dynamically
+        player.showControls();   // Common method
+        player.stop();          // May be overridden
+        System.out.println();
+    }
+    
+    // Method showing runtime type determination
+    public static void identifyAndPlay(MediaPlayer player) {
+        System.out.println("Analyzing media player type...");
+        
+        // Runtime type checking with instanceof
+        if (player instanceof StreamingPlayer) {
+            System.out.println("Detected: Streaming Player");
+            StreamingPlayer streaming = (StreamingPlayer) player;
+            streaming.play(); // Dynamic dispatch
+            
+        } else if (player instanceof VideoPlayer) {
+            System.out.println("Detected: Video Player");
+            VideoPlayer video = (VideoPlayer) player;
+            video.play(); // Dynamic dispatch
+            video.adjustBrightness(80);
+            
+        } else if (player instanceof AudioPlayer) {
+            System.out.println("Detected: Audio Player");
+            AudioPlayer audio = (AudioPlayer) player;
+            audio.play(); // Dynamic dispatch
+            audio.adjustVolume(75);
+            
+        } else {
+            System.out.println("Detected: Generic Media Player");
+            player.play(); // Dynamic dispatch
+        }
+        
+        System.out.println("---");
+    }
+    
+    public static void main(String[] args) {
+        System.out.println("=== Dynamic Method Dispatch Demonstration ===\n");
+        
+        // Step 1: Create objects of different types
+        MediaPlayer audio = new AudioPlayer("Bohemian Rhapsody", "MP3", 320);
+        MediaPlayer video = new VideoPlayer("Avengers Endgame", "MP4", "4K", 60);
+        MediaPlayer stream = new StreamingPlayer("Live Concert", "WebM", 
+                                                "https://stream.example.com/live", 50);
+        MediaPlayer generic = new MediaPlayer("Unknown Media", "RAW");
+        
+        // Step 2: Store in array (polymorphic behavior)
+        MediaPlayer[] playlist = {audio, video, stream, generic};
+        
+        // Step 3: Demonstrate dynamic method dispatch
+        System.out.println("=== Polymorphic Array Processing ===");
+        
+        for (int i = 0; i < playlist.length; i++) {
+            System.out.println("Item " + (i + 1) + ":");
+            playMedia(playlist[i]); // Same method call, different behavior
+        }
+        
+        // Step 4: Demonstrate runtime method resolution
+        System.out.println("=== Runtime Type Detection ===");
+        
+        for (MediaPlayer player : playlist) {
+            identifyAndPlay(player);
+        }
+        
+        // Step 5: Show method binding differences
+        System.out.println("=== Method Binding Demonstration ===");
+        
+        MediaPlayer player1 = new AudioPlayer("Song1", "FLAC", 1411);
+        AudioPlayer player2 = new AudioPlayer("Song2", "FLAC", 1411);
+        
+        System.out.println("MediaPlayer reference -> AudioPlayer object:");
+        player1.play(); // Dynamic dispatch - AudioPlayer's play() called
+        
+        System.out.println("\nAudioPlayer reference -> AudioPlayer object:");
+        player2.play(); // Direct call - AudioPlayer's play() called
+        
+        // Step 6: Demonstrate the power of polymorphism
+        System.out.println("\n=== Polymorphism Benefits ===");
+        System.out.println("1. Same interface (MediaPlayer) for different implementations");
+        System.out.println("2. Method calls resolved at runtime based on actual object type");
+        System.out.println("3. Easy to add new player types without changing existing code");
+        System.out.println("4. Client code works with any MediaPlayer implementation");
+        
+        // Example of extensibility
+        MediaPlayer newPlayer = new VideoPlayer("New Movie", "AVI", "1080p", 30);
+        playMedia(newPlayer); // Works immediately with existing code
+    }
+}</code></pre>
+                    
+                    <h4>How Dynamic Method Dispatch Supports Polymorphism:</h4>
+                    
+                    <ol>
+                        <li><strong>Runtime Resolution:</strong> Method calls are resolved based on actual object type, not reference type</li>
+                        <li><strong>Flexibility:</strong> Same code can work with different object types</li>
+                        <li><strong>Extensibility:</strong> New subclasses can be added without modifying existing code</li>
+                        <li><strong>Code Reusability:</strong> Common interface allows unified processing</li>
+                        <li><strong>Maintainability:</strong> Changes in implementation don't affect client code</li>
+                    </ol>
+                    
+                    <h4>Key Points:</h4>
+                    <ul>
+                        <li>Only instance methods participate in dynamic dispatch</li>
+                        <li>Static methods use static binding (no dynamic dispatch)</li>
+                        <li>Private and final methods use static binding</li>
+                        <li>Method resolution happens at runtime using method table lookup</li>
+                        <li>The actual object type (not reference type) determines which method is called</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Summary -->
+            <section>
+                <h2>Lecture Summary</h2>
+                
+                <div class="two-column">
+                    <div class="column">
+                        <h3>Key Concepts Covered:</h3>
+                        <ul>
+                            <li>Polymorphism types and implementation</li>
+                            <li>Runtime vs compile-time polymorphism</li>
+                            <li>Abstract classes and abstract methods</li>
+                            <li>Dynamic method dispatch mechanism</li>
+                            <li>Method binding (static vs dynamic)</li>
+                            <li>Polymorphic arrays and collections</li>
+                            <li>Real-world polymorphic design patterns</li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <h3>Learning Outcomes Achieved:</h3>
+                        <ul>
+                            <li>✅ Master polymorphic programming concepts</li>
+                            <li>✅ Implement abstract classes effectively</li>
+                            <li>✅ Understand dynamic method resolution</li>
+                            <li>✅ Design flexible object-oriented systems</li>
+                            <li>✅ Apply polymorphism in practical scenarios</li>
+                            <li>✅ Distinguish different binding mechanisms</li>
+                            <li>✅ Create maintainable and extensible code</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="highlight center">
+                    <p><strong>Next Lecture:</strong> Interfaces and Multiple Inheritance</p>
+                    <p>Topics: Interface concepts, multiple inheritance, default methods, interface vs abstract classes</p>
+                </div>
+            </section>
+
+            <!-- Thank You -->
+            <section class="title-slide">
+                <h1>Thank You!</h1>
+                <h2>Questions & Discussion</h2>
+                <br>
+                <p>Next: Lecture 12 - Interfaces and Multiple Inheritance</p>
+                <br>
+                <p><small>
+                    Course: 4343203 Java Programming<br>
+                    Unit 2: Object-Oriented Programming<br>
+                    GTU Semester 4
+                </small></p>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/highlight/highlight.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            transition: 'slide',
+            transitionSpeed: 'default',
+            backgroundTransition: 'fade',
+            plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+        });
+    </script>
+</body>
+</html>

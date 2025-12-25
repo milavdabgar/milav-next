@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Lecture 16: Advanced Thread Concepts | Java Programming (4343203)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <style>
+        .reveal {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 90vh;
+        }
+        .reveal .slides section {
+            text-align: left;
+            font-size: 0.85em;
+        }
+        .reveal h1, .reveal h2, .reveal h3 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .reveal h1 { font-size: 2.2em; }
+        .reveal h2 { font-size: 1.8em; margin-bottom: 30px; }
+        .reveal h3 { font-size: 1.4em; margin-bottom: 20px; }
+        .reveal pre {
+            width: 100%;
+            font-size: 0.75em;
+            line-height: 1.2;
+        }
+        .reveal code {
+            background-color: #f8f9fa;
+            padding: 2px 4px;
+            border-radius: 3px;
+            color: #e83e8c;
+        }
+        .reveal .hljs {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            padding: 15px;
+        }
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+        .highlight-box {
+            background-color: #e8f4fd;
+            border-left: 5px solid #3498db;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        .warning-box {
+            background-color: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        .success-box {
+            background-color: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        .error-box {
+            background-color: #f8d7da;
+            border-left: 5px solid #dc3545;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        .reveal ul, .reveal ol {
+            margin-left: 1em;
+        }
+        .reveal li {
+            margin-bottom: 8px;
+        }
+        .gtu-question {
+            background-color: #f0f8ff;
+            border: 2px solid #4682b4;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        .gtu-question h4 {
+            color: #4682b4;
+            margin: 0 0 15px 0;
+            font-size: 1.1em;
+        }
+        .reveal table {
+            font-size: 0.7em;
+            border-collapse: collapse;
+            width: 100%;
+            margin: 15px 0;
+        }
+        .reveal td, .reveal th {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .reveal th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- Title Slide -->
+            <section>
+                <h1>Advanced Thread Concepts</h1>
+                <h3>Java Programming (4343203)</h3>
+                <h3>Lecture 16</h3>
+                <p style="text-align: center; margin-top: 50px;">
+                    <strong>Unit 4: Advanced Java - Concurrency</strong><br>
+                    GTU Computer Engineering Semester 4
+                </p>
+            </section>
+
+            <!-- Learning Objectives -->
+            <section>
+                <h2>Learning Objectives</h2>
+                <ul>
+                    <li>Master ExecutorService and thread pools</li>
+                    <li>Understand concurrent collections and atomic operations</li>
+                    <li>Learn deadlock prevention and detection techniques</li>
+                    <li>Implement thread-safe patterns and best practices</li>
+                    <li>Use volatile keyword and memory consistency</li>
+                    <li>Apply Fork-Join framework for parallel processing</li>
+                </ul>
+                <div class="highlight-box">
+                    <strong>Focus:</strong> Professional-grade concurrent programming techniques for scalable applications.
+                </div>
+            </section>
+
+            <!-- Thread Pools and ExecutorService -->
+            <section>
+                <h2>Thread Pools and ExecutorService</h2>
+                <div class="two-column">
+                    <div>
+                        <h3>Why Thread Pools?</h3>
+                        <ul>
+                            <li>Avoid thread creation overhead</li>
+                            <li>Control resource consumption</li>
+                            <li>Improve application performance</li>
+                            <li>Better thread lifecycle management</li>
+                        </ul>
+                        
+                        <h3>ExecutorService Types</h3>
+                        <ul>
+                            <li><code>newFixedThreadPool(n)</code></li>
+                            <li><code>newCachedThreadPool()</code></li>
+                            <li><code>newSingleThreadExecutor()</code></li>
+                            <li><code>newScheduledThreadPool(n)</code></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Basic ExecutorService Usage</h3>
+                        <pre><code class="java">
+import java.util.concurrent.*;
+
+ExecutorService executor = 
+    Executors.newFixedThreadPool(4);
+
+// Submit tasks
+for (int i = 1; i <= 10; i++) {
+    final int taskId = i;
+    executor.submit(() -> {
+        System.out.println("Task " + taskId + 
+                          " on " + Thread.currentThread().getName());
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    });
+}
+
+// Shutdown executor
+executor.shutdown();
+try {
+    if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
+        executor.shutdownNow();
+    }
+} catch (InterruptedException e) {
+    executor.shutdownNow();
+}
+                        </code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Detailed ExecutorService Example -->
+            <section>
+                <h2>Comprehensive ExecutorService Example</h2>
+                <pre><code class="java">
+import java.util.concurrent.*;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Random;
+
+// Task class for demonstration
+class DataProcessingTask implements Callable<ProcessingResult> {
+    private final int taskId;
+    private final int[] data;
+    private final Random random = new Random();
+    
+    public DataProcessingTask(int taskId, int[] data) {
+        this.taskId = taskId;
+        this.data = data;
+    }
+    
+    @Override
+    public ProcessingResult call() throws Exception {
+        String threadName = Thread.currentThread().getName();
+        System.out.println("Task " + taskId + " started on " + threadName);
+        
+        // Simulate complex processing
+        Thread.sleep(random.nextInt(2000) + 1000);
+        
+        // Calculate sum, average, max, min
+        long sum = 0;
+        int max = Integer.MIN_VALUE;
+        int min = Integer.MAX_VALUE;
+        
+        for (int value : data) {
+            sum += value;
+            max = Math.max(max, value);
+            min = Math.min(min, value);
+        }
+        
+        double average = (double) sum / data.length;
+        
+        System.out.println("Task " + taskId + " completed on " + threadName);
+        return new ProcessingResult(taskId, sum, average, max, min);
+    }
+}
+
+// Result class
+class ProcessingResult {
+    private final int taskId;
+    private final long sum;
+    private final double average;
+    private final int max, min;
+    
+    public ProcessingResult(int taskId, long sum, double average, int max, int min) {
+        this.taskId = taskId;
+        this.sum = sum;
+        this.average = average;
+        this.max = max;
+        this.min = min;
+    }
+    
+    @Override
+    public String toString() {
+        return String.format("Task %d: Sum=%d, Avg=%.2f, Max=%d, Min=%d", 
+                           taskId, sum, average, max, min);
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- ExecutorService Demo Main -->
+            <section>
+                <h2>ExecutorService Demonstration</h2>
+                <pre><code class="java">
+public class ExecutorServiceDemo {
+    public static void main(String[] args) {
+        final int TASK_COUNT = 6;
+        final int DATA_SIZE = 1000;
+        
+        // Create thread pool
+        ExecutorService executor = Executors.newFixedThreadPool(3);
+        List<Future<ProcessingResult>> futures = new ArrayList<>();
+        
+        System.out.println("=== ExecutorService Demo ===");
+        System.out.println("Thread pool size: 3");
+        System.out.println("Number of tasks: " + TASK_COUNT);
+        
+        long startTime = System.currentTimeMillis();
+        
+        // Submit tasks
+        for (int i = 1; i <= TASK_COUNT; i++) {
+            // Generate random data for each task
+            int[] data = generateRandomData(DATA_SIZE);
+            DataProcessingTask task = new DataProcessingTask(i, data);
+            Future<ProcessingResult> future = executor.submit(task);
+            futures.add(future);
+        }
+        
+        System.out.println("All tasks submitted to executor");
+        
+        // Collect results
+        List<ProcessingResult> results = new ArrayList<>();
+        for (Future<ProcessingResult> future : futures) {
+            try {
+                ProcessingResult result = future.get(); // Blocking call
+                results.add(result);
+            } catch (InterruptedException | ExecutionException e) {
+                System.err.println("Task failed: " + e.getMessage());
+            }
+        }
+        
+        long endTime = System.currentTimeMillis();
+        
+        // Display results
+        System.out.println("\n=== Results ===");
+        results.forEach(System.out::println);
+        
+        System.out.printf("Total execution time: %d ms%n", endTime - startTime);
+        
+        // Shutdown executor
+        executor.shutdown();
+        try {
+            if (!executor.awaitTermination(10, TimeUnit.SECONDS)) {
+                executor.shutdownNow();
+                System.out.println("Executor forcefully shutdown");
+            } else {
+                System.out.println("Executor shutdown gracefully");
+            }
+        } catch (InterruptedException e) {
+            executor.shutdownNow();
+        }
+    }
+    
+    private static int[] generateRandomData(int size) {
+        Random random = new Random();
+        int[] data = new int[size];
+        for (int i = 0; i < size; i++) {
+            data[i] = random.nextInt(100) + 1;
+        }
+        return data;
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- Atomic Operations -->
+            <section>
+                <h2>Atomic Operations and Variables</h2>
+                <div class="two-column">
+                    <div>
+                        <h3>Why Atomic Operations?</h3>
+                        <ul>
+                            <li>Thread-safe without synchronization</li>
+                            <li>Lock-free programming</li>
+                            <li>Better performance than synchronized</li>
+                            <li>Avoid race conditions</li>
+                        </ul>
+                        
+                        <h3>Common Atomic Classes</h3>
+                        <ul>
+                            <li><code>AtomicInteger</code></li>
+                            <li><code>AtomicLong</code></li>
+                            <li><code>AtomicBoolean</code></li>
+                            <li><code>AtomicReference</code></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <pre><code class="java">
+import java.util.concurrent.atomic.*;
+
+// Atomic counter example
+class AtomicCounter {
+    private final AtomicInteger count = 
+        new AtomicInteger(0);
+    
+    public void increment() {
+        count.incrementAndGet();
+    }
+    
+    public void decrement() {
+        count.decrementAndGet();
+    }
+    
+    public int get() {
+        return count.get();
+    }
+    
+    // Compare and swap operation
+    public boolean compareAndSet(int expected, 
+                               int newValue) {
+        return count.compareAndSet(expected, 
+                                 newValue);
+    }
+    
+    // Atomic add and return
+    public int addAndGet(int delta) {
+        return count.addAndGet(delta);
+    }
+}
+                        </code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Atomic Operations Demo -->
+            <section>
+                <h2>Atomic Operations Demonstration</h2>
+                <pre><code class="java">
+import java.util.concurrent.atomic.*;
+import java.util.concurrent.*;
+
+public class AtomicOperationsDemo {
+    private static final int THREAD_COUNT = 5;
+    private static final int OPERATIONS_PER_THREAD = 10000;
+    
+    // Compare atomic vs non-atomic counters
+    private static volatile int regularCounter = 0;
+    private static AtomicInteger atomicCounter = new AtomicInteger(0);
+    
+    public static void main(String[] args) throws InterruptedException {
+        System.out.println("=== Atomic Operations Demo ===");
+        System.out.println("Threads: " + THREAD_COUNT);
+        System.out.println("Operations per thread: " + OPERATIONS_PER_THREAD);
+        
+        // Test regular counter (race condition)
+        testRegularCounter();
+        
+        // Test atomic counter (thread-safe)
+        testAtomicCounter();
+        
+        // Demonstrate other atomic operations
+        demonstrateAtomicOperations();
+    }
+    
+    private static void testRegularCounter() throws InterruptedException {
+        System.out.println("\n--- Testing Regular Counter (Race Condition) ---");
+        regularCounter = 0;
+        
+        ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT);
+        CountDownLatch latch = new CountDownLatch(THREAD_COUNT);
+        
+        for (int i = 0; i < THREAD_COUNT; i++) {
+            executor.submit(() -> {
+                for (int j = 0; j < OPERATIONS_PER_THREAD; j++) {
+                    regularCounter++; // Not thread-safe!
+                }
+                latch.countDown();
+            });
+        }
+        
+        latch.await();
+        executor.shutdown();
+        
+        int expected = THREAD_COUNT * OPERATIONS_PER_THREAD;
+        System.out.println("Expected: " + expected);
+        System.out.println("Actual: " + regularCounter);
+        System.out.println("Data corruption: " + (expected != regularCounter));
+    }
+    
+    private static void testAtomicCounter() throws InterruptedException {
+        System.out.println("\n--- Testing Atomic Counter (Thread-Safe) ---");
+        atomicCounter.set(0);
+        
+        ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT);
+        CountDownLatch latch = new CountDownLatch(THREAD_COUNT);
+        
+        for (int i = 0; i < THREAD_COUNT; i++) {
+            executor.submit(() -> {
+                for (int j = 0; j < OPERATIONS_PER_THREAD; j++) {
+                    atomicCounter.incrementAndGet(); // Thread-safe!
+                }
+                latch.countDown();
+            });
+        }
+        
+        latch.await();
+        executor.shutdown();
+        
+        int expected = THREAD_COUNT * OPERATIONS_PER_THREAD;
+        System.out.println("Expected: " + expected);
+        System.out.println("Actual: " + atomicCounter.get());
+        System.out.println("Thread-safe: " + (expected == atomicCounter.get()));
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- Volatile Keyword -->
+            <section>
+                <h2>Volatile Keyword and Memory Consistency</h2>
+                <div class="two-column">
+                    <div>
+                        <h3>What is Volatile?</h3>
+                        <ul>
+                            <li>Ensures visibility across threads</li>
+                            <li>Prevents instruction reordering</li>
+                            <li>Not atomic for compound operations</li>
+                            <li>Lighter than synchronization</li>
+                        </ul>
+                        
+                        <div class="warning-box">
+                            <strong>Important:</strong> Volatile doesn't guarantee atomicity for operations like <code>i++</code>
+                        </div>
+                    </div>
+                    <div>
+                        <pre><code class="java">
+class VolatileExample {
+    private volatile boolean shutdown = false;
+    private volatile int counter = 0;
+    
+    // Worker thread
+    public void worker() {
+        while (!shutdown) {
+            // Do work
+            System.out.println("Working... " + 
+                             counter);
+            counter++; // Not atomic!
+            
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
+        System.out.println("Worker shutdown");
+    }
+    
+    // Main thread
+    public void stopWorker() {
+        shutdown = true; // Visible immediately
+    }
+    
+    public boolean isShutdown() {
+        return shutdown;
+    }
+}
+                        </code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Concurrent Collections -->
+            <section>
+                <h2>Concurrent Collections</h2>
+                <h3>Thread-Safe Collection Classes</h3>
+                <pre><code class="java">
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class ConcurrentCollectionsDemo {
+    public static void main(String[] args) throws InterruptedException {
+        // 1. ConcurrentHashMap - Thread-safe HashMap
+        ConcurrentHashMap<String, Integer> concurrentMap = new ConcurrentHashMap<>();
+        
+        // 2. CopyOnWriteArrayList - Thread-safe ArrayList (for read-heavy scenarios)
+        CopyOnWriteArrayList<String> safeList = new CopyOnWriteArrayList<>();
+        
+        // 3. BlockingQueue - Thread-safe queue with blocking operations
+        BlockingQueue<String> queue = new ArrayBlockingQueue<>(100);
+        
+        // 4. ConcurrentLinkedQueue - Non-blocking thread-safe queue
+        ConcurrentLinkedQueue<String> linkedQueue = new ConcurrentLinkedQueue<>();
+        
+        System.out.println("=== Concurrent Collections Demo ===");
+        
+        // Demonstrate ConcurrentHashMap
+        demonstrateConcurrentHashMap(concurrentMap);
+        
+        // Demonstrate BlockingQueue
+        demonstrateBlockingQueue(queue);
+    }
+    
+    private static void demonstrateConcurrentHashMap(
+            ConcurrentHashMap<String, Integer> map) throws InterruptedException {
+        
+        System.out.println("\n--- ConcurrentHashMap Demo ---");
+        
+        ExecutorService executor = Executors.newFixedThreadPool(4);
+        AtomicInteger totalOperations = new AtomicInteger(0);
+        
+        // Multiple threads updating the same map
+        for (int i = 1; i <= 4; i++) {
+            final int threadId = i;
+            executor.submit(() -> {
+                for (int j = 1; j <= 10; j++) {
+                    String key = "key" + (j % 5); // 5 different keys
+                    
+                    // Atomic increment using compute method
+                    map.compute(key, (k, v) -> {
+                        totalOperations.incrementAndGet();
+                        return (v == null) ? 1 : v + 1;
+                    });
+                    
+                    System.out.printf("Thread-%d: Updated %s = %d%n", 
+                                    threadId, key, map.get(key));
+                }
+            });
+        }
+        
+        executor.shutdown();
+        executor.awaitTermination(10, TimeUnit.SECONDS);
+        
+        System.out.println("Final map contents: " + map);
+        System.out.println("Total operations: " + totalOperations.get());
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- Deadlock Prevention -->
+            <section>
+                <h2>Deadlock Prevention and Detection</h2>
+                <div class="two-column">
+                    <div>
+                        <h3>Deadlock Conditions</h3>
+                        <ol>
+                            <li><strong>Mutual Exclusion:</strong> Resources cannot be shared</li>
+                            <li><strong>Hold and Wait:</strong> Thread holds resources while waiting</li>
+                            <li><strong>No Preemption:</strong> Resources cannot be forcibly taken</li>
+                            <li><strong>Circular Wait:</strong> Circular dependency of resource requests</li>
+                        </ol>
+                        
+                        <h3>Prevention Strategies</h3>
+                        <ul>
+                            <li>Ordered lock acquisition</li>
+                            <li>Timeout-based locking</li>
+                            <li>Avoid nested locks</li>
+                            <li>Use higher-level concurrency utilities</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <div class="error-box">
+                            <h4>Deadlock Example</h4>
+                            <pre><code class="java">
+// BAD: Can cause deadlock
+class DeadlockRisk {
+    private final Object lock1 = new Object();
+    private final Object lock2 = new Object();
+    
+    public void method1() {
+        synchronized(lock1) {
+            synchronized(lock2) {
+                // Critical section
+            }
+        }
+    }
+    
+    public void method2() {
+        synchronized(lock2) {
+            synchronized(lock1) { // Deadlock!
+                // Critical section
+            }
+        }
+    }
+}
+                            </code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Deadlock Prevention Example -->
+            <section>
+                <h2>Deadlock Prevention Example</h2>
+                <pre><code class="java">
+import java.util.concurrent.locks.*;
+
+// GOOD: Deadlock prevention using ordered locking
+class BankAccount {
+    private final int accountId;
+    private double balance;
+    private final ReentrantLock lock = new ReentrantLock();
+    
+    public BankAccount(int id, double initialBalance) {
+        this.accountId = id;
+        this.balance = initialBalance;
+    }
+    
+    // Deadlock-free money transfer using ordered locking
+    public static boolean transfer(BankAccount from, BankAccount to, double amount) {
+        if (from == to) return false; // Same account
+        
+        // Order locks by account ID to prevent deadlock
+        BankAccount firstLock = from.accountId < to.accountId ? from : to;
+        BankAccount secondLock = from.accountId < to.accountId ? to : from;
+        
+        firstLock.lock.lock();
+        try {
+            secondLock.lock.lock();
+            try {
+                // Check sufficient funds
+                if (from.balance >= amount) {
+                    from.balance -= amount;
+                    to.balance += amount;
+                    
+                    System.out.printf("Transferred $%.2f: Account-%d -> Account-%d%n",
+                                    amount, from.accountId, to.accountId);
+                    System.out.printf("Balances: Account-%d=$%.2f, Account-%d=$%.2f%n",
+                                    from.accountId, from.balance, to.accountId, to.balance);
+                    return true;
+                } else {
+                    System.out.printf("Transfer failed: Insufficient funds in Account-%d%n", 
+                                    from.accountId);
+                    return false;
+                }
+            } finally {
+                secondLock.lock.unlock();
+            }
+        } finally {
+            firstLock.lock.unlock();
+        }
+    }
+    
+    // Alternative: Using tryLock with timeout
+    public static boolean transferWithTimeout(BankAccount from, BankAccount to, 
+                                            double amount, long timeoutMs) {
+        try {
+            if (from.lock.tryLock(timeoutMs, TimeUnit.MILLISECONDS)) {
+                try {
+                    if (to.lock.tryLock(timeoutMs, TimeUnit.MILLISECONDS)) {
+                        try {
+                            if (from.balance >= amount) {
+                                from.balance -= amount;
+                                to.balance += amount;
+                                return true;
+                            }
+                        } finally {
+                            to.lock.unlock();
+                        }
+                    }
+                } finally {
+                    from.lock.unlock();
+                }
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return false; // Transfer failed or timed out
+    }
+    
+    public double getBalance() {
+        lock.lock();
+        try {
+            return balance;
+        } finally {
+            lock.unlock();
+        }
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- GTU Previous Year Question 1 -->
+            <section>
+                <div class="gtu-question">
+                    <h4>GTU Previous Year Question (Summer 2022)</h4>
+                    <p><strong>Q: Write a Java program using ExecutorService to process multiple tasks concurrently. Each task should perform mathematical calculations (factorial, prime check, etc.) and return results. Demonstrate proper thread pool management and result collection.</strong></p>
+                </div>
+                
+                <h3>Solution:</h3>
+                <pre><code class="java">
+import java.util.concurrent.*;
+import java.util.List;
+import java.util.ArrayList;
+import java.math.BigInteger;
+
+// Task for mathematical calculations
+class MathTask implements Callable<MathResult> {
+    private final int number;
+    private final String operation;
+    private final int taskId;
+    
+    public MathTask(int taskId, int number, String operation) {
+        this.taskId = taskId;
+        this.number = number;
+        this.operation = operation;
+    }
+    
+    @Override
+    public MathResult call() throws Exception {
+        String threadName = Thread.currentThread().getName();
+        System.out.printf("Task %d (%s for %d) started on %s%n", 
+                         taskId, operation, number, threadName);
+        
+        long startTime = System.currentTimeMillis();
+        Object result;
+        
+        switch (operation.toLowerCase()) {
+            case "factorial":
+                result = calculateFactorial(number);
+                break;
+            case "prime":
+                result = isPrime(number);
+                break;
+            case "fibonacci":
+                result = calculateFibonacci(number);
+                break;
+            case "sum":
+                result = calculateSum(number);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown operation: " + operation);
+        }
+        
+        long executionTime = System.currentTimeMillis() - startTime;
+        
+        System.out.printf("Task %d completed on %s in %d ms%n", 
+                         taskId, threadName, executionTime);
+        
+        return new MathResult(taskId, number, operation, result, executionTime, threadName);
+    }
+    
+    private BigInteger calculateFactorial(int n) throws InterruptedException {
+        if (n < 0) throw new IllegalArgumentException("Factorial not defined for negative numbers");
+        if (n > 50) throw new IllegalArgumentException("Number too large for factorial calculation");
+        
+        BigInteger result = BigInteger.ONE;
+        for (int i = 2; i <= n; i++) {
+            result = result.multiply(BigInteger.valueOf(i));
+            // Simulate work and check for interruption
+            if (i % 5 == 0) {
+                Thread.sleep(10);
+                if (Thread.currentThread().isInterrupted()) {
+                    throw new InterruptedException("Factorial calculation interrupted");
+                }
+            }
+        }
+        return result;
+    }
+    
+    private boolean isPrime(int n) throws InterruptedException {
+        if (n < 2) return false;
+        if (n == 2) return true;
+        if (n % 2 == 0) return false;
+        
+        for (int i = 3; i * i <= n; i += 2) {
+            if (n % i == 0) return false;
+            // Check for interruption periodically
+            if (i % 1000 == 3) {
+                Thread.sleep(1);
+                if (Thread.currentThread().isInterrupted()) {
+                    throw new InterruptedException("Prime check interrupted");
+                }
+            }
+        }
+        return true;
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- Math Task Solution Continued -->
+            <section>
+                <h3>Additional Methods and Result Class:</h3>
+                <pre><code class="java">
+    private long calculateFibonacci(int n) throws InterruptedException {
+        if (n < 0) throw new IllegalArgumentException("Fibonacci not defined for negative numbers");
+        if (n > 50) throw new IllegalArgumentException("Number too large for Fibonacci calculation");
+        
+        if (n <= 1) return n;
+        
+        long a = 0, b = 1, result = 0;
+        for (int i = 2; i <= n; i++) {
+            result = a + b;
+            a = b;
+            b = result;
+            
+            if (i % 5 == 0) {
+                Thread.sleep(5);
+                if (Thread.currentThread().isInterrupted()) {
+                    throw new InterruptedException("Fibonacci calculation interrupted");
+                }
+            }
+        }
+        return result;
+    }
+    
+    private long calculateSum(int n) throws InterruptedException {
+        if (n < 1) throw new IllegalArgumentException("Sum calculation requires positive number");
+        
+        long sum = 0;
+        for (int i = 1; i <= n; i++) {
+            sum += i;
+            if (i % 10000 == 0) {
+                Thread.sleep(1);
+                if (Thread.currentThread().isInterrupted()) {
+                    throw new InterruptedException("Sum calculation interrupted");
+                }
+            }
+        }
+        return sum;
+    }
+
+// Result class to hold calculation results
+class MathResult {
+    private final int taskId;
+    private final int inputNumber;
+    private final String operation;
+    private final Object result;
+    private final long executionTime;
+    private final String threadName;
+    
+    public MathResult(int taskId, int inputNumber, String operation, 
+                     Object result, long executionTime, String threadName) {
+        this.taskId = taskId;
+        this.inputNumber = inputNumber;
+        this.operation = operation;
+        this.result = result;
+        this.executionTime = executionTime;
+        this.threadName = threadName;
+    }
+    
+    @Override
+    public String toString() {
+        return String.format("Task %d: %s(%d) = %s [%d ms on %s]", 
+                           taskId, operation, inputNumber, result, executionTime, threadName);
+    }
+    
+    // Getters
+    public int getTaskId() { return taskId; }
+    public String getOperation() { return operation; }
+    public long getExecutionTime() { return executionTime; }
+    public Object getResult() { return result; }
+}
+                </code></pre>
+            </section>
+
+            <!-- ExecutorService Demo Main -->
+            <section>
+                <h3>Main Demonstration Class:</h3>
+                <pre><code class="java">
+public class ConcurrentMathProcessor {
+    public static void main(String[] args) {
+        final int THREAD_POOL_SIZE = 4;
+        
+        System.out.println("=== Concurrent Mathematical Task Processor ===");
+        System.out.println("Thread pool size: " + THREAD_POOL_SIZE);
+        
+        // Create thread pool
+        ExecutorService executor = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
+        List<Future<MathResult>> futures = new ArrayList<>();
+        
+        // Create various mathematical tasks
+        Object[][] tasks = {
+            {1, 10, "factorial"},     // 10!
+            {2, 97, "prime"},         // Check if 97 is prime
+            {3, 20, "fibonacci"},     // 20th Fibonacci number
+            {4, 1000, "sum"},         // Sum of 1 to 1000
+            {5, 15, "factorial"},     // 15!
+            {6, 101, "prime"},        // Check if 101 is prime
+            {7, 25, "fibonacci"},     // 25th Fibonacci number
+            {8, 5000, "sum"},         // Sum of 1 to 5000
+            {9, 89, "prime"},         // Check if 89 is prime
+            {10, 12, "factorial"}     // 12!
+        };
+        
+        long startTime = System.currentTimeMillis();
+        
+        // Submit all tasks
+        for (Object[] taskData : tasks) {
+            int taskId = (Integer) taskData[0];
+            int number = (Integer) taskData[1];
+            String operation = (String) taskData[2];
+            
+            MathTask task = new MathTask(taskId, number, operation);
+            Future<MathResult> future = executor.submit(task);
+            futures.add(future);
+        }
+        
+        System.out.println("All tasks submitted to executor\n");
+        
+        // Collect results
+        List<MathResult> results = new ArrayList<>();
+        int completedTasks = 0;
+        
+        for (Future<MathResult> future : futures) {
+            try {
+                MathResult result = future.get(10, TimeUnit.SECONDS); // Timeout after 10 seconds
+                results.add(result);
+                completedTasks++;
+            } catch (InterruptedException e) {
+                System.err.println("Task interrupted: " + e.getMessage());
+                Thread.currentThread().interrupt();
+            } catch (ExecutionException e) {
+                System.err.println("Task execution failed: " + e.getCause().getMessage());
+            } catch (TimeoutException e) {
+                System.err.println("Task timed out");
+                future.cancel(true); // Interrupt the task
+            }
+        }
+        
+        long totalTime = System.currentTimeMillis() - startTime;
+        
+        // Display results
+        System.out.println("\n=== EXECUTION RESULTS ===");
+        results.stream()
+               .sorted((r1, r2) -> Integer.compare(r1.getTaskId(), r2.getTaskId()))
+               .forEach(System.out::println);
+        
+        // Display statistics
+        System.out.println("\n=== EXECUTION STATISTICS ===");
+        System.out.println("Total tasks: " + tasks.length);
+        System.out.println("Completed tasks: " + completedTasks);
+        System.out.println("Failed tasks: " + (tasks.length - completedTasks));
+        System.out.println("Total execution time: " + totalTime + " ms");
+        
+        long totalTaskTime = results.stream().mapToLong(MathResult::getExecutionTime).sum();
+        System.out.println("Sum of individual task times: " + totalTaskTime + " ms");
+        System.out.println("Speedup factor: " + String.format("%.2fx", (double)totalTaskTime / totalTime));
+        
+        // Shutdown executor
+        shutdownExecutor(executor);
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- ExecutorService Shutdown -->
+            <section>
+                <h3>Proper ExecutorService Shutdown:</h3>
+                <pre><code class="java">
+    private static void shutdownExecutor(ExecutorService executor) {
+        System.out.println("\n=== SHUTDOWN PROCESS ===");
+        
+        // Disable new tasks from being submitted
+        executor.shutdown();
+        
+        try {
+            // Wait a while for existing tasks to terminate
+            if (!executor.awaitTermination(30, TimeUnit.SECONDS)) {
+                System.out.println("Executor did not terminate gracefully, forcing shutdown...");
+                
+                // Cancel currently executing tasks
+                executor.shutdownNow();
+                
+                // Wait a while for tasks to respond to being cancelled
+                if (!executor.awaitTermination(10, TimeUnit.SECONDS)) {
+                    System.err.println("Executor did not terminate after forced shutdown");
+                } else {
+                    System.out.println("Executor terminated after forced shutdown");
+                }
+            } else {
+                System.out.println("Executor terminated gracefully");
+            }
+        } catch (InterruptedException e) {
+            System.out.println("Shutdown interrupted, forcing immediate shutdown...");
+            executor.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
+    }
+}
+                </code></pre>
+                
+                <div class="success-box">
+                    <strong>Solution Features:</strong>
+                    <ul>
+                        <li>Multiple mathematical operations (factorial, prime, Fibonacci, sum)</li>
+                        <li>Proper ExecutorService lifecycle management</li>
+                        <li>Result collection using Future objects</li>
+                        <li>Error handling and timeout management</li>
+                        <li>Performance statistics and speedup calculation</li>
+                        <li>Graceful shutdown with fallback to forced termination</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- GTU Previous Year Question 2 -->
+            <section>
+                <div class="gtu-question">
+                    <h4>GTU Previous Year Question (Winter 2022)</h4>
+                    <p><strong>Q: Explain the concept of deadlock in multithreading. Write a Java program that demonstrates both deadlock situation and its prevention using proper synchronization techniques.</strong></p>
+                </div>
+                
+                <h3>Deadlock Demonstration and Prevention:</h3>
+                <pre><code class="java">
+import java.util.concurrent.*;
+import java.util.concurrent.locks.ReentrantLock;
+
+// Resource class for demonstration
+class Resource {
+    private final int id;
+    private final String name;
+    private final ReentrantLock lock = new ReentrantLock();
+    
+    public Resource(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+    
+    public void acquire(String threadName) {
+        System.out.printf("%s trying to acquire %s%n", threadName, name);
+        lock.lock();
+        System.out.printf("%s acquired %s%n", threadName, name);
+    }
+    
+    public boolean tryAcquire(String threadName, long timeoutMs) {
+        System.out.printf("%s trying to acquire %s (with timeout)%n", threadName, name);
+        try {
+            if (lock.tryLock(timeoutMs, TimeUnit.MILLISECONDS)) {
+                System.out.printf("%s acquired %s%n", threadName, name);
+                return true;
+            } else {
+                System.out.printf("%s failed to acquire %s (timeout)%n", threadName, name);
+                return false;
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return false;
+        }
+    }
+    
+    public void release(String threadName) {
+        lock.unlock();
+        System.out.printf("%s released %s%n", threadName, name);
+    }
+    
+    public int getId() { return id; }
+    public String getName() { return name; }
+}
+
+// Task that can cause deadlock
+class DeadlockTask implements Runnable {
+    private final Resource resource1;
+    private final Resource resource2;
+    private final String taskName;
+    
+    public DeadlockTask(String name, Resource r1, Resource r2) {
+        this.taskName = name;
+        this.resource1 = r1;
+        this.resource2 = r2;
+    }
+    
+    @Override
+    public void run() {
+        try {
+            // Acquire first resource
+            resource1.acquire(taskName);
+            
+            // Simulate some work
+            Thread.sleep(100);
+            
+            // Try to acquire second resource - potential deadlock here!
+            resource2.acquire(taskName);
+            
+            System.out.printf("%s: Successfully acquired both resources!%n", taskName);
+            
+            // Simulate critical section work
+            Thread.sleep(200);
+            
+        } catch (InterruptedException e) {
+            System.out.printf("%s interrupted%n", taskName);
+            Thread.currentThread().interrupt();
+        } finally {
+            // Release resources in reverse order
+            try {
+                resource2.release(taskName);
+            } catch (Exception e) {
+                // Resource might not have been acquired
+            }
+            resource1.release(taskName);
+        }
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- Deadlock Prevention Solution -->
+            <section>
+                <h3>Deadlock Prevention Implementation:</h3>
+                <pre><code class="java">
+// Task with deadlock prevention using ordered locking
+class DeadlockFreeTask implements Runnable {
+    private final Resource resource1;
+    private final Resource resource2;
+    private final String taskName;
+    
+    public DeadlockFreeTask(String name, Resource r1, Resource r2) {
+        this.taskName = name;
+        this.resource1 = r1;
+        this.resource2 = r2;
+    }
+    
+    @Override
+    public void run() {
+        // Order resources by ID to prevent circular wait
+        Resource firstResource = resource1.getId() < resource2.getId() ? resource1 : resource2;
+        Resource secondResource = resource1.getId() < resource2.getId() ? resource2 : resource1;
+        
+        try {
+            // Acquire resources in ordered manner
+            firstResource.acquire(taskName);
+            
+            Thread.sleep(50); // Simulate work
+            
+            secondResource.acquire(taskName);
+            
+            System.out.printf("%s: Successfully acquired both resources (deadlock-free)!%n", taskName);
+            
+            // Critical section work
+            Thread.sleep(100);
+            
+        } catch (InterruptedException e) {
+            System.out.printf("%s interrupted%n", taskName);
+            Thread.currentThread().interrupt();
+        } finally {
+            // Release in reverse order
+            try {
+                secondResource.release(taskName);
+            } catch (Exception e) {
+                // Might not have been acquired
+            }
+            firstResource.release(taskName);
+        }
+    }
+}
+
+// Task with timeout-based deadlock prevention
+class TimeoutBasedTask implements Runnable {
+    private final Resource resource1;
+    private final Resource resource2;
+    private final String taskName;
+    private final long timeoutMs;
+    
+    public TimeoutBasedTask(String name, Resource r1, Resource r2, long timeout) {
+        this.taskName = name;
+        this.resource1 = r1;
+        this.resource2 = r2;
+        this.timeoutMs = timeout;
+    }
+    
+    @Override
+    public void run() {
+        boolean acquired1 = false, acquired2 = false;
+        
+        try {
+            // Try to acquire first resource with timeout
+            acquired1 = resource1.tryAcquire(taskName, timeoutMs);
+            if (!acquired1) {
+                System.out.printf("%s: Failed to acquire first resource%n", taskName);
+                return;
+            }
+            
+            Thread.sleep(50); // Simulate work
+            
+            // Try to acquire second resource with timeout
+            acquired2 = resource2.tryAcquire(taskName, timeoutMs);
+            if (!acquired2) {
+                System.out.printf("%s: Failed to acquire second resource%n", taskName);
+                return;
+            }
+            
+            System.out.printf("%s: Successfully acquired both resources (timeout-based)!%n", taskName);
+            
+            // Critical section work
+            Thread.sleep(100);
+            
+        } catch (InterruptedException e) {
+            System.out.printf("%s interrupted%n", taskName);
+            Thread.currentThread().interrupt();
+        } finally {
+            // Release acquired resources
+            if (acquired2) resource2.release(taskName);
+            if (acquired1) resource1.release(taskName);
+        }
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- Deadlock Demo Main -->
+            <section>
+                <h3>Complete Deadlock Demonstration:</h3>
+                <pre><code class="java">
+public class DeadlockDemo {
+    public static void main(String[] args) {
+        Resource resourceA = new Resource(1, "Resource-A");
+        Resource resourceB = new Resource(2, "Resource-B");
+        
+        System.out.println("=== DEADLOCK DEMONSTRATION ===\n");
+        
+        // 1. Demonstrate deadlock scenario
+        System.out.println("--- 1. Demonstrating Deadlock Scenario ---");
+        demonstrateDeadlock(resourceA, resourceB);
+        
+        // Wait a bit between demonstrations
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        
+        // 2. Demonstrate deadlock prevention using ordered locking
+        System.out.println("\n--- 2. Deadlock Prevention: Ordered Locking ---");
+        demonstrateOrderedLocking(resourceA, resourceB);
+        
+        // 3. Demonstrate deadlock prevention using timeouts
+        System.out.println("\n--- 3. Deadlock Prevention: Timeout-Based ---");
+        demonstrateTimeoutBasedPrevention(resourceA, resourceB);
+    }
+    
+    private static void demonstrateDeadlock(Resource resourceA, Resource resourceB) {
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        
+        // Task 1: A -> B
+        DeadlockTask task1 = new DeadlockTask("Task-1", resourceA, resourceB);
+        // Task 2: B -> A (creates circular dependency)
+        DeadlockTask task2 = new DeadlockTask("Task-2", resourceB, resourceA);
+        
+        Future<?> future1 = executor.submit(task1);
+        Future<?> future2 = executor.submit(task2);
+        
+        try {
+            // Wait for tasks with timeout to detect deadlock
+            future1.get(3, TimeUnit.SECONDS);
+            future2.get(3, TimeUnit.SECONDS);
+            System.out.println("Both tasks completed successfully (no deadlock)");
+        } catch (TimeoutException e) {
+            System.err.println("DEADLOCK DETECTED! Tasks timed out.");
+            future1.cancel(true);
+            future2.cancel(true);
+        } catch (InterruptedException | ExecutionException e) {
+            System.err.println("Task execution error: " + e.getMessage());
+        }
+        
+        executor.shutdownNow();
+    }
+    
+    private static void demonstrateOrderedLocking(Resource resourceA, Resource resourceB) {
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        
+        DeadlockFreeTask task1 = new DeadlockFreeTask("OrderedTask-1", resourceA, resourceB);
+        DeadlockFreeTask task2 = new DeadlockFreeTask("OrderedTask-2", resourceB, resourceA);
+        
+        Future<?> future1 = executor.submit(task1);
+        Future<?> future2 = executor.submit(task2);
+        
+        try {
+            future1.get(5, TimeUnit.SECONDS);
+            future2.get(5, TimeUnit.SECONDS);
+            System.out.println("Both ordered tasks completed successfully!");
+        } catch (Exception e) {
+            System.err.println("Ordered task execution error: " + e.getMessage());
+        }
+        
+        executor.shutdown();
+    }
+    
+    private static void demonstrateTimeoutBasedPrevention(Resource resourceA, Resource resourceB) {
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        
+        TimeoutBasedTask task1 = new TimeoutBasedTask("TimeoutTask-1", resourceA, resourceB, 1000);
+        TimeoutBasedTask task2 = new TimeoutBasedTask("TimeoutTask-2", resourceB, resourceA, 1000);
+        
+        Future<?> future1 = executor.submit(task1);
+        Future<?> future2 = executor.submit(task2);
+        
+        try {
+            future1.get(5, TimeUnit.SECONDS);
+            future2.get(5, TimeUnit.SECONDS);
+            System.out.println("Both timeout-based tasks completed!");
+        } catch (Exception e) {
+            System.err.println("Timeout-based task execution error: " + e.getMessage());
+        }
+        
+        executor.shutdown();
+    }
+}
+                </code></pre>
+                
+                <div class="highlight-box">
+                    <strong>Deadlock Prevention Techniques Demonstrated:</strong>
+                    <ul>
+                        <li><strong>Ordered Locking:</strong> Always acquire locks in the same order</li>
+                        <li><strong>Timeout-Based:</strong> Use tryLock() with timeout to avoid indefinite waiting</li>
+                        <li><strong>Detection:</strong> Monitor task execution time to detect potential deadlocks</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Hands-on Lab Exercise -->
+            <section>
+                <h2>🧪 Hands-on Lab Exercise</h2>
+                <div class="highlight-box">
+                    <h3>Lab 16: Concurrent Web Crawler</h3>
+                    <p><strong>Task:</strong> Create a multi-threaded web scraper that processes URLs concurrently using ExecutorService, atomic counters, and concurrent collections.</p>
+                </div>
+                
+                <h3>Requirements:</h3>
+                <ul>
+                    <li>Implement a <code>WebCrawlerTask</code> using Callable interface</li>
+                    <li>Use <code>ConcurrentHashMap</code> to store crawled URLs and results</li>
+                    <li>Implement atomic counters for success/failure statistics</li>
+                    <li>Use <code>CompletionService</code> to process results as they complete</li>
+                    <li>Implement proper timeout handling and resource cleanup</li>
+                    <li>Create a monitoring thread to display real-time progress</li>
+                </ul>
+                
+                <div class="warning-box">
+                    <strong>Challenge:</strong> Implement rate limiting to avoid overwhelming target servers and handle various exception scenarios gracefully.
+                </div>
+            </section>
+
+            <!-- Summary -->
+            <section>
+                <h2>📚 Lecture Summary</h2>
+                <div class="two-column">
+                    <div>
+                        <h3>Advanced Concepts Covered</h3>
+                        <ul>
+                            <li>ExecutorService and thread pools</li>
+                            <li>Concurrent collections (ConcurrentHashMap, etc.)</li>
+                            <li>Atomic operations and variables</li>
+                            <li>Volatile keyword and memory visibility</li>
+                            <li>Deadlock detection and prevention</li>
+                            <li>Lock-free programming techniques</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Best Practices</h3>
+                        <ul>
+                            <li>Use thread pools instead of creating threads manually</li>
+                            <li>Prefer concurrent collections over synchronized ones</li>
+                            <li>Use atomic variables for simple thread-safe operations</li>
+                            <li>Implement proper resource cleanup and shutdown</li>
+                            <li>Use ordered locking to prevent deadlocks</li>
+                            <li>Handle interruptions and timeouts gracefully</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="highlight-box" style="margin-top: 30px;">
+                    <h3>🎯 Next Lecture Preview</h3>
+                    <p><strong>Lecture 17: Java Collections Framework</strong></p>
+                    <ul>
+                        <li>List, Set, and Map interfaces</li>
+                        <li>ArrayList, LinkedList, HashMap implementations</li>
+                        <li>Iterators and enhanced for loops</li>
+                        <li>Comparable and Comparator interfaces</li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/notes/notes.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/highlight.min.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            transition: 'slide',
+            transitionSpeed: 'fast',
+            center: true,
+            plugins: [RevealNotes, RevealHighlight]
+        });
+    </script>
+</body>
+</html>

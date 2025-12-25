@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sniffing</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/white.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/monokai.css">
+    <style>
+        .reveal h1, .reveal h2, .reveal h3 {
+            color: #2c3e50;
+        }
+        .reveal .slides section {
+            text-align: left;
+        }
+        .reveal .title-slide {
+            text-align: center;
+        }
+        .reveal .highlight {
+            background-color: #3498db;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        .reveal .sniff-box {
+            background-color: #e8f5e8;
+            border-left: 4px solid #27ae60;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .reveal .passive-box {
+            background-color: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .reveal .active-box {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .reveal .attack-box {
+            background-color: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .reveal .example-box {
+            background-color: #f8f9fa;
+            border: 2px solid #6c757d;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 0.85em;
+        }
+        .reveal img {
+            border: none !important;
+            box-shadow: none !important;
+        }
+        .reveal .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            font-size: 0.9em;
+        }
+        .reveal .tools-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            font-size: 0.85em;
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- Title Slide -->
+            <section class="title-slide">
+                <h1>Sniffing</h1>
+                <h3>Network Traffic Interception and Analysis</h3>
+                <p>
+                    <small>Understanding Packet Capture, Analysis, and Security Implications</small>
+                </p>
+                <div style="text-align: center; margin-top: 30px;">
+                    <img src="diagrams/mitm-attack.svg" alt="Man-in-the-Middle Attack" style="width: 70%; height: auto; max-width: 700px;">
+                </div>
+            </section>
+
+            <!-- Overview of Network Sniffing -->
+            <section>
+                <h2>Network Sniffing Overview</h2>
+                <div class="sniff-box">
+                    <strong>Network Sniffing:</strong> The process of capturing, intercepting, and analyzing network traffic as it passes through network infrastructure to examine data packets and extract information.
+                </div>
+                <h3>Core Concepts:</h3>
+                <ul>
+                    <li><strong>Packet Capture:</strong> Intercepting data packets from network interfaces</li>
+                    <li><strong>Traffic Analysis:</strong> Examining packet contents and patterns</li>
+                    <li><strong>Protocol Decoding:</strong> Understanding various network protocols</li>
+                    <li><strong>Data Extraction:</strong> Retrieving useful information from packets</li>
+                    <li><strong>Network Monitoring:</strong> Continuous traffic surveillance</li>
+                    <li><strong>Security Assessment:</strong> Identifying vulnerabilities and threats</li>
+                </ul>
+                <div class="passive-box">
+                    <strong>Dual Purpose:</strong> Network sniffing serves both legitimate network administration and security purposes, as well as malicious surveillance and attack activities
+                </div>
+            </section>
+
+            <!-- Types of Network Sniffing -->
+            <section>
+                <h2>Types of Network Sniffing</h2>
+                <div class="comparison-grid">
+                    <div class="passive-box">
+                        <h4>Passive Sniffing:</h4>
+                        <ul>
+                            <li><strong>Method:</strong> Listening to network traffic without interaction</li>
+                            <li><strong>Detection:</strong> Difficult to detect by network devices</li>
+                            <li><strong>Network Type:</strong> Effective on hubs and wireless networks</li>
+                            <li><strong>Traffic Access:</strong> Only traffic sent to or through sniffer</li>
+                            <li><strong>Examples:</strong> Hub-based networks, wireless monitoring</li>
+                            <li><strong>Stealth:</strong> Completely undetectable to targets</li>
+                        </ul>
+                    </div>
+                    <div class="active-box">
+                        <h4>Active Sniffing:</h4>
+                        <ul>
+                            <li><strong>Method:</strong> Actively manipulating network to capture traffic</li>
+                            <li><strong>Detection:</strong> May be detectable through network monitoring</li>
+                            <li><strong>Network Type:</strong> Required for switched network environments</li>
+                            <li><strong>Traffic Access:</strong> Can capture traffic not normally accessible</li>
+                            <li><strong>Examples:</strong> ARP spoofing, MAC flooding, DHCP attacks</li>
+                            <li><strong>Stealth:</strong> May generate suspicious network activity</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="sniff-box">
+                    <h3>Network Infrastructure Impact:</h3>
+                    <ul>
+                        <li><strong>Hub Networks:</strong> All traffic visible to all ports (broadcast domain)</li>
+                        <li><strong>Switched Networks:</strong> Traffic segmented by MAC address tables</li>
+                        <li><strong>Wireless Networks:</strong> Radio frequency transmission accessible to all</li>
+                        <li><strong>Router Networks:</strong> Inter-VLAN traffic may be observable</li>
+                        <li><strong>Internet Backbones:</strong> High-volume traffic aggregation points</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Network Protocols and Sniffing -->
+            <section>
+                <h2>Network Protocols and Vulnerability</h2>
+                <div class="tools-grid">
+                    <div class="attack-box">
+                        <h4>Vulnerable Protocols:</h4>
+                        <ul>
+                            <li><strong>HTTP:</strong> Unencrypted web traffic</li>
+                            <li><strong>FTP:</strong> File transfer with plain text credentials</li>
+                            <li><strong>Telnet:</strong> Unencrypted remote access</li>
+                            <li><strong>SMTP:</strong> Email transmission without encryption</li>
+                            <li><strong>POP3/IMAP:</strong> Email retrieval protocols</li>
+                            <li><strong>SNMP v1/v2:</strong> Network management protocols</li>
+                        </ul>
+                    </div>
+                    <div class="passive-box">
+                        <h4>Partially Vulnerable:</h4>
+                        <ul>
+                            <li><strong>HTTPS:</strong> Encrypted but metadata visible</li>
+                            <li><strong>SSH:</strong> Encrypted but connection patterns visible</li>
+                            <li><strong>VPN:</strong> Tunnel endpoints and traffic volume</li>
+                            <li><strong>DNS:</strong> Query names may be visible</li>
+                            <li><strong>NTP:</strong> Time synchronization data</li>
+                            <li><strong>DHCP:</strong> IP assignment information</li>
+                        </ul>
+                    </div>
+                    <div class="sniff-box">
+                        <h4>Protected Protocols:</h4>
+                        <ul>
+                            <li><strong>TLS/SSL:</strong> Transport layer security</li>
+                            <li><strong>IPSec:</strong> Network layer encryption</li>
+                            <li><strong>WPA3:</strong> Strong wireless encryption</li>
+                            <li><strong>SFTP:</strong> Secure file transfer</li>
+                            <li><strong>HTTPS:</strong> Encrypted web communications</li>
+                            <li><strong>SNMPv3:</strong> Authenticated SNMP</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="example-box">
+                    <strong>Protocol Stack Sniffing Example:</strong><br><br>
+                    
+                    <strong>Layer 1 (Physical):</strong> Radio frequency, electrical signals<br>
+                    <strong>Layer 2 (Data Link):</strong> MAC addresses, frame headers<br>
+                    <strong>Layer 3 (Network):</strong> IP addresses, routing information<br>
+                    <strong>Layer 4 (Transport):</strong> TCP/UDP ports, sequence numbers<br>
+                    <strong>Layer 5+ (Application):</strong> HTTP, FTP, email content<br><br>
+                    
+                    <strong>Captured Data:</strong><br>
+                    • Source/Destination MAC: 00:11:22:33:44:55 → 66:77:88:99:aa:bb<br>
+                    • Source/Destination IP: 192.168.1.100 → 10.0.0.50<br>
+                    • Protocol: TCP Port 80 (HTTP)<br>
+                    • Payload: GET /login.php HTTP/1.1 + form data
+                </div>
+            </section>
+
+            <!-- Network Sniffing Tools -->
+            <section>
+                <h2>Network Sniffing Tools and Software</h2>
+                <div class="tools-grid">
+                    <div class="sniff-box">
+                        <h4>Professional Tools:</h4>
+                        <ul>
+                            <li><strong>Wireshark:</strong> Most popular network protocol analyzer</li>
+                            <li><strong>tcpdump:</strong> Command-line packet analyzer</li>
+                            <li><strong>NetworkMiner:</strong> Network forensic analysis tool</li>
+                            <li><strong>Omnipeek:</strong> Commercial network analysis suite</li>
+                            <li><strong>SolarWinds NPM:</strong> Enterprise network monitoring</li>
+                            <li><strong>PRTG:</strong> Network monitoring solution</li>
+                        </ul>
+                    </div>
+                    <div class="active-box">
+                        <h4>Penetration Testing Tools:</h4>
+                        <ul>
+                            <li><strong>Ettercap:</strong> Comprehensive sniffing suite</li>
+                            <li><strong>Bettercap:</strong> Modern network attack framework</li>
+                            <li><strong>dSniff:</strong> Collection of sniffing tools</li>
+                            <li><strong>Cain & Abel:</strong> Windows password recovery tool</li>
+                            <li><strong>Kismet:</strong> Wireless network detector</li>
+                            <li><strong>airodump-ng:</strong> WiFi packet capture</li>
+                        </ul>
+                    </div>
+                    <div class="attack-box">
+                        <h4>Specialized Sniffers:</h4>
+                        <ul>
+                            <li><strong>MailSnarf:</strong> Email message sniffing</li>
+                            <li><strong>URLSnarf:</strong> HTTP request capturing</li>
+                            <li><strong>WebSpy:</strong> Web browsing activity monitoring</li>
+                            <li><strong>SSHMitM:</strong> SSH connection interception</li>
+                            <li><strong>DNSSpoof:</strong> DNS response forging</li>
+                            <li><strong>Fragrouter:</strong> Network packet fragmentation</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="passive-box">
+                    <h3>Tool Selection Criteria:</h3>
+                    <ul>
+                        <li><strong>Protocol Support:</strong> Comprehensive protocol decoding capabilities</li>
+                        <li><strong>Performance:</strong> High-speed packet capture and analysis</li>
+                        <li><strong>User Interface:</strong> Intuitive analysis and visualization</li>
+                        <li><strong>Filtering:</strong> Advanced packet filtering and search</li>
+                        <li><strong>Export Options:</strong> Multiple output formats</li>
+                        <li><strong>Platform Support:</strong> Operating system compatibility</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Wireshark Deep Dive -->
+            <section>
+                <h2>Wireshark: The Ultimate Network Analyzer</h2>
+                <div class="sniff-box">
+                    <strong>Wireshark:</strong> Free, open-source network protocol analyzer that provides deep inspection of network traffic with comprehensive protocol support and analysis capabilities.
+                </div>
+                <div class="example-box">
+                    <strong>Wireshark Key Features and Usage:</strong><br><br>
+                    
+                    <strong># Installation and Basic Usage</strong><br>
+                    sudo apt install wireshark<br>
+                    sudo usermod -aG wireshark $USER<br>
+                    wireshark<br><br>
+                    
+                    <strong># Command-line equivalent (tshark)</strong><br>
+                    tshark -i eth0 -w capture.pcap<br>
+                    tshark -r capture.pcap -Y "http"<br><br>
+                    
+                    <strong>Key Features:</strong><br>
+                    • <strong>Live Capture:</strong> Real-time packet capture from network interfaces<br>
+                    • <strong>Deep Inspection:</strong> Layer 2-7 protocol analysis<br>
+                    • <strong>Rich Filtering:</strong> Display and capture filters<br>
+                    • <strong>Statistical Analysis:</strong> Traffic patterns and trends<br>
+                    • <strong>Expert System:</strong> Automatic problem detection<br>
+                    • <strong>Extensibility:</strong> Plugin architecture and scripting<br><br>
+                    
+                    <strong>Common Display Filters:</strong><br>
+                    ip.addr == 192.168.1.100<br>
+                    tcp.port == 80 or tcp.port == 443<br>
+                    http.request.method == "POST"<br>
+                    dns.flags.response == 0<br>
+                    tcp.analysis.flags && !tcp.analysis.window_update
+                </div>
+            </section>
+
+            <!-- Active Sniffing Techniques -->
+            <section>
+                <h2>Active Sniffing Attack Techniques</h2>
+                <div class="active-box">
+                    <strong>Active Sniffing:</strong> Techniques that manipulate network infrastructure or protocols to redirect or intercept traffic that wouldn't normally be accessible.
+                </div>
+                <div class="comparison-grid">
+                    <div class="attack-box">
+                        <h4>ARP Spoofing/Poisoning:</h4>
+                        <ul>
+                            <li><strong>Method:</strong> Send fake ARP responses</li>
+                            <li><strong>Effect:</strong> Redirect traffic through attacker</li>
+                            <li><strong>Target:</strong> Switched network environments</li>
+                            <li><strong>Detection:</strong> ARP table monitoring</li>
+                            <li><strong>Tools:</strong> Ettercap, Bettercap, ARPspoof</li>
+                            <li><strong>Mitigation:</strong> Static ARP entries, DAI</li>
+                        </ul>
+                    </div>
+                    <div class="active-box">
+                        <h4>MAC Flooding:</h4>
+                        <ul>
+                            <li><strong>Method:</strong> Overflow switch MAC address table</li>
+                            <li><strong>Effect:</strong> Force switch into hub mode</li>
+                            <li><strong>Target:</strong> Older or vulnerable switches</li>
+                            <li><strong>Detection:</strong> Switch log analysis</li>
+                            <li><strong>Tools:</strong> macof, Yersinia</li>
+                            <li><strong>Mitigation:</strong> Port security, MAC limits</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="tools-grid">
+                    <div class="attack-box">
+                        <h4>DHCP Attacks:</h4>
+                        <ul>
+                            <li><strong>DHCP Spoofing:</strong> Rogue DHCP server</li>
+                            <li><strong>DHCP Starvation:</strong> Exhaust IP pool</li>
+                            <li><strong>Default Gateway:</strong> Traffic redirection</li>
+                            <li><strong>DNS Server:</strong> DNS poisoning setup</li>
+                        </ul>
+                    </div>
+                    <div class="active-box">
+                        <h4>DNS Spoofing:</h4>
+                        <ul>
+                            <li><strong>Cache Poisoning:</strong> Corrupt DNS cache</li>
+                            <li><strong>Response Injection:</strong> Fake DNS responses</li>
+                            <li><strong>Domain Hijacking:</strong> Redirect domains</li>
+                            <li><strong>Pharming:</strong> Traffic misdirection</li>
+                        </ul>
+                    </div>
+                    <div class="sniff-box">
+                        <h4>SSL/TLS Attacks:</h4>
+                        <ul>
+                            <li><strong>SSL Stripping:</strong> Downgrade to HTTP</li>
+                            <li><strong>Certificate Spoofing:</strong> Fake certificates</li>
+                            <li><strong>MITM Proxies:</strong> Transparent proxying</li>
+                            <li><strong>HSTS Bypass:</strong> Bypass security headers</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ARP Spoofing Attack Demonstration -->
+            <section>
+                <h2>ARP Spoofing Attack Example</h2>
+                <div class="attack-box">
+                    <strong>ARP Spoofing:</strong> Man-in-the-middle attack that exploits the Address Resolution Protocol to intercept network traffic between hosts.
+                </div>
+                <div class="example-box">
+                    <strong>ARP Spoofing Attack Steps:</strong><br><br>
+                    
+                    <strong># 1. Network Discovery</strong><br>
+                    nmap -sn 192.168.1.0/24<br>
+                    arp -a<br><br>
+                    
+                    <strong># 2. Enable IP Forwarding</strong><br>
+                    echo 1 > /proc/sys/net/ipv4/ip_forward<br>
+                    sysctl net.ipv4.ip_forward=1<br><br>
+                    
+                    <strong># 3. ARP Spoofing with ettercap</strong><br>
+                    ettercap -T -M arp:remote /192.168.1.1// /192.168.1.100//<br>
+                    ettercap -T -i eth0 -M arp /192.168.1.1-254//<br><br>
+                    
+                    <strong># 4. Alternative with arpspoof</strong><br>
+                    arpspoof -i eth0 -t 192.168.1.100 192.168.1.1<br>
+                    arpspoof -i eth0 -t 192.168.1.1 192.168.1.100<br><br>
+                    
+                    <strong># 5. Capture Traffic</strong><br>
+                    tcpdump -i eth0 -w mitm_capture.pcap<br>
+                    wireshark -i eth0<br><br>
+                    
+                    <strong># 6. Analysis</strong><br>
+                    # View captured credentials, cookies, and sensitive data<br>
+                    tshark -r mitm_capture.pcap -Y "http.request.method==POST"<br>
+                    tshark -r mitm_capture.pcap -T fields -e http.cookie
+                </div>
+            </section>
+
+            <!-- Wireless Network Sniffing -->
+            <section>
+                <h2>Wireless Network Sniffing</h2>
+                <div class="passive-box">
+                    <strong>Wireless Sniffing:</strong> Capturing and analyzing wireless network traffic, taking advantage of the broadcast nature of radio frequency communications.
+                </div>
+                <div class="comparison-grid">
+                    <div class="sniff-box">
+                        <h4>WiFi Sniffing Process:</h4>
+                        <ul>
+                            <li><strong>Monitor Mode:</strong> Enable wireless interface monitoring</li>
+                            <li><strong>Channel Hopping:</strong> Scan across all WiFi channels</li>
+                            <li><strong>Frame Capture:</strong> Collect 802.11 management frames</li>
+                            <li><strong>Beacon Analysis:</strong> Identify access points and networks</li>
+                            <li><strong>Client Tracking:</strong> Monitor device associations</li>
+                            <li><strong>Traffic Analysis:</strong> Analyze captured packets</li>
+                        </ul>
+                    </div>
+                    <div class="active-box">
+                        <h4>Wireless Attack Vectors:</h4>
+                        <ul>
+                            <li><strong>Open Networks:</strong> Unencrypted traffic capture</li>
+                            <li><strong>WEP Cracking:</strong> Weak encryption key recovery</li>
+                            <li><strong>WPA Handshake:</strong> Capture authentication handshakes</li>
+                            <li><strong>Evil Twin:</strong> Rogue access point attacks</li>
+                            <li><strong>Deauthentication:</strong> Force client reconnections</li>
+                            <li><strong>Packet Injection:</strong> Inject malicious frames</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="example-box">
+                    <strong>Wireless Sniffing Commands:</strong><br><br>
+                    
+                    <strong># Enable monitor mode</strong><br>
+                    airmon-ng start wlan0<br>
+                    iwconfig wlan0mon mode monitor<br><br>
+                    
+                    <strong># Discover wireless networks</strong><br>
+                    airodump-ng wlan0mon<br>
+                    kismet -c wlan0mon<br><br>
+                    
+                    <strong># Capture specific network traffic</strong><br>
+                    airodump-ng -c 6 --bssid AA:BB:CC:DD:EE:FF -w capture wlan0mon<br><br>
+                    
+                    <strong># Deauthentication attack</strong><br>
+                    aireplay-ng -0 10 -a AA:BB:CC:DD:EE:FF -c 11:22:33:44:55:66 wlan0mon<br><br>
+                    
+                    <strong># WPA handshake analysis</strong><br>
+                    aircrack-ng -w wordlist.txt -b AA:BB:CC:DD:EE:FF capture-01.cap
+                </div>
+            </section>
+
+            <!-- Password and Credential Sniffing -->
+            <section>
+                <h2>Password and Credential Sniffing</h2>
+                <div class="attack-box">
+                    <strong>Credential Harvesting:</strong> Extracting usernames, passwords, and authentication tokens from captured network traffic and protocols.
+                </div>
+                <div class="tools-grid">
+                    <div class="attack-box">
+                        <h4>HTTP Authentication:</h4>
+                        <ul>
+                            <li><strong>Basic Auth:</strong> Base64 encoded credentials</li>
+                            <li><strong>Form Data:</strong> POST request parameters</li>
+                            <li><strong>Cookies:</strong> Session and authentication tokens</li>
+                            <li><strong>Headers:</strong> Custom authentication headers</li>
+                            <li><strong>URLs:</strong> Credentials in query parameters</li>
+                        </ul>
+                    </div>
+                    <div class="passive-box">
+                        <h4>Protocol Credentials:</h4>
+                        <ul>
+                            <li><strong>FTP:</strong> USER and PASS commands</li>
+                            <li><strong>Telnet:</strong> Login sequences</li>
+                            <li><strong>SMTP:</strong> AUTH LOGIN commands</li>
+                            <li><strong>POP3/IMAP:</strong> Authentication exchanges</li>
+                            <li><strong>SNMP:</strong> Community strings</li>
+                        </ul>
+                    </div>
+                    <div class="sniff-box">
+                        <h4>Advanced Techniques:</h4>
+                        <ul>
+                            <li><strong>Session Hijacking:</strong> Cookie and token theft</li>
+                            <li><strong>Kerberos:</strong> Ticket extraction</li>
+                            <li><strong>NTLM:</strong> Challenge-response capture</li>
+                            <li><strong>SSL/TLS:</strong> Certificate and key extraction</li>
+                            <li><strong>VPN:</strong> IPSec and OpenVPN credentials</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="example-box">
+                    <strong>Credential Extraction Examples:</strong><br><br>
+                    
+                    <strong># HTTP Basic Authentication (Wireshark filter)</strong><br>
+                    http.authbasic<br><br>
+                    
+                    <strong># Extract FTP credentials</strong><br>
+                    tshark -r capture.pcap -Y "ftp.request.command==USER or ftp.request.command==PASS"<br><br>
+                    
+                    <strong># Find HTTP POST data</strong><br>
+                    tshark -r capture.pcap -Y "http.request.method==POST" -T fields -e http.file_data<br><br>
+                    
+                    <strong># Using dsniff tools</strong><br>
+                    dsniff -i eth0<br>
+                    urlsnarf -i eth0<br>
+                    mailsnarf -i eth0<br><br>
+                    
+                    <strong># Extract cookies and tokens</strong><br>
+                    tshark -r capture.pcap -Y "http.cookie" -T fields -e http.cookie<br>
+                    tshark -r capture.pcap -Y "http.authorization" -T fields -e http.authorization
+                </div>
+            </section>
+
+            <!-- Sniffing Detection and Prevention -->
+            <section>
+                <h2>Sniffing Detection Techniques</h2>
+                <div class="sniff-box">
+                    <strong>Detection Challenge:</strong> Passive sniffing is inherently difficult to detect, while active sniffing may leave observable traces in network traffic and logs.
+                </div>
+                <div class="comparison-grid">
+                    <div class="passive-box">
+                        <h4>Passive Sniffing Detection:</h4>
+                        <ul>
+                            <li><strong>Physical Inspection:</strong> Unauthorized network taps</li>
+                            <li><strong>Port Monitoring:</strong> Unexpected port mirroring</li>
+                            <li><strong>Device Inventory:</strong> Unknown network interfaces</li>
+                            <li><strong>Performance Impact:</strong> Network latency changes</li>
+                            <li><strong>Promiscuous Mode:</strong> Network interface status</li>
+                            <li><strong>Switch Logs:</strong> Port configuration changes</li>
+                        </ul>
+                    </div>
+                    <div class="active-box">
+                        <h4>Active Sniffing Detection:</h4>
+                        <ul>
+                            <li><strong>ARP Table Monitoring:</strong> Duplicate or changing entries</li>
+                            <li><strong>MAC Address Tracking:</strong> Spoofed addresses</li>
+                            <li><strong>Network Latency:</strong> Increased response times</li>
+                            <li><strong>DHCP Logs:</strong> Multiple servers or conflicts</li>
+                            <li><strong>DNS Query Analysis:</strong> Suspicious resolutions</li>
+                            <li><strong>Certificate Warnings:</strong> SSL/TLS anomalies</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="example-box">
+                    <strong>Detection Tools and Commands:</strong><br><br>
+                    
+                    <strong># Check for promiscuous mode interfaces</strong><br>
+                    ip link show<br>
+                    ifconfig -a | grep PROMISC<br><br>
+                    
+                    <strong># Monitor ARP table changes</strong><br>
+                    arp -a > arp_baseline.txt<br>
+                    watch -n 5 'arp -a | diff - arp_baseline.txt'<br><br>
+                    
+                    <strong># Detect ARP spoofing with arpwatch</strong><br>
+                    arpwatch -i eth0<br><br>
+                    
+                    <strong># Check for duplicate IP addresses</strong><br>
+                    arping -D 192.168.1.100<br><br>
+                    
+                    <strong># Monitor DNS responses</strong><br>
+                    dig @8.8.8.8 example.com<br>
+                    dig @192.168.1.1 example.com<br><br>
+                    
+                    <strong># SSL certificate verification</strong><br>
+                    openssl s_client -connect example.com:443 -servername example.com
+                </div>
+            </section>
+
+            <!-- Sniffing Prevention and Countermeasures -->
+            <section>
+                <h2>Sniffing Prevention and Countermeasures</h2>
+                <div class="sniff-box">
+                    <strong>Defense Strategy:</strong> Multi-layered approach combining network segmentation, encryption, monitoring, and access controls to prevent or mitigate sniffing attacks.
+                </div>
+                <div class="tools-grid">
+                    <div class="passive-box">
+                        <h4>Network Security:</h4>
+                        <ul>
+                            <li><strong>Switch Security:</strong> Port security, MAC limiting</li>
+                            <li><strong>VLAN Segmentation:</strong> Network isolation</li>
+                            <li><strong>Dynamic ARP Inspection:</strong> ARP validation</li>
+                            <li><strong>DHCP Snooping:</strong> DHCP security</li>
+                            <li><strong>Private VLANs:</strong> Host isolation</li>
+                            <li><strong>Network Access Control:</strong> 802.1X authentication</li>
+                        </ul>
+                    </div>
+                    <div class="active-box">
+                        <h4>Encryption and Protocols:</h4>
+                        <ul>
+                            <li><strong>HTTPS:</strong> Web traffic encryption</li>
+                            <li><strong>SSH:</strong> Secure remote access</li>
+                            <li><strong>VPN:</strong> Network tunnel encryption</li>
+                            <li><strong>WPA3:</strong> Strong wireless encryption</li>
+                            <li><strong>IPSec:</strong> Network layer security</li>
+                            <li><strong>TLS:</strong> Transport layer security</li>
+                        </ul>
+                    </div>
+                    <div class="attack-box">
+                        <h4>Monitoring and Detection:</h4>
+                        <ul>
+                            <li><strong>Network Monitoring:</strong> Traffic analysis</li>
+                            <li><strong>Intrusion Detection:</strong> IDS/IPS deployment</li>
+                            <li><strong>SIEM Integration:</strong> Log correlation</li>
+                            <li><strong>Anomaly Detection:</strong> Behavioral analysis</li>
+                            <li><strong>Honeypots:</strong> Deception technology</li>
+                            <li><strong>Threat Intelligence:</strong> IOC monitoring</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="example-box">
+                    <strong>Switch Security Configuration:</strong><br><br>
+                    
+                    <strong># Enable port security</strong><br>
+                    interface fastethernet 0/1<br>
+                    switchport mode access<br>
+                    switchport port-security<br>
+                    switchport port-security maximum 2<br>
+                    switchport port-security violation restrict<br><br>
+                    
+                    <strong># Enable DHCP snooping</strong><br>
+                    ip dhcp snooping<br>
+                    ip dhcp snooping vlan 10<br>
+                    interface fastethernet 0/24<br>
+                    ip dhcp snooping trust<br><br>
+                    
+                    <strong># Enable Dynamic ARP Inspection</strong><br>
+                    ip arp inspection vlan 10<br>
+                    interface fastethernet 0/24<br>
+                    ip arp inspection trust
+                </div>
+            </section>
+
+            <!-- Legal and Ethical Considerations -->
+            <section>
+                <h2>Legal and Ethical Considerations</h2>
+                <div class="attack-box">
+                    <strong>Legal Framework:</strong> Network sniffing activities must comply with applicable laws, regulations, and organizational policies regarding privacy and unauthorized access.
+                </div>
+                <div class="comparison-grid">
+                    <div class="passive-box">
+                        <h4>Legitimate Uses:</h4>
+                        <ul>
+                            <li><strong>Network Administration:</strong> Troubleshooting and optimization</li>
+                            <li><strong>Security Monitoring:</strong> Threat detection and analysis</li>
+                            <li><strong>Forensic Investigation:</strong> Incident response and evidence</li>
+                            <li><strong>Compliance Auditing:</strong> Regulatory requirement validation</li>
+                            <li><strong>Penetration Testing:</strong> Authorized security assessment</li>
+                            <li><strong>Research:</strong> Academic and security research</li>
+                        </ul>
+                    </div>
+                    <div class="attack-box">
+                        <h4>Legal Requirements:</h4>
+                        <ul>
+                            <li><strong>Authorization:</strong> Explicit permission from network owners</li>
+                            <li><strong>Scope Definition:</strong> Clear boundaries and limitations</li>
+                            <li><strong>Data Protection:</strong> Privacy law compliance (GDPR, HIPAA)</li>
+                            <li><strong>Employee Notification:</strong> Workplace monitoring disclosure</li>
+                            <li><strong>Log Retention:</strong> Data retention and destruction policies</li>
+                            <li><strong>Chain of Custody:</strong> Evidence handling procedures</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="sniff-box">
+                    <h3>Best Practice Guidelines:</h3>
+                    <ul>
+                        <li><strong>Written Policies:</strong> Clear organizational guidelines for network monitoring</li>
+                        <li><strong>Access Controls:</strong> Restrict sniffing tool access to authorized personnel</li>
+                        <li><strong>Training:</strong> Proper training on legal and ethical use</li>
+                        <li><strong>Documentation:</strong> Maintain detailed records of monitoring activities</li>
+                        <li><strong>Regular Review:</strong> Periodic policy and procedure updates</li>
+                        <li><strong>Incident Response:</strong> Procedures for handling discovered violations</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Advanced Sniffing Techniques -->
+            <section>
+                <h2>Advanced Sniffing and Evasion Techniques</h2>
+                <div class="active-box">
+                    <strong>Advanced Methods:</strong> Sophisticated sniffing techniques used by advanced attackers to bypass security controls and evade detection.
+                </div>
+                <div class="comparison-grid">
+                    <div class="attack-box">
+                        <h4>Steganographic Sniffing:</h4>
+                        <ul>
+                            <li><strong>Covert Channels:</strong> Hidden communication methods</li>
+                            <li><strong>Protocol Tunneling:</strong> Data hiding in legitimate protocols</li>
+                            <li><strong>Timing Attacks:</strong> Information extraction via timing</li>
+                            <li><strong>Side Channels:</strong> Electromagnetic and acoustic sniffing</li>
+                            <li><strong>Traffic Analysis:</strong> Metadata and pattern analysis</li>
+                        </ul>
+                    </div>
+                    <div class="sniff-box">
+                        <h4>Evasion Techniques:</h4>
+                        <ul>
+                            <li><strong>Anti-Detection:</strong> Avoiding security tool signatures</li>
+                            <li><strong>Traffic Mimicry:</strong> Disguising malicious traffic</li>
+                            <li><strong>Low and Slow:</strong> Gradual data exfiltration</li>
+                            <li><strong>Protocol Obfuscation:</strong> Traffic pattern masking</li>
+                            <li><strong>Distributed Sniffing:</strong> Multiple collection points</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="passive-box">
+                    <h4>Emerging Threats:</h4>
+                    <ul>
+                        <li><strong>AI-Powered Analysis:</strong> Machine learning for traffic analysis</li>
+                        <li><strong>IoT Sniffing:</strong> Internet of Things device monitoring</li>
+                        <li><strong>5G Networks:</strong> Next-generation wireless sniffing</li>
+                        <li><strong>Cloud Traffic:</strong> Virtualized network monitoring</li>
+                        <li><strong>Container Networks:</strong> Docker and Kubernetes sniffing</li>
+                        <li><strong>SDN Environments:</strong> Software-defined network monitoring</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Incident Response for Sniffing Attacks -->
+            <section>
+                <h2>Incident Response for Sniffing Attacks</h2>
+                <div class="attack-box">
+                    <strong>Response Strategy:</strong> Systematic approach to identifying, containing, and remediating network sniffing incidents while preserving evidence.
+                </div>
+                <div class="example-box">
+                    <strong>Sniffing Incident Response Process:</strong><br><br>
+                    
+                    <strong>1. Detection and Analysis:</strong><br>
+                    • Network anomaly identification<br>
+                    • Traffic pattern analysis<br>
+                    • Device and user behavior assessment<br>
+                    • Scope and impact evaluation<br><br>
+                    
+                    <strong>2. Containment:</strong><br>
+                    • Isolate suspected compromised systems<br>
+                    • Block suspicious network connections<br>
+                    • Disable compromised accounts<br>
+                    • Prevent lateral movement<br><br>
+                    
+                    <strong>3. Investigation:</strong><br>
+                    • Packet capture analysis<br>
+                    • Log file examination<br>
+                    • Device forensic analysis<br>
+                    • Timeline reconstruction<br><br>
+                    
+                    <strong>4. Eradication:</strong><br>
+                    • Remove sniffing tools and malware<br>
+                    • Patch identified vulnerabilities<br>
+                    • Strengthen security controls<br>
+                    • Update security policies<br><br>
+                    
+                    <strong>5. Recovery and Monitoring:</strong><br>
+                    • Restore affected systems<br>
+                    • Implement enhanced monitoring<br>
+                    • Validate security improvements<br>
+                    • Continuous threat hunting
+                </div>
+            </section>
+
+            <!-- Key Takeaways -->
+            <section>
+                <h2>Key Takeaways</h2>
+                <ul>
+                    <li>Network sniffing is both a legitimate network administration tool and security threat</li>
+                    <li>Passive sniffing is harder to detect than active sniffing techniques</li>
+                    <li>Switched networks require active sniffing methods like ARP spoofing</li>
+                    <li>Wireless networks are particularly vulnerable to sniffing attacks</li>
+                    <li>Encryption is the primary defense against traffic interception</li>
+                    <li>Network segmentation and access controls reduce sniffing exposure</li>
+                    <li>Detection requires monitoring for network anomalies and behaviors</li>
+                    <li>Legal authorization is required for legitimate sniffing activities</li>
+                </ul>
+                <div class="sniff-box">
+                    <strong>Remember:</strong> Network sniffing capabilities should be used responsibly with proper authorization and within legal boundaries to improve network security rather than compromise it
+                </div>
+            </section>
+
+            <!-- Thank You -->
+            <section class="title-slide">
+                <h1>Thank You</h1>
+                <h3>Questions & Discussion</h3>
+                <p>Next: Session Hijacking</p>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/notes/notes.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/markdown/markdown.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/highlight.min.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            transition: 'slide',
+            plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+        });
+    </script>
+</body>
+</html>

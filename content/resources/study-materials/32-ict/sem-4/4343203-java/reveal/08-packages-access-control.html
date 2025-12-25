@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Java Programming - Packages and Access Control</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/theme/white.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/highlight/monokai.css">
+    <style>
+        .reveal h1, .reveal h2, .reveal h3 { color: #2c3e50; }
+        .reveal .slides section { text-align: left; padding: 10px 30px; height: 90vh; box-sizing: border-box; overflow: hidden; }
+        .reveal .title-slide { text-align: center; }
+        .reveal .center { text-align: center; }
+        .reveal pre code { font-size: 0.7em; line-height: 1.1; max-height: 300px; overflow-y: auto; }
+        .reveal h2 { font-size: 1.6em; margin-bottom: 0.4em; }
+        .reveal h3 { font-size: 1.3em; margin-bottom: 0.3em; }
+        .reveal h4 { font-size: 1.0em; margin-bottom: 0.2em; }
+        .reveal ul, .reveal ol { font-size: 0.85em; margin: 0.4em 0; }
+        .reveal li { margin: 0.2em 0; }
+        .highlight { background-color: #fff3cd; padding: 6px; border-left: 4px solid #ffc107; margin: 6px 0; font-size: 0.85em; }
+        .concept-box { background-color: #e8f4f8; padding: 8px; border-radius: 5px; margin: 6px 0; font-size: 0.8em; }
+        .two-column { display: flex; gap: 15px; font-size: 0.8em; }
+        .three-column { display: flex; gap: 10px; font-size: 0.75em; }
+        .column { flex: 1; }
+        .compact-list li { margin: 0.1em 0; font-size: 0.8em; }
+        .small-text { font-size: 0.75em; }
+        .table-style { font-size: 0.7em; width: 100%; border-collapse: collapse; }
+        .table-style th, .table-style td { border: 1px solid #ddd; padding: 4px; text-align: center; }
+        .table-style th { background-color: #f2f2f2; font-weight: bold; }
+        .package-box { background: #f8f9fa; padding: 8px; border-radius: 5px; margin: 6px 0; font-size: 0.8em; }
+        .access-box { background: #e3f2fd; padding: 8px; border-radius: 5px; margin: 6px 0; font-size: 0.8em; }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- Title Slide -->
+            <section class="title-slide">
+                <h1>Java Programming Language</h1>
+                <h2>Chapter 8: Packages and Access Control</h2>
+                <p>Organizing and Securing Java Code</p>
+                <br>
+                <p><small>Course: 4343203 - Java Programming</small></p>
+            </section>
+
+            <!-- Table of Contents -->
+            <section>
+                <h2>What We'll Cover</h2>
+                <ul class="compact-list">
+                    <li>Package Fundamentals</li>
+                    <li>Creating and Using Packages</li>
+                    <li>Import Statements</li>
+                    <li>Access Modifiers</li>
+                    <li>Access Control Levels</li>
+                    <li>Package-Level Access</li>
+                    <li>CLASSPATH and Package Structure</li>
+                    <li>Java Built-in Packages</li>
+                </ul>
+            </section>
+
+            <!-- Packages Overview -->
+            <section>
+                <h2>Package Structure</h2>
+                <div class="center">
+                    <img src="diagrams/package-structure.svg" alt="Java Package Structure" style="width: 95%; max-height: 75vh;">
+                </div>
+            </section>
+
+            <!-- Package Fundamentals -->
+            <section>
+                <section>
+                    <h2>Package Fundamentals</h2>
+                    <div class="highlight">
+                        <p><strong>Packages</strong> are namespaces that organize related classes and interfaces</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>What are Packages?</h3>
+                    <div class="concept-box">
+                        <h4>Package Benefits:</h4>
+                        <ul class="compact-list">
+                            <li>Organize related classes and interfaces</li>
+                            <li>Provide namespace to avoid name conflicts</li>
+                            <li>Control access with package-level visibility</li>
+                            <li>Create logical groups of functionality</li>
+                            <li>Enable modular programming</li>
+                        </ul>
+                    </div>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>Package Declaration:</h4>
+                            <pre><code data-trim>
+// File: com/company/utils/Calculator.java
+package com.company.utils;
+
+public class Calculator {
+    public int add(int a, int b) {
+        return a + b;
+    }
+    
+    public int subtract(int a, int b) {
+        return a - b;
+    }
+}
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Directory Structure:</h4>
+                            <pre><code data-trim>
+src/
+  com/
+    company/
+      utils/
+        Calculator.java
+        MathUtils.java
+      models/
+        Student.java
+        Course.java
+      main/
+        Application.java
+                            </code></pre>
+                            <div class="package-box">
+                                <h5>Rules:</h5>
+                                <ul class="compact-list">
+                                    <li>package statement must be first</li>
+                                    <li>Only one package per file</li>
+                                    <li>Directory structure matches package</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Package Naming Conventions</h3>
+                    <div class="three-column">
+                        <div class="column">
+                            <div class="package-box">
+                                <h4>Standard Convention</h4>
+                                <ul class="compact-list">
+                                    <li>All lowercase</li>
+                                    <li>Reverse domain name</li>
+                                    <li>Dot-separated</li>
+                                    <li>Descriptive names</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="package-box">
+                                <h4>Examples</h4>
+                                <ul class="compact-list">
+                                    <li>com.oracle.jdbc</li>
+                                    <li>org.apache.commons</li>
+                                    <li>edu.university.cs</li>
+                                    <li>gov.agency.module</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="package-box">
+                                <h4>Avoid</h4>
+                                <ul class="compact-list">
+                                    <li>java.* (reserved)</li>
+                                    <li>javax.* (reserved)</li>
+                                    <li>Single word packages</li>
+                                    <li>Mixed case</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Creating and Using Packages -->
+            <section>
+                <section>
+                    <h2>Creating and Using Packages</h2>
+                </section>
+
+                <section>
+                    <h3>Creating Package Example</h3>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>shapes/Circle.java:</h4>
+                            <pre><code data-trim>
+package shapes;
+
+public class Circle {
+    private double radius;
+    
+    public Circle(double radius) {
+        this.radius = radius;
+    }
+    
+    public double getArea() {
+        return Math.PI * radius * radius;
+    }
+    
+    public double getCircumference() {
+        return 2 * Math.PI * radius;
+    }
+    
+    public void display() {
+        System.out.println("Circle with radius: " + radius);
+        System.out.println("Area: " + getArea());
+    }
+}
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>shapes/Rectangle.java:</h4>
+                            <pre><code data-trim>
+package shapes;
+
+public class Rectangle {
+    private double width, height;
+    
+    public Rectangle(double width, double height) {
+        this.width = width;
+        this.height = height;
+    }
+    
+    public double getArea() {
+        return width * height;
+    }
+    
+    public double getPerimeter() {
+        return 2 * (width + height);
+    }
+    
+    public void display() {
+        System.out.println("Rectangle: " + width + "x" + height);
+        System.out.println("Area: " + getArea());
+    }
+}
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Using Packages with Import</h3>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>main/TestShapes.java:</h4>
+                            <pre><code data-trim>
+package main;
+
+// Import specific classes
+import shapes.Circle;
+import shapes.Rectangle;
+
+// Or import all classes from package
+// import shapes.*;
+
+public class TestShapes {
+    public static void main(String[] args) {
+        // Using imported classes
+        Circle circle = new Circle(5.0);
+        circle.display();
+        
+        Rectangle rect = new Rectangle(4.0, 6.0);
+        rect.display();
+        
+        // Without import (fully qualified name)
+        shapes.Circle anotherCircle = 
+            new shapes.Circle(3.0);
+        anotherCircle.display();
+    }
+}
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Compilation and Execution:</h4>
+                            <pre><code data-trim>
+# Compile with package structure
+javac -d . shapes/*.java main/TestShapes.java
+
+# Directory structure after compilation:
+src/
+  shapes/
+    Circle.class
+    Rectangle.class
+  main/
+    TestShapes.class
+
+# Run with package name
+java main.TestShapes
+                            </code></pre>
+                            <div class="package-box">
+                                <h5>Key Points:</h5>
+                                <ul class="compact-list">
+                                    <li>-d . creates directory structure</li>
+                                    <li>Run with full package.ClassName</li>
+                                    <li>CLASSPATH must include root directory</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Import Statements -->
+            <section>
+                <section>
+                    <h2>Import Statements</h2>
+                    <div class="highlight">
+                        <p><strong>Import statements</strong> allow you to use classes from other packages without fully qualified names</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Types of Import Statements</h3>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>Single Type Import:</h4>
+                            <pre><code data-trim>
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.io.File;
+
+public class Example1 {
+    public static void main(String[] args) {
+        ArrayList<String> list = new ArrayList<>();
+        HashMap<String, Integer> map = new HashMap<>();
+        File file = new File("test.txt");
+    }
+}
+                            </code></pre>
+                            
+                            <h4>On-Demand Import:</h4>
+                            <pre><code data-trim>
+import java.util.*;
+import java.io.*;
+
+public class Example2 {
+    public static void main(String[] args) {
+        ArrayList<String> list = new ArrayList<>();
+        HashMap<String, Integer> map = new HashMap<>();
+        File file = new File("test.txt");
+        Scanner scanner = new Scanner(System.in);
+    }
+}
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Static Import:</h4>
+                            <pre><code data-trim>
+import static java.lang.Math.*;
+import static java.lang.System.out;
+
+public class Example3 {
+    public static void main(String[] args) {
+        // Using static imports
+        double result = sqrt(16);   // Math.sqrt()
+        double power = pow(2, 3);   // Math.pow()
+        out.println(result);        // System.out.println()
+        out.println(power);
+        
+        // Constants
+        out.println("PI = " + PI);  // Math.PI
+        out.println("E = " + E);    // Math.E
+    }
+}
+                            </code></pre>
+                            
+                            <h4>Avoiding Name Conflicts:</h4>
+                            <pre><code data-trim>
+import java.util.Date;
+import java.sql.Date; // Compilation error!
+
+// Solution: Use fully qualified names
+public class DateExample {
+    public static void main(String[] args) {
+        java.util.Date utilDate = new java.util.Date();
+        java.sql.Date sqlDate = new java.sql.Date(
+            System.currentTimeMillis());
+    }
+}
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Access Modifiers -->
+            <section>
+                <section>
+                    <h2>Access Modifiers</h2>
+                    <div class="highlight">
+                        <p><strong>Access modifiers</strong> control the visibility and accessibility of classes, methods, and variables</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Access Modifiers Scope & Visibility</h3>
+                    <div class="center">
+                        <img src="diagrams/access-modifiers-scope.svg" alt="Java Access Modifiers Scope and Visibility" style="width: 95%; max-width: 900px;">
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Access Control Levels</h3>
+                    <table class="table-style">
+                        <tr>
+                            <th>Modifier</th>
+                            <th>Same Class</th>
+                            <th>Same Package</th>
+                            <th>Subclass</th>
+                            <th>Different Package</th>
+                        </tr>
+                        <tr>
+                            <td><strong>private</strong></td>
+                            <td>✓</td>
+                            <td>✗</td>
+                            <td>✗</td>
+                            <td>✗</td>
+                        </tr>
+                        <tr>
+                            <td><strong>default</strong></td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✗</td>
+                            <td>✗</td>
+                        </tr>
+                        <tr>
+                            <td><strong>protected</strong></td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✗</td>
+                        </tr>
+                        <tr>
+                            <td><strong>public</strong></td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                        </tr>
+                    </table>
+                </section>
+
+                <section>
+                    <h3>Access Modifier Examples</h3>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>package1/ClassA.java:</h4>
+                            <pre><code data-trim>
+package package1;
+
+public class ClassA {
+    public int publicVar = 1;
+    protected int protectedVar = 2;
+    int defaultVar = 3;      // package-private
+    private int privateVar = 4;
+    
+    public void publicMethod() {
+        System.out.println("Public method");
+    }
+    
+    protected void protectedMethod() {
+        System.out.println("Protected method");
+    }
+    
+    void defaultMethod() {
+        System.out.println("Default method");
+    }
+    
+    private void privateMethod() {
+        System.out.println("Private method");
+    }
+    
+    public void testAccess() {
+        // All accessible within same class
+        System.out.println(publicVar);
+        System.out.println(protectedVar);
+        System.out.println(defaultVar);
+        System.out.println(privateVar);
+        
+        publicMethod();
+        protectedMethod();
+        defaultMethod();
+        privateMethod();
+    }
+}
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>package1/ClassB.java:</h4>
+                            <pre><code data-trim>
+package package1;
+
+public class ClassB {
+    public void testAccess() {
+        ClassA obj = new ClassA();
+        
+        // Accessible in same package
+        System.out.println(obj.publicVar);     // ✓
+        System.out.println(obj.protectedVar);  // ✓
+        System.out.println(obj.defaultVar);    // ✓
+        // System.out.println(obj.privateVar); // ✗
+        
+        obj.publicMethod();     // ✓
+        obj.protectedMethod();  // ✓
+        obj.defaultMethod();    // ✓
+        // obj.privateMethod(); // ✗
+    }
+}
+                            </code></pre>
+                            
+                            <h4>package2/ClassC.java:</h4>
+                            <pre><code data-trim>
+package package2;
+import package1.ClassA;
+
+public class ClassC extends ClassA {
+    public void testAccess() {
+        // Accessible to subclass
+        System.out.println(publicVar);     // ✓
+        System.out.println(protectedVar);  // ✓
+        // System.out.println(defaultVar);    // ✗
+        // System.out.println(privateVar);    // ✗
+        
+        publicMethod();     // ✓
+        protectedMethod();  // ✓
+        // defaultMethod();    // ✗
+        // privateMethod();    // ✗
+    }
+}
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Package-Level Access -->
+            <section>
+                <section>
+                    <h2>Package-Level Access</h2>
+                    <div class="highlight">
+                        <p><strong>Default access</strong> (no modifier) provides package-level visibility</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Package-Private Members</h3>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>utilities/Helper.java:</h4>
+                            <pre><code data-trim>
+package utilities;
+
+// Package-private class
+class Helper {
+    // Package-private field
+    String name;
+    
+    // Package-private constructor
+    Helper(String name) {
+        this.name = name;
+    }
+    
+    // Package-private method
+    void performTask() {
+        System.out.println(name + " performing task");
+    }
+}
+
+public class UtilityManager {
+    public void useHelper() {
+        // Can access package-private class
+        Helper helper = new Helper("Manager Helper");
+        helper.performTask();
+    }
+}
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>utilities/Calculator.java:</h4>
+                            <pre><code data-trim>
+package utilities;
+
+public class Calculator {
+    // Package-private utility method
+    static double internalCalculation(double x) {
+        return x * 2 + 1;
+    }
+    
+    public double calculate(double input) {
+        // Can access package-private method
+        return internalCalculation(input);
+    }
+    
+    public void demonstrateAccess() {
+        // Can access package-private class
+        Helper helper = new Helper("Calculator Helper");
+        helper.name = "Modified Name";
+        helper.performTask();
+    }
+}
+                            </code></pre>
+                            
+                            <h4>main/Application.java:</h4>
+                            <pre><code data-trim>
+package main;
+import utilities.*;
+
+public class Application {
+    public static void main(String[] args) {
+        Calculator calc = new Calculator();
+        
+        // Can access public methods
+        double result = calc.calculate(5.0);
+        
+        // Cannot access package-private
+        // Helper helper = new Helper("Test"); // ✗
+        // calc.internalCalculation(10);       // ✗
+    }
+}
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- CLASSPATH and Package Structure -->
+            <section>
+                <section>
+                    <h2>CLASSPATH and Package Structure</h2>
+                    <div class="highlight">
+                        <p><strong>CLASSPATH</strong> tells Java where to find class files and packages</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Understanding CLASSPATH</h3>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>Setting CLASSPATH:</h4>
+                            <pre><code data-trim>
+# Windows
+set CLASSPATH=.;C:\myproject\classes;C:\lib\mylib.jar
+
+# Unix/Linux/Mac
+export CLASSPATH=.:./classes:/usr/local/lib/mylib.jar
+
+# Compilation with classpath
+javac -cp ./classes:./lib/* com/company/Main.java
+
+# Execution with classpath
+java -cp ./classes:./lib/* com.company.Main
+                            </code></pre>
+                            
+                            <h4>Directory Structure Example:</h4>
+                            <pre><code data-trim>
+project/
+  src/
+    com/
+      company/
+        Main.java
+        utils/
+          Helper.java
+  classes/    (compiled .class files)
+  lib/        (external JAR files)
+    commons.jar
+    database.jar
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Build and Run Process:</h4>
+                            <pre><code data-trim>
+# 1. Create directory structure
+mkdir -p classes
+
+# 2. Compile with package structure
+javac -d classes -cp lib/* src/com/company/*.java src/com/company/utils/*.java
+
+# 3. Results in classes directory:
+classes/
+  com/
+    company/
+      Main.class
+      utils/
+        Helper.class
+
+# 4. Run with correct classpath
+java -cp classes:lib/* com.company.Main
+                            </code></pre>
+                            
+                            <div class="access-box">
+                                <h5>CLASSPATH Tips:</h5>
+                                <ul class="compact-list">
+                                    <li>Always include current directory (.)</li>
+                                    <li>Use ; on Windows, : on Unix</li>
+                                    <li>JAR files must be explicitly listed</li>
+                                    <li>Use -cp or -classpath option</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Java Built-in Packages -->
+            <section>
+                <section>
+                    <h2>Java Built-in Packages</h2>
+                    <div class="highlight">
+                        <p><strong>Java Standard Library</strong> provides many useful packages</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Common Java Packages</h3>
+                    <div class="three-column">
+                        <div class="column">
+                            <div class="package-box">
+                                <h4>java.lang</h4>
+                                <ul class="compact-list">
+                                    <li>Object, String, System</li>
+                                    <li>Integer, Double, Boolean</li>
+                                    <li>Math, Thread</li>
+                                    <li>Exception classes</li>
+                                </ul>
+                                <p class="small-text"><em>Automatically imported</em></p>
+                            </div>
+                            
+                            <div class="package-box">
+                                <h4>java.util</h4>
+                                <ul class="compact-list">
+                                    <li>ArrayList, HashMap</li>
+                                    <li>Scanner, Random</li>
+                                    <li>Date, Calendar</li>
+                                    <li>Collections framework</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="package-box">
+                                <h4>java.io</h4>
+                                <ul class="compact-list">
+                                    <li>File, FileReader</li>
+                                    <li>InputStream, OutputStream</li>
+                                    <li>BufferedReader, PrintWriter</li>
+                                    <li>Serialization classes</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="package-box">
+                                <h4>java.net</h4>
+                                <ul class="compact-list">
+                                    <li>URL, URLConnection</li>
+                                    <li>Socket, ServerSocket</li>
+                                    <li>InetAddress</li>
+                                    <li>HTTP classes</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="package-box">
+                                <h4>java.awt / javax.swing</h4>
+                                <ul class="compact-list">
+                                    <li>GUI components</li>
+                                    <li>Event handling</li>
+                                    <li>Graphics and painting</li>
+                                    <li>Layout managers</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="package-box">
+                                <h4>java.sql</h4>
+                                <ul class="compact-list">
+                                    <li>Database connectivity</li>
+                                    <li>Connection, Statement</li>
+                                    <li>ResultSet, PreparedStatement</li>
+                                    <li>JDBC drivers</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Using Built-in Packages</h3>
+                    <pre><code data-trim>
+import java.util.*;
+import java.io.*;
+import java.net.*;
+
+public class BuiltinPackageDemo {
+    public static void main(String[] args) throws Exception {
+        // java.util package
+        ArrayList<String> list = new ArrayList<>();
+        list.add("Java");
+        list.add("Programming");
+        
+        HashMap<String, Integer> scores = new HashMap<>();
+        scores.put("Alice", 95);
+        scores.put("Bob", 87);
+        
+        Scanner scanner = new Scanner(System.in);
+        Random random = new Random();
+        
+        // java.io package
+        File file = new File("example.txt");
+        FileWriter writer = new FileWriter(file);
+        writer.write("Hello, World!");
+        writer.close();
+        
+        BufferedReader reader = new BufferedReader(new FileReader(file));
+        String content = reader.readLine();
+        reader.close();
+        
+        // java.net package
+        URL url = new URL("https://www.oracle.com");
+        URLConnection connection = url.openConnection();
+        
+        // java.lang package (automatically imported)
+        String text = "Java Programming";
+        int length = text.length();
+        String upper = text.toUpperCase();
+        
+        Math.sqrt(16);
+        System.out.println("Content: " + content);
+        System.out.println("Random number: " + random.nextInt(100));
+    }
+}
+                    </code></pre>
+                </section>
+            </section>
+
+            <!-- Summary -->
+            <section>
+                <h2>Chapter Summary</h2>
+                <div class="two-column">
+                    <div class="column">
+                        <h3>Package Concepts:</h3>
+                        <ul class="compact-list">
+                            <li>Organize related classes and interfaces</li>
+                            <li>Provide namespace and avoid conflicts</li>
+                            <li>Follow naming conventions</li>
+                            <li>Match directory structure</li>
+                            <li>Use import statements effectively</li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <h3>Access Control:</h3>
+                        <ul class="compact-list">
+                            <li>private: class-level access</li>
+                            <li>default: package-level access</li>
+                            <li>protected: inheritance access</li>
+                            <li>public: universal access</li>
+                            <li>CLASSPATH configuration</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="highlight center">
+                    <p><strong>Next:</strong> Exception Handling</p>
+                </div>
+            </section>
+
+            <!-- Thank You -->
+            <section class="title-slide">
+                <h1>Thank You!</h1>
+                <h2>Questions?</h2>
+                <br>
+                <p>Ready to explore Exception Handling!</p>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/highlight/highlight.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            transition: 'slide',
+            transitionSpeed: 'default',
+            backgroundTransition: 'fade',
+            plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+        });
+    </script>
+</body>
+</html>

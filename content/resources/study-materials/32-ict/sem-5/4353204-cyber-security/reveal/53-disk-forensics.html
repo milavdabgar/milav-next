@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Disk Forensics</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/white.css">
+    <style>
+        .reveal .slides section {
+            text-align: left;
+        }
+        .reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .definition-box {
+            background-color: #e8f4fd;
+            border: 2px solid #3498db;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+        .example-box {
+            background-color: #fff9e6;
+            border: 2px solid #f39c12;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+        .prevention-box {
+            background-color: #e8f8f5;
+            border: 2px solid #27ae60;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+        .code-box {
+            background-color: #f8f9fa;
+            border: 2px solid #6c757d;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .forensics-category {
+            background-color: #f3e5f5;
+            border: 2px solid #9c27b0;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .technical-box {
+            background-color: #e1f5fe;
+            border: 2px solid #0277bd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- Title Slide -->
+            <section>
+                <h1>Disk Forensics</h1>
+                <p style="text-align: center; font-size: 1.2em; color: #7f8c8d;">Storage Device Investigation and Analysis</p>
+                <div style="text-align: center; margin-top: 30px;">
+                    <img src="diagrams/disk-forensics-process.svg" alt="Disk Forensics Process" style="width: 70%; height: auto; max-width: 700px;">
+                </div>
+            </section>
+
+            <!-- Definition and Overview -->
+            <section>
+                <h2>What is Disk Forensics?</h2>
+                <div class="definition-box">
+                    <strong>Disk Forensics:</strong> The process of examining storage devices (hard drives, SSDs, USB drives) to recover, analyze, and preserve digital evidence while maintaining data integrity and legal admissibility.
+                </div>
+                <ul>
+                    <li><strong>Storage Analysis:</strong> Examining various storage media types</li>
+                    <li><strong>Data Recovery:</strong> Retrieving deleted or hidden information</li>
+                    <li><strong>Evidence Preservation:</strong> Maintaining forensic soundness</li>
+                    <li><strong>File System Examination:</strong> Understanding data organization</li>
+                </ul>
+            </section>
+
+            <!-- Storage Device Types -->
+            <section>
+                <h2>Storage Device Types</h2>
+                <div class="grid-container">
+                    <div class="forensics-category">
+                        <h4>Hard Disk Drives (HDD)</h4>
+                        <ul>
+                            <li>Magnetic storage technology</li>
+                            <li>Mechanical read/write heads</li>
+                            <li>Traditional forensic target</li>
+                            <li>Data remnants in unallocated space</li>
+                        </ul>
+                    </div>
+                    <div class="forensics-category">
+                        <h4>Solid State Drives (SSD)</h4>
+                        <ul>
+                            <li>Flash memory technology</li>
+                            <li>No mechanical components</li>
+                            <li>TRIM command challenges</li>
+                            <li>Wear leveling complexities</li>
+                        </ul>
+                    </div>
+                    <div class="forensics-category">
+                        <h4>Optical Media</h4>
+                        <ul>
+                            <li>CD, DVD, Blu-ray discs</li>
+                            <li>Write-once or rewritable</li>
+                            <li>Session-based writing</li>
+                            <li>Physical damage assessment</li>
+                        </ul>
+                    </div>
+                    <div class="forensics-category">
+                        <h4>External Storage</h4>
+                        <ul>
+                            <li>USB flash drives</li>
+                            <li>External hard drives</li>
+                            <li>Memory cards (SD, microSD)</li>
+                            <li>Portable storage devices</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- File Systems -->
+            <section>
+                <h2>File System Analysis</h2>
+                <div class="technical-box">
+                    <h4>Common File Systems:</h4>
+                    <ul>
+                        <li><strong>NTFS:</strong> Windows NT File System with security features</li>
+                        <li><strong>FAT32/exFAT:</strong> File Allocation Table systems</li>
+                        <li><strong>ext4:</strong> Fourth extended filesystem for Linux</li>
+                        <li><strong>HFS+/APFS:</strong> Apple file systems for macOS</li>
+                        <li><strong>UFS:</strong> Unix File System variants</li>
+                    </ul>
+                </div>
+                <div class="code-box">
+                    <strong>File System Components:</strong>
+                    • Boot sector - Contains file system information
+                    • File Allocation Table - Tracks file locations
+                    • Directory structure - Organizes files and folders
+                    • Data area - Stores actual file content
+                    • Metadata - File attributes and timestamps
+                </div>
+            </section>
+
+            <!-- Data Acquisition Process -->
+            <section>
+                <h2>Data Acquisition Process</h2>
+                <div class="example-box">
+                    <h4>Acquisition Methods:</h4>
+                    <ol>
+                        <li><strong>Physical Imaging:</strong> Bit-by-bit copy of entire drive</li>
+                        <li><strong>Logical Imaging:</strong> Copy of file system and allocated data</li>
+                        <li><strong>Sparse Imaging:</strong> Copy only allocated data blocks</li>
+                        <li><strong>Live Imaging:</strong> Acquisition from running system</li>
+                    </ol>
+                </div>
+                <div class="technical-box">
+                    <h4>Write Blockers:</h4>
+                    <ul>
+                        <li><strong>Hardware Write Blockers:</strong> Physical devices preventing writes</li>
+                        <li><strong>Software Write Blockers:</strong> OS-level write protection</li>
+                        <li><strong>Purpose:</strong> Prevent evidence contamination</li>
+                        <li><strong>Validation:</strong> Test before and after use</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Disk Structure Analysis -->
+            <section>
+                <h2>Disk Structure and Organization</h2>
+                <div class="code-box">
+                    <strong>Physical Disk Layout:</strong>
+                    Cylinder → Head → Sector (CHS addressing)
+                    OR
+                    Logical Block Addressing (LBA)
+                    
+                    Typical Structure:
+                    • Master Boot Record (MBR) or GUID Partition Table (GPT)
+                    • Partition tables
+                    • File system boot sectors
+                    • Data areas
+                </div>
+                <div class="grid-container">
+                    <div class="technical-box">
+                        <h4>Partition Analysis</h4>
+                        <ul>
+                            <li>Primary and extended partitions</li>
+                            <li>Hidden partitions</li>
+                            <li>Deleted partition recovery</li>
+                            <li>Partition table reconstruction</li>
+                        </ul>
+                    </div>
+                    <div class="technical-box">
+                        <h4>Slack Space</h4>
+                        <ul>
+                            <li>RAM slack space</li>
+                            <li>Drive slack space</li>
+                            <li>Data hiding locations</li>
+                            <li>Evidence remnants</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Deleted File Recovery -->
+            <section>
+                <h2>Deleted File Recovery</h2>
+                <div class="definition-box">
+                    <strong>File Deletion Process:</strong> When files are deleted, the data typically remains on disk until overwritten, with only the file system metadata being modified to mark the space as available.
+                </div>
+                <div class="example-box">
+                    <h4>Recovery Techniques:</h4>
+                    <ul>
+                        <li><strong>Undelete Utilities:</strong> Recover recently deleted files from file system</li>
+                        <li><strong>File Carving:</strong> Search for file signatures in unallocated space</li>
+                        <li><strong>Journal Analysis:</strong> Examine file system journals for deleted entries</li>
+                        <li><strong>Shadow Copy Analysis:</strong> Recover from Windows Volume Shadow copies</li>
+                        <li><strong>Recycle Bin Forensics:</strong> Analyze deleted file metadata</li>
+                    </ul>
+                </div>
+                <div class="code-box">
+                    <strong>File Signature Examples:</strong>
+                    JPEG: FF D8 FF
+                    PNG: 89 50 4E 47 0D 0A 1A 0A
+                    PDF: 25 50 44 46
+                    ZIP: 50 4B 03 04
+                    EXE: 4D 5A
+                </code>
+            </section>
+
+            <!-- Timeline Analysis -->
+            <section>
+                <h2>Timeline Analysis</h2>
+                <div class="technical-box">
+                    <h4>Timestamp Types (MACB):</h4>
+                    <ul>
+                        <li><strong>Modified (M):</strong> When file content was last changed</li>
+                        <li><strong>Accessed (A):</strong> When file was last accessed</li>
+                        <li><strong>Changed (C):</strong> When file metadata was changed</li>
+                        <li><strong>Born (B):</strong> When file was created</li>
+                    </ul>
+                </div>
+                <div class="example-box">
+                    <h4>Timeline Creation Process:</h4>
+                    <ol>
+                        <li>Extract timestamps from file system metadata</li>
+                        <li>Parse log files for time-based events</li>
+                        <li>Correlate events across different sources</li>
+                        <li>Create comprehensive timeline of activities</li>
+                        <li>Identify suspicious patterns or gaps</li>
+                    </ol>
+                </div>
+                <div class="prevention-box">
+                    <h4>Timeline Analysis Benefits:</h4>
+                    <ul>
+                        <li>Reconstruct sequence of events</li>
+                        <li>Identify user activity patterns</li>
+                        <li>Detect evidence manipulation attempts</li>
+                        <li>Establish incident timelines</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Registry Analysis -->
+            <section>
+                <h2>Windows Registry Forensics</h2>
+                <div class="definition-box">
+                    <strong>Windows Registry:</strong> Hierarchical database storing system configuration, user preferences, software settings, and forensically valuable artifacts.
+                </div>
+                <div class="grid-container">
+                    <div class="forensics-category">
+                        <h4>Registry Hives</h4>
+                        <ul>
+                            <li>HKEY_LOCAL_MACHINE (HKLM)</li>
+                            <li>HKEY_CURRENT_USER (HKCU)</li>
+                            <li>HKEY_USERS (HKU)</li>
+                            <li>HKEY_CURRENT_CONFIG (HKCC)</li>
+                        </ul>
+                    </div>
+                    <div class="forensics-category">
+                        <h4>Forensic Artifacts</h4>
+                        <ul>
+                            <li>Recently used file lists</li>
+                            <li>USB device connection history</li>
+                            <li>Network connection records</li>
+                            <li>Program execution evidence</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="code-box">
+                    <strong>Key Forensic Registry Locations:</strong>
+                    • HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+                    • HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\RecentDocs
+                    • HKLM\SYSTEM\CurrentControlSet\Enum\USB
+                    • HKCU\Software\Microsoft\Internet Explorer\TypedURLs
+                </code>
+            </section>
+
+            <!-- Encryption and Security -->
+            <section>
+                <h2>Dealing with Encryption</h2>
+                <div class="example-box">
+                    <h4>Encryption Technologies:</h4>
+                    <ul>
+                        <li><strong>BitLocker:</strong> Microsoft's full disk encryption</li>
+                        <li><strong>FileVault:</strong> Apple's disk encryption for macOS</li>
+                        <li><strong>LUKS:</strong> Linux Unified Key Setup</li>
+                        <li><strong>TrueCrypt/VeraCrypt:</strong> Third-party encryption tools</li>
+                        <li><strong>Hardware Encryption:</strong> Self-encrypting drives (SEDs)</li>
+                    </ul>
+                </div>
+                <div class="technical-box">
+                    <h4>Investigation Strategies:</h4>
+                    <ul>
+                        <li><strong>Live Analysis:</strong> Access encrypted data while system is running</li>
+                        <li><strong>Memory Acquisition:</strong> Extract encryption keys from RAM</li>
+                        <li><strong>Hibernation Files:</strong> Keys may be stored in hiberfil.sys</li>
+                        <li><strong>Key Recovery:</strong> Use recovery keys or certificates</li>
+                        <li><strong>Brute Force:</strong> Last resort for weak passwords</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Anti-Forensic Techniques -->
+            <section>
+                <h2>Anti-Forensic Challenges</h2>
+                <div class="definition-box">
+                    <strong>Anti-Forensics:</strong> Techniques used to impede digital forensic investigations by hiding, destroying, or altering evidence.
+                </div>
+                <div class="grid-container">
+                    <div class="example-box">
+                        <h4>Data Hiding Techniques</h4>
+                        <ul>
+                            <li>Steganography in files</li>
+                            <li>Alternate data streams (NTFS)</li>
+                            <li>Hidden partitions</li>
+                            <li>File signature manipulation</li>
+                        </ul>
+                    </div>
+                    <div class="example-box">
+                        <h4>Data Destruction Methods</h4>
+                        <ul>
+                            <li>Secure deletion utilities</li>
+                            <li>Disk wiping software</li>
+                            <li>Physical drive destruction</li>
+                            <li>Degaussing magnetic media</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="prevention-box">
+                    <h4>Countermeasures:</h4>
+                    <ul>
+                        <li>Multiple acquisition methods</li>
+                        <li>Deep analysis of unallocated space</li>
+                        <li>File carving and signature analysis</li>
+                        <li>Cross-correlation with other evidence</li>
+                        <li>Specialized anti-anti-forensic tools</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- SSD Specific Challenges -->
+            <section>
+                <h2>SSD Forensic Challenges</h2>
+                <div class="technical-box">
+                    <h4>SSD Unique Characteristics:</h4>
+                    <ul>
+                        <li><strong>TRIM Command:</strong> Immediately marks deleted blocks for erasure</li>
+                        <li><strong>Wear Leveling:</strong> Distributes writes across all cells</li>
+                        <li><strong>Over-provisioning:</strong> Hidden spare blocks for wear management</li>
+                        <li><strong>Garbage Collection:</strong> Background cleanup of invalid data</li>
+                    </ul>
+                </div>
+                <div class="example-box">
+                    <h4>Forensic Implications:</h4>
+                    <ul>
+                        <li>Deleted data may be immediately unrecoverable</li>
+                        <li>Data location is not predictable</li>
+                        <li>Traditional file carving may be less effective</li>
+                        <li>Need for live acquisition techniques</li>
+                        <li>Importance of RAM and hibernation file analysis</li>
+                    </ul>
+                </div>
+                <div class="prevention-box">
+                    <h4>SSD Investigation Strategies:</h4>
+                    <ul>
+                        <li>Disable TRIM during acquisition</li>
+                        <li>Perform live acquisition when possible</li>
+                        <li>Focus on allocated data analysis</li>
+                        <li>Examine firmware and controller logs</li>
+                        <li>Use specialized SSD forensic tools</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Forensic Tools -->
+            <section>
+                <h2>Disk Forensic Tools</h2>
+                <div class="grid-container">
+                    <div class="forensics-category">
+                        <h4>Commercial Tools</h4>
+                        <ul>
+                            <li>EnCase Forensic</li>
+                            <li>FTK (AccessData)</li>
+                            <li>X-Ways Forensics</li>
+                            <li>Magnet AXIOM</li>
+                            <li>MSAB XRY</li>
+                        </ul>
+                    </div>
+                    <div class="forensics-category">
+                        <h4>Open Source Tools</h4>
+                        <ul>
+                            <li>Autopsy (The Sleuth Kit)</li>
+                            <li>PhotoRec/TestDisk</li>
+                            <li>DEFT Linux</li>
+                            <li>Paladin Forensic Suite</li>
+                            <li>SIFT Workstation</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="code-box">
+                    <strong>Command Line Tools:</strong>
+                    • dd - Create bit-by-bit copies
+                    • fsstat - Display file system details
+                    • fls - List file and directory names
+                    • icat - Display contents of a file
+                    • mmls - Display partition layout
+                    • blkls - List unallocated disk blocks
+                </code>
+            </section>
+
+            <!-- Quality Assurance -->
+            <section>
+                <h2>Quality Assurance and Validation</h2>
+                <div class="technical-box">
+                    <h4>Hash Verification:</h4>
+                    <ul>
+                        <li><strong>MD5:</strong> 128-bit hash (legacy, collision concerns)</li>
+                        <li><strong>SHA-1:</strong> 160-bit hash (deprecated for security)</li>
+                        <li><strong>SHA-256:</strong> 256-bit hash (current standard)</li>
+                        <li><strong>Purpose:</strong> Verify data integrity throughout process</li>
+                    </ul>
+                </div>
+                <div class="prevention-box">
+                    <h4>Validation Procedures:</h4>
+                    <ul>
+                        <li>Pre-acquisition hash of source drive</li>
+                        <li>Post-acquisition hash of forensic image</li>
+                        <li>Regular verification during analysis</li>
+                        <li>Tool validation and testing</li>
+                        <li>Documentation of all procedures</li>
+                    </ul>
+                </div>
+                <div class="example-box">
+                    <h4>Chain of Custody:</h4>
+                    <ul>
+                        <li>Detailed evidence logging</li>
+                        <li>Access control and monitoring</li>
+                        <li>Transfer documentation</li>
+                        <li>Storage environment controls</li>
+                        <li>Regular integrity checks</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Reporting and Documentation -->
+            <section>
+                <h2>Reporting and Documentation</h2>
+                <div class="technical-box">
+                    <h4>Report Components:</h4>
+                    <ol>
+                        <li><strong>Executive Summary:</strong> High-level findings</li>
+                        <li><strong>Case Information:</strong> Background and scope</li>
+                        <li><strong>Evidence Description:</strong> Items examined</li>
+                        <li><strong>Methodology:</strong> Procedures and tools used</li>
+                        <li><strong>Findings:</strong> Detailed analysis results</li>
+                        <li><strong>Conclusions:</strong> Summary and opinions</li>
+                        <li><strong>Appendices:</strong> Supporting documentation</li>
+                    </ol>
+                </div>
+                <div class="prevention-box">
+                    <h4>Documentation Best Practices:</h4>
+                    <ul>
+                        <li>Contemporaneous notes during examination</li>
+                        <li>Screenshot evidence of findings</li>
+                        <li>Step-by-step procedure documentation</li>
+                        <li>Tool version and configuration records</li>
+                        <li>Peer review of findings</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Legal Considerations -->
+            <section>
+                <h2>Legal and Ethical Considerations</h2>
+                <div class="example-box">
+                    <h4>Legal Requirements:</h4>
+                    <ul>
+                        <li><strong>Search Warrants:</strong> Legal authority to examine evidence</li>
+                        <li><strong>Privacy Rights:</strong> Respect for personal information</li>
+                        <li><strong>Evidence Admissibility:</strong> Meeting court standards</li>
+                        <li><strong>Chain of Custody:</strong> Maintaining evidence integrity</li>
+                        <li><strong>Expert Testimony:</strong> Explaining findings in court</li>
+                    </ul>
+                </div>
+                <div class="technical-box">
+                    <h4>Ethical Guidelines:</h4>
+                    <ul>
+                        <li>Maintain objectivity and impartiality</li>
+                        <li>Only examine authorized evidence</li>
+                        <li>Protect sensitive personal information</li>
+                        <li>Report findings honestly and completely</li>
+                        <li>Continue professional development</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Conclusion -->
+            <section>
+                <h2>Key Takeaways</h2>
+                <div class="definition-box">
+                    <h4>Critical Points:</h4>
+                    <ul>
+                        <li><strong>Methodical Approach:</strong> Systematic examination procedures</li>
+                        <li><strong>Technology Awareness:</strong> Understanding different storage types</li>
+                        <li><strong>Evidence Preservation:</strong> Maintaining forensic integrity</li>
+                        <li><strong>Comprehensive Analysis:</strong> Multiple examination techniques</li>
+                        <li><strong>Legal Compliance:</strong> Meeting court and legal standards</li>
+                    </ul>
+                </div>
+                <div class="prevention-box">
+                    <strong>Disk Forensics Excellence:</strong> Combine technical expertise, proper methodology, and legal compliance to conduct thorough storage device examinations that produce reliable and admissible digital evidence.
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            controls: true,
+            progress: true,
+            center: true,
+            transition: 'slide'
+        });
+    </script>
+</body>
+</html>

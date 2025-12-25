@@ -1,0 +1,136 @@
+<svg viewBox="0 0 900 700" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .title { font-family: Arial, sans-serif; font-size: 20px; font-weight: bold; fill: #2c3e50; text-anchor: middle; }
+      .label { font-family: Arial, sans-serif; font-size: 14px; fill: #2c3e50; text-anchor: middle; }
+      .small-label { font-family: Arial, sans-serif; font-size: 10px; fill: #2c3e50; text-anchor: middle; }
+      .signal-text { font-family: Arial, sans-serif; font-size: 11px; fill: #2c3e50; text-anchor: middle; }
+      .timing-line { stroke: #34495e; stroke-width: 2; fill: none; }
+      .high-signal { stroke: #e74c3c; stroke-width: 3; fill: none; }
+      .low-signal { stroke: #3498db; stroke-width: 3; fill: none; }
+      .phase-box { stroke: #2980b9; stroke-width: 1; fill: #ecf0f1; }
+      .grid-line { stroke: #bdc3c7; stroke-width: 1; fill: none; stroke-dasharray: 5,5; }
+    </style>
+  </defs>
+
+  <!-- Title -->
+  <text x="450" y="30" class="title">8085 Timing Diagram - Instruction Fetch Cycle</text>
+
+  <!-- Time scale -->
+  <g class="time-scale">
+    <text x="100" y="70" class="label">Time States:</text>
+    <rect x="150" y="55" width="120" height="30" class="phase-box"/>
+    <text x="210" y="75" class="label">T1</text>
+    <rect x="270" y="55" width="120" height="30" class="phase-box"/>
+    <text x="330" y="75" class="label">T2</text>
+    <rect x="390" y="55" width="120" height="30" class="phase-box"/>
+    <text x="450" y="75" class="label">T3</text>
+    <rect x="510" y="55" width="120" height="30" class="phase-box"/>
+    <text x="570" y="75" class="label">T4</text>
+  </g>
+
+  <!-- Clock Signal -->
+  <g class="clock-signal">
+    <text x="50" y="130" class="signal-text">CLK</text>
+    <line x1="80" y1="130" x2="680" y2="130" class="timing-line"/>
+    
+    <!-- Clock pulses -->
+    <path d="M 150 130 L 150 110 L 210 110 L 210 130 L 210 150 L 270 150 L 270 130 L 270 110 L 330 110 L 330 130 L 330 150 L 390 150 L 390 130 L 390 110 L 450 110 L 450 130 L 450 150 L 510 150 L 510 130 L 510 110 L 570 110 L 570 130 L 570 150 L 630 150 L 630 130" class="high-signal"/>
+  </g>
+
+  <!-- ALE Signal -->
+  <g class="ale-signal">
+    <text x="50" y="200" class="signal-text">ALE</text>
+    <line x1="80" y1="200" x2="680" y2="200" class="timing-line"/>
+    
+    <!-- ALE pulse in T1 -->
+    <path d="M 150 200 L 150 180 L 210 180 L 210 200 L 270 200 L 390 200 L 510 200 L 630 200" class="high-signal"/>
+  </g>
+
+  <!-- AD0-AD7 (Multiplexed Address/Data) -->
+  <g class="ad-bus">
+    <text x="30" y="270" class="signal-text">AD0-AD7</text>
+    <line x1="80" y1="270" x2="680" y2="270" class="timing-line"/>
+    
+    <!-- Address phase (T1) -->
+    <rect x="150" y="250" width="120" height="40" fill="#f39c12" stroke="#e67e22" stroke-width="2"/>
+    <text x="210" y="275" class="signal-text">Lower Address</text>
+    <text x="210" y="285" class="small-label">(A0-A7)</text>
+    
+    <!-- Data phase (T2-T4) -->
+    <rect x="270" y="250" width="360" height="40" fill="#27ae60" stroke="#229954" stroke-width="2"/>
+    <text x="450" y="275" class="signal-text">Instruction Data</text>
+    <text x="450" y="285" class="small-label">(Fetched from Memory)</text>
+  </g>
+
+  <!-- A8-A15 (Higher Address Bus) -->
+  <g class="a-bus">
+    <text x="30" y="340" class="signal-text">A8-A15</text>
+    <line x1="80" y1="340" x2="680" y2="340" class="timing-line"/>
+    
+    <!-- Address stable throughout -->
+    <rect x="150" y="320" width="480" height="40" fill="#f39c12" stroke="#e67e22" stroke-width="2"/>
+    <text x="390" y="345" class="signal-text">Higher Address (A8-A15)</text>
+    <text x="390" y="355" class="small-label">Stable throughout cycle</text>
+  </g>
+
+  <!-- RD Signal -->
+  <g class="rd-signal">
+    <text x="50" y="410" class="signal-text">RD</text>
+    <line x1="80" y1="410" x2="680" y2="410" class="timing-line"/>
+    
+    <!-- RD active low in T2-T3 -->
+    <path d="M 150 410 L 270 410 L 270 430 L 450 430 L 450 410 L 630 410" class="low-signal"/>
+    <text x="360" y="445" class="small-label">Active Low (Memory Read)</text>
+  </g>
+
+  <!-- IO/M Signal -->
+  <g class="iom-signal">
+    <text x="50" y="480" class="signal-text">IO/M</text>
+    <line x1="80" y1="480" x2="680" y2="480" class="timing-line"/>
+    
+    <!-- IO/M low for memory operation -->
+    <path d="M 150 500 L 630 500" class="low-signal"/>
+    <text x="390" y="515" class="small-label">Low = Memory Operation</text>
+  </g>
+
+  <!-- Status Signals S0, S1 -->
+  <g class="status-signals">
+    <text x="30" y="550" class="signal-text">S0, S1</text>
+    <line x1="80" y1="550" x2="680" y2="550" class="timing-line"/>
+    
+    <!-- Status for opcode fetch -->
+    <rect x="150" y="530" width="480" height="40" fill="#9b59b6" stroke="#8e44ad" stroke-width="2"/>
+    <text x="390" y="555" class="signal-text">11 - Opcode Fetch</text>
+    <text x="390" y="565" class="small-label">S1=1, S0=1</text>
+  </g>
+
+  <!-- Machine Cycle Description -->
+  <g class="cycle-description">
+    <rect x="100" y="600" width="700" height="80" class="phase-box"/>
+    <text x="450" y="625" class="label">Machine Cycle Phases</text>
+    
+    <text x="210" y="645" class="small-label">T1: Address Setup</text>
+    <text x="210" y="655" class="small-label">ALE pulse latches</text>
+    <text x="210" y="665" class="small-label">lower address</text>
+    
+    <text x="330" y="645" class="small-label">T2: Memory Access</text>
+    <text x="330" y="655" class="small-label">RD signal active</text>
+    <text x="330" y="665" class="small-label">Data on bus</text>
+    
+    <text x="450" y="645" class="small-label">T3: Data Valid</text>
+    <text x="450" y="655" class="small-label">Instruction data</text>
+    <text x="450" y="665" class="small-label">stable on bus</text>
+    
+    <text x="570" y="645" class="small-label">T4: End Cycle</text>
+    <text x="570" y="655" class="small-label">Data latched</text>
+    <text x="570" y="665" class="small-label">by processor</text>
+  </g>
+
+  <!-- Grid lines for timing reference -->
+  <line x1="150" y1="90" x2="150" y2="590" class="grid-line"/>
+  <line x1="270" y1="90" x2="270" y2="590" class="grid-line"/>
+  <line x1="390" y1="90" x2="390" y2="590" class="grid-line"/>
+  <line x1="510" y1="90" x2="510" y2="590" class="grid-line"/>
+  <line x1="630" y1="90" x2="630" y2="590" class="grid-line"/>
+</svg>

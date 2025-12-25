@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Lecture 18: Generics and Type Safety | Java Programming (4343203)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <style>
+        .reveal {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 90vh;
+        }
+        .reveal .slides section {
+            text-align: left;
+            font-size: 0.85em;
+        }
+        .reveal h1, .reveal h2, .reveal h3 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .reveal h1 { font-size: 2.2em; }
+        .reveal h2 { font-size: 1.8em; margin-bottom: 30px; }
+        .reveal h3 { font-size: 1.4em; margin-bottom: 20px; }
+        .reveal pre {
+            width: 100%;
+            font-size: 0.75em;
+            line-height: 1.2;
+        }
+        .reveal code {
+            background-color: #f8f9fa;
+            padding: 2px 4px;
+            border-radius: 3px;
+            color: #e83e8c;
+        }
+        .reveal .hljs {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            padding: 15px;
+        }
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+        .highlight-box {
+            background-color: #e8f4fd;
+            border-left: 5px solid #3498db;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        .warning-box {
+            background-color: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        .success-box {
+            background-color: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        .error-box {
+            background-color: #f8d7da;
+            border-left: 5px solid #dc3545;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        .reveal ul, .reveal ol {
+            margin-left: 1em;
+        }
+        .reveal li {
+            margin-bottom: 8px;
+        }
+        .gtu-question {
+            background-color: #f0f8ff;
+            border: 2px solid #4682b4;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        .gtu-question h4 {
+            color: #4682b4;
+            margin: 0 0 15px 0;
+            font-size: 1.1em;
+        }
+        .reveal table {
+            font-size: 0.7em;
+            border-collapse: collapse;
+            width: 100%;
+            margin: 15px 0;
+        }
+        .reveal td, .reveal th {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .reveal th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- Title Slide -->
+            <section>
+                <h1>Generics and Type Safety</h1>
+                <h3>Java Programming (4343203)</h3>
+                <h3>Lecture 18</h3>
+                <p style="text-align: center; margin-top: 50px;">
+                    <strong>Unit 4: Advanced Java - Type Safety</strong><br>
+                    GTU Computer Engineering Semester 4
+                </p>
+            </section>
+
+            <!-- Learning Objectives -->
+            <section>
+                <h2>Learning Objectives</h2>
+                <ul>
+                    <li>Understand the need for generics in Java programming</li>
+                    <li>Create and use generic classes and interfaces</li>
+                    <li>Implement generic methods and constructors</li>
+                    <li>Master bounded type parameters and wildcards</li>
+                    <li>Apply type erasure concepts and limitations</li>
+                    <li>Utilize generic collections for type-safe programming</li>
+                </ul>
+                <div class="highlight-box">
+                    <strong>Focus:</strong> Writing type-safe, reusable code using Java's generics system for better compile-time error detection.
+                </div>
+            </section>
+
+            <!-- Why Generics? -->
+            <section>
+                <h2>Why Do We Need Generics?</h2>
+                <div class="two-column">
+                    <div>
+                        <h3>Problems Before Generics</h3>
+                        <pre><code class="java">
+// Pre-Java 5 code (without generics)
+import java.util.*;
+
+public class PreGenericsExample {
+    public static void main(String[] args) {
+        // Raw type ArrayList
+        ArrayList list = new ArrayList();
+        
+        list.add("Hello");
+        list.add("World");
+        list.add(42); // Oops! Integer in String list
+        
+        // No compile-time type checking
+        for (Object obj : list) {
+            String str = (String) obj; // ClassCastException!
+            System.out.println(str.toUpperCase());
+        }
+    }
+}
+                        </code></pre>
+                        
+                        <div class="error-box">
+                            <strong>Problems:</strong>
+                            <ul>
+                                <li>No compile-time type checking</li>
+                                <li>Runtime ClassCastException</li>
+                                <li>Explicit casting required</li>
+                                <li>Code is not self-documenting</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div>
+                        <h3>Solution with Generics</h3>
+                        <pre><code class="java">
+// Java 5+ code (with generics)
+import java.util.*;
+
+public class WithGenericsExample {
+    public static void main(String[] args) {
+        // Generic ArrayList
+        ArrayList<String> list = new ArrayList<String>();
+        
+        list.add("Hello");
+        list.add("World");
+        // list.add(42); // Compile-time error!
+        
+        // No explicit casting needed
+        for (String str : list) {
+            System.out.println(str.toUpperCase());
+        }
+        
+        // Type-safe retrieval
+        String first = list.get(0); // No casting
+    }
+}
+                        </code></pre>
+                        
+                        <div class="success-box">
+                            <strong>Benefits:</strong>
+                            <ul>
+                                <li>Compile-time type safety</li>
+                                <li>No ClassCastException</li>
+                                <li>No explicit casting</li>
+                                <li>Self-documenting code</li>
+                                <li>Better performance (no boxing/unboxing)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Generic Classes -->
+            <section>
+                <h2>Generic Classes</h2>
+                <h3>Creating a Generic Class</h3>
+                <pre><code class="java">
+// Generic Box class
+public class Box<T> {
+    private T content;
+    
+    // Constructor
+    public Box(T content) {
+        this.content = content;
+    }
+    
+    // Generic methods
+    public T getContent() {
+        return content;
+    }
+    
+    public void setContent(T content) {
+        this.content = content;
+    }
+    
+    // Method with generic parameter
+    public boolean isSameType(Box<T> other) {
+        return this.content.getClass().equals(other.content.getClass());
+    }
+    
+    @Override
+    public String toString() {
+        return "Box{content=" + content + ", type=" + content.getClass().getSimpleName() + "}";
+    }
+}
+
+// Usage examples
+public class GenericClassDemo {
+    public static void main(String[] args) {
+        // Creating generic instances
+        Box<String> stringBox = new Box<>("Hello Generics!");
+        Box<Integer> integerBox = new Box<>(42);
+        Box<Double> doubleBox = new Box<>(3.14);
+        
+        System.out.println("String box: " + stringBox);
+        System.out.println("Integer box: " + integerBox);
+        System.out.println("Double box: " + doubleBox);
+        
+        // Type-safe operations
+        String str = stringBox.getContent(); // No casting needed
+        Integer num = integerBox.getContent();
+        
+        // stringBox.setContent(123); // Compile-time error!
+        stringBox.setContent("Updated content"); // OK
+        
+        // Comparing types
+        Box<String> anotherStringBox = new Box<>("Another string");
+        System.out.println("Same type? " + stringBox.isSameType(anotherStringBox));
+        
+        // Diamond operator (Java 7+)
+        Box<String> diamondBox = new Box<>("Diamond operator");
+        System.out.println("Diamond box: " + diamondBox);
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- Multiple Type Parameters -->
+            <section>
+                <h2>Multiple Type Parameters</h2>
+                <pre><code class="java">
+// Generic class with multiple type parameters
+public class Pair<T, U> {
+    private T first;
+    private U second;
+    
+    public Pair(T first, U second) {
+        this.first = first;
+        this.second = second;
+    }
+    
+    // Getters and setters
+    public T getFirst() { return first; }
+    public void setFirst(T first) { this.first = first; }
+    
+    public U getSecond() { return second; }
+    public void setSecond(U second) { this.second = second; }
+    
+    // Utility method
+    public void swap() {
+        // This won't work because T and U might be different types
+        // We need bounded types or careful design
+    }
+    
+    @Override
+    public String toString() {
+        return "Pair{first=" + first + ", second=" + second + "}";
+    }
+    
+    // Static generic method
+    public static <T, U> Pair<T, U> of(T first, U second) {
+        return new Pair<>(first, second);
+    }
+}
+
+// Generic Triple class
+public class Triple<T, U, V> {
+    private T first;
+    private U second;
+    private V third;
+    
+    public Triple(T first, U second, V third) {
+        this.first = first;
+        this.second = second;
+        this.third = third;
+    }
+    
+    // Getters
+    public T getFirst() { return first; }
+    public U getSecond() { return second; }
+    public V getThird() { return third; }
+    
+    @Override
+    public String toString() {
+        return String.format("Triple{%s, %s, %s}", first, second, third);
+    }
+}
+
+// Usage demonstration
+public class MultipleTypeParametersDemo {
+    public static void main(String[] args) {
+        // Different type combinations
+        Pair<String, Integer> nameAge = new Pair<>("Alice", 25);
+        Pair<Integer, String> idName = new Pair<>(101, "Bob");
+        Pair<Double, Boolean> scorePass = new Pair<>(85.5, true);
+        
+        System.out.println("Name-Age: " + nameAge);
+        System.out.println("ID-Name: " + idName);
+        System.out.println("Score-Pass: " + scorePass);
+        
+        // Using static factory method
+        Pair<String, String> coordinates = Pair.of("X", "Y");
+        System.out.println("Coordinates: " + coordinates);
+        
+        // Triple example
+        Triple<String, Integer, Double> studentRecord = 
+            new Triple<>("Charlie", 22, 3.8);
+        System.out.println("Student: " + studentRecord);
+        
+        // Nested generics
+        Pair<String, Pair<Integer, Double>> complexPair = 
+            new Pair<>("Student", new Pair<>(20, 3.5));
+        System.out.println("Complex pair: " + complexPair);
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- Generic Methods -->
+            <section>
+                <h2>Generic Methods</h2>
+                <pre><code class="java">
+public class GenericMethods {
+    
+    // Generic static method
+    public static <T> void swap(T[] array, int i, int j) {
+        if (i >= 0 && j >= 0 && i < array.length && j < array.length) {
+            T temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+        }
+    }
+    
+    // Generic method with return type
+    public static <T> T getMiddleElement(T[] array) {
+        if (array == null || array.length == 0) {
+            return null;
+        }
+        return array[array.length / 2];
+    }
+    
+    // Generic method with multiple type parameters
+    public static <T, U> boolean areEqual(T obj1, U obj2) {
+        return obj1 != null && obj1.equals(obj2);
+    }
+    
+    // Generic method in non-generic class
+    public <T> Box<T> createBox(T content) {
+        return new Box<>(content);
+    }
+    
+    // Generic method with bounded type parameter
+    public static <T extends Number> double getAverage(T[] numbers) {
+        double sum = 0.0;
+        for (T num : numbers) {
+            sum += num.doubleValue();
+        }
+        return sum / numbers.length;
+    }
+    
+    // Generic method with multiple bounds
+    public static <T extends Number & Comparable<T>> T findMax(T[] array) {
+        if (array == null || array.length == 0) {
+            return null;
+        }
+        
+        T max = array[0];
+        for (int i = 1; i < array.length; i++) {
+            if (array[i].compareTo(max) > 0) {
+                max = array[i];
+            }
+        }
+        return max;
+    }
+    
+    // Generic method for printing arrays
+    public static <T> void printArray(String name, T[] array) {
+        System.out.print(name + ": [");
+        for (int i = 0; i < array.length; i++) {
+            System.out.print(array[i]);
+            if (i < array.length - 1) System.out.print(", ");
+        }
+        System.out.println("]");
+    }
+    
+    public static void main(String[] args) {
+        // Test generic methods
+        
+        // String array operations
+        String[] names = {"Alice", "Bob", "Charlie", "Diana"};
+        printArray("Original names", names);
+        
+        swap(names, 0, 2);
+        printArray("After swapping 0 and 2", names);
+        
+        String middleName = getMiddleElement(names);
+        System.out.println("Middle name: " + middleName);
+        
+        // Integer array operations
+        Integer[] numbers = {10, 20, 30, 40, 50};
+        printArray("Numbers", numbers);
+        
+        Integer middleNumber = getMiddleElement(numbers);
+        System.out.println("Middle number: " + middleNumber);
+        
+        double average = getAverage(numbers);
+        System.out.println("Average: " + average);
+        
+        Integer maxNumber = findMax(numbers);
+        System.out.println("Max number: " + maxNumber);
+        
+        // Double array
+        Double[] decimals = {3.14, 2.71, 1.41, 1.73};
+        Double maxDecimal = findMax(decimals);
+        System.out.println("Max decimal: " + maxDecimal);
+        
+        // Equality testing
+        System.out.println("Are 'Hello' and 'Hello' equal? " + areEqual("Hello", "Hello"));
+        System.out.println("Are 42 and 42.0 equal? " + areEqual(42, 42.0));
+        
+        // Creating boxes using generic method
+        GenericMethods gm = new GenericMethods();
+        Box<String> stringBox = gm.createBox("Generic Method Created");
+        Box<Integer> intBox = gm.createBox(100);
+        
+        System.out.println("Created boxes:");
+        System.out.println("  " + stringBox);
+        System.out.println("  " + intBox);
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- Bounded Type Parameters -->
+            <section>
+                <h2>Bounded Type Parameters</h2>
+                <div class="two-column">
+                    <div>
+                        <h3>Upper Bounded Types</h3>
+                        <pre><code class="java">
+// Upper bounded with extends
+class NumberBox<T extends Number> {
+    private T value;
+    
+    public NumberBox(T value) {
+        this.value = value;
+    }
+    
+    public T getValue() {
+        return value;
+    }
+    
+    // Can call Number methods
+    public double getDoubleValue() {
+        return value.doubleValue();
+    }
+    
+    // Can call Number methods
+    public int getIntValue() {
+        return value.intValue();
+    }
+    
+    // Comparison method
+    public boolean isGreaterThan(NumberBox<T> other) {
+        return this.value.doubleValue() > 
+               other.value.doubleValue();
+    }
+}
+
+// Usage
+public class BoundedDemo {
+    public static void main(String[] args) {
+        NumberBox<Integer> intBox = 
+            new NumberBox<>(42);
+        NumberBox<Double> doubleBox = 
+            new NumberBox<>(3.14);
+        
+        System.out.println("Int value: " + 
+                          intBox.getDoubleValue());
+        System.out.println("Double value: " + 
+                          doubleBox.getIntValue());
+        
+        // NumberBox<String> stringBox = 
+        //     new NumberBox<>("Hello"); // Error!
+    }
+}
+                        </code></pre>
+                    </div>
+                    <div>
+                        <h3>Multiple Bounds</h3>
+                        <pre><code class="java">
+// Interface for comparison
+interface Printable {
+    void print();
+}
+
+// Class implementing the interface
+class PrintableNumber extends Number 
+        implements Printable, Comparable<PrintableNumber> {
+    private double value;
+    
+    public PrintableNumber(double value) {
+        this.value = value;
+    }
+    
+    @Override
+    public void print() {
+        System.out.println("Value: " + value);
+    }
+    
+    @Override
+    public int compareTo(PrintableNumber other) {
+        return Double.compare(this.value, other.value);
+    }
+    
+    @Override
+    public int intValue() { return (int) value; }
+    
+    @Override
+    public long longValue() { return (long) value; }
+    
+    @Override
+    public float floatValue() { return (float) value; }
+    
+    @Override
+    public double doubleValue() { return value; }
+    
+    @Override
+    public String toString() { 
+        return String.valueOf(value); 
+    }
+}
+
+// Generic class with multiple bounds
+class AdvancedBox<T extends Number & Printable & Comparable<T>> {
+    private T content;
+    
+    public AdvancedBox(T content) {
+        this.content = content;
+    }
+    
+    public T getContent() {
+        return content;
+    }
+    
+    public void printContent() {
+        content.print(); // From Printable
+    }
+    
+    public double getNumericValue() {
+        return content.doubleValue(); // From Number
+    }
+    
+    public boolean isGreaterThan(AdvancedBox<T> other) {
+        return content.compareTo(other.content) > 0; // From Comparable
+    }
+}
+                        </code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Wildcards -->
+            <section>
+                <h2>Wildcards in Generics</h2>
+                <h3>Unbounded Wildcards</h3>
+                <pre><code class="java">
+import java.util.*;
+
+public class WildcardsDemo {
+    
+    // Unbounded wildcard - can accept any type
+    public static void printList(List<?> list) {
+        for (Object item : list) {
+            System.out.print(item + " ");
+        }
+        System.out.println();
+    }
+    
+    // Upper bounded wildcard - accepts Number and its subtypes
+    public static double sumNumbers(List<? extends Number> numbers) {
+        double sum = 0.0;
+        for (Number num : numbers) {
+            sum += num.doubleValue();
+        }
+        return sum;
+    }
+    
+    // Lower bounded wildcard - accepts Number and its supertypes
+    public static void addNumbers(List<? super Number> numbers) {
+        numbers.add(42);
+        numbers.add(3.14);
+        numbers.add(100L);
+        // numbers.add("Hello"); // Compile error - String is not Number or supertype
+    }
+    
+    // Method demonstrating PECS principle
+    // Producer Extends, Consumer Super
+    public static <T> void copy(List<? extends T> source, List<? super T> destination) {
+        for (T item : source) {
+            destination.add(item);
+        }
+    }
+    
+    public static void main(String[] args) {
+        System.out.println("=== Wildcards Demonstration ===");
+        
+        // Different types of lists
+        List<String> stringList = Arrays.asList("Hello", "World", "Generics");
+        List<Integer> intList = Arrays.asList(1, 2, 3, 4, 5);
+        List<Double> doubleList = Arrays.asList(1.1, 2.2, 3.3);
+        
+        // Unbounded wildcard usage
+        System.out.println("Printing different types of lists:");
+        printList(stringList);
+        printList(intList);
+        printList(doubleList);
+        
+        // Upper bounded wildcard
+        System.out.println("Sum of integers: " + sumNumbers(intList));
+        System.out.println("Sum of doubles: " + sumNumbers(doubleList));
+        // System.out.println("Sum of strings: " + sumNumbers(stringList)); // Error!
+        
+        // Lower bounded wildcard
+        List<Number> numberList = new ArrayList<>();
+        List<Object> objectList = new ArrayList<>();
+        
+        addNumbers(numberList);
+        addNumbers(objectList);
+        // addNumbers(intList); // Error! Integer is not supertype of Number
+        
+        System.out.println("Number list after adding: " + numberList);
+        System.out.println("Object list after adding: " + objectList);
+        
+        // PECS principle demonstration
+        List<Integer> source = Arrays.asList(10, 20, 30);
+        List<Number> destination = new ArrayList<>();
+        
+        copy(source, destination);
+        System.out.println("Copied from Integer list to Number list: " + destination);
+        
+        // Wildcard capture demonstration
+        demonstrateWildcardCapture();
+    }
+    
+    // Wildcard capture helper
+    private static void demonstrateWildcardCapture() {
+        System.out.println("\n--- Wildcard Capture ---");
+        
+        List<String> stringList = Arrays.asList("A", "B", "C");
+        swapElements(stringList, 0, 2);
+        System.out.println("After swap: " + stringList);
+        
+        List<Integer> intList = new ArrayList<>(Arrays.asList(1, 2, 3));
+        swapElements(intList, 0, 2);
+        System.out.println("After swap: " + intList);
+    }
+    
+    // Method using wildcard capture
+    public static void swapElements(List<?> list, int i, int j) {
+        swapElementsHelper(list, i, j);
+    }
+    
+    // Helper method that captures the wildcard type
+    private static <T> void swapElementsHelper(List<T> list, int i, int j) {
+        T temp = list.get(i);
+        list.set(i, list.get(j));
+        list.set(j, temp);
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- Type Erasure -->
+            <section>
+                <h2>Type Erasure and Limitations</h2>
+                <div class="two-column">
+                    <div>
+                        <h3>What is Type Erasure?</h3>
+                        <ul>
+                            <li>Generics are compile-time feature only</li>
+                            <li>Type information removed at runtime</li>
+                            <li>Ensures backward compatibility</li>
+                            <li>Raw types exist at runtime</li>
+                        </ul>
+                        
+                        <pre><code class="java">
+// Before compilation
+List<String> stringList = new ArrayList<String>();
+List<Integer> intList = new ArrayList<Integer>();
+
+// After type erasure (at runtime)
+List stringList = new ArrayList();
+List intList = new ArrayList();
+
+// This is why this doesn't work:
+public class ErasureExample {
+    // public void method(List<String> list) { }
+    // public void method(List<Integer> list) { } 
+    // Compile error: same erasure!
+    
+    // Workaround using bounded types
+    public void method(List<String> list, String dummy) { }
+    public void method(List<Integer> list, Integer dummy) { }
+}
+                        </code></pre>
+                    </div>
+                    <div>
+                        <h3>Limitations Due to Type Erasure</h3>
+                        <pre><code class="java">
+public class GenericLimitations<T> {
+    
+    // 1. Cannot create instance of type parameter
+    // T instance = new T(); // Error!
+    
+    // 2. Cannot create array of generic type
+    // T[] array = new T[10]; // Error!
+    
+    // 3. Cannot use primitive types
+    // List<int> intList; // Error! Use List<Integer>
+    
+    // 4. Cannot use instanceof with parameterized types
+    public boolean checkType(Object obj) {
+        // return obj instanceof List<String>; // Error!
+        return obj instanceof List; // OK, but loses type info
+    }
+    
+    // 5. Cannot create generic exception classes
+    // class MyException<T> extends Exception { } // Error!
+    
+    // 6. Cannot have static fields of type T
+    // static T staticField; // Error!
+    
+    // Workarounds
+    private Class<T> clazz;
+    
+    public GenericLimitations(Class<T> clazz) {
+        this.clazz = clazz;
+    }
+    
+    // Workaround for creating instances
+    public T createInstance() throws InstantiationException, 
+                                   IllegalAccessException {
+        return clazz.newInstance();
+    }
+    
+    // Workaround for arrays
+    @SuppressWarnings("unchecked")
+    public T[] createArray(int size) {
+        return (T[]) java.lang.reflect.Array.newInstance(clazz, size);
+    }
+}
+
+// Bridge methods example
+class Parent<T> {
+    public T getValue() { return null; }
+    public void setValue(T value) { }
+}
+
+class Child extends Parent<String> {
+    @Override
+    public String getValue() { return "child"; }
+    
+    @Override
+    public void setValue(String value) { }
+    
+    // Compiler generates bridge methods:
+    // public Object getValue() { return getValue(); }
+    // public void setValue(Object value) { setValue((String) value); }
+}
+                        </code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Generic Collections -->
+            <section>
+                <h2>Generic Collections Best Practices</h2>
+                <pre><code class="java">
+import java.util.*;
+
+public class GenericCollectionsBestPractices {
+    
+    public static void main(String[] args) {
+        demonstrateListGenerics();
+        demonstrateMapGenerics();
+        demonstrateSetGenerics();
+        demonstrateCollectionUtilities();
+    }
+    
+    private static void demonstrateListGenerics() {
+        System.out.println("=== List Generics ===");
+        
+        // Prefer interface types
+        List<String> list = new ArrayList<>(); // Diamond operator
+        
+        // Type-safe operations
+        list.add("Java");
+        list.add("Generics");
+        list.add("Collections");
+        
+        // No casting needed
+        for (String item : list) {
+            System.out.println(item.toUpperCase());
+        }
+        
+        // Generic methods with lists
+        Collections.sort(list);
+        String first = Collections.min(list);
+        System.out.println("First alphabetically: " + first);
+    }
+    
+    private static void demonstrateMapGenerics() {
+        System.out.println("\n=== Map Generics ===");
+        
+        Map<String, List<Integer>> studentGrades = new HashMap<>();
+        
+        // Adding data
+        studentGrades.put("Alice", Arrays.asList(85, 90, 88));
+        studentGrades.put("Bob", Arrays.asList(78, 82, 85));
+        studentGrades.put("Charlie", Arrays.asList(92, 95, 90));
+        
+        // Type-safe iteration
+        for (Map.Entry<String, List<Integer>> entry : studentGrades.entrySet()) {
+            String student = entry.getKey();
+            List<Integer> grades = entry.getValue();
+            
+            double average = grades.stream().mapToInt(Integer::intValue).average().orElse(0.0);
+            System.out.printf("%s: %s (avg: %.2f)%n", student, grades, average);
+        }
+        
+        // Generic method calls
+        Set<String> students = studentGrades.keySet();
+        Collection<List<Integer>> allGrades = studentGrades.values();
+        
+        System.out.println("Students: " + students);
+        System.out.println("Total grade lists: " + allGrades.size());
+    }
+    
+    private static void demonstrateSetGenerics() {
+        System.out.println("\n=== Set Generics ===");
+        
+        Set<String> hashSet = new HashSet<>();
+        Set<String> treeSet = new TreeSet<>();
+        
+        String[] words = {"banana", "apple", "cherry", "date", "apple"};
+        
+        Collections.addAll(hashSet, words);
+        Collections.addAll(treeSet, words);
+        
+        System.out.println("HashSet (no order): " + hashSet);
+        System.out.println("TreeSet (sorted): " + treeSet);
+        
+        // Set operations
+        Set<String> vowelWords = new HashSet<>();
+        vowelWords.add("apple");
+        vowelWords.add("orange");
+        
+        Set<String> intersection = new HashSet<>(hashSet);
+        intersection.retainAll(vowelWords);
+        System.out.println("Intersection: " + intersection);
+    }
+    
+    private static void demonstrateCollectionUtilities() {
+        System.out.println("\n=== Collection Utilities ===");
+        
+        // Generic utility methods
+        List<Integer> numbers = Arrays.asList(5, 2, 8, 1, 9, 3);
+        
+        // Sorting
+        List<Integer> sortedNumbers = new ArrayList<>(numbers);
+        Collections.sort(sortedNumbers);
+        System.out.println("Sorted: " + sortedNumbers);
+        
+        // Reverse sorting
+        Collections.sort(sortedNumbers, Collections.reverseOrder());
+        System.out.println("Reverse sorted: " + sortedNumbers);
+        
+        // Binary search
+        Collections.sort(sortedNumbers);
+        int index = Collections.binarySearch(sortedNumbers, 5);
+        System.out.println("Index of 5: " + index);
+        
+        // Custom comparator with generics
+        List<String> names = Arrays.asList("Alice", "Bob", "Charlie", "David");
+        Collections.sort(names, Comparator.comparing(String::length));
+        System.out.println("Sorted by length: " + names);
+        
+        // Frequency counting
+        List<String> letters = Arrays.asList("a", "b", "a", "c", "b", "a");
+        int frequency = Collections.frequency(letters, "a");
+        System.out.println("Frequency of 'a': " + frequency);
+        
+        // Type-safe empty collections
+        List<String> emptyList = Collections.emptyList();
+        Set<Integer> emptySet = Collections.emptySet();
+        Map<String, Double> emptyMap = Collections.emptyMap();
+        
+        // Immutable collections (Java 9+) or using Collections.unmodifiableXxx
+        List<String> immutableList = Collections.unmodifiableList(names);
+        System.out.println("Immutable list: " + immutableList);
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- GTU Previous Year Question 1 -->
+            <section>
+                <div class="gtu-question">
+                    <h4>GTU Previous Year Question (Summer 2022)</h4>
+                    <p><strong>Q: Write a Java program to demonstrate the use of generics. Create a generic class 'Container' that can store any type of object. Implement methods for adding, removing, and retrieving objects. Also demonstrate bounded type parameters with an example.</strong></p>
+                </div>
+                
+                <h3>Solution:</h3>
+                <pre><code class="java">
+import java.util.*;
+
+// Generic Container class
+class Container<T> {
+    private List<T> items;
+    private int maxSize;
+    
+    // Constructor
+    public Container(int maxSize) {
+        this.maxSize = maxSize;
+        this.items = new ArrayList<>();
+    }
+    
+    // Default constructor with unlimited size
+    public Container() {
+        this(-1); // -1 indicates no size limit
+    }
+    
+    // Add item to container
+    public boolean add(T item) {
+        if (maxSize > 0 && items.size() >= maxSize) {
+            System.out.println("Container is full! Cannot add: " + item);
+            return false;
+        }
+        items.add(item);
+        System.out.println("Added: " + item);
+        return true;
+    }
+    
+    // Add item at specific index
+    public boolean add(int index, T item) {
+        if (maxSize > 0 && items.size() >= maxSize) {
+            System.out.println("Container is full! Cannot add: " + item);
+            return false;
+        }
+        if (index < 0 || index > items.size()) {
+            System.out.println("Invalid index: " + index);
+            return false;
+        }
+        items.add(index, item);
+        System.out.println("Added at index " + index + ": " + item);
+        return true;
+    }
+    
+    // Remove item by object
+    public boolean remove(T item) {
+        boolean removed = items.remove(item);
+        if (removed) {
+            System.out.println("Removed: " + item);
+        } else {
+            System.out.println("Item not found: " + item);
+        }
+        return removed;
+    }
+    
+    // Remove item by index
+    public T remove(int index) {
+        if (index < 0 || index >= items.size()) {
+            System.out.println("Invalid index: " + index);
+            return null;
+        }
+        T removedItem = items.remove(index);
+        System.out.println("Removed from index " + index + ": " + removedItem);
+        return removedItem;
+    }
+    
+    // Retrieve item by index
+    public T get(int index) {
+        if (index < 0 || index >= items.size()) {
+            System.out.println("Invalid index: " + index);
+            return null;
+        }
+        return items.get(index);
+    }
+    
+    // Check if container contains item
+    public boolean contains(T item) {
+        return items.contains(item);
+    }
+    
+    // Get size
+    public int size() {
+        return items.size();
+    }
+    
+    // Check if empty
+    public boolean isEmpty() {
+        return items.isEmpty();
+    }
+    
+    // Clear all items
+    public void clear() {
+        items.clear();
+        System.out.println("Container cleared");
+    }
+    
+    // Get all items
+    public List<T> getAllItems() {
+        return new ArrayList<>(items); // Return copy for safety
+    }
+    
+    // Display all items
+    public void display() {
+        if (items.isEmpty()) {
+            System.out.println("Container is empty");
+        } else {
+            System.out.println("Container contents: " + items);
+        }
+    }
+    
+    // Generic method to find first item matching predicate
+    public T findFirst(Predicate<T> predicate) {
+        for (T item : items) {
+            if (predicate.test(item)) {
+                return item;
+            }
+        }
+        return null;
+    }
+    
+    @Override
+    public String toString() {
+        return "Container{size=" + items.size() + 
+               ", maxSize=" + (maxSize > 0 ? maxSize : "unlimited") + 
+               ", items=" + items + "}";
+    }
+}
+
+// Functional interface for demonstration
+@FunctionalInterface
+interface Predicate<T> {
+    boolean test(T item);
+}
+                </code></pre>
+            </section>
+
+            <!-- Bounded Container Example -->
+            <section>
+                <h3>Bounded Type Parameters Example:</h3>
+                <pre><code class="java">
+// Bounded container for numeric types only
+class NumericContainer<T extends Number> {
+    private List<T> numbers;
+    
+    public NumericContainer() {
+        this.numbers = new ArrayList<>();
+    }
+    
+    // Add number
+    public void add(T number) {
+        numbers.add(number);
+        System.out.println("Added number: " + number);
+    }
+    
+    // Calculate sum using Number methods
+    public double getSum() {
+        double sum = 0.0;
+        for (T number : numbers) {
+            sum += number.doubleValue(); // Can call Number methods
+        }
+        return sum;
+    }
+    
+    // Calculate average
+    public double getAverage() {
+        if (numbers.isEmpty()) return 0.0;
+        return getSum() / numbers.size();
+    }
+    
+    // Find maximum value
+    public T getMax() {
+        if (numbers.isEmpty()) return null;
+        
+        T max = numbers.get(0);
+        for (T number : numbers) {
+            if (number.doubleValue() > max.doubleValue()) {
+                max = number;
+            }
+        }
+        return max;
+    }
+    
+    // Find minimum value
+    public T getMin() {
+        if (numbers.isEmpty()) return null;
+        
+        T min = numbers.get(0);
+        for (T number : numbers) {
+            if (number.doubleValue() < min.doubleValue()) {
+                min = number;
+            }
+        }
+        return min;
+    }
+    
+    // Get all numbers
+    public List<T> getNumbers() {
+        return new ArrayList<>(numbers);
+    }
+    
+    // Display statistics
+    public void displayStatistics() {
+        System.out.println("=== Numeric Container Statistics ===");
+        System.out.println("Count: " + numbers.size());
+        if (!numbers.isEmpty()) {
+            System.out.printf("Sum: %.2f%n", getSum());
+            System.out.printf("Average: %.2f%n", getAverage());
+            System.out.println("Maximum: " + getMax());
+            System.out.println("Minimum: " + getMin());
+        }
+        System.out.println("Numbers: " + numbers);
+    }
+    
+    @Override
+    public String toString() {
+        return "NumericContainer{count=" + numbers.size() + ", numbers=" + numbers + "}";
+    }
+}
+
+// Comparable container for sortable types
+class SortableContainer<T extends Comparable<T>> {
+    private List<T> items;
+    
+    public SortableContainer() {
+        this.items = new ArrayList<>();
+    }
+    
+    // Add item
+    public void add(T item) {
+        items.add(item);
+        System.out.println("Added to sortable container: " + item);
+    }
+    
+    // Sort items using natural ordering
+    public void sort() {
+        Collections.sort(items);
+        System.out.println("Container sorted");
+    }
+    
+    // Get sorted items without modifying original
+    public List<T> getSorted() {
+        List<T> sorted = new ArrayList<>(items);
+        Collections.sort(sorted);
+        return sorted;
+    }
+    
+    // Find item using binary search (requires sorted container)
+    public int binarySearch(T item) {
+        sort(); // Ensure sorted first
+        return Collections.binarySearch(items, item);
+    }
+    
+    // Get items
+    public List<T> getItems() {
+        return new ArrayList<>(items);
+    }
+    
+    @Override
+    public String toString() {
+        return "SortableContainer{items=" + items + "}";
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- Complete Demo -->
+            <section>
+                <h3>Complete Demonstration:</h3>
+                <pre><code class="java">
+public class GenericContainerDemo {
+    public static void main(String[] args) {
+        System.out.println("=== Generic Container Demonstration ===\n");
+        
+        // Demonstrate basic generic container
+        demonstrateBasicContainer();
+        
+        // Demonstrate bounded numeric container
+        demonstrateNumericContainer();
+        
+        // Demonstrate sortable container
+        demonstrateSortableContainer();
+    }
+    
+    private static void demonstrateBasicContainer() {
+        System.out.println("--- Basic Generic Container ---");
+        
+        // String container
+        Container<String> stringContainer = new Container<>(5); // Max 5 items
+        stringContainer.add("Hello");
+        stringContainer.add("Generics");
+        stringContainer.add("World");
+        stringContainer.add(1, "Java"); // Insert at index 1
+        stringContainer.display();
+        
+        System.out.println("Contains 'Java': " + stringContainer.contains("Java"));
+        System.out.println("Item at index 2: " + stringContainer.get(2));
+        
+        stringContainer.remove("World");
+        stringContainer.display();
+        
+        // Integer container
+        Container<Integer> intContainer = new Container<>(); // Unlimited size
+        intContainer.add(10);
+        intContainer.add(20);
+        intContainer.add(30);
+        intContainer.add(40);
+        
+        System.out.println("Integer container: " + intContainer);
+        
+        // Find first even number
+        Integer firstEven = intContainer.findFirst(num -> num % 2 == 0);
+        System.out.println("First even number: " + firstEven);
+        
+        // Student container (custom objects)
+        Container<Student> studentContainer = new Container<>();
+        studentContainer.add(new Student("Alice", 85));
+        studentContainer.add(new Student("Bob", 92));
+        studentContainer.add(new Student("Charlie", 78));
+        
+        System.out.println("Student container:");
+        studentContainer.display();
+        
+        System.out.println();
+    }
+    
+    private static void demonstrateNumericContainer() {
+        System.out.println("--- Bounded Numeric Container ---");
+        
+        // Integer numeric container
+        NumericContainer<Integer> intNumbers = new NumericContainer<>();
+        intNumbers.add(10);
+        intNumbers.add(25);
+        intNumbers.add(15);
+        intNumbers.add(30);
+        intNumbers.displayStatistics();
+        
+        // Double numeric container
+        NumericContainer<Double> doubleNumbers = new NumericContainer<>();
+        doubleNumbers.add(3.14);
+        doubleNumbers.add(2.71);
+        doubleNumbers.add(1.41);
+        doubleNumbers.displayStatistics();
+        
+        // Cannot create NumericContainer<String> - compile error!
+        // NumericContainer<String> stringNumbers = new NumericContainer<>(); // Error!
+        
+        System.out.println();
+    }
+    
+    private static void demonstrateSortableContainer() {
+        System.out.println("--- Sortable Container ---");
+        
+        // String sortable container
+        SortableContainer<String> words = new SortableContainer<>();
+        words.add("Zebra");
+        words.add("Apple");
+        words.add("Mango");
+        words.add("Banana");
+        
+        System.out.println("Before sorting: " + words.getItems());
+        System.out.println("Sorted items: " + words.getSorted());
+        
+        words.sort();
+        System.out.println("After sorting: " + words.getItems());
+        
+        int index = words.binarySearch("Mango");
+        System.out.println("Index of 'Mango': " + index);
+        
+        // Integer sortable container
+        SortableContainer<Integer> numbers = new SortableContainer<>();
+        numbers.add(42);
+        numbers.add(17);
+        numbers.add(35);
+        numbers.add(8);
+        
+        System.out.println("Numbers before sorting: " + numbers.getItems());
+        numbers.sort();
+        System.out.println("Numbers after sorting: " + numbers.getItems());
+        
+        System.out.println();
+    }
+}
+
+// Helper class for demonstration
+class Student {
+    private String name;
+    private int grade;
+    
+    public Student(String name, int grade) {
+        this.name = name;
+        this.grade = grade;
+    }
+    
+    public String getName() { return name; }
+    public int getGrade() { return grade; }
+    
+    @Override
+    public String toString() {
+        return "Student{name='" + name + "', grade=" + grade + "}";
+    }
+}
+                </code></pre>
+                
+                <div class="success-box">
+                    <strong>Solution Features:</strong>
+                    <ul>
+                        <li>Complete generic Container class with type safety</li>
+                        <li>Bounded NumericContainer for Number subtypes only</li>
+                        <li>SortableContainer for Comparable types</li>
+                        <li>Comprehensive CRUD operations and utility methods</li>
+                        <li>Real-world examples with different data types</li>
+                        <li>Demonstrates compile-time type checking benefits</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Hands-on Lab Exercise -->
+            <section>
+                <h2>🧪 Hands-on Lab Exercise</h2>
+                <div class="highlight-box">
+                    <h3>Lab 18: Generic Data Processing Pipeline</h3>
+                    <p><strong>Task:</strong> Create a generic data processing pipeline that can transform, filter, and aggregate data of any type using generics, bounded parameters, and wildcards.</p>
+                </div>
+                
+                <h3>Requirements:</h3>
+                <ul>
+                    <li>Create a generic <code>Pipeline&lt;T&gt;</code> class with transformation methods</li>
+                    <li>Implement generic <code>Transformer&lt;T, R&gt;</code> and <code>Predicate&lt;T&gt;</code> interfaces</li>
+                    <li>Use bounded type parameters for numeric aggregations</li>
+                    <li>Implement wildcard methods for pipeline composition</li>
+                    <li>Create a generic cache system with type-safe operations</li>
+                    <li>Demonstrate pipeline chaining with different data types</li>
+                </ul>
+                
+                <div class="warning-box">
+                    <strong>Challenge:</strong> Implement a generic repository pattern with CRUD operations that maintains type safety across different entity types.
+                </div>
+            </section>
+
+            <!-- Summary -->
+            <section>
+                <h2>📚 Lecture Summary</h2>
+                <div class="two-column">
+                    <div>
+                        <h3>Key Concepts Covered</h3>
+                        <ul>
+                            <li>Generic classes and interfaces</li>
+                            <li>Generic methods and constructors</li>
+                            <li>Bounded type parameters (extends)</li>
+                            <li>Wildcards (?, extends, super)</li>
+                            <li>Type erasure and limitations</li>
+                            <li>Generic collections best practices</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Best Practices</h3>
+                        <ul>
+                            <li>Use generics for type safety</li>
+                            <li>Prefer bounded types when constraints are needed</li>
+                            <li>Apply PECS principle for wildcards</li>
+                            <li>Use diamond operator for cleaner code</li>
+                            <li>Avoid raw types in new code</li>
+                            <li>Understand type erasure limitations</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="highlight-box" style="margin-top: 30px;">
+                    <h3>🎯 Next Lecture Preview</h3>
+                    <p><strong>Lecture 19: Input/Output and File Handling</strong></p>
+                    <ul>
+                        <li>Stream classes and I/O hierarchy</li>
+                        <li>File and directory operations</li>
+                        <li>Character vs byte streams</li>
+                        <li>Serialization and deserialization</li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/notes/notes.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/highlight.min.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            transition: 'slide',
+            transitionSpeed: 'fast',
+            center: true,
+            plugins: [RevealNotes, RevealHighlight]
+        });
+    </script>
+</body>
+</html>

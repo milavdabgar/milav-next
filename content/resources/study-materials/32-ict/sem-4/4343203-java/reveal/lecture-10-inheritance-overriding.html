@@ -1,0 +1,1571 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Lecture 10 - Inheritance and Method Overriding</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/theme/white.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/highlight/monokai.css">
+    <style>
+        .reveal h1, .reveal h2, .reveal h3 { color: #2c3e50; }
+        .reveal .slides section { text-align: left; padding: 10px 30px; height: 90vh; box-sizing: border-box; overflow: hidden; }
+        .reveal .title-slide { text-align: center; }
+        .reveal .center { text-align: center; }
+        .reveal pre code { font-size: 0.7em; line-height: 1.1; max-height: 300px; overflow-y: auto; }
+        .reveal h2 { font-size: 1.6em; margin-bottom: 0.4em; }
+        .reveal h3 { font-size: 1.3em; margin-bottom: 0.3em; }
+        .reveal ul, .reveal ol { font-size: 0.85em; margin: 0.4em 0; }
+        .reveal li { margin: 0.2em 0; }
+        .highlight { background-color: #fff3cd; padding: 6px; border-left: 4px solid #ffc107; margin: 6px 0; font-size: 0.85em; }
+        .inheritance-box { background-color: #e8f4f8; padding: 8px; border-radius: 5px; margin: 6px 0; font-size: 0.8em; }
+        .two-column { display: flex; gap: 15px; font-size: 0.8em; }
+        .column { flex: 1; }
+        .hierarchy-box { background: #f0f8ff; padding: 8px; margin: 6px 0; border-left: 4px solid #007bff; font-size: 0.8em; }
+        .exam-question { background: #e8f5e9; padding: 8px; border-left: 4px solid #28a745; margin: 8px 0; font-size: 0.8em; }
+        .solution-box { background: #f8f9fa; padding: 8px; border: 1px solid #dee2e6; border-radius: 4px; margin: 6px 0; }
+        .table-style { font-size: 0.65em; width: 100%; border-collapse: collapse; }
+        .table-style th, .table-style td { border: 1px solid #ddd; padding: 4px; text-align: center; }
+        .override-box { background: #fff0f5; padding: 8px; border-left: 4px solid #d63384; margin: 6px 0; font-size: 0.8em; }
+        .super-box { background: #f0fff4; padding: 8px; border-left: 4px solid #20c997; margin: 6px 0; font-size: 0.8em; }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- Title Slide -->
+            <section class="title-slide">
+                <h1>Java Programming</h1>
+                <h2>Lecture 10: Inheritance and Method Overriding</h2>
+                <p>Course: 4343203 - Java Programming</p>
+                <p><small>GTU Semester 4 | Unit 2</small></p>
+                <br>
+                <p><em>Learning Objectives:</em></p>
+                <ul style="font-size: 0.8em; text-align: left; display: inline-block;">
+                    <li>Master inheritance concepts and implementation</li>
+                    <li>Understand method overriding and polymorphism</li>
+                    <li>Learn super keyword usage and constructor chaining</li>
+                    <li>Apply inheritance hierarchies in real applications</li>
+                    <li>Handle inheritance-related design patterns</li>
+                </ul>
+            </section>
+
+            <!-- Introduction to Inheritance -->
+            <section>
+                <h2>Understanding Inheritance</h2>
+                
+                <div class="center">
+                    <img src="diagrams/inheritance-polymorphism-relationship.svg" alt="Inheritance Hierarchy" style="width: 90%; max-width: 800px;">
+                </div>
+                
+                <div class="highlight">
+                    <p><strong>Inheritance</strong> is a mechanism where a new class (subclass/child) acquires the properties and methods of an existing class (superclass/parent), promoting code reusability and establishing an "is-a" relationship.</p>
+                </div>
+                
+                <div class="two-column">
+                    <div class="column">
+                        <div class="inheritance-box">
+                            <h3>Key Inheritance Concepts:</h3>
+                            <ul>
+                                <li><strong>Superclass/Parent:</strong> The class being inherited from</li>
+                                <li><strong>Subclass/Child:</strong> The class that inherits</li>
+                                <li><strong>extends keyword:</strong> Used to establish inheritance</li>
+                                <li><strong>Is-a relationship:</strong> Subclass is a type of superclass</li>
+                                <li><strong>Code reusability:</strong> Inherit existing functionality</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="hierarchy-box">
+                            <h3>Benefits of Inheritance:</h3>
+                            <ul>
+                                <li>Code reusability and reduced redundancy</li>
+                                <li>Easier maintenance and updates</li>
+                                <li>Polymorphism support</li>
+                                <li>Real-world modeling</li>
+                                <li>Extensibility for future enhancements</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="inheritance-box">
+                            <h3>Basic Inheritance Syntax:</h3>
+                            <pre><code data-trim>
+// Superclass (Parent)
+public class Vehicle {
+    protected String brand;
+    protected int year;
+    protected String color;
+    
+    public Vehicle(String brand, int year, String color) {
+        this.brand = brand;
+        this.year = year;
+        this.color = color;
+    }
+    
+    public void start() {
+        System.out.println("Vehicle is starting...");
+    }
+    
+    public void stop() {
+        System.out.println("Vehicle is stopping...");
+    }
+}
+
+// Subclass (Child)
+public class Car extends Vehicle {
+    private int doors;
+    private String fuelType;
+    
+    public Car(String brand, int year, String color, 
+               int doors, String fuelType) {
+        super(brand, year, color);  // Call parent constructor
+        this.doors = doors;
+        this.fuelType = fuelType;
+    }
+    
+    public void honk() {
+        System.out.println("Car is honking: Beep beep!");
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Types of Inheritance -->
+            <section>
+                <h2>Types of Inheritance</h2>
+                
+                <div class="two-column">
+                    <div class="column">
+                        <div class="hierarchy-box">
+                            <h3>Single Inheritance:</h3>
+                            <p>One subclass inherits from one superclass.</p>
+                            <pre><code data-trim>
+// Single Inheritance Example
+class Animal {
+    String name;
+    
+    public void eat() {
+        System.out.println(name + " is eating");
+    }
+}
+
+class Dog extends Animal {
+    public void bark() {
+        System.out.println(name + " is barking");
+    }
+}
+
+// Usage:
+Dog dog = new Dog();
+dog.name = "Buddy";
+dog.eat();   // Inherited method
+dog.bark();  // Own method</code></pre>
+                        </div>
+                        
+                        <div class="hierarchy-box">
+                            <h3>Multilevel Inheritance:</h3>
+                            <p>A chain of inheritance where each class extends another.</p>
+                            <pre><code data-trim>
+// Multilevel Inheritance Example
+class Animal {
+    public void breathe() {
+        System.out.println("Animal is breathing");
+    }
+}
+
+class Mammal extends Animal {
+    public void giveBirth() {
+        System.out.println("Mammal gives birth");
+    }
+}
+
+class Dog extends Mammal {
+    public void bark() {
+        System.out.println("Dog is barking");
+    }
+}
+
+// Dog inherits from both Mammal and Animal
+Dog dog = new Dog();
+dog.breathe();    // From Animal
+dog.giveBirth();  // From Mammal
+dog.bark();       // Own method</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="hierarchy-box">
+                            <h3>Hierarchical Inheritance:</h3>
+                            <p>Multiple subclasses inherit from one superclass.</p>
+                            <pre><code data-trim>
+// Hierarchical Inheritance Example
+class Shape {
+    protected String color;
+    
+    public Shape(String color) {
+        this.color = color;
+    }
+    
+    public void draw() {
+        System.out.println("Drawing a " + color + " shape");
+    }
+}
+
+class Circle extends Shape {
+    private double radius;
+    
+    public Circle(String color, double radius) {
+        super(color);
+        this.radius = radius;
+    }
+    
+    public double getArea() {
+        return Math.PI * radius * radius;
+    }
+}
+
+class Rectangle extends Shape {
+    private double width, height;
+    
+    public Rectangle(String color, double width, double height) {
+        super(color);
+        this.width = width;
+        this.height = height;
+    }
+    
+    public double getArea() {
+        return width * height;
+    }
+}</code></pre>
+                        </div>
+                        
+                        <div class="highlight">
+                            <p><strong>Note:</strong> Java does NOT support multiple inheritance of classes (one class extending multiple classes) to avoid the Diamond Problem. However, it supports multiple inheritance of interfaces.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Method Overriding -->
+            <section>
+                <h2>Method Overriding</h2>
+                
+                <div class="two-column">
+                    <div class="column">
+                        <div class="override-box">
+                            <h3>What is Method Overriding?</h3>
+                            <p>Method overriding allows a subclass to provide a specific implementation of a method that is already defined in its superclass.</p>
+                            
+                            <h3>Overriding Rules:</h3>
+                            <ul>
+                                <li>Method signature must be identical</li>
+                                <li>Return type must be same or covariant</li>
+                                <li>Access modifier cannot be more restrictive</li>
+                                <li>Cannot override static, final, or private methods</li>
+                                <li>Use @Override annotation for clarity</li>
+                            </ul>
+                            
+                            <h3>Basic Overriding Example:</h3>
+                            <pre><code data-trim>
+class Animal {
+    public void makeSound() {
+        System.out.println("Animal makes a sound");
+    }
+    
+    public void move() {
+        System.out.println("Animal moves");
+    }
+}
+
+class Dog extends Animal {
+    @Override
+    public void makeSound() {
+        System.out.println("Dog barks: Woof!");
+    }
+    
+    @Override
+    public void move() {
+        System.out.println("Dog runs on four legs");
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="override-box">
+                            <h3>Runtime Polymorphism:</h3>
+                            <pre><code data-trim>
+public class PolymorphismDemo {
+    public static void main(String[] args) {
+        // Reference variable of parent type
+        Animal animal1 = new Animal();
+        Animal animal2 = new Dog();    // Polymorphism
+        Animal animal3 = new Cat();    // Polymorphism
+        
+        // Method calls resolved at runtime
+        animal1.makeSound(); // "Animal makes a sound"
+        animal2.makeSound(); // "Dog barks: Woof!"
+        animal3.makeSound(); // "Cat meows: Meow!"
+        
+        // Array of different animal types
+        Animal[] zoo = {
+            new Dog(),
+            new Cat(),
+            new Bird(),
+            new Fish()
+        };
+        
+        System.out.println("Zoo sounds:");
+        for (Animal animal : zoo) {
+            animal.makeSound(); // Different sound for each
+        }
+    }
+}
+
+class Cat extends Animal {
+    @Override
+    public void makeSound() {
+        System.out.println("Cat meows: Meow!");
+    }
+}
+
+class Bird extends Animal {
+    @Override
+    public void makeSound() {
+        System.out.println("Bird chirps: Tweet!");
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- super Keyword -->
+            <section>
+                <h2>The super Keyword</h2>
+                
+                <div class="two-column">
+                    <div class="column">
+                        <div class="super-box">
+                            <h3>Uses of super Keyword:</h3>
+                            <ol>
+                                <li><strong>Access parent's variables</strong></li>
+                                <li><strong>Call parent's methods</strong></li>
+                                <li><strong>Call parent's constructors</strong></li>
+                            </ol>
+                            
+                            <h3>1. Accessing Parent Variables:</h3>
+                            <pre><code data-trim>
+class Parent {
+    protected String name = "Parent";
+}
+
+class Child extends Parent {
+    private String name = "Child";
+    
+    public void displayNames() {
+        System.out.println("Child name: " + this.name);
+        System.out.println("Parent name: " + super.name);
+    }
+}</code></pre>
+                            
+                            <h3>2. Calling Parent Methods:</h3>
+                            <pre><code data-trim>
+class Vehicle {
+    public void start() {
+        System.out.println("Vehicle engine starting...");
+    }
+}
+
+class Car extends Vehicle {
+    @Override
+    public void start() {
+        super.start();  // Call parent method first
+        System.out.println("Car engine started successfully!");
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="super-box">
+                            <h3>3. Constructor Chaining with super:</h3>
+                            <pre><code data-trim>
+class Employee {
+    protected String name;
+    protected int id;
+    protected double salary;
+    
+    public Employee(String name, int id) {
+        this.name = name;
+        this.id = id;
+        this.salary = 30000.0;  // Default salary
+        System.out.println("Employee constructor called");
+    }
+    
+    public Employee(String name, int id, double salary) {
+        this.name = name;
+        this.id = id;
+        this.salary = salary;
+        System.out.println("Employee parameterized constructor");
+    }
+}
+
+class Manager extends Employee {
+    private String department;
+    private double bonus;
+    
+    public Manager(String name, int id, String department) {
+        super(name, id);  // Call parent constructor
+        this.department = department;
+        this.bonus = 5000.0;
+        System.out.println("Manager constructor called");
+    }
+    
+    public Manager(String name, int id, double salary, 
+                  String department, double bonus) {
+        super(name, id, salary);  // Call specific parent constructor
+        this.department = department;
+        this.bonus = bonus;
+        System.out.println("Manager full constructor called");
+    }
+    
+    public double getTotalSalary() {
+        return salary + bonus;  // Access protected variable
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="highlight">
+                    <p><strong>Important:</strong> super() must be the first statement in a constructor. If not explicitly called, Java automatically inserts super() to call the parent's default constructor.</p>
+                </div>
+            </section>
+
+            <!-- Access Modifiers in Inheritance -->
+            <section>
+                <h2>Access Modifiers and Inheritance</h2>
+                
+                <div class="two-column">
+                    <div class="column">
+                        <div class="inheritance-box">
+                            <h3>Access Modifier Visibility:</h3>
+                            <table class="table-style">
+                                <tr>
+                                    <th>Modifier</th>
+                                    <th>Same Class</th>
+                                    <th>Same Package</th>
+                                    <th>Subclass</th>
+                                    <th>Different Package</th>
+                                </tr>
+                                <tr>
+                                    <td>private</td>
+                                    <td>✅</td>
+                                    <td>❌</td>
+                                    <td>❌</td>
+                                    <td>❌</td>
+                                </tr>
+                                <tr>
+                                    <td>default</td>
+                                    <td>✅</td>
+                                    <td>✅</td>
+                                    <td>❌*</td>
+                                    <td>❌</td>
+                                </tr>
+                                <tr>
+                                    <td>protected</td>
+                                    <td>✅</td>
+                                    <td>✅</td>
+                                    <td>✅</td>
+                                    <td>❌</td>
+                                </tr>
+                                <tr>
+                                    <td>public</td>
+                                    <td>✅</td>
+                                    <td>✅</td>
+                                    <td>✅</td>
+                                    <td>✅</td>
+                                </tr>
+                            </table>
+                            <p style="font-size: 0.7em;">*Only if subclass is in same package</p>
+                        </div>
+                        
+                        <div class="inheritance-box">
+                            <h3>Overriding Access Rules:</h3>
+                            <ul>
+                                <li>Cannot reduce visibility when overriding</li>
+                                <li>Can increase visibility</li>
+                                <li>protected → public ✅</li>
+                                <li>public → protected ❌</li>
+                                <li>private methods cannot be overridden</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="inheritance-box">
+                            <h3>Access Modifier Examples:</h3>
+                            <pre><code data-trim>
+public class Parent {
+    private int privateVar = 10;      // Not inherited
+    int defaultVar = 20;              // Package visibility
+    protected int protectedVar = 30;  // Inherited
+    public int publicVar = 40;        // Inherited
+    
+    private void privateMethod() {
+        System.out.println("Private method");
+    }
+    
+    protected void protectedMethod() {
+        System.out.println("Protected method");
+    }
+    
+    public void publicMethod() {
+        System.out.println("Public method");
+    }
+}
+
+public class Child extends Parent {
+    public void accessParentMembers() {
+        // System.out.println(privateVar);     // ❌ Error!
+        System.out.println(defaultVar);        // ✅ If same package
+        System.out.println(protectedVar);      // ✅ Always accessible
+        System.out.println(publicVar);         // ✅ Always accessible
+        
+        // privateMethod();     // ❌ Error!
+        protectedMethod();      // ✅ Accessible
+        publicMethod();         // ✅ Accessible
+    }
+    
+    // Method overriding with access modifier changes
+    @Override
+    public void protectedMethod() {  // Increased visibility: protected → public
+        super.protectedMethod();
+        System.out.println("Child's enhanced protected method");
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Real-world Inheritance Example -->
+            <section>
+                <h2>Real-world Inheritance Example</h2>
+                
+                <div class="two-column">
+                    <div class="column">
+                        <div class="hierarchy-box">
+                            <h3>Banking System Hierarchy:</h3>
+                            <pre><code data-trim>
+// Base Account class
+public abstract class Account {
+    protected String accountNumber;
+    protected String holderName;
+    protected double balance;
+    protected String accountType;
+    
+    public Account(String accountNumber, String holderName, 
+                  String accountType) {
+        this.accountNumber = accountNumber;
+        this.holderName = holderName;
+        this.accountType = accountType;
+        this.balance = 0.0;
+    }
+    
+    // Common methods for all accounts
+    public void deposit(double amount) {
+        if (amount > 0) {
+            balance += amount;
+            System.out.println("Deposited: $" + amount);
+        }
+    }
+    
+    public boolean withdraw(double amount) {
+        if (amount > 0 && amount <= balance) {
+            balance -= amount;
+            System.out.println("Withdrawn: $" + amount);
+            return true;
+        }
+        return false;
+    }
+    
+    // Abstract method - must be implemented by subclasses
+    public abstract double calculateInterest();
+    
+    public void displayInfo() {
+        System.out.println("Account: " + accountNumber);
+        System.out.println("Holder: " + holderName);
+        System.out.println("Type: " + accountType);
+        System.out.println("Balance: $" + balance);
+    }
+    
+    // Getters
+    public String getAccountNumber() { return accountNumber; }
+    public double getBalance() { return balance; }
+}</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="hierarchy-box">
+                            <h3>Specialized Account Types:</h3>
+                            <pre><code data-trim>
+// Savings Account
+public class SavingsAccount extends Account {
+    private double interestRate;
+    private int minBalance;
+    
+    public SavingsAccount(String accountNumber, String holderName, 
+                         double interestRate) {
+        super(accountNumber, holderName, "Savings");
+        this.interestRate = interestRate;
+        this.minBalance = 1000;
+    }
+    
+    @Override
+    public boolean withdraw(double amount) {
+        if (balance - amount >= minBalance) {
+            return super.withdraw(amount);
+        }
+        System.out.println("Insufficient balance! Minimum balance: $" + minBalance);
+        return false;
+    }
+    
+    @Override
+    public double calculateInterest() {
+        return balance * interestRate / 100;
+    }
+    
+    public void applyInterest() {
+        double interest = calculateInterest();
+        balance += interest;
+        System.out.println("Interest applied: $" + interest);
+    }
+}
+
+// Current Account
+public class CurrentAccount extends Account {
+    private double overdraftLimit;
+    
+    public CurrentAccount(String accountNumber, String holderName, 
+                         double overdraftLimit) {
+        super(accountNumber, holderName, "Current");
+        this.overdraftLimit = overdraftLimit;
+    }
+    
+    @Override
+    public boolean withdraw(double amount) {
+        if (amount > 0 && (balance + overdraftLimit) >= amount) {
+            balance -= amount;
+            System.out.println("Withdrawn: $" + amount);
+            if (balance < 0) {
+                System.out.println("Account overdrawn by: $" + Math.abs(balance));
+            }
+            return true;
+        }
+        System.out.println("Withdrawal exceeds overdraft limit!");
+        return false;
+    }
+    
+    @Override
+    public double calculateInterest() {
+        return 0.0;  // No interest for current account
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Method Overriding vs Overloading -->
+            <section>
+                <h2>Method Overriding vs Method Overloading</h2>
+                
+                <div class="two-column">
+                    <div class="column">
+                        <div class="override-box">
+                            <h3>Method Overriding:</h3>
+                            <ul>
+                                <li>Same method signature in parent and child</li>
+                                <li>Runtime polymorphism</li>
+                                <li>Uses inheritance</li>
+                                <li>@Override annotation</li>
+                                <li>Method resolution at runtime</li>
+                            </ul>
+                            
+                            <pre><code data-trim>
+class Animal {
+    public void makeSound() {
+        System.out.println("Animal sound");
+    }
+}
+
+class Dog extends Animal {
+    @Override  // Same signature
+    public void makeSound() {
+        System.out.println("Woof!");
+    }
+}
+
+// Usage:
+Animal animal = new Dog();
+animal.makeSound();  // Prints "Woof!" - Runtime decision</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="override-box">
+                            <h3>Method Overloading:</h3>
+                            <ul>
+                                <li>Same method name, different parameters</li>
+                                <li>Compile-time polymorphism</li>
+                                <li>Within same class</li>
+                                <li>No special annotation</li>
+                                <li>Method resolution at compile time</li>
+                            </ul>
+                            
+                            <pre><code data-trim>
+class Calculator {
+    public int add(int a, int b) {
+        return a + b;
+    }
+    
+    public double add(double a, double b) {  // Different parameters
+        return a + b;
+    }
+    
+    public int add(int a, int b, int c) {    // Different parameter count
+        return a + b + c;
+    }
+}
+
+// Usage:
+Calculator calc = new Calculator();
+calc.add(5, 3);        // Calls int version
+calc.add(5.5, 3.2);    // Calls double version
+calc.add(1, 2, 3);     // Calls three-parameter version</code></pre>
+                        </div>
+                    </div>
+                </div>
+                
+                <table class="table-style">
+                    <tr>
+                        <th>Aspect</th>
+                        <th>Method Overriding</th>
+                        <th>Method Overloading</th>
+                    </tr>
+                    <tr>
+                        <td>Purpose</td>
+                        <td>Provide specific implementation</td>
+                        <td>Multiple ways to call method</td>
+                    </tr>
+                    <tr>
+                        <td>Inheritance</td>
+                        <td>Required (parent-child)</td>
+                        <td>Not required (same class)</td>
+                    </tr>
+                    <tr>
+                        <td>Method Signature</td>
+                        <td>Must be identical</td>
+                        <td>Must be different</td>
+                    </tr>
+                    <tr>
+                        <td>Polymorphism Type</td>
+                        <td>Runtime</td>
+                        <td>Compile-time</td>
+                    </tr>
+                    <tr>
+                        <td>Performance</td>
+                        <td>Slightly slower (dynamic binding)</td>
+                        <td>Faster (static binding)</td>
+                    </tr>
+                </table>
+            </section>
+
+            <!-- Previous Year Questions -->
+            <section>
+                <h2>Previous Year Exam Questions</h2>
+                
+                <div class="exam-question">
+                    <p><strong>Q1. (GTU Summer 2022)</strong> Explain inheritance in Java with its types. Write a program to demonstrate method overriding with a practical example.</p>
+                </div>
+                
+                <div class="solution-box">
+                    <p><strong>Solution:</strong></p>
+                    
+                    <h4>Inheritance in Java:</h4>
+                    <p>Inheritance is a fundamental OOP concept where a new class (subclass) acquires properties and methods from an existing class (superclass). It promotes code reusability and establishes an "is-a" relationship.</p>
+                    
+                    <h4>Types of Inheritance:</h4>
+                    
+                    <h4>1. Single Inheritance:</h4>
+                    <p>One class extends another class directly.</p>
+                    
+                    <h4>2. Multilevel Inheritance:</h4>
+                    <p>A class extends another class which itself extends another class, forming a chain.</p>
+                    
+                    <h4>3. Hierarchical Inheritance:</h4>
+                    <p>Multiple classes inherit from a single superclass.</p>
+                    
+                    <h4>Method Overriding Program - Employee Management System:</h4>
+                    
+                    <pre><code>// Base class
+class Employee {
+    protected String name;
+    protected int empId;
+    protected double basicSalary;
+    protected String department;
+    
+    public Employee(String name, int empId, double basicSalary, String department) {
+        this.name = name;
+        this.empId = empId;
+        this.basicSalary = basicSalary;
+        this.department = department;
+    }
+    
+    // Method to be overridden
+    public double calculateSalary() {
+        return basicSalary;
+    }
+    
+    // Method to be overridden
+    public void displayDetails() {
+        System.out.println("=== Employee Details ===");
+        System.out.println("Name: " + name);
+        System.out.println("ID: " + empId);
+        System.out.println("Department: " + department);
+        System.out.println("Basic Salary: $" + basicSalary);
+        System.out.println("Total Salary: $" + calculateSalary());
+    }
+    
+    // Common method for all employees
+    public void work() {
+        System.out.println(name + " is working in " + department + " department");
+    }
+}
+
+// Derived class 1 - Manager
+class Manager extends Employee {
+    private double allowance;
+    private int teamSize;
+    
+    public Manager(String name, int empId, double basicSalary, 
+                  String department, double allowance, int teamSize) {
+        super(name, empId, basicSalary, department);  // Call parent constructor
+        this.allowance = allowance;
+        this.teamSize = teamSize;
+    }
+    
+    // Override calculateSalary method
+    @Override
+    public double calculateSalary() {
+        double teamBonus = teamSize * 500;  // $500 per team member
+        return basicSalary + allowance + teamBonus;
+    }
+    
+    // Override displayDetails method
+    @Override
+    public void displayDetails() {
+        super.displayDetails();  // Call parent method
+        System.out.println("Position: Manager");
+        System.out.println("Team Size: " + teamSize);
+        System.out.println("Allowance: $" + allowance);
+        System.out.println("Team Bonus: $" + (teamSize * 500));
+        System.out.println("========================");
+    }
+    
+    // Manager-specific method
+    public void conductMeeting() {
+        System.out.println("Manager " + name + " is conducting a team meeting");
+    }
+}
+
+// Derived class 2 - Developer
+class Developer extends Employee {
+    private String programmingLanguage;
+    private int projectsCompleted;
+    
+    public Developer(String name, int empId, double basicSalary, 
+                    String department, String programmingLanguage, int projectsCompleted) {
+        super(name, empId, basicSalary, department);
+        this.programmingLanguage = programmingLanguage;
+        this.projectsCompleted = projectsCompleted;
+    }
+    
+    // Override calculateSalary method
+    @Override
+    public double calculateSalary() {
+        double projectBonus = projectsCompleted * 1000;  // $1000 per project
+        double skillBonus = 2000;  // Fixed skill bonus
+        return basicSalary + projectBonus + skillBonus;
+    }
+    
+    // Override displayDetails method
+    @Override
+    public void displayDetails() {
+        super.displayDetails();
+        System.out.println("Position: Developer");
+        System.out.println("Programming Language: " + programmingLanguage);
+        System.out.println("Projects Completed: " + projectsCompleted);
+        System.out.println("Project Bonus: $" + (projectsCompleted * 1000));
+        System.out.println("Skill Bonus: $2000");
+        System.out.println("========================");
+    }
+    
+    // Developer-specific method
+    public void writeCode() {
+        System.out.println("Developer " + name + " is writing code in " + programmingLanguage);
+    }
+}
+
+// Derived class 3 - Intern
+class Intern extends Employee {
+    private int duration;  // in months
+    private String university;
+    
+    public Intern(String name, int empId, double basicSalary, 
+                 String department, int duration, String university) {
+        super(name, empId, basicSalary, department);
+        this.duration = duration;
+        this.university = university;
+    }
+    
+    // Override calculateSalary method
+    @Override
+    public double calculateSalary() {
+        // Interns get basic salary + completion bonus if duration > 6 months
+        double completionBonus = (duration > 6) ? 1500 : 0;
+        return basicSalary + completionBonus;
+    }
+    
+    // Override displayDetails method
+    @Override
+    public void displayDetails() {
+        super.displayDetails();
+        System.out.println("Position: Intern");
+        System.out.println("University: " + university);
+        System.out.println("Duration: " + duration + " months");
+        if (duration > 6) {
+            System.out.println("Completion Bonus: $1500");
+        }
+        System.out.println("========================");
+    }
+    
+    // Intern-specific method
+    public void attendTraining() {
+        System.out.println("Intern " + name + " is attending training sessions");
+    }
+}
+
+// Main class to demonstrate method overriding
+public class InheritanceDemo {
+    public static void main(String[] args) {
+        System.out.println("=== Inheritance and Method Overriding Demo ===\n");
+        
+        // Create different types of employees
+        Manager manager = new Manager("Alice Johnson", 101, 60000, "IT", 15000, 8);
+        Developer developer = new Developer("Bob Smith", 102, 50000, "Development", "Java", 12);
+        Intern intern = new Intern("Charlie Brown", 103, 15000, "IT", 8, "State University");
+        
+        // Store in array for polymorphic behavior
+        Employee[] employees = {manager, developer, intern};
+        
+        System.out.println("=== Employee Information ===\n");
+        
+        // Demonstrate polymorphism and method overriding
+        for (Employee emp : employees) {
+            emp.displayDetails();  // Different implementation for each type
+            emp.work();           // Common method
+            System.out.println();
+        }
+        
+        // Demonstrate specific methods
+        System.out.println("=== Specific Employee Actions ===");
+        manager.conductMeeting();
+        developer.writeCode();
+        intern.attendTraining();
+        
+        // Calculate total payroll
+        System.out.println("\n=== Payroll Summary ===");
+        double totalPayroll = 0;
+        
+        for (Employee emp : employees) {
+            double salary = emp.calculateSalary();  // Overridden method called
+            totalPayroll += salary;
+            System.out.printf("%s (ID: %d): $%.2f\n", emp.name, emp.empId, salary);
+        }
+        
+        System.out.printf("\nTotal Company Payroll: $%.2f\n", totalPayroll);
+        
+        // Demonstrate runtime polymorphism
+        System.out.println("\n=== Runtime Polymorphism Demo ===");
+        Employee emp1 = new Manager("David Wilson", 104, 55000, "Sales", 12000, 5);
+        Employee emp2 = new Developer("Eva Davis", 105, 48000, "Development", "Python", 8);
+        
+        // Reference type is Employee, but actual object determines method called
+        System.out.println("emp1 salary: $" + emp1.calculateSalary());  // Manager's method
+        System.out.println("emp2 salary: $" + emp2.calculateSalary());  // Developer's method
+    }
+}</code></pre>
+                </div>
+            </section>
+
+            <section>
+                <div class="exam-question">
+                    <p><strong>Q2. (GTU Winter 2021)</strong> What is the use of 'super' keyword in Java? Explain with examples including constructor chaining.</p>
+                </div>
+                
+                <div class="solution-box">
+                    <p><strong>Solution:</strong></p>
+                    
+                    <h4>The 'super' Keyword in Java:</h4>
+                    <p>The 'super' keyword is a reference variable that refers to the immediate parent class object. It is used to access parent class members from child class.</p>
+                    
+                    <h4>Uses of 'super' Keyword:</h4>
+                    
+                    <h4>1. Access Parent Class Variables:</h4>
+                    <pre><code>class Vehicle {
+    protected String brand = "Generic Vehicle";
+    protected int maxSpeed = 100;
+}
+
+class Car extends Vehicle {
+    private String brand = "Toyota";  // Hides parent's brand
+    private int maxSpeed = 180;       // Hides parent's maxSpeed
+    
+    public void displayInfo() {
+        System.out.println("Car brand: " + this.brand);        // Child's brand
+        System.out.println("Vehicle brand: " + super.brand);   // Parent's brand
+        System.out.println("Car max speed: " + this.maxSpeed);    // Child's maxSpeed
+        System.out.println("Vehicle max speed: " + super.maxSpeed); // Parent's maxSpeed
+    }
+}</code></pre>
+                    
+                    <h4>2. Call Parent Class Methods:</h4>
+                    <pre><code>class Animal {
+    public void eat() {
+        System.out.println("Animal is eating food");
+    }
+    
+    public void sleep() {
+        System.out.println("Animal is sleeping");
+    }
+}
+
+class Dog extends Animal {
+    @Override
+    public void eat() {
+        super.eat();  // Call parent's eat method first
+        System.out.println("Dog is eating dog food");
+    }
+    
+    public void displayBehavior() {
+        super.sleep();  // Call parent's sleep method
+        this.eat();     // Call overridden eat method
+    }
+}</code></pre>
+                    
+                    <h4>3. Constructor Chaining with 'super':</h4>
+                    <pre><code>// Base class
+class Person {
+    protected String name;
+    protected int age;
+    protected String address;
+    
+    // Default constructor
+    public Person() {
+        this.name = "Unknown";
+        this.age = 0;
+        this.address = "Not specified";
+        System.out.println("Person default constructor called");
+    }
+    
+    // Parameterized constructor
+    public Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+        this.address = "Not specified";
+        System.out.println("Person constructor (name, age) called");
+    }
+    
+    // Full constructor
+    public Person(String name, int age, String address) {
+        this.name = name;
+        this.age = age;
+        this.address = address;
+        System.out.println("Person full constructor called");
+    }
+    
+    public void displayPersonInfo() {
+        System.out.println("Name: " + name);
+        System.out.println("Age: " + age);
+        System.out.println("Address: " + address);
+    }
+}
+
+// Derived class
+class Student extends Person {
+    private String studentId;
+    private String course;
+    private double gpa;
+    
+    // Constructor 1: Default
+    public Student() {
+        super();  // Call parent's default constructor (optional - called automatically)
+        this.studentId = "STU000";
+        this.course = "General";
+        this.gpa = 0.0;
+        System.out.println("Student default constructor called");
+    }
+    
+    // Constructor 2: Basic info
+    public Student(String name, int age, String studentId) {
+        super(name, age);  // Call parent's parameterized constructor
+        this.studentId = studentId;
+        this.course = "General";
+        this.gpa = 0.0;
+        System.out.println("Student basic constructor called");
+    }
+    
+    // Constructor 3: Full info
+    public Student(String name, int age, String address, 
+                  String studentId, String course, double gpa) {
+        super(name, age, address);  // Call parent's full constructor
+        this.studentId = studentId;
+        this.course = course;
+        this.gpa = gpa;
+        System.out.println("Student full constructor called");
+    }
+    
+    @Override
+    public void displayPersonInfo() {
+        super.displayPersonInfo();  // Call parent method
+        System.out.println("Student ID: " + studentId);
+        System.out.println("Course: " + course);
+        System.out.println("GPA: " + gpa);
+    }
+    
+    public void study() {
+        System.out.println(name + " is studying " + course);
+    }
+}
+
+// Further derived class
+class GraduateStudent extends Student {
+    private String researchTopic;
+    private String advisor;
+    
+    public GraduateStudent(String name, int age, String address, 
+                          String studentId, String course, double gpa, 
+                          String researchTopic, String advisor) {
+        super(name, age, address, studentId, course, gpa);  // Chain to Student constructor
+        this.researchTopic = researchTopic;
+        this.advisor = advisor;
+        System.out.println("GraduateStudent constructor called");
+    }
+    
+    @Override
+    public void displayPersonInfo() {
+        super.displayPersonInfo();  // Call Student's method (which calls Person's)
+        System.out.println("Research Topic: " + researchTopic);
+        System.out.println("Advisor: " + advisor);
+    }
+    
+    @Override
+    public void study() {
+        super.study();  // Call Student's study method
+        System.out.println(name + " is also conducting research on " + researchTopic);
+    }
+}
+
+// Demo class
+public class SuperKeywordDemo {
+    public static void main(String[] args) {
+        System.out.println("=== Constructor Chaining Demo ===\n");
+        
+        System.out.println("Creating Student with default constructor:");
+        Student student1 = new Student();
+        student1.displayPersonInfo();
+        System.out.println();
+        
+        System.out.println("Creating Student with basic constructor:");
+        Student student2 = new Student("John Doe", 20, "STU001");
+        student2.displayPersonInfo();
+        System.out.println();
+        
+        System.out.println("Creating Student with full constructor:");
+        Student student3 = new Student("Jane Smith", 22, "123 Main St", 
+                                      "STU002", "Computer Science", 3.8);
+        student3.displayPersonInfo();
+        System.out.println();
+        
+        System.out.println("Creating GraduateStudent (multilevel inheritance):");
+        GraduateStudent gradStudent = new GraduateStudent(
+            "Alice Johnson", 25, "456 Oak Ave", "GRAD001", 
+            "Computer Science", 3.9, "Machine Learning", "Dr. Brown");
+        
+        gradStudent.displayPersonInfo();
+        System.out.println();
+        
+        System.out.println("=== Method Calls with super ===");
+        gradStudent.study();
+        
+        System.out.println("\n=== Summary of 'super' Usage ===");
+        System.out.println("1. super() - calls parent constructor (must be first statement)");
+        System.out.println("2. super.variable - accesses parent class variable");
+        System.out.println("3. super.method() - calls parent class method");
+        System.out.println("4. Constructor chaining creates proper initialization hierarchy");
+    }
+}</code></pre>
+                    
+                    <h4>Key Points about 'super' Keyword:</h4>
+                    <ul>
+                        <li><strong>Constructor Chaining:</strong> super() must be the first statement in child constructor</li>
+                        <li><strong>Automatic Call:</strong> If super() is not explicit, Java automatically calls super()</li>
+                        <li><strong>Variable Access:</strong> Useful when child hides parent variables</li>
+                        <li><strong>Method Enhancement:</strong> Call parent method and add additional functionality</li>
+                        <li><strong>Multilevel Inheritance:</strong> Each level calls its immediate parent</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section>
+                <div class="exam-question">
+                    <p><strong>Q3. (GTU Summer 2020)</strong> Differentiate between method overriding and method overloading with suitable examples.</p>
+                </div>
+                
+                <div class="solution-box">
+                    <p><strong>Solution:</strong></p>
+                    
+                    <h4>Method Overriding vs Method Overloading:</h4>
+                    
+                    <table class="table-style">
+                        <tr>
+                            <th>Aspect</th>
+                            <th>Method Overriding</th>
+                            <th>Method Overloading</th>
+                        </tr>
+                        <tr>
+                            <td>Definition</td>
+                            <td>Redefining parent method in child class</td>
+                            <td>Multiple methods with same name, different parameters</td>
+                        </tr>
+                        <tr>
+                            <td>Inheritance Required</td>
+                            <td>Yes (parent-child relationship)</td>
+                            <td>No (same class)</td>
+                        </tr>
+                        <tr>
+                            <td>Method Signature</td>
+                            <td>Must be identical</td>
+                            <td>Must be different (parameters)</td>
+                        </tr>
+                        <tr>
+                            <td>Polymorphism Type</td>
+                            <td>Runtime (Dynamic)</td>
+                            <td>Compile-time (Static)</td>
+                        </tr>
+                        <tr>
+                            <td>Binding</td>
+                            <td>Late binding</td>
+                            <td>Early binding</td>
+                        </tr>
+                        <tr>
+                            <td>Performance</td>
+                            <td>Slightly slower</td>
+                            <td>Faster</td>
+                        </tr>
+                        <tr>
+                            <td>Access Modifier</td>
+                            <td>Cannot reduce visibility</td>
+                            <td>Can have any access modifier</td>
+                        </tr>
+                        <tr>
+                            <td>Return Type</td>
+                            <td>Same or covariant</td>
+                            <td>Can be different</td>
+                        </tr>
+                    </table>
+                    
+                    <h4>Method Overriding Example:</h4>
+                    <pre><code>// Method Overriding - Runtime Polymorphism
+class Shape {
+    public void draw() {
+        System.out.println("Drawing a generic shape");
+    }
+    
+    public double getArea() {
+        return 0.0;
+    }
+    
+    public void displayInfo() {
+        System.out.println("Shape information");
+        System.out.println("Area: " + getArea());  // Will call overridden version
+    }
+}
+
+class Circle extends Shape {
+    private double radius;
+    
+    public Circle(double radius) {
+        this.radius = radius;
+    }
+    
+    @Override  // Method Overriding
+    public void draw() {
+        System.out.println("Drawing a circle with radius " + radius);
+    }
+    
+    @Override  // Method Overriding
+    public double getArea() {
+        return Math.PI * radius * radius;
+    }
+    
+    // Additional method specific to Circle
+    public double getCircumference() {
+        return 2 * Math.PI * radius;
+    }
+}
+
+class Rectangle extends Shape {
+    private double width, height;
+    
+    public Rectangle(double width, double height) {
+        this.width = width;
+        this.height = height;
+    }
+    
+    @Override  // Method Overriding
+    public void draw() {
+        System.out.println("Drawing a rectangle " + width + "x" + height);
+    }
+    
+    @Override  // Method Overriding
+    public double getArea() {
+        return width * height;
+    }
+    
+    // Additional method specific to Rectangle
+    public double getPerimeter() {
+        return 2 * (width + height);
+    }
+}</code></pre>
+                    
+                    <h4>Method Overloading Example:</h4>
+                    <pre><code>// Method Overloading - Compile-time Polymorphism
+class Calculator {
+    
+    // Method Overloading - Different number of parameters
+    public int add(int a, int b) {
+        System.out.println("Adding two integers");
+        return a + b;
+    }
+    
+    public int add(int a, int b, int c) {
+        System.out.println("Adding three integers");
+        return a + b + c;
+    }
+    
+    // Method Overloading - Different parameter types
+    public double add(double a, double b) {
+        System.out.println("Adding two doubles");
+        return a + b;
+    }
+    
+    public String add(String a, String b) {
+        System.out.println("Concatenating two strings");
+        return a + b;
+    }
+    
+    // Method Overloading - Different parameter order
+    public void display(int a, String b) {
+        System.out.println("Integer: " + a + ", String: " + b);
+    }
+    
+    public void display(String a, int b) {
+        System.out.println("String: " + a + ", Integer: " + b);
+    }
+    
+    // Method Overloading with varargs
+    public int add(int... numbers) {
+        System.out.println("Adding " + numbers.length + " integers using varargs");
+        int sum = 0;
+        for (int num : numbers) {
+            sum += num;
+        }
+        return sum;
+    }
+}</code></pre>
+                    
+                    <h4>Demonstration Program:</h4>
+                    <pre><code>public class OverridingVsOverloadingDemo {
+    public static void main(String[] args) {
+        System.out.println("=== Method Overriding Demo ===");
+        
+        // Runtime Polymorphism - Method determined at runtime
+        Shape shape1 = new Circle(5.0);
+        Shape shape2 = new Rectangle(4.0, 6.0);
+        Shape shape3 = new Shape();
+        
+        Shape[] shapes = {shape1, shape2, shape3};
+        
+        for (Shape shape : shapes) {
+            shape.draw();           // Different method called for each object
+            shape.displayInfo();    // Different area calculation
+            System.out.println("---");
+        }
+        
+        System.out.println("\n=== Method Overloading Demo ===");
+        
+        Calculator calc = new Calculator();
+        
+        // Method determined at compile time based on parameters
+        System.out.println("Result: " + calc.add(5, 3));           // Two int
+        System.out.println("Result: " + calc.add(5, 3, 2));        // Three int
+        System.out.println("Result: " + calc.add(5.5, 3.2));       // Two double
+        System.out.println("Result: " + calc.add("Hello ", "World")); // Two String
+        
+        calc.display(10, "Test");      // int, String
+        calc.display("Test", 10);      // String, int
+        
+        System.out.println("Result: " + calc.add(1, 2, 3, 4, 5));  // Varargs
+        
+        System.out.println("\n=== Key Differences Summary ===");
+        System.out.println("Method Overriding:");
+        System.out.println("- Requires inheritance");
+        System.out.println("- Same method signature");
+        System.out.println("- Runtime decision (dynamic binding)");
+        System.out.println("- Enables runtime polymorphism");
+        
+        System.out.println("\nMethod Overloading:");
+        System.out.println("- Same class");
+        System.out.println("- Different method signature");
+        System.out.println("- Compile-time decision (static binding)");
+        System.out.println("- Enables compile-time polymorphism");
+    }
+}</code></pre>
+                </div>
+            </section>
+
+            <!-- Lab Exercises -->
+            <section>
+                <h2>Hands-on Lab Exercises</h2>
+                
+                <div class="inheritance-box">
+                    <h3>Exercise 1: Vehicle Hierarchy System</h3>
+                    <ol>
+                        <li>Create a comprehensive vehicle inheritance hierarchy:</li>
+                        <ul>
+                            <li>Base Vehicle class with common properties and methods</li>
+                            <li>LandVehicle, WaterVehicle, AirVehicle subclasses</li>
+                            <li>Specific vehicles: Car, Truck, Boat, Ship, Airplane, Helicopter</li>
+                            <li>Implement method overriding for start(), stop(), move() methods</li>
+                        </ul>
+                        <li>Include proper constructor chaining and super keyword usage</li>
+                        <li>Demonstrate polymorphism with arrays of different vehicle types</li>
+                    </ol>
+                </div>
+                
+                <div class="inheritance-box">
+                    <h3>Exercise 2: Educational Institution Management</h3>
+                    <ol>
+                        <li>Design a complete educational system:</li>
+                        <ul>
+                            <li>Person base class with common attributes</li>
+                            <li>Student, Teacher, Administrator subclasses</li>
+                            <li>Specialized classes: GraduateStudent, Professor, Principal</li>
+                            <li>Override methods like displayInfo(), calculateFees(), getSalary()</li>
+                        </ul>
+                        <li>Implement method overloading for multiple constructors and utility methods</li>
+                        <li>Create interactive system for managing different person types</li>
+                    </ol>
+                </div>
+                
+                <div class="inheritance-box">
+                    <h3>Exercise 3: Media Library System</h3>
+                    <ol>
+                        <li>Build a media management system:</li>
+                        <ul>
+                            <li>Media base class with common properties</li>
+                            <li>Book, Movie, Music, Game subclasses</li>
+                            <li>Override methods: play(), display(), calculateRentalCost()</li>
+                            <li>Implement different rental pricing strategies</li>
+                        </ul>
+                        <li>Include method overloading for search and filter operations</li>
+                        <li>Demonstrate inheritance benefits in code maintenance</li>
+                    </ol>
+                </div>
+            </section>
+
+            <!-- Summary -->
+            <section>
+                <h2>Lecture Summary</h2>
+                
+                <div class="two-column">
+                    <div class="column">
+                        <h3>Key Concepts Covered:</h3>
+                        <ul>
+                            <li>Inheritance fundamentals and types</li>
+                            <li>Method overriding and runtime polymorphism</li>
+                            <li>Super keyword for parent access</li>
+                            <li>Constructor chaining in inheritance</li>
+                            <li>Access modifiers in inheritance hierarchy</li>
+                            <li>Method overriding vs method overloading</li>
+                            <li>Real-world inheritance design patterns</li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <h3>Learning Outcomes Achieved:</h3>
+                        <ul>
+                            <li>✅ Master inheritance concept and implementation</li>
+                            <li>✅ Apply method overriding for polymorphism</li>
+                            <li>✅ Use super keyword effectively</li>
+                            <li>✅ Design inheritance hierarchies properly</li>
+                            <li>✅ Understand access control in inheritance</li>
+                            <li>✅ Distinguish overriding from overloading</li>
+                            <li>✅ Build scalable object-oriented systems</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="highlight center">
+                    <p><strong>Next Lecture:</strong> Polymorphism and Abstract Classes</p>
+                    <p>Topics: Runtime polymorphism, abstract classes, abstract methods, interface introduction</p>
+                </div>
+            </section>
+
+            <!-- Thank You -->
+            <section class="title-slide">
+                <h1>Thank You!</h1>
+                <h2>Questions & Discussion</h2>
+                <br>
+                <p>Next: Lecture 11 - Polymorphism and Abstract Classes</p>
+                <br>
+                <p><small>
+                    Course: 4343203 Java Programming<br>
+                    Unit 2: Object-Oriented Programming<br>
+                    GTU Semester 4
+                </small></p>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/highlight/highlight.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            transition: 'slide',
+            transitionSpeed: 'default',
+            backgroundTransition: 'fade',
+            plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+        });
+    </script>
+</body>
+</html>

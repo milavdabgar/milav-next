@@ -1,0 +1,413 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "GTU Universal Syllabus Schema - API Compatible",
+  "description": "Universal schema supporting both old (4343xxx) and new (DI) syllabus formats, aligned with existing Course API structure",
+  "required": [
+    "courseInfo",
+    "rationale", 
+    "courseOutcomes",
+    "teachingExamScheme"
+  ],
+  "properties": {
+    "courseInfo": {
+      "type": "object",
+      "required": ["courseCode", "courseTitle", "semester"],
+      "properties": {
+        "courseCode": {"type": "string", "description": "Maps to Course.subcode - supports both 4343xxx and DI formats"},
+        "subcode": {"type": "string", "description": "Alias for courseCode - API compatibility"},
+        "courseTitle": {"type": "string", "description": "Maps to Course.subjectName"}, 
+        "subjectName": {"type": "string", "description": "Alias for courseTitle - API compatibility"},
+        "semester": {"type": ["string", "number"], "description": "Maps to Course.semester"},
+        "program": {"type": "string"},
+        "branch": {"type": "string", "description": "Program/branch name for DI format"},
+        "level": {"type": "string", "default": "Diploma"},
+        "curriculum": {"type": "string", "description": "COGC-2021 for old format"},
+        "academicYear": {"type": "string", "description": "w.e.f. 2024-25 for new format"},
+        "effFrom": {"type": "string", "description": "Maps to Course.effFrom"},
+        "category": {"type": "string", "description": "Maps to Course.category - Core/PCC/ESC/BSC"},
+        "prerequisite": {"type": "string", "description": "Course prerequisites - new format"},
+        
+        "departmentId": {"type": "string", "description": "For database mapping - Course.departmentId"},
+        "programId": {"type": "string", "description": "For database mapping - Course.programId"},
+        "departmentName": {"type": "string", "description": "Human readable department name"},
+        "programName": {"type": "string", "description": "Human readable program name"}
+      }
+    },
+    
+    "teachingExamScheme": {
+      "type": "object",
+      "required": ["teachingScheme", "examinationScheme"],
+      "properties": {
+        "teachingScheme": {
+          "type": "object",
+          "properties": {
+            "lecture": {"type": "number", "description": "Maps to Course.lectureHours - L"},
+            "lectureHours": {"type": "number", "description": "Alias for lecture - API compatibility"},
+            "tutorial": {"type": "number", "description": "Maps to Course.tutorialHours - T"},
+            "tutorialHours": {"type": "number", "description": "Alias for tutorial - API compatibility"},
+            "practical": {"type": "number", "description": "Maps to Course.practicalHours - PR"},
+            "practicalHours": {"type": "number", "description": "Alias for practical - API compatibility"},
+            "credits": {"type": "number", "description": "Maps to Course.credits - C"}
+          }
+        },
+        "examinationScheme": {
+          "type": "object",
+          "properties": {
+            "theoryESE": {"type": "number", "description": "Maps to Course.theoryEseMarks - E"},
+            "theoryEseMarks": {"type": "number", "description": "Alias for theoryESE - API compatibility"},
+            "theoryCA": {"type": "number", "description": "Maps to Course.theoryPaMarks - M"},  
+            "theoryPaMarks": {"type": "number", "description": "Alias for theoryCA - API compatibility"},
+            "practicalCA": {"type": "number", "description": "Maps to Course.practicalPaMarks - I"},
+            "practicalPaMarks": {"type": "number", "description": "Alias for practicalCA - API compatibility"},
+            "practicalESE": {"type": "number", "description": "Maps to Course.practicalEseMarks - V"},
+            "practicalEseMarks": {"type": "number", "description": "Alias for practicalESE - API compatibility"},
+            "oralPaMarks": {"type": "number", "description": "Maps to Course.oralPaMarks"},
+            "totalMarks": {"type": "number", "description": "Maps to Course.totalMarks"}
+          }
+        },
+        "courseFlags": {
+          "type": "object",
+          "properties": {
+            "isElective": {"type": "boolean", "description": "Maps to Course.isElective"},
+            "isTheory": {"type": "boolean", "description": "Maps to Course.isTheory"},
+            "theoryExamDuration": {"type": "string", "description": "Maps to Course.theoryExamDuration"},
+            "isPractical": {"type": "boolean", "description": "Maps to Course.isPractical"},
+            "practicalExamDuration": {"type": "string", "description": "Maps to Course.practicalExamDuration"},
+            "isFunctional": {"type": "boolean", "description": "Maps to Course.isFunctional"},
+            "isSemiPractical": {"type": "boolean", "description": "Maps to Course.isSemiPractical"}
+          }
+        }
+      }
+    },
+
+    "rationale": {
+      "type": "string",
+      "description": "Course purpose and industry relevance - present in both formats"
+    },
+    
+    "competency": {
+      "type": "string",
+      "description": "Main industry competency to achieve - old format only"
+    },
+    
+    "courseOutcomes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "description"],
+        "properties": {
+          "id": {"type": "string", "description": "CO1, CO2, etc."},
+          "description": {"type": "string"},
+          "rbtLevel": {"type": "string", "description": "RBT Level - new format (R, U, A, N, E, C)"},
+          "bloomLevel": {"type": "string", "description": "Detailed Bloom level - new format (Apply, Remember, etc.)"}
+        }
+      }
+    },
+
+    "courseContent": {
+      "type": "array",
+      "description": "Unit-wise course content - new format structure",
+      "items": {
+        "type": "object",
+        "required": ["unitNumber", "unitTitle", "content", "hours", "weightage"],
+        "properties": {
+          "unitNumber": {"type": ["string", "number"]},
+          "unitTitle": {"type": "string"},
+          "content": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "hours": {"type": "number"},
+          "weightage": {"type": "number", "description": "Percentage weightage"}
+        }
+      }
+    },
+    
+    "practicalExercises": {
+      "type": "array",
+      "description": "Detailed practical exercises - old format",
+      "items": {
+        "type": "object",
+        "required": ["srNo", "description", "unitNo", "hours"],
+        "properties": {
+          "srNo": {"type": "number"},
+          "description": {"type": "string"},
+          "unitNo": {"type": "string"},
+          "hours": {"type": "number"},
+          "isCompulsory": {"type": "boolean", "default": false}
+        }
+      }
+    },
+
+    "practicalOutcomes": {
+      "type": "array", 
+      "description": "Practical Outcomes (PrOs) - new format",
+      "items": {
+        "type": "object",
+        "required": ["srNo", "outcome", "unitNo", "hours"],
+        "properties": {
+          "srNo": {"type": "number"},
+          "outcome": {"type": "string"},
+          "unitNo": {"type": ["string", "number"]},
+          "hours": {"type": "number"}
+        }
+      }
+    },
+
+    "specificationTable": {
+      "type": "array",
+      "description": "Theory marks distribution - both formats",
+      "items": {
+        "type": "object",
+        "properties": {
+          "unitNo": {"type": "string"},
+          "unitTitle": {"type": "string"},
+          "teachingHours": {"type": "number"},
+          "rememberLevel": {"type": "number", "description": "R Level marks"},
+          "understandLevel": {"type": "number", "description": "U Level marks"},
+          "applyLevel": {"type": "number", "description": "A Level marks"},
+          "analyzeLevel": {"type": "number", "description": "N Level marks"},
+          "evaluateLevel": {"type": "number", "description": "E Level marks"},
+          "createLevel": {"type": "number", "description": "C Level marks"},
+          "totalMarks": {"type": "number"}
+        }
+      }
+    },
+    
+    "performanceIndicators": {
+      "type": "array",
+      "description": "Performance indicators - old format only",
+      "items": {
+        "type": "object",
+        "properties": {
+          "indicator": {"type": "string"},
+          "weightage": {"type": "number"}
+        }
+      }
+    },
+    
+    "equipment": {
+      "type": "object",
+      "description": "Laboratory equipment - old format",
+      "properties": {
+        "hardware": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "software": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      }
+    },
+
+    "laboratoryResources": {
+      "type": "array",
+      "description": "Laboratory resources - new format",
+      "items": {
+        "type": "object",
+        "properties": {
+          "srNo": {"type": "number"},
+          "resourceName": {"type": "string"},
+          "specifications": {"type": "string"},
+          "applicableTo": {"type": "string"}
+        }
+      }
+    },
+    
+    "affectiveDomainOutcomes": {
+      "type": "array",
+      "description": "Soft skills development - old format",
+      "items": {"type": "string"}
+    },
+    
+    "underpinningTheory": {
+      "type": "array",
+      "description": "Detailed theory structure - old format only",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["unitNumber", "unitTitle", "unitOutcomes", "topics"],
+        "properties": {
+          "unitNumber": {"type": "string"},
+          "unitTitle": {"type": "string"},
+          "unitOutcomes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "description"],
+              "properties": {
+                "id": {"type": "string"},
+                "description": {"type": "string"}
+              }
+            }
+          },
+          "topics": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["topicNumber", "title"],
+              "properties": {
+                "topicNumber": {"type": "string"},
+                "title": {"type": "string"},
+                "subtopics": {
+                  "type": "array",
+                  "items": {"type": "string"}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    
+    "studentActivities": {
+      "type": "array",
+      "description": "Co-curricular activities - both formats",
+      "items": {"type": "string"}
+    },
+    
+    "instructionalStrategies": {
+      "type": "array",
+      "description": "Teaching methods - old format",
+      "items": {"type": "string"}
+    },
+    
+    "microProjects": {
+      "type": "array",
+      "description": "Micro-project suggestions - old format",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {"type": "string"},
+          "description": {"type": "string"}
+        }
+      }
+    },
+
+    "projectList": {
+      "type": "array",
+      "description": "Project suggestions - new format",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {"type": "string"},
+          "description": {"type": "string"},
+          "domain": {"type": "string"}
+        }
+      }
+    },
+    
+    "learningResources": {
+      "type": "object",
+      "description": "Books and resources - both formats",
+      "properties": {
+        "books": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "srNo": {"type": "number"},
+              "title": {"type": "string"},
+              "author": {"type": "string"},
+              "publication": {"type": "string"},
+              "isbn": {"type": "string"}
+            }
+          }
+        },
+        "websites": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {"type": "string"},
+              "url": {"type": "string"},
+              "type": {"type": "string"}
+            }
+          }
+        },
+        "openSourceSoftware": {
+          "type": "array",
+          "items": {
+            "type": "object", 
+            "properties": {
+              "name": {"type": "string"},
+              "url": {"type": "string"},
+              "description": {"type": "string"}
+            }
+          }
+        },
+        "mobileApps": {
+          "type": "array",
+          "description": "Android/iOS apps - new format",
+          "items": {"type": "string"}
+        }
+      }
+    },
+    
+    "competencyMapping": {
+      "type": "object",
+      "description": "Program outcomes mapping - old format only",
+      "properties": {
+        "programOutcomes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "poNumber": {"type": "string"},
+              "description": {"type": "string"}
+            }
+          }
+        },
+        "mapping": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "courseOutcome": {"type": "string"},
+              "poMappings": {
+                "type": "object",
+                "patternProperties": {
+                  "^PO[0-9]+$": {"type": "number", "minimum": 0, "maximum": 3}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    
+    "developmentCommittee": {
+      "type": "array",
+      "description": "Course development team - old format only",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "designation": {"type": "string"},
+          "institute": {"type": "string"},
+          "contact": {"type": "string"},
+          "email": {"type": "string"}
+        }
+      }
+    },
+    
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "syllabusFormat": {"type": "string", "enum": ["old", "new"], "description": "Format type: old (4343xxx) or new (DI)"},
+        "syllabusUrl": {"type": "string", "description": "Maps to Course.syllabusUrl"},
+        "remarks": {"type": "string", "description": "Maps to Course.remarks"},
+        "createdAt": {"type": "string", "format": "date-time"},
+        "updatedAt": {"type": "string", "format": "date-time"},
+        "version": {"type": "string"},
+        "gtuSyllabusUrl": {"type": "string"},
+        "curriculumVersion": {"type": "string"},
+        "id": {"type": "string", "description": "Maps to Course.id"},
+        "subjectCode": {"type": "string", "description": "Maps to Course.subjectCode"}
+      }
+    }
+  }
+}

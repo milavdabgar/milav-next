@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Java Programming - Interfaces and Abstract Classes</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/theme/white.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/highlight/monokai.css">
+    <style>
+        .reveal h1, .reveal h2, .reveal h3 { color: #2c3e50; }
+        .reveal .slides section { text-align: left; padding: 10px 30px; height: 90vh; box-sizing: border-box; overflow: hidden; }
+        .reveal .title-slide { text-align: center; }
+        .reveal .center { text-align: center; }
+        .reveal pre code { font-size: 0.7em; line-height: 1.1; max-height: 300px; overflow-y: auto; }
+        .reveal h2 { font-size: 1.6em; margin-bottom: 0.4em; }
+        .reveal h3 { font-size: 1.3em; margin-bottom: 0.3em; }
+        .reveal h4 { font-size: 1.0em; margin-bottom: 0.2em; }
+        .reveal ul, .reveal ol { font-size: 0.85em; margin: 0.4em 0; }
+        .reveal li { margin: 0.2em 0; }
+        .highlight { background-color: #fff3cd; padding: 6px; border-left: 4px solid #ffc107; margin: 6px 0; font-size: 0.85em; }
+        .concept-box { background-color: #e8f4f8; padding: 8px; border-radius: 5px; margin: 6px 0; font-size: 0.8em; }
+        .two-column { display: flex; gap: 15px; font-size: 0.8em; }
+        .three-column { display: flex; gap: 10px; font-size: 0.75em; }
+        .column { flex: 1; }
+        .compact-list li { margin: 0.1em 0; font-size: 0.8em; }
+        .small-text { font-size: 0.75em; }
+        .table-style { font-size: 0.7em; width: 100%; border-collapse: collapse; }
+        .table-style th, .table-style td { border: 1px solid #ddd; padding: 4px; text-align: center; }
+        .table-style th { background-color: #f2f2f2; font-weight: bold; }
+        .interface-box { background: #f8f9fa; padding: 8px; border-radius: 5px; margin: 6px 0; font-size: 0.8em; }
+        .abstract-box { background: #fff3e0; padding: 8px; border-radius: 5px; margin: 6px 0; font-size: 0.8em; }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- Title Slide -->
+            <section class="title-slide">
+                <h1>Java Programming Language</h1>
+                <h2>Chapter 7: Interfaces and Abstract Classes</h2>
+                <p>Abstraction in Java</p>
+                <br>
+                <p><small>Course: 4343203 - Java Programming</small></p>
+            </section>
+
+            <!-- Table of Contents -->
+            <section>
+                <h2>What We'll Cover</h2>
+                <ul class="compact-list">
+                    <li>Abstract Classes</li>
+                    <li>Abstract Methods</li>
+                    <li>Interface Fundamentals</li>
+                    <li>Interface Implementation</li>
+                    <li>Multiple Inheritance with Interfaces</li>
+                    <li>Default and Static Methods in Interfaces</li>
+                    <li>Abstract Classes vs Interfaces</li>
+                    <li>Practical Examples</li>
+                </ul>
+            </section>
+
+            <!-- Abstraction Overview -->
+            <section>
+                <h2>Abstraction Concepts</h2>
+                <div class="center">
+                    <img src="diagrams/abstraction-concepts.svg" alt="Java Abstraction Concepts" style="width: 95%; max-height: 75vh;">
+                </div>
+            </section>
+
+            <!-- Abstract Classes -->
+            <section>
+                <section>
+                    <h2>Abstract Classes</h2>
+                    <div class="highlight">
+                        <p><strong>Abstract Class</strong> is a class that cannot be instantiated and may contain abstract methods</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Abstract Class Characteristics</h3>
+                    <div class="concept-box">
+                        <h4>Key Features:</h4>
+                        <ul class="compact-list">
+                            <li>Declared with <strong>abstract</strong> keyword</li>
+                            <li>Cannot be instantiated directly</li>
+                            <li>Can have both abstract and concrete methods</li>
+                            <li>Can have constructors, fields, and static methods</li>
+                            <li>Must be extended by concrete classes</li>
+                        </ul>
+                    </div>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>Abstract Class Example:</h4>
+                            <pre><code data-trim>
+abstract class Animal {
+    // Concrete field
+    protected String name;
+    protected int age;
+    
+    // Constructor
+    public Animal(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+    
+    // Concrete method
+    public void sleep() {
+        System.out.println(name + " is sleeping");
+    }
+    
+    // Abstract method (must be implemented)
+    public abstract void makeSound();
+    public abstract void move();
+}
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Concrete Implementation:</h4>
+                            <pre><code data-trim>
+class Dog extends Animal {
+    public Dog(String name, int age) {
+        super(name, age);
+    }
+    
+    @Override
+    public void makeSound() {
+        System.out.println(name + " barks: Woof!");
+    }
+    
+    @Override
+    public void move() {
+        System.out.println(name + " runs on four legs");
+    }
+}
+
+public class TestAbstract {
+    public static void main(String[] args) {
+        // Animal animal = new Animal(); // Error!
+        
+        Dog dog = new Dog("Buddy", 3);
+        dog.makeSound(); // Buddy barks: Woof!
+        dog.move();      // Buddy runs on four legs
+        dog.sleep();     // Buddy is sleeping
+    }
+}
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Abstract Methods</h3>
+                    <div class="abstract-box">
+                        <h4>Abstract Method Rules:</h4>
+                        <ul class="compact-list">
+                            <li>Declared with <strong>abstract</strong> keyword</li>
+                            <li>No method body (only signature)</li>
+                            <li>Must be implemented in concrete subclasses</li>
+                            <li>Cannot be private, final, or static</li>
+                        </ul>
+                    </div>
+                    <pre><code data-trim>
+abstract class Shape {
+    protected String color;
+    
+    public Shape(String color) {
+        this.color = color;
+    }
+    
+    // Abstract methods - must be implemented
+    public abstract double area();
+    public abstract double perimeter();
+    
+    // Concrete method
+    public void displayInfo() {
+        System.out.println("Color: " + color);
+        System.out.println("Area: " + area());
+        System.out.println("Perimeter: " + perimeter());
+    }
+}
+
+class Circle extends Shape {
+    private double radius;
+    
+    public Circle(String color, double radius) {
+        super(color);
+        this.radius = radius;
+    }
+    
+    @Override
+    public double area() {
+        return Math.PI * radius * radius;
+    }
+    
+    @Override
+    public double perimeter() {
+        return 2 * Math.PI * radius;
+    }
+}
+
+class Rectangle extends Shape {
+    private double width, height;
+    
+    public Rectangle(String color, double width, double height) {
+        super(color);
+        this.width = width;
+        this.height = height;
+    }
+    
+    @Override
+    public double area() {
+        return width * height;
+    }
+    
+    @Override
+    public double perimeter() {
+        return 2 * (width + height);
+    }
+}
+                    </code></pre>
+                </section>
+            </section>
+
+            <!-- Interfaces -->
+            <section>
+                <section>
+                    <h2>Interfaces</h2>
+                    <div class="highlight">
+                        <p><strong>Interface</strong> defines a contract that implementing classes must follow</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Interface Characteristics</h3>
+                    <div class="concept-box">
+                        <h4>Key Features:</h4>
+                        <ul class="compact-list">
+                            <li>Declared with <strong>interface</strong> keyword</li>
+                            <li>All methods are implicitly public and abstract</li>
+                            <li>All fields are implicitly public, static, and final</li>
+                            <li>Cannot be instantiated</li>
+                            <li>Supports multiple inheritance</li>
+                        </ul>
+                    </div>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>Interface Definition:</h4>
+                            <pre><code data-trim>
+interface Drawable {
+    // Constant (public static final)
+    String TYPE = "DRAWABLE";
+    
+    // Abstract methods (public abstract)
+    void draw();
+    void resize(double factor);
+}
+
+interface Movable {
+    void move(int x, int y);
+    void rotate(double angle);
+}
+
+interface Printable {
+    void print();
+    boolean canPrint();
+}
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Interface Implementation:</h4>
+                            <pre><code data-trim>
+class Rectangle implements Drawable, Movable {
+    private int x, y, width, height;
+    
+    public Rectangle(int x, int y, int w, int h) {
+        this.x = x; this.y = y;
+        this.width = w; this.height = h;
+    }
+    
+    @Override
+    public void draw() {
+        System.out.println("Drawing rectangle at (" 
+            + x + "," + y + ")");
+    }
+    
+    @Override
+    public void resize(double factor) {
+        width *= factor;
+        height *= factor;
+    }
+    
+    @Override
+    public void move(int newX, int newY) {
+        this.x = newX;
+        this.y = newY;
+    }
+    
+    @Override
+    public void rotate(double angle) {
+        System.out.println("Rotating by " + angle);
+    }
+}
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Multiple Interface Implementation</h3>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>Multiple Interfaces:</h4>
+                            <pre><code data-trim>
+interface Flyable {
+    void fly();
+    double getAltitude();
+}
+
+interface Swimmable {
+    void swim();
+    double getDepth();
+}
+
+class Duck implements Flyable, Swimmable {
+    private double altitude = 0;
+    private double depth = 0;
+    
+    @Override
+    public void fly() {
+        altitude = 100;
+        System.out.println("Duck is flying");
+    }
+    
+    @Override
+    public double getAltitude() {
+        return altitude;
+    }
+    
+    @Override
+    public void swim() {
+        depth = 5;
+        System.out.println("Duck is swimming");
+    }
+    
+    @Override
+    public double getDepth() {
+        return depth;
+    }
+    
+    public void walk() {
+        System.out.println("Duck is walking");
+    }
+}
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Interface Inheritance:</h4>
+                            <pre><code data-trim>
+interface Vehicle {
+    void start();
+    void stop();
+}
+
+interface LandVehicle extends Vehicle {
+    void accelerate();
+    void brake();
+}
+
+interface WaterVehicle extends Vehicle {
+    void sail();
+    void anchor();
+}
+
+// Multiple interface inheritance
+interface AmphibiousVehicle 
+    extends LandVehicle, WaterVehicle {
+    void switchToLandMode();
+    void switchToWaterMode();
+}
+
+class AmphibiousCar 
+    implements AmphibiousVehicle {
+    
+    @Override
+    public void start() {
+        System.out.println("Engine started");
+    }
+    
+    @Override
+    public void stop() {
+        System.out.println("Engine stopped");
+    }
+    
+    // Implement all other methods...
+}
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Default and Static Methods -->
+            <section>
+                <section>
+                    <h2>Default and Static Methods in Interfaces</h2>
+                    <div class="highlight">
+                        <p><strong>Java 8+</strong> introduced default and static methods in interfaces</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Default Methods</h3>
+                    <div class="interface-box">
+                        <h4>Default Method Features:</h4>
+                        <ul class="compact-list">
+                            <li>Provide default implementation in interface</li>
+                            <li>Can be overridden in implementing classes</li>
+                            <li>Enable interface evolution without breaking existing code</li>
+                            <li>Declared with <strong>default</strong> keyword</li>
+                        </ul>
+                    </div>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>Interface with Default Methods:</h4>
+                            <pre><code data-trim>
+interface Calculator {
+    // Abstract methods
+    double add(double a, double b);
+    double subtract(double a, double b);
+    
+    // Default methods
+    default double multiply(double a, double b) {
+        return a * b;
+    }
+    
+    default double divide(double a, double b) {
+        if (b == 0) {
+            throw new ArithmeticException("Division by zero");
+        }
+        return a / b;
+    }
+    
+    default void printResult(double result) {
+        System.out.println("Result: " + result);
+    }
+}
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Implementation:</h4>
+                            <pre><code data-trim>
+class BasicCalculator implements Calculator {
+    @Override
+    public double add(double a, double b) {
+        return a + b;
+    }
+    
+    @Override
+    public double subtract(double a, double b) {
+        return a - b;
+    }
+    
+    // Can override default methods if needed
+    @Override
+    public void printResult(double result) {
+        System.out.println("Calculation result: " + result);
+    }
+    
+    // multiply() and divide() are inherited
+}
+
+public class TestDefault {
+    public static void main(String[] args) {
+        Calculator calc = new BasicCalculator();
+        
+        double sum = calc.add(10, 5);
+        calc.printResult(sum); // Uses overridden method
+        
+        double product = calc.multiply(4, 3);
+        calc.printResult(product); // Uses default method
+    }
+}
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Static Methods in Interfaces</h3>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>Interface with Static Methods:</h4>
+                            <pre><code data-trim>
+interface MathUtils {
+    // Static constants
+    double PI = 3.14159;
+    double E = 2.71828;
+    
+    // Abstract method
+    double calculate();
+    
+    // Static methods
+    static double square(double x) {
+        return x * x;
+    }
+    
+    static double cube(double x) {
+        return x * x * x;
+    }
+    
+    static double power(double base, double exp) {
+        return Math.pow(base, exp);
+    }
+    
+    static boolean isEven(int num) {
+        return num % 2 == 0;
+    }
+    
+    static boolean isPrime(int num) {
+        if (num < 2) return false;
+        for (int i = 2; i <= Math.sqrt(num); i++) {
+            if (num % i == 0) return false;
+        }
+        return true;
+    }
+}
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Using Static Methods:</h4>
+                            <pre><code data-trim>
+class NumberProcessor implements MathUtils {
+    private double value;
+    
+    public NumberProcessor(double value) {
+        this.value = value;
+    }
+    
+    @Override
+    public double calculate() {
+        return MathUtils.square(value);
+    }
+}
+
+public class TestStatic {
+    public static void main(String[] args) {
+        // Call static methods directly
+        double result1 = MathUtils.square(5);
+        double result2 = MathUtils.cube(3);
+        
+        System.out.println("5² = " + result1);
+        System.out.println("3³ = " + result2);
+        
+        // Check if numbers are prime
+        System.out.println("Is 17 prime? " + 
+            MathUtils.isPrime(17));
+        System.out.println("Is 20 even? " + 
+            MathUtils.isEven(20));
+        
+        // Use with implementing class
+        NumberProcessor processor = 
+            new NumberProcessor(4);
+        System.out.println("Calculated: " + 
+            processor.calculate());
+    }
+}
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Abstract Classes vs Interfaces -->
+            <section>
+                <section>
+                    <h2>Abstract Classes vs Interfaces</h2>
+                    <div class="center">
+                        <img src="diagrams/interface-abstract-comparison.svg" alt="Interface vs Abstract Class Comparison" style="width: 95%; max-width: 900px;">
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Detailed Feature Comparison</h3>
+                    <table class="table-style">
+                    <tr>
+                        <th>Feature</th>
+                        <th>Abstract Class</th>
+                        <th>Interface</th>
+                    </tr>
+                    <tr>
+                        <td>Keyword</td>
+                        <td>abstract class</td>
+                        <td>interface</td>
+                    </tr>
+                    <tr>
+                        <td>Inheritance</td>
+                        <td>Single inheritance (extends)</td>
+                        <td>Multiple inheritance (implements)</td>
+                    </tr>
+                    <tr>
+                        <td>Methods</td>
+                        <td>Abstract and concrete methods</td>
+                        <td>Abstract, default, and static methods</td>
+                    </tr>
+                    <tr>
+                        <td>Fields</td>
+                        <td>Any type of fields</td>
+                        <td>Only public static final constants</td>
+                    </tr>
+                    <tr>
+                        <td>Constructor</td>
+                        <td>Can have constructors</td>
+                        <td>Cannot have constructors</td>
+                    </tr>
+                    <tr>
+                        <td>Access Modifiers</td>
+                        <td>All access modifiers</td>
+                        <td>Methods are public by default</td>
+                    </tr>
+                    <tr>
+                        <td>Instantiation</td>
+                        <td>Cannot be instantiated</td>
+                        <td>Cannot be instantiated</td>
+                    </tr>
+                    <tr>
+                        <td>Use Case</td>
+                        <td>When classes share common code</td>
+                        <td>When defining contracts for behavior</td>
+                    </tr>
+                </table>
+            </section>
+
+            <!-- Practical Examples -->
+            <section>
+                <section>
+                    <h2>Practical Examples</h2>
+                </section>
+
+                <section>
+                    <h3>Real-World Example: Media Player</h3>
+                    <pre><code data-trim>
+// Interface for playable media
+interface Playable {
+    void play();
+    void pause();
+    void stop();
+    double getDuration();
+    
+    // Default method
+    default void displayInfo() {
+        System.out.println("Media duration: " + getDuration() + " seconds");
+    }
+}
+
+// Abstract class for media files
+abstract class MediaFile implements Playable {
+    protected String fileName;
+    protected double fileSize;
+    protected boolean isPlaying;
+    
+    public MediaFile(String fileName, double fileSize) {
+        this.fileName = fileName;
+        this.fileSize = fileSize;
+        this.isPlaying = false;
+    }
+    
+    // Concrete method
+    public void displayFileInfo() {
+        System.out.println("File: " + fileName + " (" + fileSize + " MB)");
+    }
+    
+    // Abstract method
+    public abstract String getFormat();
+}
+
+// Concrete implementations
+class AudioFile extends MediaFile {
+    private double duration;
+    
+    public AudioFile(String fileName, double fileSize, double duration) {
+        super(fileName, fileSize);
+        this.duration = duration;
+    }
+    
+    @Override
+    public void play() {
+        isPlaying = true;
+        System.out.println("Playing audio: " + fileName);
+    }
+    
+    @Override
+    public void pause() {
+        System.out.println("Audio paused: " + fileName);
+    }
+    
+    @Override
+    public void stop() {
+        isPlaying = false;
+        System.out.println("Audio stopped: " + fileName);
+    }
+    
+    @Override
+    public double getDuration() {
+        return duration;
+    }
+    
+    @Override
+    public String getFormat() {
+        return "MP3";
+    }
+}
+
+class VideoFile extends MediaFile {
+    private double duration;
+    private String resolution;
+    
+    public VideoFile(String fileName, double fileSize, double duration, String resolution) {
+        super(fileName, fileSize);
+        this.duration = duration;
+        this.resolution = resolution;
+    }
+    
+    @Override
+    public void play() {
+        isPlaying = true;
+        System.out.println("Playing video: " + fileName + " (" + resolution + ")");
+    }
+    
+    @Override
+    public void pause() {
+        System.out.println("Video paused: " + fileName);
+    }
+    
+    @Override
+    public void stop() {
+        isPlaying = false;
+        System.out.println("Video stopped: " + fileName);
+    }
+    
+    @Override
+    public double getDuration() {
+        return duration;
+    }
+    
+    @Override
+    public String getFormat() {
+        return "MP4";
+    }
+}
+
+// Usage
+public class MediaPlayerDemo {
+    public static void main(String[] args) {
+        Playable[] playlist = {
+            new AudioFile("song1.mp3", 5.2, 210),
+            new VideoFile("movie.mp4", 1200, 7200, "1080p"),
+            new AudioFile("song2.mp3", 4.8, 180)
+        };
+        
+        for (Playable media : playlist) {
+            if (media instanceof MediaFile) {
+                ((MediaFile) media).displayFileInfo();
+            }
+            media.displayInfo();
+            media.play();
+            System.out.println();
+        }
+    }
+}
+                    </code></pre>
+                </section>
+            </section>
+
+            <!-- Summary -->
+            <section>
+                <h2>Chapter Summary</h2>
+                <div class="two-column">
+                    <div class="column">
+                        <h3>Abstract Classes:</h3>
+                        <ul class="compact-list">
+                            <li>Partial implementation with abstract methods</li>
+                            <li>Cannot be instantiated</li>
+                            <li>Support constructors and instance variables</li>
+                            <li>Single inheritance only</li>
+                            <li>Mix of abstract and concrete methods</li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <h3>Interfaces:</h3>
+                        <ul class="compact-list">
+                            <li>Pure contracts with method signatures</li>
+                            <li>Support multiple inheritance</li>
+                            <li>Default and static methods (Java 8+)</li>
+                            <li>All fields are constants</li>
+                            <li>Achieve loose coupling</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="highlight center">
+                    <p><strong>Next:</strong> Packages and Access Control</p>
+                </div>
+            </section>
+
+            <!-- Thank You -->
+            <section class="title-slide">
+                <h1>Thank You!</h1>
+                <h2>Questions?</h2>
+                <br>
+                <p>Ready to explore Packages and Access Control!</p>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/highlight/highlight.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            transition: 'slide',
+            transitionSpeed: 'default',
+            backgroundTransition: 'fade',
+            plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+        });
+    </script>
+</body>
+</html>

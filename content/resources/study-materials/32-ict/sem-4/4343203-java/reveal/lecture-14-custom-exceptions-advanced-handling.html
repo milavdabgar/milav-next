@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Lecture 14: Custom Exceptions & Advanced Handling | Java Programming (4343203)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <style>
+        .reveal {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 90vh;
+        }
+        .reveal .slides section {
+            text-align: left;
+            font-size: 0.85em;
+        }
+        .reveal h1, .reveal h2, .reveal h3 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .reveal h1 { font-size: 2.2em; }
+        .reveal h2 { font-size: 1.8em; margin-bottom: 30px; }
+        .reveal h3 { font-size: 1.4em; margin-bottom: 20px; }
+        .reveal pre {
+            width: 100%;
+            font-size: 0.75em;
+            line-height: 1.2;
+        }
+        .reveal code {
+            background-color: #f8f9fa;
+            padding: 2px 4px;
+            border-radius: 3px;
+            color: #e83e8c;
+        }
+        .reveal .hljs {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            padding: 15px;
+        }
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+        .highlight-box {
+            background-color: #e8f4fd;
+            border-left: 5px solid #3498db;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        .warning-box {
+            background-color: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        .success-box {
+            background-color: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        .reveal ul, .reveal ol {
+            margin-left: 1em;
+        }
+        .reveal li {
+            margin-bottom: 8px;
+        }
+        .gtu-question {
+            background-color: #f0f8ff;
+            border: 2px solid #4682b4;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        .gtu-question h4 {
+            color: #4682b4;
+            margin: 0 0 15px 0;
+            font-size: 1.1em;
+        }
+        .reveal table {
+            font-size: 0.7em;
+            border-collapse: collapse;
+            width: 100%;
+            margin: 15px 0;
+        }
+        .reveal td, .reveal th {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .reveal th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- Title Slide -->
+            <section>
+                <h1>Custom Exceptions & Advanced Handling</h1>
+                <h3>Java Programming (4343203)</h3>
+                <h3>Lecture 14</h3>
+                <p style="text-align: center; margin-top: 50px;">
+                    <strong>Unit 3: Exception Handling - Advanced Topics</strong><br>
+                    GTU Computer Engineering Semester 4
+                </p>
+            </section>
+
+            <!-- Learning Objectives -->
+            <section>
+                <h2>Learning Objectives</h2>
+                <ul>
+                    <li>Understand the need for custom exceptions</li>
+                    <li>Learn to create user-defined exception classes</li>
+                    <li>Master the <code>throw</code> and <code>throws</code> keywords</li>
+                    <li>Implement exception chaining and wrapping</li>
+                    <li>Practice advanced exception handling strategies</li>
+                    <li>Build robust error handling systems</li>
+                </ul>
+                <div class="highlight-box">
+                    <strong>Focus:</strong> Creating maintainable and informative error handling systems using custom exceptions.
+                </div>
+            </section>
+
+            <!-- Why Custom Exceptions? -->
+            <section>
+                <h2>Why Create Custom Exceptions?</h2>
+                <div class="two-column">
+                    <div>
+                        <h3>Business Logic Errors</h3>
+                        <ul>
+                            <li>Domain-specific errors</li>
+                            <li>Validation failures</li>
+                            <li>Business rule violations</li>
+                            <li>Application-specific conditions</li>
+                        </ul>
+                        
+                        <h3>Better Error Communication</h3>
+                        <ul>
+                            <li>Meaningful error messages</li>
+                            <li>Clear error identification</li>
+                            <li>Specific handling strategies</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Examples of Custom Exceptions</h3>
+                        <ul>
+                            <li><code>InsufficientFundsException</code></li>
+                            <li><code>InvalidEmailException</code></li>
+                            <li><code>UserNotFoundException</code></li>
+                            <li><code>ProductOutOfStockException</code></li>
+                            <li><code>InvalidPasswordException</code></li>
+                        </ul>
+                        
+                        <div class="warning-box">
+                            <strong>Note:</strong> Custom exceptions should extend appropriate base classes (Exception, RuntimeException, etc.)
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Creating Custom Exceptions -->
+            <section>
+                <h2>Creating Custom Exception Classes</h2>
+                <h3>1. Checked Custom Exception</h3>
+                <pre><code class="java">
+// Custom checked exception
+public class InsufficientFundsException extends Exception {
+    private double balance;
+    private double requestedAmount;
+    
+    // Default constructor
+    public InsufficientFundsException() {
+        super("Insufficient funds");
+    }
+    
+    // Constructor with message
+    public InsufficientFundsException(String message) {
+        super(message);
+    }
+    
+    // Constructor with detailed information
+    public InsufficientFundsException(double balance, double requestedAmount) {
+        super("Insufficient funds: Balance=" + balance + 
+              ", Requested=" + requestedAmount);
+        this.balance = balance;
+        this.requestedAmount = requestedAmount;
+    }
+    
+    // Constructor with message and cause
+    public InsufficientFundsException(String message, Throwable cause) {
+        super(message, cause);
+    }
+    
+    // Getters
+    public double getBalance() { return balance; }
+    public double getRequestedAmount() { return requestedAmount; }
+    public double getShortfall() { return requestedAmount - balance; }
+}
+                </code></pre>
+            </section>
+
+            <!-- Runtime Custom Exceptions -->
+            <section>
+                <h2>Runtime Custom Exceptions</h2>
+                <h3>2. Unchecked Custom Exception</h3>
+                <pre><code class="java">
+// Custom runtime exception
+public class InvalidEmailException extends RuntimeException {
+    private String invalidEmail;
+    private String reason;
+    
+    public InvalidEmailException(String email, String reason) {
+        super("Invalid email '" + email + "': " + reason);
+        this.invalidEmail = email;
+        this.reason = reason;
+    }
+    
+    public String getInvalidEmail() { return invalidEmail; }
+    public String getReason() { return reason; }
+}
+
+// Usage example
+public class EmailValidator {
+    public static void validateEmail(String email) {
+        if (email == null || email.trim().isEmpty()) {
+            throw new InvalidEmailException(email, "Email cannot be null or empty");
+        }
+        
+        if (!email.contains("@")) {
+            throw new InvalidEmailException(email, "Email must contain '@' symbol");
+        }
+        
+        if (!email.contains(".")) {
+            throw new InvalidEmailException(email, "Email must contain domain extension");
+        }
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- throw vs throws -->
+            <section>
+                <h2>The 'throw' and 'throws' Keywords</h2>
+                <div class="two-column">
+                    <div>
+                        <h3>'throw' Keyword</h3>
+                        <ul>
+                            <li>Used to explicitly throw an exception</li>
+                            <li>Used inside method body</li>
+                            <li>Followed by exception object</li>
+                            <li>Can throw only one exception at a time</li>
+                        </ul>
+                        
+                        <pre><code class="java">
+public void withdraw(double amount) {
+    if (amount > balance) {
+        throw new InsufficientFundsException(
+            balance, amount);
+    }
+    balance -= amount;
+}
+                        </code></pre>
+                    </div>
+                    <div>
+                        <h3>'throws' Keyword</h3>
+                        <ul>
+                            <li>Used in method declaration</li>
+                            <li>Declares exceptions that method might throw</li>
+                            <li>Followed by exception class names</li>
+                            <li>Can declare multiple exceptions</li>
+                        </ul>
+                        
+                        <pre><code class="java">
+public void processPayment(double amount) 
+    throws InsufficientFundsException, 
+           NetworkException {
+    // Method implementation
+    validateBalance(amount);
+    connectToBank();
+}
+                        </code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Complete Banking Example -->
+            <section>
+                <h2>Complete Banking System Example</h2>
+                <pre><code class="java">
+public class BankAccount {
+    private String accountNumber;
+    private double balance;
+    private boolean isActive;
+    
+    public BankAccount(String accountNumber, double initialBalance) {
+        this.accountNumber = accountNumber;
+        this.balance = initialBalance;
+        this.isActive = true;
+    }
+    
+    public void withdraw(double amount) throws InsufficientFundsException,
+                                              AccountClosedException {
+        // Validate account status
+        if (!isActive) {
+            throw new AccountClosedException("Account " + accountNumber + 
+                                           " has been closed");
+        }
+        
+        // Validate amount
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Withdrawal amount must be positive");
+        }
+        
+        // Check sufficient funds
+        if (amount > balance) {
+            throw new InsufficientFundsException(balance, amount);
+        }
+        
+        balance -= amount;
+        System.out.println("Withdrawn: $" + amount + ", Balance: $" + balance);
+    }
+    
+    public void deposit(double amount) throws AccountClosedException {
+        if (!isActive) {
+            throw new AccountClosedException("Cannot deposit to closed account");
+        }
+        
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Deposit amount must be positive");
+        }
+        
+        balance += amount;
+        System.out.println("Deposited: $" + amount + ", Balance: $" + balance);
+    }
+    
+    public double getBalance() { return balance; }
+    public void closeAccount() { this.isActive = false; }
+}
+                </code></pre>
+            </section>
+
+            <!-- Custom Exception for Closed Account -->
+            <section>
+                <h2>Additional Custom Exception</h2>
+                <pre><code class="java">
+public class AccountClosedException extends Exception {
+    private String accountNumber;
+    private Date closureDate;
+    
+    public AccountClosedException(String message) {
+        super(message);
+    }
+    
+    public AccountClosedException(String accountNumber, Date closureDate) {
+        super("Account " + accountNumber + " was closed on " + closureDate);
+        this.accountNumber = accountNumber;
+        this.closureDate = closureDate;
+    }
+    
+    public String getAccountNumber() { return accountNumber; }
+    public Date getClosureDate() { return closureDate; }
+}
+
+// Usage in banking application
+public class BankingApplication {
+    public static void main(String[] args) {
+        BankAccount account = new BankAccount("12345", 1000.0);
+        
+        try {
+            account.withdraw(500.0);  // Success
+            account.withdraw(700.0);  // Insufficient funds
+        } catch (InsufficientFundsException e) {
+            System.err.println("Transaction failed: " + e.getMessage());
+            System.err.println("Shortfall: $" + e.getShortfall());
+        } catch (AccountClosedException e) {
+            System.err.println("Account error: " + e.getMessage());
+        }
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- Exception Chaining -->
+            <section>
+                <h2>Exception Chaining and Wrapping</h2>
+                <h3>Preserving Original Exception Information</h3>
+                <pre><code class="java">
+public class DatabaseException extends Exception {
+    public DatabaseException(String message) {
+        super(message);
+    }
+    
+    public DatabaseException(String message, Throwable cause) {
+        super(message, cause);
+    }
+}
+
+public class UserService {
+    private DatabaseConnection db;
+    
+    public User findUserById(int userId) throws DatabaseException {
+        try {
+            // Database operation that might throw SQLException
+            return db.queryUser("SELECT * FROM users WHERE id = ?", userId);
+        } catch (SQLException sqlEx) {
+            // Chain the original exception
+            throw new DatabaseException(
+                "Failed to find user with ID: " + userId, sqlEx);
+        } catch (ConnectionException connEx) {
+            // Chain connection exception
+            throw new DatabaseException(
+                "Database connection failed while finding user: " + userId, 
+                connEx);
+        }
+    }
+}
+
+// Using exception chaining
+public class Application {
+    public static void main(String[] args) {
+        UserService service = new UserService();
+        
+        try {
+            User user = service.findUserById(123);
+        } catch (DatabaseException e) {
+            System.err.println("Main error: " + e.getMessage());
+            
+            // Access the original cause
+            Throwable cause = e.getCause();
+            if (cause != null) {
+                System.err.println("Root cause: " + cause.getMessage());
+                cause.printStackTrace();
+            }
+        }
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- Exception Best Practices -->
+            <section>
+                <h2>Exception Design Best Practices</h2>
+                <div class="two-column">
+                    <div>
+                        <h3>1. Exception Hierarchy</h3>
+                        <pre><code class="java">
+// Base application exception
+public class ApplicationException 
+    extends Exception {
+    protected ApplicationException(String msg) {
+        super(msg);
+    }
+}
+
+// Specific business exceptions
+public class ValidationException 
+    extends ApplicationException {
+    public ValidationException(String msg) {
+        super("Validation failed: " + msg);
+    }
+}
+
+public class BusinessLogicException 
+    extends ApplicationException {
+    public BusinessLogicException(String msg) {
+        super("Business rule violation: " + msg);
+    }
+}
+                        </code></pre>
+                    </div>
+                    <div>
+                        <h3>2. Exception Information</h3>
+                        <pre><code class="java">
+public class PaymentException extends Exception {
+    private String transactionId;
+    private PaymentMethod method;
+    private double amount;
+    private ErrorCode errorCode;
+    
+    public PaymentException(String transactionId, 
+                           PaymentMethod method,
+                           double amount, 
+                           ErrorCode code, 
+                           String message) {
+        super(message);
+        this.transactionId = transactionId;
+        this.method = method;
+        this.amount = amount;
+        this.errorCode = code;
+    }
+    
+    // Getters for debugging
+    public String getTransactionId() { 
+        return transactionId; 
+    }
+    public PaymentMethod getMethod() { 
+        return method; 
+    }
+    public double getAmount() { 
+        return amount; 
+    }
+    public ErrorCode getErrorCode() { 
+        return errorCode; 
+    }
+}
+                        </code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Advanced Exception Handling -->
+            <section>
+                <h2>Advanced Exception Handling Patterns</h2>
+                <h3>1. Exception Translation Pattern</h3>
+                <pre><code class="java">
+public class OrderService {
+    private PaymentService paymentService;
+    private InventoryService inventoryService;
+    
+    public void processOrder(Order order) throws OrderProcessingException {
+        try {
+            // Check inventory
+            inventoryService.reserveItems(order.getItems());
+            
+            // Process payment
+            paymentService.processPayment(order.getPayment());
+            
+            // Confirm order
+            confirmOrder(order);
+            
+        } catch (InsufficientStockException e) {
+            throw new OrderProcessingException(
+                "Order cannot be fulfilled due to insufficient stock", e);
+        } catch (PaymentException e) {
+            // Release reserved inventory
+            inventoryService.releaseReservation(order.getItems());
+            throw new OrderProcessingException(
+                "Order failed due to payment error", e);
+        } catch (Exception e) {
+            // Handle unexpected errors
+            rollbackOrder(order);
+            throw new OrderProcessingException(
+                "Unexpected error during order processing", e);
+        }
+    }
+    
+    private void rollbackOrder(Order order) {
+        // Cleanup operations
+        try {
+            inventoryService.releaseReservation(order.getItems());
+            paymentService.refundPayment(order.getPayment());
+        } catch (Exception rollbackEx) {
+            // Log rollback failures
+            System.err.println("Rollback failed: " + rollbackEx.getMessage());
+        }
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- GTU Previous Year Question 1 -->
+            <section>
+                <div class="gtu-question">
+                    <h4>GTU Previous Year Question (Summer 2022)</h4>
+                    <p><strong>Q: Explain the concept of custom exceptions in Java. Create a custom exception class for handling invalid age scenarios (age should be between 0 and 150). Write a complete program demonstrating the use of this exception.</strong></p>
+                </div>
+                
+                <h3>Solution:</h3>
+                <pre><code class="java">
+// Custom exception for invalid age
+class InvalidAgeException extends Exception {
+    private int invalidAge;
+    private String reason;
+    
+    public InvalidAgeException(int age, String reason) {
+        super("Invalid age: " + age + " - " + reason);
+        this.invalidAge = age;
+        this.reason = reason;
+    }
+    
+    public int getInvalidAge() { return invalidAge; }
+    public String getReason() { return reason; }
+}
+
+// Person class using custom exception
+class Person {
+    private String name;
+    private int age;
+    
+    public Person(String name, int age) throws InvalidAgeException {
+        setName(name);
+        setAge(age);
+    }
+    
+    public void setAge(int age) throws InvalidAgeException {
+        if (age < 0) {
+            throw new InvalidAgeException(age, "Age cannot be negative");
+        }
+        if (age > 150) {
+            throw new InvalidAgeException(age, "Age cannot exceed 150 years");
+        }
+        this.age = age;
+    }
+    
+    public void setName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Name cannot be null or empty");
+        }
+        this.name = name;
+    }
+    
+    public String getName() { return name; }
+    public int getAge() { return age; }
+    
+    @Override
+    public String toString() {
+        return "Person{name='" + name + "', age=" + age + "}";
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- GTU Question 1 Solution Continued -->
+            <section>
+                <h3>Complete Demonstration Program:</h3>
+                <pre><code class="java">
+public class CustomExceptionDemo {
+    public static void main(String[] args) {
+        // Test cases for custom exception
+        int[] testAges = {25, -5, 200, 0, 150, 151};
+        String[] names = {"John", "Alice", "Bob", "Charlie", "Diana", "Eve"};
+        
+        for (int i = 0; i < testAges.length; i++) {
+            try {
+                Person person = new Person(names[i], testAges[i]);
+                System.out.println("✓ Successfully created: " + person);
+                
+                // Test age update
+                if (i == 0) {  // Test updating John's age
+                    person.setAge(30);
+                    System.out.println("✓ Successfully updated age: " + person);
+                }
+                
+            } catch (InvalidAgeException e) {
+                System.err.println("✗ InvalidAgeException: " + e.getMessage());
+                System.err.println("  Invalid age: " + e.getInvalidAge());
+                System.err.println("  Reason: " + e.getReason());
+                
+            } catch (IllegalArgumentException e) {
+                System.err.println("✗ IllegalArgumentException: " + e.getMessage());
+            }
+            System.out.println(); // Empty line for readability
+        }
+        
+        // Demonstrate exception chaining
+        System.out.println("=== Exception Chaining Demo ===");
+        try {
+            createPersonFromString("InvalidPerson,-10");
+        } catch (Exception e) {
+            System.err.println("Caught exception: " + e.getMessage());
+            if (e.getCause() != null) {
+                System.err.println("Root cause: " + e.getCause().getMessage());
+            }
+        }
+    }
+    
+    // Method demonstrating exception chaining
+    public static Person createPersonFromString(String personData) 
+            throws Exception {
+        try {
+            String[] parts = personData.split(",");
+            String name = parts[0];
+            int age = Integer.parseInt(parts[1]);
+            return new Person(name, age);
+        } catch (InvalidAgeException e) {
+            throw new Exception("Failed to create person from string: " + 
+                              personData, e);
+        } catch (NumberFormatException e) {
+            throw new Exception("Invalid age format in string: " + 
+                              personData, e);
+        }
+    }
+}
+                </code></pre>
+                
+                <div class="success-box">
+                    <strong>Key Points Covered:</strong> Custom exception creation, meaningful error messages, exception chaining, and comprehensive error handling.
+                </div>
+            </section>
+
+            <!-- GTU Previous Year Question 2 -->
+            <section>
+                <div class="gtu-question">
+                    <h4>GTU Previous Year Question (Winter 2022)</h4>
+                    <p><strong>Q: Explain the difference between 'throw' and 'throws' keywords in Java. Write a program to demonstrate both keywords with appropriate examples.</strong></p>
+                </div>
+                
+                <h3>Comparison Table:</h3>
+                <table>
+                    <tr>
+                        <th>Aspect</th>
+                        <th>'throw' Keyword</th>
+                        <th>'throws' Keyword</th>
+                    </tr>
+                    <tr>
+                        <td>Purpose</td>
+                        <td>Explicitly throw an exception</td>
+                        <td>Declare exceptions that method might throw</td>
+                    </tr>
+                    <tr>
+                        <td>Location</td>
+                        <td>Inside method body</td>
+                        <td>In method signature</td>
+                    </tr>
+                    <tr>
+                        <td>Syntax</td>
+                        <td>throw new ExceptionType();</td>
+                        <td>methodName() throws ExceptionType</td>
+                    </tr>
+                    <tr>
+                        <td>Exception Object</td>
+                        <td>Followed by exception instance</td>
+                        <td>Followed by exception class name</td>
+                    </tr>
+                    <tr>
+                        <td>Multiple Exceptions</td>
+                        <td>One exception at a time</td>
+                        <td>Can declare multiple exceptions</td>
+                    </tr>
+                </table>
+            </section>
+
+            <!-- GTU Question 2 Solution -->
+            <section>
+                <h3>Demonstration Program:</h3>
+                <pre><code class="java">
+// Custom exceptions for demonstration
+class NegativeNumberException extends Exception {
+    public NegativeNumberException(String message) {
+        super(message);
+    }
+}
+
+class ZeroDivisionException extends Exception {
+    public ZeroDivisionException(String message) {
+        super(message);
+    }
+}
+
+public class ThrowVsThrowsDemo {
+    
+    // Method using 'throws' keyword - declares exceptions
+    public static double calculateSquareRoot(double number) 
+            throws NegativeNumberException {
+        
+        // Using 'throw' keyword - explicitly throwing exception
+        if (number < 0) {
+            throw new NegativeNumberException(
+                "Cannot calculate square root of negative number: " + number);
+        }
+        
+        return Math.sqrt(number);
+    }
+    
+    // Method using 'throws' with multiple exceptions
+    public static double divide(double dividend, double divisor) 
+            throws ZeroDivisionException, NegativeNumberException {
+        
+        // Using 'throw' for zero division
+        if (divisor == 0) {
+            throw new ZeroDivisionException(
+                "Division by zero is not allowed");
+        }
+        
+        // Using 'throw' for negative dividend
+        if (dividend < 0) {
+            throw new NegativeNumberException(
+                "Dividend cannot be negative: " + dividend);
+        }
+        
+        return dividend / divisor;
+    }
+    
+    // Method demonstrating unchecked exception with 'throw'
+    public static void validateAge(int age) {
+        // 'throw' with unchecked exception (no 'throws' needed)
+        if (age < 0 || age > 150) {
+            throw new IllegalArgumentException(
+                "Invalid age: " + age + ". Age must be between 0 and 150.");
+        }
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- GTU Question 2 Solution Main -->
+            <section>
+                <h3>Main Method Demonstration:</h3>
+                <pre><code class="java">
+public class MainDemo {
+    public static void main(String[] args) {
+        System.out.println("=== Demonstrating 'throw' and 'throws' ===\n");
+        
+        // Test 1: Square root calculation
+        double[] numbers = {25.0, -4.0, 0.0, 16.0};
+        
+        for (double num : numbers) {
+            try {
+                double result = ThrowVsThrowsDemo.calculateSquareRoot(num);
+                System.out.println("√" + num + " = " + result);
+            } catch (NegativeNumberException e) {
+                System.err.println("Error: " + e.getMessage());
+            }
+        }
+        
+        System.out.println("\n" + "=".repeat(40) + "\n");
+        
+        // Test 2: Division operation
+        double[][] divisionTests = {
+            {10.0, 2.0}, {15.0, 0.0}, {-8.0, 4.0}, {20.0, 5.0}
+        };
+        
+        for (double[] test : divisionTests) {
+            try {
+                double result = ThrowVsThrowsDemo.divide(test[0], test[1]);
+                System.out.println(test[0] + " ÷ " + test[1] + " = " + result);
+            } catch (ZeroDivisionException | NegativeNumberException e) {
+                System.err.println("Division Error: " + e.getMessage());
+            }
+        }
+        
+        System.out.println("\n" + "=".repeat(40) + "\n");
+        
+        // Test 3: Age validation (unchecked exception)
+        int[] ages = {25, -5, 200, 30};
+        
+        for (int age : ages) {
+            try {
+                ThrowVsThrowsDemo.validateAge(age);
+                System.out.println("Valid age: " + age);
+            } catch (IllegalArgumentException e) {
+                System.err.println("Validation Error: " + e.getMessage());
+            }
+        }
+    }
+}
+                </code></pre>
+                
+                <div class="highlight-box">
+                    <strong>Key Differences Demonstrated:</strong>
+                    <ul>
+                        <li><code>throw</code>: Actively throws exceptions inside method body</li>
+                        <li><code>throws</code>: Declares that method might throw certain exceptions</li>
+                        <li>Checked exceptions require <code>throws</code> declaration</li>
+                        <li>Unchecked exceptions don't require <code>throws</code> declaration</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- GTU Previous Year Question 3 -->
+            <section>
+                <div class="gtu-question">
+                    <h4>GTU Previous Year Question (Summer 2023)</h4>
+                    <p><strong>Q: Write a Java program to create a custom exception for bank account operations. The program should handle cases like insufficient funds, invalid account numbers, and closed accounts. Demonstrate proper exception handling with try-catch blocks.</strong></p>
+                </div>
+                
+                <h3>Complete Banking System Solution:</h3>
+                <pre><code class="java">
+// Custom exceptions for banking operations
+class InsufficientFundsException extends Exception {
+    private double balance, requestedAmount;
+    
+    public InsufficientFundsException(double balance, double requestedAmount) {
+        super(String.format("Insufficient funds. Balance: %.2f, Requested: %.2f", 
+                           balance, requestedAmount));
+        this.balance = balance;
+        this.requestedAmount = requestedAmount;
+    }
+    
+    public double getBalance() { return balance; }
+    public double getRequestedAmount() { return requestedAmount; }
+    public double getShortfall() { return requestedAmount - balance; }
+}
+
+class InvalidAccountException extends Exception {
+    private String accountNumber;
+    
+    public InvalidAccountException(String accountNumber, String reason) {
+        super("Invalid account '" + accountNumber + "': " + reason);
+        this.accountNumber = accountNumber;
+    }
+    
+    public String getAccountNumber() { return accountNumber; }
+}
+
+class ClosedAccountException extends Exception {
+    private String accountNumber;
+    private java.util.Date closureDate;
+    
+    public ClosedAccountException(String accountNumber) {
+        super("Account '" + accountNumber + "' is closed");
+        this.accountNumber = accountNumber;
+        this.closureDate = new java.util.Date(); // Simulate closure date
+    }
+    
+    public String getAccountNumber() { return accountNumber; }
+    public java.util.Date getClosureDate() { return closureDate; }
+}
+
+// Bank account class
+class BankAccount {
+    private String accountNumber;
+    private String accountHolder;
+    private double balance;
+    private boolean isActive;
+    
+    public BankAccount(String accountNumber, String holder, double initialBalance) 
+            throws InvalidAccountException {
+        validateAccountNumber(accountNumber);
+        this.accountNumber = accountNumber;
+        this.accountHolder = holder;
+        this.balance = initialBalance;
+        this.isActive = true;
+    }
+    
+    private void validateAccountNumber(String accountNumber) 
+            throws InvalidAccountException {
+        if (accountNumber == null || accountNumber.trim().isEmpty()) {
+            throw new InvalidAccountException(accountNumber, "Account number cannot be empty");
+        }
+        if (accountNumber.length() != 10) {
+            throw new InvalidAccountException(accountNumber, "Account number must be 10 digits");
+        }
+        if (!accountNumber.matches("\\d+")) {
+            throw new InvalidAccountException(accountNumber, "Account number must contain only digits");
+        }
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- Bank Account Operations -->
+            <section>
+                <h3>Banking Operations Implementation:</h3>
+                <pre><code class="java">
+    // Banking operations with exception handling
+    public void deposit(double amount) throws ClosedAccountException {
+        if (!isActive) {
+            throw new ClosedAccountException(accountNumber);
+        }
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Deposit amount must be positive");
+        }
+        
+        balance += amount;
+        System.out.printf("Deposited: $%.2f, New Balance: $%.2f%n", amount, balance);
+    }
+    
+    public void withdraw(double amount) throws InsufficientFundsException, 
+                                              ClosedAccountException {
+        if (!isActive) {
+            throw new ClosedAccountException(accountNumber);
+        }
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Withdrawal amount must be positive");
+        }
+        if (amount > balance) {
+            throw new InsufficientFundsException(balance, amount);
+        }
+        
+        balance -= amount;
+        System.out.printf("Withdrawn: $%.2f, New Balance: $%.2f%n", amount, balance);
+    }
+    
+    public void closeAccount() {
+        this.isActive = false;
+        System.out.println("Account " + accountNumber + " has been closed.");
+    }
+    
+    public void displayAccountInfo() {
+        System.out.printf("Account: %s, Holder: %s, Balance: $%.2f, Status: %s%n",
+                         accountNumber, accountHolder, balance, 
+                         isActive ? "Active" : "Closed");
+    }
+    
+    // Getters
+    public String getAccountNumber() { return accountNumber; }
+    public double getBalance() { return balance; }
+    public boolean isActive() { return isActive; }
+}
+                </code></pre>
+            </section>
+
+            <!-- Banking Demo Main -->
+            <section>
+                <h3>Complete Banking Demo:</h3>
+                <pre><code class="java">
+public class BankingSystemDemo {
+    public static void main(String[] args) {
+        System.out.println("=== Banking System with Custom Exceptions ===\n");
+        
+        try {
+            // Test 1: Create valid account
+            BankAccount account1 = new BankAccount("1234567890", "John Doe", 1000.0);
+            account1.displayAccountInfo();
+            
+            // Test 2: Valid operations
+            account1.deposit(500.0);
+            account1.withdraw(300.0);
+            
+            System.out.println();
+            
+            // Test 3: Invalid operations
+            System.out.println("--- Testing Exception Scenarios ---");
+            
+            // Insufficient funds
+            try {
+                account1.withdraw(2000.0);
+            } catch (InsufficientFundsException e) {
+                System.err.println("❌ " + e.getMessage());
+                System.err.printf("   Shortfall: $%.2f%n", e.getShortfall());
+            }
+            
+            // Test 4: Closed account operations
+            account1.closeAccount();
+            try {
+                account1.deposit(100.0);
+            } catch (ClosedAccountException e) {
+                System.err.println("❌ " + e.getMessage());
+            }
+            
+            try {
+                account1.withdraw(50.0);
+            } catch (ClosedAccountException e) {
+                System.err.println("❌ " + e.getMessage());
+            }
+            
+        } catch (InvalidAccountException e) {
+            System.err.println("❌ Account Creation Failed: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("❌ Unexpected error: " + e.getMessage());
+        }
+        
+        System.out.println("\n--- Testing Invalid Account Numbers ---");
+        
+        // Test 5: Invalid account numbers
+        String[] invalidAccountNumbers = {"", "123", "12345abcde", "12345678901", null};
+        
+        for (String accNum : invalidAccountNumbers) {
+            try {
+                BankAccount invalidAccount = new BankAccount(accNum, "Test User", 1000.0);
+                System.out.println("✓ Account created: " + accNum);
+            } catch (InvalidAccountException e) {
+                System.err.println("❌ " + e.getMessage());
+            } catch (Exception e) {
+                System.err.println("❌ Unexpected error for account " + accNum + ": " + e.getMessage());
+            }
+        }
+    }
+}
+                </code></pre>
+                
+                <div class="success-box">
+                    <strong>Complete Solution Features:</strong>
+                    <ul>
+                        <li>Three custom exceptions for different banking scenarios</li>
+                        <li>Comprehensive validation and error handling</li>
+                        <li>Detailed exception information with getter methods</li>
+                        <li>Real-world banking operations simulation</li>
+                        <li>Proper exception propagation and handling</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Hands-on Lab Exercise -->
+            <section>
+                <h2>🧪 Hands-on Lab Exercise</h2>
+                <div class="highlight-box">
+                    <h3>Lab 14: E-commerce Exception System</h3>
+                    <p><strong>Task:</strong> Create a complete e-commerce system with custom exceptions for product management, shopping cart operations, and order processing.</p>
+                </div>
+                
+                <h3>Requirements:</h3>
+                <ul>
+                    <li>Create custom exceptions: <code>ProductNotFoundException</code>, <code>OutOfStockException</code>, <code>InvalidQuantityException</code></li>
+                    <li>Implement <code>Product</code>, <code>ShoppingCart</code>, and <code>OrderProcessor</code> classes</li>
+                    <li>Handle edge cases: negative quantities, unavailable products, insufficient stock</li>
+                    <li>Implement exception chaining for order processing failures</li>
+                    <li>Create comprehensive test scenarios demonstrating all exception types</li>
+                </ul>
+                
+                <div class="warning-box">
+                    <strong>Challenge:</strong> Implement a rollback mechanism when order processing fails at any stage.
+                </div>
+            </section>
+
+            <!-- Summary -->
+            <section>
+                <h2>📚 Lecture Summary</h2>
+                <div class="two-column">
+                    <div>
+                        <h3>Key Concepts Covered</h3>
+                        <ul>
+                            <li>Custom exception design principles</li>
+                            <li>Checked vs unchecked custom exceptions</li>
+                            <li><code>throw</code> vs <code>throws</code> keywords</li>
+                            <li>Exception chaining and wrapping</li>
+                            <li>Exception hierarchy design</li>
+                            <li>Advanced error handling patterns</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Best Practices</h3>
+                        <ul>
+                            <li>Create meaningful exception names</li>
+                            <li>Include relevant error information</li>
+                            <li>Use exception chaining appropriately</li>
+                            <li>Design exception hierarchies</li>
+                            <li>Handle exceptions at appropriate levels</li>
+                            <li>Provide recovery mechanisms where possible</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="highlight-box" style="margin-top: 30px;">
+                    <h3>🎯 Next Lecture Preview</h3>
+                    <p><strong>Lecture 15: Multi-threading Fundamentals</strong></p>
+                    <ul>
+                        <li>Thread creation and lifecycle</li>
+                        <li>Thread synchronization basics</li>
+                        <li>Race conditions and thread safety</li>
+                        <li>Producer-consumer problem</li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/notes/notes.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/highlight.min.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            transition: 'slide',
+            transitionSpeed: 'fast',
+            center: true,
+            plugins: [RevealNotes, RevealHighlight]
+        });
+    </script>
+</body>
+</html>

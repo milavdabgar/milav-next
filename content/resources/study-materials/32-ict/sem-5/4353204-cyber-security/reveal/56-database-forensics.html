@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Database Forensics</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/white.css">
+    <style>
+        .reveal .slides section { text-align: left; }
+        .reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6 { color: #2c3e50; text-align: center; }
+        .definition-box { background-color: #e8f4fd; border: 2px solid #3498db; padding: 15px; margin: 10px 0; border-radius: 8px; }
+        .example-box { background-color: #fff9e6; border: 2px solid #f39c12; padding: 15px; margin: 10px 0; border-radius: 8px; }
+        .prevention-box { background-color: #e8f8f5; border: 2px solid #27ae60; padding: 15px; margin: 10px 0; border-radius: 8px; }
+        .code-box { background-color: #f8f9fa; border: 2px solid #6c757d; padding: 15px; margin: 10px 0; border-radius: 8px; font-family: 'Courier New', monospace; }
+        .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .db-category { background-color: #e3f2fd; border: 2px solid #1976d2; padding: 15px; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <section>
+                <h1>Database Forensics</h1>
+                <p style="text-align: center; font-size: 1.2em; color: #7f8c8d;">Database Investigation and Evidence Recovery</p>
+                <div style="text-align: center; margin-top: 30px;">
+                    <img src="diagrams/data-diddling-process.svg" alt="Data Diddling Process" style="width: 70%; height: auto; max-width: 700px;">
+                </div>
+            </section>
+
+            <section>
+                <h2>What is Database Forensics?</h2>
+                <div class="definition-box">
+                    <strong>Database Forensics:</strong> The process of identifying, extracting, preserving, and analyzing data stored in database systems to support forensic investigations and legal proceedings.
+                </div>
+                <ul>
+                    <li><strong>Data Recovery:</strong> Retrieving deleted or hidden records</li>
+                    <li><strong>Transaction Analysis:</strong> Examining database operations</li>
+                    <li><strong>Schema Investigation:</strong> Understanding database structure</li>
+                    <li><strong>Log Analysis:</strong> Reviewing transaction and audit logs</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Database Types and Forensics</h2>
+                <div class="grid-container">
+                    <div class="db-category">
+                        <h4>Relational Databases</h4>
+                        <ul><li>MySQL, PostgreSQL</li><li>Microsoft SQL Server</li><li>Oracle Database</li><li>IBM Db2</li></ul>
+                    </div>
+                    <div class="db-category">
+                        <h4>NoSQL Databases</h4>
+                        <ul><li>MongoDB (Document)</li><li>Cassandra (Column)</li><li>Redis (Key-Value)</li><li>Neo4j (Graph)</li></ul>
+                    </div>
+                    <div class="db-category">
+                        <h4>Cloud Databases</h4>
+                        <ul><li>Amazon RDS/DynamoDB</li><li>Google Cloud SQL</li><li>Azure SQL Database</li><li>Snowflake</li></ul>
+                    </div>
+                    <div class="db-category">
+                        <h4>Embedded Databases</h4>
+                        <ul><li>SQLite</li><li>Berkeley DB</li><li>Apache Derby</li><li>Mobile app databases</li></ul>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <h2>Database Forensics Process</h2>
+                <div class="prevention-box">
+                    <h4>Investigation Methodology:</h4>
+                    <ol>
+                        <li><strong>Preparation:</strong> Understand database architecture and access requirements</li>
+                        <li><strong>Identification:</strong> Locate database files, logs, and configurations</li>
+                        <li><strong>Preservation:</strong> Create forensic copies with integrity verification</li>
+                        <li><strong>Collection:</strong> Extract data, metadata, and transaction logs</li>
+                        <li><strong>Examination:</strong> Analyze structure, content, and relationships</li>
+                        <li><strong>Analysis:</strong> Identify evidence and reconstruct events</li>
+                        <li><strong>Documentation:</strong> Report findings and maintain chain of custody</li>
+                    </ol>
+                </div>
+            </section>
+
+            <section>
+                <h2>Database File Types</h2>
+                <div class="code-box">
+                    <strong>Common Database Files:</strong>
+                    • .mdf/.ldf (SQL Server data/log files)
+                    • .frm/.ibd/.ibdata (MySQL table/data files)
+                    • .db/.sqlite/.sqlite3 (SQLite database files)
+                    • .dbf (Oracle data files)
+                    • .bson (MongoDB BSON files)
+                </code>
+                <div class="example-box">
+                    <h4>File Location Strategies:</h4>
+                    <ul>
+                        <li><strong>Default Locations:</strong> Check standard installation directories</li>
+                        <li><strong>Configuration Files:</strong> Parse config files for custom paths</li>
+                        <li><strong>Registry Analysis:</strong> Windows registry for database settings</li>
+                        <li><strong>File Signature Search:</strong> Scan for database file headers</li>
+                        <li><strong>Process Memory:</strong> Extract database paths from running processes</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section>
+                <h2>Data Recovery Techniques</h2>
+                <div class="grid-container">
+                    <div class="db-category">
+                        <h4>Deleted Record Recovery</h4>
+                        <ul>
+                            <li>Transaction log analysis</li>
+                            <li>Unallocated space examination</li>
+                            <li>Shadow copy analysis</li>
+                            <li>Rollback segment inspection</li>
+                        </ul>
+                    </div>
+                    <div class="db-category">
+                        <h4>Corrupted Data Recovery</h4>
+                        <ul>
+                            <li>Page-level reconstruction</li>
+                            <li>Backup file analysis</li>
+                            <li>Binary log parsing</li>
+                            <li>Consistency check utilities</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="code-box">
+                    <strong>SQL Server Recovery Example:</strong>
+                    SELECT * FROM fn_dblog(NULL, NULL)  -- View transaction log
+                    DBCC PAGE(database, file, page, 3)  -- Examine data pages
+                    RESTORE DATABASE FROM DISK = 'backup.bak' WITH REPLACE
+                </code>
+            </section>
+
+            <section>
+                <h2>Transaction Log Analysis</h2>
+                <div class="definition-box">
+                    <strong>Transaction Logs:</strong> Sequential records of all changes made to the database, crucial for forensic reconstruction of events.
+                </div>
+                <div class="example-box">
+                    <h4>Log Analysis Benefits:</h4>
+                    <ul>
+                        <li><strong>Timeline Reconstruction:</strong> Chronological sequence of database changes</li>
+                        <li><strong>User Activity Tracking:</strong> Identify who made specific changes</li>
+                        <li><strong>Data Modification History:</strong> Before and after values</li>
+                        <li><strong>Rollback Information:</strong> Understand undone transactions</li>
+                        <li><strong>Security Event Detection:</strong> Unauthorized access attempts</li>
+                    </ul>
+                </div>
+                <div class="prevention-box">
+                    <h4>Log Types:</h4>
+                    <ul>
+                        <li><strong>Redo Logs:</strong> Forward recovery operations</li>
+                        <li><strong>Undo Logs:</strong> Rollback information</li>
+                        <li><strong>Binary Logs:</strong> MySQL replication logs</li>
+                        <li><strong>Archive Logs:</strong> Historical transaction records</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section>
+                <h2>SQL Injection Forensics</h2>
+                <div class="example-box">
+                    <h4>SQL Injection Evidence:</h4>
+                    <ul>
+                        <li><strong>Web Server Logs:</strong> Suspicious HTTP requests with SQL syntax</li>
+                        <li><strong>Database Logs:</strong> Malformed or unusual SQL queries</li>
+                        <li><strong>Error Logs:</strong> Database errors revealing schema information</li>
+                        <li><strong>Performance Logs:</strong> Unusually long-running queries</li>
+                        <li><strong>Access Logs:</strong> Privilege escalation attempts</li>
+                    </ul>
+                </div>
+                <div class="code-box">
+                    <strong>Common SQLi Patterns:</strong>
+                    • ' OR '1'='1 (Authentication bypass)
+                    • UNION SELECT (Data exfiltration)
+                    • ; DROP TABLE (Destructive attacks)
+                    • xp_cmdshell (Command execution)
+                    • INTO OUTFILE (File writing)
+                </code>
+            </section>
+
+            <section>
+                <h2>Database Schema Analysis</h2>
+                <div class="prevention-box">
+                    <h4>Schema Investigation Components:</h4>
+                    <ul>
+                        <li><strong>Table Structure:</strong> Column definitions, data types, constraints</li>
+                        <li><strong>Relationships:</strong> Foreign keys and table associations</li>
+                        <li><strong>Indexes:</strong> Performance optimization structures</li>
+                        <li><strong>Views:</strong> Virtual tables and data presentation</li>
+                        <li><strong>Stored Procedures:</strong> Embedded business logic</li>
+                        <li><strong>Triggers:</strong> Automated database responses</li>
+                    </ul>
+                </div>
+                <div class="code-box">
+                    <strong>Schema Discovery Queries:</strong>
+                    -- MySQL
+                    SHOW TABLES; DESCRIBE table_name;
+                    -- PostgreSQL  
+                    \dt \d+ table_name
+                    -- SQL Server
+                    SELECT * FROM INFORMATION_SCHEMA.TABLES
+                </code>
+            </section>
+
+            <section>
+                <h2>Database Security Analysis</h2>
+                <div class="grid-container">
+                    <div class="db-category">
+                        <h4>Access Control Analysis</h4>
+                        <ul>
+                            <li>User account enumeration</li>
+                            <li>Permission and role analysis</li>
+                            <li>Privilege escalation detection</li>
+                            <li>Default account identification</li>
+                        </ul>
+                    </div>
+                    <div class="db-category">
+                        <h4>Security Configuration</h4>
+                        <ul>
+                            <li>Authentication mechanisms</li>
+                            <li>Encryption implementation</li>
+                            <li>Audit logging settings</li>
+                            <li>Network security configuration</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="example-box">
+                    <h4>Security Indicators:</h4>
+                    <ul>
+                        <li>Weak or default passwords</li>
+                        <li>Excessive user privileges</li>
+                        <li>Disabled security features</li>
+                        <li>Unencrypted sensitive data</li>
+                        <li>Missing security patches</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section>
+                <h2>NoSQL Database Forensics</h2>
+                <div class="definition-box">
+                    <strong>NoSQL Challenges:</strong> Document-based, schema-less databases require specialized forensic approaches compared to traditional relational databases.
+                </div>
+                <div class="example-box">
+                    <h4>MongoDB Forensics:</h4>
+                    <ul>
+                        <li><strong>BSON Analysis:</strong> Binary JSON document format</li>
+                        <li><strong>Collection Examination:</strong> Document groups analysis</li>
+                        <li><strong>GridFS Investigation:</strong> Large file storage system</li>
+                        <li><strong>Replica Set Analysis:</strong> Distributed data examination</li>
+                        <li><strong>Oplog Analysis:</strong> Operation log for replication</li>
+                    </ul>
+                </div>
+                <div class="code-box">
+                    <strong>MongoDB Investigation Commands:</strong>
+                    db.runCommand({listCollections: 1})
+                    db.collection.find().pretty()
+                    db.oplog.rs.find().limit(10)
+                    db.stats()
+                </code>
+            </section>
+
+            <section>
+                <h2>Cloud Database Forensics</h2>
+                <div class="db-category">
+                    <h4>Cloud-Specific Challenges:</h4>
+                    <ul>
+                        <li><strong>Limited Physical Access:</strong> Virtual infrastructure constraints</li>
+                        <li><strong>Shared Tenancy:</strong> Multi-tenant security isolation</li>
+                        <li><strong>API-Based Access:</strong> Programmatic investigation methods</li>
+                        <li><strong>Geographic Distribution:</strong> Data spread across regions</li>
+                        <li><strong>Provider Cooperation:</strong> Legal and technical coordination</li>
+                    </ul>
+                </div>
+                <div class="prevention-box">
+                    <h4>Cloud Investigation Strategies:</h4>
+                    <ul>
+                        <li>API-based data extraction</li>
+                        <li>Cloud audit log analysis</li>
+                        <li>Snapshot and backup examination</li>
+                        <li>Network traffic analysis</li>
+                        <li>Identity and access management review</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section>
+                <h2>Database Forensic Tools</h2>
+                <div class="grid-container">
+                    <div class="db-category">
+                        <h4>Commercial Tools</h4>
+                        <ul>
+                            <li>AccessData FTK Database</li>
+                            <li>Magnet AXIOM Database</li>
+                            <li>Oxygen SQLite Viewer</li>
+                            <li>Stellar Phoenix Database Recovery</li>
+                        </ul>
+                    </div>
+                    <div class="db-category">
+                        <h4>Open Source Tools</h4>
+                        <ul>
+                            <li>SQLite Browser</li>
+                            <li>phpMyAdmin</li>
+                            <li>DBeaver</li>
+                            <li>MySQL Workbench</li>
+                        </ul>
+                    </div>
+                    <div class="db-category">
+                        <h4>Command Line Tools</h4>
+                        <ul>
+                            <li>sqlite3 (SQLite CLI)</li>
+                            <li>mysql (MySQL client)</li>
+                            <li>psql (PostgreSQL client)</li>
+                            <li>sqlcmd (SQL Server client)</li>
+                        </ul>
+                    </div>
+                    <div class="db-category">
+                        <h4>Specialized Utilities</h4>
+                        <ul>
+                            <li>Log analysis tools</li>
+                            <li>Hex editors for low-level analysis</li>
+                            <li>Data recovery utilities</li>
+                            <li>Schema comparison tools</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <h2>Data Privacy and Legal Issues</h2>
+                <div class="example-box">
+                    <h4>Privacy Considerations:</h4>
+                    <ul>
+                        <li><strong>GDPR Compliance:</strong> European data protection regulations</li>
+                        <li><strong>HIPAA Requirements:</strong> Healthcare data privacy</li>
+                        <li><strong>PCI DSS Standards:</strong> Payment card data protection</li>
+                        <li><strong>SOX Compliance:</strong> Financial data integrity</li>
+                        <li><strong>Industry-Specific Regulations:</strong> Sector-based requirements</li>
+                    </ul>
+                </div>
+                <div class="prevention-box">
+                    <h4>Legal Best Practices:</h4>
+                    <ul>
+                        <li>Obtain proper legal authorization</li>
+                        <li>Minimize data exposure during investigation</li>
+                        <li>Implement strong access controls</li>
+                        <li>Document all investigation procedures</li>
+                        <li>Follow data retention and disposal policies</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section>
+                <h2>Database Timeline Reconstruction</h2>
+                <div class="prevention-box">
+                    <h4>Timeline Creation Process:</h4>
+                    <ol>
+                        <li><strong>Transaction Log Parsing:</strong> Extract timestamped events</li>
+                        <li><strong>Audit Trail Analysis:</strong> Correlate security events</li>
+                        <li><strong>Backup Analysis:</strong> Identify data state at specific times</li>
+                        <li><strong>User Activity Correlation:</strong> Link actions to specific users</li>
+                        <li><strong>Cross-System Correlation:</strong> Integrate with other log sources</li>
+                    </ol>
+                </div>
+                <div class="code-box">
+                    <strong>Timeline Reconstruction Example:</strong>
+                    2023-10-15 14:30:15 - User 'admin' logged in
+                    2023-10-15 14:32:22 - SELECT query on customer table
+                    2023-10-15 14:33:45 - DELETE 15000 records from customer table
+                    2023-10-15 14:35:12 - User 'admin' logged out
+                </code>
+            </section>
+
+            <section>
+                <h2>Database Backup Analysis</h2>
+                <div class="db-category">
+                    <h4>Backup Types:</h4>
+                    <ul>
+                        <li><strong>Full Backups:</strong> Complete database snapshots</li>
+                        <li><strong>Differential Backups:</strong> Changes since last full backup</li>
+                        <li><strong>Transaction Log Backups:</strong> Point-in-time recovery data</li>
+                        <li><strong>Incremental Backups:</strong> Changes since last backup</li>
+                    </ul>
+                </div>
+                <div class="example-box">
+                    <h4>Forensic Value of Backups:</h4>
+                    <ul>
+                        <li>Historical data state analysis</li>
+                        <li>Deleted data recovery</li>
+                        <li>Change comparison and tracking</li>
+                        <li>Attack timeline reconstruction</li>
+                        <li>Data integrity verification</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section>
+                <h2>Database Incident Response</h2>
+                <div class="example-box">
+                    <h4>Immediate Response Actions:</h4>
+                    <ul>
+                        <li><strong>Isolation:</strong> Disconnect compromised databases</li>
+                        <li><strong>Preservation:</strong> Create immediate backups</li>
+                        <li><strong>Documentation:</strong> Record current system state</li>
+                        <li><strong>Log Collection:</strong> Gather all relevant logs</li>
+                        <li><strong>Access Control:</strong> Secure administrator accounts</li>
+                    </ul>
+                </div>
+                <div class="prevention-box">
+                    <h4>Investigation Coordination:</h4>
+                    <ul>
+                        <li>Coordinate with system administrators</li>
+                        <li>Engage database vendors if needed</li>
+                        <li>Coordinate with legal and compliance teams</li>
+                        <li>Maintain detailed investigation logs</li>
+                        <li>Plan for business continuity</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section>
+                <h2>Best Practices and Challenges</h2>
+                <div class="grid-container">
+                    <div class="prevention-box">
+                        <h4>Best Practices</h4>
+                        <ul>
+                            <li>Maintain database expertise across platforms</li>
+                            <li>Develop standard operating procedures</li>
+                            <li>Regular training on new database technologies</li>
+                            <li>Coordinate with database administrators</li>
+                            <li>Maintain current forensic tools</li>
+                        </ul>
+                    </div>
+                    <div class="db-category">
+                        <h4>Common Challenges</h4>
+                        <ul>
+                            <li>Encryption and access controls</li>
+                            <li>Large dataset volumes</li>
+                            <li>Complex database schemas</li>
+                            <li>Distributed database architectures</li>
+                            <li>Real-time data changes</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <h2>Key Takeaways</h2>
+                <div class="definition-box">
+                    <h4>Critical Points:</h4>
+                    <ul>
+                        <li><strong>Multi-Platform Expertise:</strong> Understanding diverse database systems</li>
+                        <li><strong>Systematic Approach:</strong> Following structured investigation methodology</li>
+                        <li><strong>Legal Compliance:</strong> Adhering to privacy and data protection laws</li>
+                        <li><strong>Evidence Integrity:</strong> Maintaining chain of custody for database evidence</li>
+                        <li><strong>Continuous Learning:</strong> Keeping pace with database technology evolution</li>
+                    </ul>
+                </div>
+                <div class="prevention-box">
+                    <strong>Database Forensics Success:</strong> Combine deep database knowledge, proper investigation methodology, and legal compliance to effectively analyze database systems and extract valuable digital evidence.
+                </div>
+            </section>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.js"></script>
+    <script>Reveal.initialize({hash: true, controls: true, progress: true, center: true, transition: 'slide'});</script>
+</body>
+</html>

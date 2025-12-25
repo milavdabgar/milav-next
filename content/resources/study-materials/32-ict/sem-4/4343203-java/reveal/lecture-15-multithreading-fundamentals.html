@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Lecture 15: Multi-threading Fundamentals | Java Programming (4343203)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <style>
+        .reveal {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 90vh;
+        }
+        .reveal .slides section {
+            text-align: left;
+            font-size: 0.85em;
+        }
+        .reveal h1, .reveal h2, .reveal h3 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .reveal h1 { font-size: 2.2em; }
+        .reveal h2 { font-size: 1.8em; margin-bottom: 30px; }
+        .reveal h3 { font-size: 1.4em; margin-bottom: 20px; }
+        .reveal pre {
+            width: 100%;
+            font-size: 0.75em;
+            line-height: 1.2;
+        }
+        .reveal code {
+            background-color: #f8f9fa;
+            padding: 2px 4px;
+            border-radius: 3px;
+            color: #e83e8c;
+        }
+        .reveal .hljs {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            padding: 15px;
+        }
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+        .highlight-box {
+            background-color: #e8f4fd;
+            border-left: 5px solid #3498db;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        .warning-box {
+            background-color: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        .success-box {
+            background-color: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        .reveal ul, .reveal ol {
+            margin-left: 1em;
+        }
+        .reveal li {
+            margin-bottom: 8px;
+        }
+        .gtu-question {
+            background-color: #f0f8ff;
+            border: 2px solid #4682b4;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        .gtu-question h4 {
+            color: #4682b4;
+            margin: 0 0 15px 0;
+            font-size: 1.1em;
+        }
+        .reveal table {
+            font-size: 0.7em;
+            border-collapse: collapse;
+            width: 100%;
+            margin: 15px 0;
+        }
+        .reveal td, .reveal th {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .reveal th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        .thread-diagram {
+            background-color: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- Title Slide -->
+            <section>
+                <h1>Multi-threading Fundamentals</h1>
+                <h3>Java Programming (4343203)</h3>
+                <h3>Lecture 15</h3>
+                <p style="text-align: center; margin-top: 50px;">
+                    <strong>Unit 4: Advanced Java Concepts</strong><br>
+                    GTU Computer Engineering Semester 4
+                </p>
+            </section>
+
+            <!-- Learning Objectives -->
+            <section>
+                <h2>Learning Objectives</h2>
+                <ul>
+                    <li>Understand the concept of multithreading and concurrency</li>
+                    <li>Learn thread creation methods in Java</li>
+                    <li>Master thread lifecycle and states</li>
+                    <li>Implement thread synchronization techniques</li>
+                    <li>Handle race conditions and thread safety</li>
+                    <li>Solve producer-consumer problems</li>
+                </ul>
+                <div class="highlight-box">
+                    <strong>Focus:</strong> Building concurrent applications with proper thread management and synchronization.
+                </div>
+            </section>
+
+            <!-- What is Multithreading? -->
+            <section>
+                <h2>Introduction to Multithreading</h2>
+                <div class="two-column">
+                    <div>
+                        <h3>What is Multithreading?</h3>
+                        <ul>
+                            <li><strong>Thread:</strong> Lightweight sub-process</li>
+                            <li><strong>Multithreading:</strong> Concurrent execution of multiple threads</li>
+                            <li><strong>Process:</strong> Independent execution environment</li>
+                            <li><strong>Concurrency:</strong> Multiple tasks progressing simultaneously</li>
+                        </ul>
+                        
+                        <h3>Benefits of Multithreading</h3>
+                        <ul>
+                            <li>Better resource utilization</li>
+                            <li>Improved performance</li>
+                            <li>Enhanced user experience</li>
+                            <li>Parallel processing capabilities</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <div class="thread-diagram">
+                            <h4>Single-threaded vs Multi-threaded</h4>
+                            <p><strong>Single-threaded:</strong><br>
+                            Task1 → Task2 → Task3 → Task4</p>
+                            
+                            <p><strong>Multi-threaded:</strong><br>
+                            Thread1: Task1 → Task3<br>
+                            Thread2: Task2 → Task4<br>
+                            <em>Parallel execution</em></p>
+                        </div>
+                        
+                        <div class="warning-box">
+                            <strong>Challenges:</strong>
+                            <ul>
+                                <li>Race conditions</li>
+                                <li>Deadlocks</li>
+                                <li>Resource sharing conflicts</li>
+                                <li>Debugging complexity</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Thread Creation Methods -->
+            <section>
+                <h2>Thread Creation in Java</h2>
+                <h3>Method 1: Extending Thread Class</h3>
+                <pre><code class="java">
+// Extending Thread class
+class MyThread extends Thread {
+    private String threadName;
+    
+    public MyThread(String name) {
+        this.threadName = name;
+    }
+    
+    @Override
+    public void run() {
+        for (int i = 1; i <= 5; i++) {
+            System.out.println(threadName + " - Count: " + i);
+            
+            try {
+                Thread.sleep(1000); // Sleep for 1 second
+            } catch (InterruptedException e) {
+                System.out.println(threadName + " interrupted");
+                return;
+            }
+        }
+        System.out.println(threadName + " finished execution");
+    }
+}
+
+// Usage
+public class ThreadExample1 {
+    public static void main(String[] args) {
+        MyThread thread1 = new MyThread("Thread-1");
+        MyThread thread2 = new MyThread("Thread-2");
+        
+        // Start threads
+        thread1.start(); // Calls run() method in new thread
+        thread2.start();
+        
+        System.out.println("Main thread continues...");
+        
+        // Wait for threads to complete
+        try {
+            thread1.join();
+            thread2.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        
+        System.out.println("All threads completed");
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- Runnable Interface -->
+            <section>
+                <h2>Method 2: Implementing Runnable Interface</h2>
+                <pre><code class="java">
+// Implementing Runnable interface (Preferred approach)
+class MyRunnable implements Runnable {
+    private String taskName;
+    private int iterations;
+    
+    public MyRunnable(String name, int iterations) {
+        this.taskName = name;
+        this.iterations = iterations;
+    }
+    
+    @Override
+    public void run() {
+        Thread currentThread = Thread.currentThread();
+        System.out.println(taskName + " started on " + currentThread.getName());
+        
+        for (int i = 1; i <= iterations; i++) {
+            System.out.printf("%s: Iteration %d/%d [%s]%n", 
+                             taskName, i, iterations, currentThread.getName());
+            
+            try {
+                Thread.sleep(500); // Simulate work
+            } catch (InterruptedException e) {
+                System.out.println(taskName + " interrupted");
+                Thread.currentThread().interrupt(); // Restore interrupt status
+                return;
+            }
+        }
+        
+        System.out.println(taskName + " completed");
+    }
+}
+
+// Usage with Thread constructor
+public class RunnableExample {
+    public static void main(String[] args) {
+        // Create Runnable tasks
+        MyRunnable task1 = new MyRunnable("Download-Task", 3);
+        MyRunnable task2 = new MyRunnable("Upload-Task", 4);
+        MyRunnable task3 = new MyRunnable("Process-Task", 2);
+        
+        // Create threads with Runnable tasks
+        Thread thread1 = new Thread(task1);
+        Thread thread2 = new Thread(task2);
+        Thread thread3 = new Thread(task3, "CustomThread-3");
+        
+        // Set thread properties
+        thread1.setPriority(Thread.MAX_PRIORITY);
+        thread2.setPriority(Thread.MIN_PRIORITY);
+        
+        // Start threads
+        thread1.start();
+        thread2.start();
+        thread3.start();
+        
+        System.out.println("Main thread ID: " + Thread.currentThread().getId());
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- Thread Lifecycle -->
+            <section>
+                <h2>Thread Lifecycle and States</h2>
+                <div class="two-column">
+                    <div>
+                        <h3>Thread States</h3>
+                        <table>
+                            <tr>
+                                <th>State</th>
+                                <th>Description</th>
+                            </tr>
+                            <tr>
+                                <td>NEW</td>
+                                <td>Thread created but not started</td>
+                            </tr>
+                            <tr>
+                                <td>RUNNABLE</td>
+                                <td>Thread executing or ready to execute</td>
+                            </tr>
+                            <tr>
+                                <td>BLOCKED</td>
+                                <td>Thread blocked waiting for monitor lock</td>
+                            </tr>
+                            <tr>
+                                <td>WAITING</td>
+                                <td>Thread waiting indefinitely</td>
+                            </tr>
+                            <tr>
+                                <td>TIMED_WAITING</td>
+                                <td>Thread waiting for specified time</td>
+                            </tr>
+                            <tr>
+                                <td>TERMINATED</td>
+                                <td>Thread finished execution</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div>
+                        <h3>State Transition Methods</h3>
+                        <ul>
+                            <li><code>start()</code> - NEW → RUNNABLE</li>
+                            <li><code>sleep(ms)</code> - RUNNABLE → TIMED_WAITING</li>
+                            <li><code>wait()</code> - RUNNABLE → WAITING</li>
+                            <li><code>join()</code> - Current thread waits</li>
+                            <li><code>notify()</code> - WAITING → RUNNABLE</li>
+                            <li><code>interrupt()</code> - Interrupt waiting thread</li>
+                        </ul>
+                        
+                        <div class="highlight-box">
+                            <strong>Important:</strong> Call <code>start()</code> to create new thread. Calling <code>run()</code> directly executes in current thread!
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Thread Lifecycle Demo -->
+            <section>
+                <h2>Thread Lifecycle Demonstration</h2>
+                <pre><code class="java">
+public class ThreadLifecycleDemo {
+    public static void main(String[] args) {
+        Thread worker = new Thread(new WorkerTask(), "Worker-Thread");
+        
+        // State monitoring
+        System.out.println("1. Initial state: " + worker.getState()); // NEW
+        
+        worker.start();
+        System.out.println("2. After start(): " + worker.getState()); // RUNNABLE
+        
+        // Let worker thread run for a bit
+        try {
+            Thread.sleep(100);
+            System.out.println("3. During execution: " + worker.getState());
+            
+            // Wait for worker to complete
+            worker.join();
+            System.out.println("4. After completion: " + worker.getState()); // TERMINATED
+            
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        
+        System.out.println("Main thread finished");
+    }
+}
+
+class WorkerTask implements Runnable {
+    @Override
+    public void run() {
+        String threadName = Thread.currentThread().getName();
+        
+        try {
+            System.out.println(threadName + " starting work...");
+            
+            // Simulate some work
+            for (int i = 1; i <= 3; i++) {
+                System.out.println(threadName + " working... step " + i);
+                Thread.sleep(300); // TIMED_WAITING state
+            }
+            
+            System.out.println(threadName + " work completed!");
+            
+        } catch (InterruptedException e) {
+            System.out.println(threadName + " was interrupted");
+            Thread.currentThread().interrupt();
+        }
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- Thread Synchronization -->
+            <section>
+                <h2>Thread Synchronization</h2>
+                <h3>The Race Condition Problem</h3>
+                <pre><code class="java">
+// Demonstrating race condition
+class Counter {
+    private int count = 0;
+    
+    // Unsynchronized method - causes race condition
+    public void increment() {
+        // This is actually 3 operations:
+        // 1. Read current value of count
+        // 2. Increment the value
+        // 3. Store the new value back to count
+        count++; // Not atomic!
+    }
+    
+    // Synchronized method - thread-safe
+    public synchronized void synchronizedIncrement() {
+        count++;
+    }
+    
+    public int getCount() {
+        return count;
+    }
+    
+    public void resetCount() {
+        count = 0;
+    }
+}
+
+// Race condition demonstration
+public class RaceConditionDemo {
+    private static Counter counter = new Counter();
+    
+    public static void main(String[] args) {
+        // Test unsynchronized increment
+        System.out.println("=== Testing Race Condition ===");
+        testRaceCondition();
+        
+        // Test synchronized increment
+        System.out.println("\n=== Testing Synchronized Access ===");
+        testSynchronizedAccess();
+    }
+    
+    private static void testRaceCondition() {
+        counter.resetCount();
+        
+        Thread[] threads = new Thread[5];
+        
+        // Create threads that increment counter
+        for (int i = 0; i < 5; i++) {
+            final int threadId = i;
+            threads[i] = new Thread(() -> {
+                for (int j = 0; j < 1000; j++) {
+                    counter.increment(); // Race condition here!
+                }
+                System.out.println("Thread " + threadId + " finished");
+            });
+        }
+        
+        // Start all threads
+        for (Thread thread : threads) {
+            thread.start();
+        }
+        
+        // Wait for all threads to complete
+        for (Thread thread : threads) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        
+        System.out.println("Expected: 5000, Actual: " + counter.getCount());
+        System.out.println("Data corruption due to race condition!");
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- Synchronized Methods and Blocks -->
+            <section>
+                <h2>Synchronization Mechanisms</h2>
+                <h3>1. Synchronized Methods</h3>
+                <pre><code class="java">
+class BankAccount {
+    private double balance;
+    private String accountNumber;
+    
+    public BankAccount(String accountNumber, double initialBalance) {
+        this.accountNumber = accountNumber;
+        this.balance = initialBalance;
+    }
+    
+    // Synchronized method - only one thread can execute at a time
+    public synchronized void deposit(double amount) {
+        if (amount > 0) {
+            System.out.println(Thread.currentThread().getName() + 
+                             " depositing $" + amount);
+            double oldBalance = balance;
+            
+            // Simulate processing time
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return;
+            }
+            
+            balance = oldBalance + amount;
+            System.out.println("Deposit complete. New balance: $" + balance);
+        }
+    }
+    
+    // Synchronized method
+    public synchronized void withdraw(double amount) {
+        if (amount > 0 && amount <= balance) {
+            System.out.println(Thread.currentThread().getName() + 
+                             " withdrawing $" + amount);
+            double oldBalance = balance;
+            
+            // Simulate processing time
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return;
+            }
+            
+            balance = oldBalance - amount;
+            System.out.println("Withdrawal complete. New balance: $" + balance);
+        } else {
+            System.out.println("Insufficient funds for withdrawal of $" + amount);
+        }
+    }
+    
+    // Synchronized getter
+    public synchronized double getBalance() {
+        return balance;
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- Synchronized Blocks -->
+            <section>
+                <h2>2. Synchronized Blocks</h2>
+                <pre><code class="java">
+class SharedResource {
+    private int data = 0;
+    private final Object lock = new Object(); // Explicit lock object
+    
+    // Method with synchronized block
+    public void updateData(int newValue) {
+        // Non-critical section - multiple threads can execute
+        String threadName = Thread.currentThread().getName();
+        System.out.println(threadName + " preparing to update data...");
+        
+        // Critical section - only one thread can execute
+        synchronized(lock) {
+            System.out.println(threadName + " entered critical section");
+            
+            int oldValue = data;
+            
+            try {
+                Thread.sleep(50); // Simulate processing
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return;
+            }
+            
+            data = newValue;
+            System.out.println(threadName + " updated data: " + 
+                             oldValue + " -> " + data);
+        }
+        
+        // Non-critical section continues
+        System.out.println(threadName + " exited critical section");
+    }
+    
+    // Alternative: synchronize on 'this'
+    public void alternativeUpdate(int newValue) {
+        synchronized(this) { // Equivalent to synchronized method
+            data = newValue;
+        }
+    }
+    
+    public int getData() {
+        synchronized(lock) {
+            return data;
+        }
+    }
+}
+
+// Demonstration
+public class SynchronizationDemo {
+    public static void main(String[] args) {
+        BankAccount account = new BankAccount("12345", 1000.0);
+        
+        // Create multiple threads accessing the same account
+        Thread depositor1 = new Thread(() -> account.deposit(200.0), "Depositor-1");
+        Thread depositor2 = new Thread(() -> account.deposit(300.0), "Depositor-2");
+        Thread withdrawer = new Thread(() -> account.withdraw(150.0), "Withdrawer");
+        
+        depositor1.start();
+        depositor2.start();
+        withdrawer.start();
+        
+        try {
+            depositor1.join();
+            depositor2.join();
+            withdrawer.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        
+        System.out.println("Final balance: $" + account.getBalance());
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- Producer-Consumer Problem -->
+            <section>
+                <h2>Producer-Consumer Problem</h2>
+                <h3>Classic Synchronization Challenge</h3>
+                <pre><code class="java">
+import java.util.ArrayList;
+import java.util.List;
+
+class SharedBuffer {
+    private final List<Integer> buffer;
+    private final int capacity;
+    
+    public SharedBuffer(int capacity) {
+        this.capacity = capacity;
+        this.buffer = new ArrayList<>();
+    }
+    
+    // Producer method - adds items to buffer
+    public synchronized void produce(int item) throws InterruptedException {
+        // Wait while buffer is full
+        while (buffer.size() == capacity) {
+            System.out.println("Buffer full. Producer waiting...");
+            wait(); // Release lock and wait
+        }
+        
+        buffer.add(item);
+        System.out.println("Produced: " + item + " | Buffer size: " + buffer.size());
+        
+        notify(); // Wake up waiting consumers
+    }
+    
+    // Consumer method - removes items from buffer
+    public synchronized int consume() throws InterruptedException {
+        // Wait while buffer is empty
+        while (buffer.isEmpty()) {
+            System.out.println("Buffer empty. Consumer waiting...");
+            wait(); // Release lock and wait
+        }
+        
+        int item = buffer.remove(0);
+        System.out.println("Consumed: " + item + " | Buffer size: " + buffer.size());
+        
+        notify(); // Wake up waiting producers
+        return item;
+    }
+    
+    public synchronized int size() {
+        return buffer.size();
+    }
+}
+
+class Producer implements Runnable {
+    private final SharedBuffer buffer;
+    private final String name;
+    private final int itemCount;
+    
+    public Producer(SharedBuffer buffer, String name, int itemCount) {
+        this.buffer = buffer;
+        this.name = name;
+        this.itemCount = itemCount;
+    }
+    
+    @Override
+    public void run() {
+        try {
+            for (int i = 1; i <= itemCount; i++) {
+                int item = Integer.parseInt(name.substring(name.length()-1)) * 100 + i;
+                buffer.produce(item);
+                Thread.sleep(200); // Simulate production time
+            }
+        } catch (InterruptedException e) {
+            System.out.println(name + " interrupted");
+            Thread.currentThread().interrupt();
+        }
+        System.out.println(name + " finished producing");
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- Consumer Implementation -->
+            <section>
+                <h2>Consumer Implementation</h2>
+                <pre><code class="java">
+class Consumer implements Runnable {
+    private final SharedBuffer buffer;
+    private final String name;
+    private final int itemCount;
+    
+    public Consumer(SharedBuffer buffer, String name, int itemCount) {
+        this.buffer = buffer;
+        this.name = name;
+        this.itemCount = itemCount;
+    }
+    
+    @Override
+    public void run() {
+        try {
+            for (int i = 1; i <= itemCount; i++) {
+                int item = buffer.consume();
+                System.out.println(name + " got item: " + item);
+                Thread.sleep(300); // Simulate consumption time
+            }
+        } catch (InterruptedException e) {
+            System.out.println(name + " interrupted");
+            Thread.currentThread().interrupt();
+        }
+        System.out.println(name + " finished consuming");
+    }
+}
+
+// Complete Producer-Consumer demonstration
+public class ProducerConsumerDemo {
+    public static void main(String[] args) {
+        final int BUFFER_SIZE = 5;
+        final int ITEMS_PER_THREAD = 3;
+        
+        SharedBuffer buffer = new SharedBuffer(BUFFER_SIZE);
+        
+        // Create producers and consumers
+        Producer producer1 = new Producer(buffer, "Producer-1", ITEMS_PER_THREAD);
+        Producer producer2 = new Producer(buffer, "Producer-2", ITEMS_PER_THREAD);
+        
+        Consumer consumer1 = new Consumer(buffer, "Consumer-1", ITEMS_PER_THREAD);
+        Consumer consumer2 = new Consumer(buffer, "Consumer-2", ITEMS_PER_THREAD);
+        
+        // Create and start threads
+        Thread p1Thread = new Thread(producer1);
+        Thread p2Thread = new Thread(producer2);
+        Thread c1Thread = new Thread(consumer1);
+        Thread c2Thread = new Thread(consumer2);
+        
+        System.out.println("Starting Producer-Consumer simulation...");
+        System.out.println("Buffer capacity: " + BUFFER_SIZE);
+        
+        // Start all threads
+        p1Thread.start();
+        p2Thread.start();
+        c1Thread.start();
+        c2Thread.start();
+        
+        // Wait for all threads to complete
+        try {
+            p1Thread.join();
+            p2Thread.join();
+            c1Thread.join();
+            c2Thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        
+        System.out.println("Producer-Consumer simulation completed");
+        System.out.println("Final buffer size: " + buffer.size());
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- GTU Previous Year Question 1 -->
+            <section>
+                <div class="gtu-question">
+                    <h4>GTU Previous Year Question (Summer 2022)</h4>
+                    <p><strong>Q: Write a Java program to create two threads. One thread should display even numbers from 1 to 20 and another thread should display odd numbers from 1 to 20. Implement proper synchronization to ensure threads execute in an alternating manner.</strong></p>
+                </div>
+                
+                <h3>Solution:</h3>
+                <pre><code class="java">
+class NumberPrinter {
+    private int currentNumber = 1;
+    private final int maxNumber = 20;
+    private boolean isEvenTurn = false; // false = odd turn, true = even turn
+    
+    // Method for printing odd numbers
+    public synchronized void printOdd() {
+        while (currentNumber <= maxNumber) {
+            // Wait if it's not odd number's turn
+            while (isEvenTurn && currentNumber <= maxNumber) {
+                try {
+                    wait(); // Wait for even thread to signal
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    return;
+                }
+            }
+            
+            // Print odd number if within range
+            if (currentNumber <= maxNumber && currentNumber % 2 == 1) {
+                System.out.println("Odd Thread: " + currentNumber);
+                currentNumber++;
+                isEvenTurn = true; // Switch turn to even thread
+                notify(); // Wake up even thread
+            }
+        }
+    }
+    
+    // Method for printing even numbers
+    public synchronized void printEven() {
+        while (currentNumber <= maxNumber) {
+            // Wait if it's not even number's turn
+            while (!isEvenTurn && currentNumber <= maxNumber) {
+                try {
+                    wait(); // Wait for odd thread to signal
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    return;
+                }
+            }
+            
+            // Print even number if within range
+            if (currentNumber <= maxNumber && currentNumber % 2 == 0) {
+                System.out.println("Even Thread: " + currentNumber);
+                currentNumber++;
+                isEvenTurn = false; // Switch turn to odd thread
+                notify(); // Wake up odd thread
+            }
+        }
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- GTU Question 1 Solution Continued -->
+            <section>
+                <h3>Thread Classes and Main Method:</h3>
+                <pre><code class="java">
+// Thread class for printing odd numbers
+class OddNumberThread extends Thread {
+    private NumberPrinter printer;
+    
+    public OddNumberThread(NumberPrinter printer) {
+        this.printer = printer;
+        this.setName("OddThread");
+    }
+    
+    @Override
+    public void run() {
+        printer.printOdd();
+    }
+}
+
+// Thread class for printing even numbers
+class EvenNumberThread extends Thread {
+    private NumberPrinter printer;
+    
+    public EvenNumberThread(NumberPrinter printer) {
+        this.printer = printer;
+        this.setName("EvenThread");
+    }
+    
+    @Override
+    public void run() {
+        printer.printEven();
+    }
+}
+
+// Main demonstration class
+public class AlternatingNumbersDemo {
+    public static void main(String[] args) {
+        System.out.println("=== Alternating Odd-Even Numbers (1-20) ===");
+        
+        NumberPrinter printer = new NumberPrinter();
+        
+        // Create threads
+        OddNumberThread oddThread = new OddNumberThread(printer);
+        EvenNumberThread evenThread = new EvenNumberThread(printer);
+        
+        // Start threads
+        System.out.println("Starting threads...\n");
+        oddThread.start();  // Start with odd numbers
+        evenThread.start();
+        
+        // Wait for both threads to complete
+        try {
+            oddThread.join();
+            evenThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        
+        System.out.println("\n=== All numbers printed successfully ===");
+        System.out.println("Both threads completed execution");
+    }
+}
+                </code></pre>
+                
+                <div class="success-box">
+                    <strong>Key Features:</strong>
+                    <ul>
+                        <li>Perfect alternation between odd and even numbers</li>
+                        <li>Synchronized access using wait() and notify()</li>
+                        <li>Thread-safe number generation and printing</li>
+                        <li>Clean termination when range is completed</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- GTU Previous Year Question 2 -->
+            <section>
+                <div class="gtu-question">
+                    <h4>GTU Previous Year Question (Winter 2022)</h4>
+                    <p><strong>Q: Explain thread lifecycle in Java with a diagram. Write a program to demonstrate different thread states and transitions between them.</strong></p>
+                </div>
+                
+                <h3>Thread Lifecycle Diagram:</h3>
+                <div class="thread-diagram">
+                    <p><strong>Thread State Transitions:</strong></p>
+                    <p>NEW → start() → RUNNABLE → run() completes → TERMINATED</p>
+                    <p>RUNNABLE → sleep()/wait() → TIMED_WAITING/WAITING → notify()/timeout → RUNNABLE</p>
+                    <p>RUNNABLE → synchronized block → BLOCKED → lock acquired → RUNNABLE</p>
+                </div>
+                
+                <h3>Thread State Demonstration Program:</h3>
+                <pre><code class="java">
+class StateMonitoringTask implements Runnable {
+    private final Object lock = new Object();
+    private volatile boolean shouldWait = true;
+    
+    @Override
+    public void run() {
+        Thread currentThread = Thread.currentThread();
+        System.out.println(currentThread.getName() + " entered RUNNABLE state");
+        
+        try {
+            // Demonstrate TIMED_WAITING state
+            System.out.println(currentThread.getName() + " going to TIMED_WAITING (sleep)");
+            Thread.sleep(2000);
+            System.out.println(currentThread.getName() + " returned from TIMED_WAITING");
+            
+            // Demonstrate WAITING state
+            synchronized (lock) {
+                if (shouldWait) {
+                    System.out.println(currentThread.getName() + " going to WAITING state");
+                    lock.wait(); // WAITING state
+                    System.out.println(currentThread.getName() + " returned from WAITING");
+                }
+            }
+            
+            // Demonstrate BLOCKED state by trying to acquire lock
+            System.out.println(currentThread.getName() + " trying to acquire external lock");
+            
+            // Some additional work
+            for (int i = 1; i <= 3; i++) {
+                System.out.println(currentThread.getName() + " working... step " + i);
+                Thread.sleep(500);
+            }
+            
+        } catch (InterruptedException e) {
+            System.out.println(currentThread.getName() + " was interrupted");
+            Thread.currentThread().interrupt();
+        }
+        
+        System.out.println(currentThread.getName() + " finished - going to TERMINATED");
+    }
+    
+    public void releaseWaiting() {
+        synchronized (lock) {
+            shouldWait = false;
+            lock.notify();
+        }
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- Thread State Monitor -->
+            <section>
+                <h3>Thread State Monitor and Demo:</h3>
+                <pre><code class="java">
+public class ThreadLifecycleDemo {
+    public static void main(String[] args) {
+        System.out.println("=== Thread Lifecycle Demonstration ===\n");
+        
+        StateMonitoringTask task = new StateMonitoringTask();
+        Thread workerThread = new Thread(task, "WorkerThread");
+        
+        // Monitor thread states
+        ThreadStateMonitor monitor = new ThreadStateMonitor(workerThread);
+        Thread monitorThread = new Thread(monitor, "MonitorThread");
+        
+        System.out.println("1. Thread created - State: " + workerThread.getState());
+        
+        // Start monitoring and worker threads
+        monitorThread.start();
+        workerThread.start();
+        
+        try {
+            // Let thread work for a while
+            Thread.sleep(3000);
+            
+            // Release waiting thread
+            System.out.println("Main thread releasing waiting worker thread");
+            task.releaseWaiting();
+            
+            // Wait for threads to complete
+            workerThread.join();
+            monitor.stopMonitoring();
+            monitorThread.join();
+            
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        
+        System.out.println("\nFinal state: " + workerThread.getState());
+        System.out.println("Thread lifecycle demonstration completed");
+    }
+}
+
+class ThreadStateMonitor implements Runnable {
+    private final Thread threadToMonitor;
+    private volatile boolean monitoring = true;
+    private Thread.State lastState;
+    
+    public ThreadStateMonitor(Thread thread) {
+        this.threadToMonitor = thread;
+        this.lastState = thread.getState();
+    }
+    
+    @Override
+    public void run() {
+        System.out.println("State monitor started");
+        
+        while (monitoring && threadToMonitor.getState() != Thread.State.TERMINATED) {
+            Thread.State currentState = threadToMonitor.getState();
+            
+            if (currentState != lastState) {
+                System.out.printf("[MONITOR] %s: %s → %s%n", 
+                                threadToMonitor.getName(), lastState, currentState);
+                lastState = currentState;
+            }
+            
+            try {
+                Thread.sleep(100); // Check every 100ms
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
+        
+        System.out.println("State monitoring stopped");
+    }
+    
+    public void stopMonitoring() {
+        monitoring = false;
+    }
+}
+                </code></pre>
+                
+                <div class="highlight-box">
+                    <strong>States Demonstrated:</strong>
+                    <ul>
+                        <li><strong>NEW:</strong> Thread created but not started</li>
+                        <li><strong>RUNNABLE:</strong> Thread executing or ready to execute</li>
+                        <li><strong>TIMED_WAITING:</strong> Thread.sleep() call</li>
+                        <li><strong>WAITING:</strong> Object.wait() call</li>
+                        <li><strong>TERMINATED:</strong> Thread completed execution</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- GTU Previous Year Question 3 -->
+            <section>
+                <div class="gtu-question">
+                    <h4>GTU Previous Year Question (Summer 2023)</h4>
+                    <p><strong>Q: Write a Java program to implement producer-consumer problem using multithreading. The program should have bounded buffer with proper synchronization to avoid race conditions.</strong></p>
+                </div>
+                
+                <h3>Complete Producer-Consumer Solution:</h3>
+                <pre><code class="java">
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.Random;
+
+// Product class representing items in the buffer
+class Product {
+    private final int id;
+    private final String name;
+    private final double price;
+    
+    public Product(int id, String name, double price) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+    }
+    
+    public int getId() { return id; }
+    public String getName() { return name; }
+    public double getPrice() { return price; }
+    
+    @Override
+    public String toString() {
+        return String.format("Product{id=%d, name='%s', price=%.2f}", id, name, price);
+    }
+}
+
+// Producer class
+class ProductProducer implements Runnable {
+    private final BlockingQueue<Product> buffer;
+    private final String producerName;
+    private final int productCount;
+    private final Random random = new Random();
+    
+    public ProductProducer(BlockingQueue<Product> buffer, String name, int count) {
+        this.buffer = buffer;
+        this.producerName = name;
+        this.productCount = count;
+    }
+    
+    @Override
+    public void run() {
+        try {
+            for (int i = 1; i <= productCount; i++) {
+                // Create a new product
+                Product product = new Product(
+                    random.nextInt(1000) + 1,
+                    "Item-" + producerName + "-" + i,
+                    10.0 + random.nextDouble() * 90.0
+                );
+                
+                // Add to buffer (blocks if buffer is full)
+                buffer.put(product);
+                
+                System.out.printf("[%s] Produced: %s | Buffer size: %d%n", 
+                                producerName, product, buffer.size());
+                
+                // Simulate production time
+                Thread.sleep(random.nextInt(500) + 100);
+            }
+        } catch (InterruptedException e) {
+            System.out.println(producerName + " was interrupted");
+            Thread.currentThread().interrupt();
+        }
+        
+        System.out.println(producerName + " finished producing " + productCount + " products");
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- Consumer Implementation for GTU -->
+            <section>
+                <h3>Consumer Implementation:</h3>
+                <pre><code class="java">
+// Consumer class
+class ProductConsumer implements Runnable {
+    private final BlockingQueue<Product> buffer;
+    private final String consumerName;
+    private final int productCount;
+    private final Random random = new Random();
+    private double totalValue = 0.0;
+    
+    public ProductConsumer(BlockingQueue<Product> buffer, String name, int count) {
+        this.buffer = buffer;
+        this.consumerName = name;
+        this.productCount = count;
+    }
+    
+    @Override
+    public void run() {
+        try {
+            for (int i = 1; i <= productCount; i++) {
+                // Take from buffer (blocks if buffer is empty)
+                Product product = buffer.take();
+                
+                totalValue += product.getPrice();
+                
+                System.out.printf("[%s] Consumed: %s | Buffer size: %d%n", 
+                                consumerName, product, buffer.size());
+                
+                // Simulate consumption time
+                Thread.sleep(random.nextInt(700) + 200);
+            }
+        } catch (InterruptedException e) {
+            System.out.println(consumerName + " was interrupted");
+            Thread.currentThread().interrupt();
+        }
+        
+        System.out.printf("%s finished consuming %d products | Total value: $%.2f%n", 
+                         consumerName, productCount, totalValue);
+    }
+    
+    public double getTotalValue() { return totalValue; }
+}
+
+// Main demonstration class
+public class ProducerConsumerSolution {
+    public static void main(String[] args) {
+        final int BUFFER_SIZE = 10;
+        final int PRODUCTS_PER_PRODUCER = 5;
+        final int PRODUCTS_PER_CONSUMER = 5;
+        
+        // Create bounded buffer using BlockingQueue
+        BlockingQueue<Product> buffer = new ArrayBlockingQueue<>(BUFFER_SIZE);
+        
+        System.out.println("=== Producer-Consumer Problem Solution ===");
+        System.out.println("Buffer capacity: " + BUFFER_SIZE);
+        System.out.println("Products per producer: " + PRODUCTS_PER_PRODUCER);
+        System.out.println("Products per consumer: " + PRODUCTS_PER_CONSUMER);
+        System.out.println();
+        
+        // Create producers and consumers
+        ProductProducer producer1 = new ProductProducer(buffer, "Producer-A", PRODUCTS_PER_PRODUCER);
+        ProductProducer producer2 = new ProductProducer(buffer, "Producer-B", PRODUCTS_PER_PRODUCER);
+        
+        ProductConsumer consumer1 = new ProductConsumer(buffer, "Consumer-X", PRODUCTS_PER_CONSUMER);
+        ProductConsumer consumer2 = new ProductConsumer(buffer, "Consumer-Y", PRODUCTS_PER_CONSUMER);
+        
+        // Create and start threads
+        Thread p1 = new Thread(producer1);
+        Thread p2 = new Thread(producer2);
+        Thread c1 = new Thread(consumer1);
+        Thread c2 = new Thread(consumer2);
+        
+        long startTime = System.currentTimeMillis();
+        
+        // Start all threads
+        p1.start();
+        p2.start();
+        c1.start();
+        c2.start();
+        
+        // Wait for all threads to complete
+        try {
+            p1.join();
+            p2.join();
+            c1.join();
+            c2.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        
+        long endTime = System.currentTimeMillis();
+        
+        System.out.println("\n=== Execution Summary ===");
+        System.out.println("Total execution time: " + (endTime - startTime) + " ms");
+        System.out.println("Final buffer size: " + buffer.size());
+        System.out.println("Consumer-X total value: $" + String.format("%.2f", consumer1.getTotalValue()));
+        System.out.println("Consumer-Y total value: $" + String.format("%.2f", consumer2.getTotalValue()));
+        System.out.println("Producer-Consumer problem solved successfully!");
+    }
+}
+                </code></pre>
+                
+                <div class="success-box">
+                    <strong>Solution Features:</strong>
+                    <ul>
+                        <li>Bounded buffer with configurable capacity</li>
+                        <li>Thread-safe operations using BlockingQueue</li>
+                        <li>No race conditions or data corruption</li>
+                        <li>Proper thread coordination and synchronization</li>
+                        <li>Realistic simulation with variable timing</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Hands-on Lab Exercise -->
+            <section>
+                <h2>🧪 Hands-on Lab Exercise</h2>
+                <div class="highlight-box">
+                    <h3>Lab 15: Multi-threaded File Processor</h3>
+                    <p><strong>Task:</strong> Create a multi-threaded file processing system that reads multiple files concurrently, processes their content, and writes results to output files.</p>
+                </div>
+                
+                <h3>Requirements:</h3>
+                <ul>
+                    <li>Create a <code>FileProcessor</code> class that implements Runnable</li>
+                    <li>Process multiple text files concurrently (word count, line count, character count)</li>
+                    <li>Use synchronized collection to store results</li>
+                    <li>Implement proper thread coordination with a summary thread</li>
+                    <li>Handle file I/O exceptions properly</li>
+                    <li>Display real-time progress from each thread</li>
+                </ul>
+                
+                <div class="warning-box">
+                    <strong>Challenge:</strong> Ensure thread-safe access to shared data structures and implement proper cleanup in case of exceptions.
+                </div>
+            </section>
+
+            <!-- Summary -->
+            <section>
+                <h2>📚 Lecture Summary</h2>
+                <div class="two-column">
+                    <div>
+                        <h3>Key Concepts Covered</h3>
+                        <ul>
+                            <li>Multithreading fundamentals and benefits</li>
+                            <li>Thread creation methods (extends Thread, implements Runnable)</li>
+                            <li>Thread lifecycle and state transitions</li>
+                            <li>Race conditions and synchronization</li>
+                            <li>Synchronized methods and blocks</li>
+                            <li>Producer-consumer problem solution</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Important Methods</h3>
+                        <ul>
+                            <li><code>start()</code> - Create new thread</li>
+                            <li><code>run()</code> - Thread execution logic</li>
+                            <li><code>join()</code> - Wait for thread completion</li>
+                            <li><code>sleep()</code> - Pause thread execution</li>
+                            <li><code>wait()</code> - Wait for notification</li>
+                            <li><code>notify()/notifyAll()</code> - Wake up threads</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="highlight-box" style="margin-top: 30px;">
+                    <h3>🎯 Next Lecture Preview</h3>
+                    <p><strong>Lecture 16: Advanced Thread Concepts</strong></p>
+                    <ul>
+                        <li>Thread pools and ExecutorService</li>
+                        <li>Concurrent collections (ConcurrentHashMap, etc.)</li>
+                        <li>Deadlock prevention and detection</li>
+                        <li>Atomic operations and volatile keyword</li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/notes/notes.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/highlight.min.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            transition: 'slide',
+            transitionSpeed: 'fast',
+            center: true,
+            plugins: [RevealNotes, RevealHighlight]
+        });
+    </script>
+</body>
+</html>

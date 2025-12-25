@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Java Programming - Multithreading</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/theme/white.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/highlight/monokai.css">
+    <style>
+        .reveal h1, .reveal h2, .reveal h3 { color: #2c3e50; }
+        .reveal .slides section { text-align: left; padding: 10px 30px; height: 90vh; box-sizing: border-box; overflow: hidden; }
+        .reveal .title-slide { text-align: center; }
+        .reveal .center { text-align: center; }
+        .reveal pre code { font-size: 0.7em; line-height: 1.1; max-height: 300px; overflow-y: auto; }
+        .reveal h2 { font-size: 1.6em; margin-bottom: 0.4em; }
+        .reveal h3 { font-size: 1.3em; margin-bottom: 0.3em; }
+        .reveal h4 { font-size: 1.0em; margin-bottom: 0.2em; }
+        .reveal ul, .reveal ol { font-size: 0.85em; margin: 0.4em 0; }
+        .reveal li { margin: 0.2em 0; }
+        .highlight { background-color: #fff3cd; padding: 6px; border-left: 4px solid #ffc107; margin: 6px 0; font-size: 0.85em; }
+        .concept-box { background-color: #e8f4f8; padding: 8px; border-radius: 5px; margin: 6px 0; font-size: 0.8em; }
+        .two-column { display: flex; gap: 15px; font-size: 0.8em; }
+        .three-column { display: flex; gap: 10px; font-size: 0.75em; }
+        .column { flex: 1; }
+        .compact-list li { margin: 0.1em 0; font-size: 0.8em; }
+        .small-text { font-size: 0.75em; }
+        .table-style { font-size: 0.7em; width: 100%; border-collapse: collapse; }
+        .table-style th, .table-style td { border: 1px solid #ddd; padding: 4px; text-align: center; }
+        .table-style th { background-color: #f2f2f2; font-weight: bold; }
+        .thread-box { background: #e8f5e8; padding: 8px; border-radius: 5px; margin: 6px 0; font-size: 0.8em; border-left: 4px solid #4caf50; }
+        .sync-box { background: #fff3e0; padding: 8px; border-radius: 5px; margin: 6px 0; font-size: 0.8em; border-left: 4px solid #ff9800; }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- Title Slide -->
+            <section class="title-slide">
+                <h1>Java Programming Language</h1>
+                <h2>Chapter 10: Multithreading</h2>
+                <p>Concurrent Programming in Java</p>
+                <br>
+                <p><small>Course: 4343203 - Java Programming</small></p>
+            </section>
+
+            <!-- Table of Contents -->
+            <section>
+                <h2>What We'll Cover</h2>
+                <ul class="compact-list">
+                    <li>Thread Fundamentals</li>
+                    <li>Creating Threads</li>
+                    <li>Thread Lifecycle</li>
+                    <li>Thread Synchronization</li>
+                    <li>Inter-thread Communication</li>
+                    <li>Thread Pool and Executor Framework</li>
+                    <li>Common Threading Issues</li>
+                    <li>Best Practices</li>
+                </ul>
+            </section>
+
+            <!-- Thread Concepts -->
+            <section>
+                <h2>Thread Lifecycle</h2>
+                <div class="center">
+                    <img src="diagrams/thread-lifecycle.svg" alt="Java Thread Lifecycle" style="width: 95%; max-height: 75vh;">
+                </div>
+            </section>
+
+            <!-- Thread Fundamentals -->
+            <section>
+                <section>
+                    <h2>Thread Fundamentals</h2>
+                    <div class="highlight">
+                        <p><strong>Thread</strong> is a lightweight subprocess that allows concurrent execution</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>What is a Thread?</h3>
+                    <div class="concept-box">
+                        <h4>Thread Characteristics:</h4>
+                        <ul class="compact-list">
+                            <li>Independent execution path within a process</li>
+                            <li>Shares memory space with other threads</li>
+                            <li>Has its own stack and program counter</li>
+                            <li>Lighter weight than processes</li>
+                            <li>Enables concurrent and parallel execution</li>
+                        </ul>
+                    </div>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>Single-threaded vs Multi-threaded:</h4>
+                            <pre><code data-trim>
+// Single-threaded approach
+public class SingleThreaded {
+    public static void main(String[] args) {
+                               
+        // Task 1 - must complete before Task 2
+        for (int i = 0; i < 5; i++) {
+            System.out.println("Task 1: " + i);
+            try {
+                Thread.sleep(1000); // Simulate work
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        
+        // Task 2 - starts only after Task 1 completes
+        for (int i = 0; i < 5; i++) {
+            System.out.println("Task 2: " + i);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+// Total time: ~10 seconds
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Benefits of Multithreading:</h4>
+                            <div class="thread-box">
+                                <h5>Performance:</h5>
+                                <ul class="compact-list">
+                                    <li>Parallel execution on multi-core systems</li>
+                                    <li>Better CPU utilization</li>
+                                    <li>Reduced overall execution time</li>
+                                </ul>
+                            </div>
+                            <div class="thread-box">
+                                <h5>Responsiveness:</h5>
+                                <ul class="compact-list">
+                                    <li>User interface remains responsive</li>
+                                    <li>Background processing</li>
+                                    <li>Non-blocking operations</li>
+                                </ul>
+                            </div>
+                            <div class="thread-box">
+                                <h5>Resource Sharing:</h5>
+                                <ul class="compact-list">
+                                    <li>Threads share memory space</li>
+                                    <li>Lower overhead than processes</li>
+                                    <li>Efficient communication</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Thread vs Process</h3>
+                    <table class="table-style">
+                        <tr>
+                            <th>Aspect</th>
+                            <th>Thread</th>
+                            <th>Process</th>
+                        </tr>
+                        <tr>
+                            <td>Memory</td>
+                            <td>Shared memory space</td>
+                            <td>Separate memory space</td>
+                        </tr>
+                        <tr>
+                            <td>Creation Cost</td>
+                            <td>Low (lightweight)</td>
+                            <td>High (heavyweight)</td>
+                        </tr>
+                        <tr>
+                            <td>Communication</td>
+                            <td>Direct (shared variables)</td>
+                            <td>IPC mechanisms required</td>
+                        </tr>
+                        <tr>
+                            <td>Context Switching</td>
+                            <td>Fast</td>
+                            <td>Slow</td>
+                        </tr>
+                        <tr>
+                            <td>Independence</td>
+                            <td>Not independent</td>
+                            <td>Independent</td>
+                        </tr>
+                        <tr>
+                            <td>Crash Impact</td>
+                            <td>Affects entire process</td>
+                            <td>Isolated</td>
+                        </tr>
+                    </table>
+                </section>
+            </section>
+
+            <!-- Creating Threads -->
+            <section>
+                <section>
+                    <h2>Creating Threads</h2>
+                    <div class="highlight">
+                        <p>Java provides multiple ways to create and start threads</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Method 1: Extending Thread Class</h3>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>Basic Thread Extension:</h4>
+                            <pre><code data-trim>
+class MyThread extends Thread {
+    private String threadName;
+    
+    public MyThread(String name) {
+        this.threadName = name;
+    }
+    
+    @Override
+    public void run() {
+        for (int i = 1; i <= 5; i++) {
+            System.out.println(threadName + ": Count " + i);
+            try {
+                Thread.sleep(1000); // Pause for 1 second
+            } catch (InterruptedException e) {
+                System.out.println(threadName + " interrupted");
+                return;
+            }
+        }
+        System.out.println(threadName + " finished");
+    }
+}
+
+public class ThreadExample1 {
+    public static void main(String[] args) {
+        MyThread thread1 = new MyThread("Thread-1");
+        MyThread thread2 = new MyThread("Thread-2");
+        
+        thread1.start(); // Start first thread
+        thread2.start(); // Start second thread
+        
+        System.out.println("Main thread continues...");
+    }
+}
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Output (may vary):</h4>
+                            <pre><code data-trim>
+Main thread continues...
+Thread-1: Count 1
+Thread-2: Count 1
+Thread-1: Count 2
+Thread-2: Count 2
+Thread-1: Count 3
+Thread-2: Count 3
+Thread-1: Count 4
+Thread-2: Count 4
+Thread-1: Count 5
+Thread-2: Count 5
+Thread-1 finished
+Thread-2 finished
+                            </code></pre>
+                            <div class="thread-box">
+                                <h5>Key Points:</h5>
+                                <ul class="compact-list">
+                                    <li>Override run() method</li>
+                                    <li>Call start() to begin execution</li>
+                                    <li>Never call run() directly</li>
+                                    <li>Threads execute concurrently</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Method 2: Implementing Runnable Interface</h3>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>Runnable Implementation:</h4>
+                            <pre><code data-trim>
+class MyTask implements Runnable {
+    private String taskName;
+    
+    public MyTask(String name) {
+        this.taskName = name;
+    }
+    
+    @Override
+    public void run() {
+        for (int i = 1; i <= 5; i++) {
+            System.out.println(taskName + ": Executing step " + i);
+            try {
+                Thread.sleep(800);
+            } catch (InterruptedException e) {
+                System.out.println(taskName + " interrupted");
+                return;
+            }
+        }
+        System.out.println(taskName + " completed");
+    }
+}
+
+public class RunnableExample {
+    public static void main(String[] args) {
+        // Create Runnable objects
+        MyTask task1 = new MyTask("Task-A");
+        MyTask task2 = new MyTask("Task-B");
+        
+        // Create Thread objects with Runnable
+        Thread thread1 = new Thread(task1);
+        Thread thread2 = new Thread(task2);
+        
+        thread1.start();
+        thread2.start();
+    }
+}
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Lambda Expression (Java 8+):</h4>
+                            <pre><code data-trim>
+public class LambdaThreadExample {
+    public static void main(String[] args) {
+        // Using lambda expression
+        Thread thread1 = new Thread(() -> {
+            for (int i = 1; i <= 3; i++) {
+                System.out.println("Lambda Thread: " + i);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        
+        // Using method reference
+        Thread thread2 = new Thread(LambdaThreadExample::performTask);
+        
+        thread1.start();
+        thread2.start();
+    }
+    
+    public static void performTask() {
+        for (int i = 1; i <= 3; i++) {
+            System.out.println("Method Reference Thread: " + i);
+            try {
+                Thread.sleep(1200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Thread vs Runnable Comparison</h3>
+                    <div class="two-column">
+                        <div class="column">
+                            <div class="thread-box">
+                                <h4>Extending Thread</h4>
+                                <h5>Pros:</h5>
+                                <ul class="compact-list">
+                                    <li>Simple to use</li>
+                                    <li>Direct access to Thread methods</li>
+                                    <li>No need for Thread wrapper</li>
+                                </ul>
+                                <h5>Cons:</h5>
+                                <ul class="compact-list">
+                                    <li>Cannot extend another class</li>
+                                    <li>Tight coupling with Thread class</li>
+                                    <li>Less flexible</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="thread-box">
+                                <h4>Implementing Runnable</h4>
+                                <h5>Pros:</h5>
+                                <ul class="compact-list">
+                                    <li>Can extend another class</li>
+                                    <li>Better separation of concerns</li>
+                                    <li>More flexible and reusable</li>
+                                    <li>Preferred approach</li>
+                                </ul>
+                                <h5>Cons:</h5>
+                                <ul class="compact-list">
+                                    <li>Requires Thread wrapper</li>
+                                    <li>Slightly more verbose</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Thread Lifecycle -->
+            <section>
+                <section>
+                    <h2>Thread Lifecycle and States</h2>
+                    <div class="highlight">
+                        <p>Threads go through various states during their execution</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Thread States</h3>
+                    <div class="three-column">
+                        <div class="column">
+                            <div class="thread-box">
+                                <h4>NEW</h4>
+                                <p class="small-text">Thread created but not started</p>
+                                <pre><code data-trim>
+Thread t = new Thread();
+// State: NEW
+                                </code></pre>
+                            </div>
+                            <div class="thread-box">
+                                <h4>RUNNABLE</h4>
+                                <p class="small-text">Thread executing or ready to execute</p>
+                                <pre><code data-trim>
+t.start();
+// State: RUNNABLE
+                                </code></pre>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="thread-box">
+                                <h4>BLOCKED</h4>
+                                <p class="small-text">Waiting for monitor lock</p>
+                                <pre><code data-trim>
+synchronized(obj) {
+    // Another thread holds lock
+    // State: BLOCKED
+}
+                                </code></pre>
+                            </div>
+                            <div class="thread-box">
+                                <h4>WAITING</h4>
+                                <p class="small-text">Waiting indefinitely for another thread</p>
+                                <pre><code data-trim>
+obj.wait();
+// State: WAITING
+                                </code></pre>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="thread-box">
+                                <h4>TIMED_WAITING</h4>
+                                <p class="small-text">Waiting for specified time</p>
+                                <pre><code data-trim>
+Thread.sleep(1000);
+// State: TIMED_WAITING
+                                </code></pre>
+                            </div>
+                            <div class="thread-box">
+                                <h4>TERMINATED</h4>
+                                <p class="small-text">Thread execution completed</p>
+                                <pre><code data-trim>
+// run() method finished
+// State: TERMINATED
+                                </code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Thread Methods</h3>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>Common Thread Methods:</h4>
+                            <pre><code data-trim>
+public class ThreadMethodsExample {
+    public static void main(String[] args) {
+        Thread worker = new Thread(() -> {
+            for (int i = 1; i <= 10; i++) {
+                System.out.println("Working: " + i);
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    System.out.println("Worker interrupted");
+                    return; // Exit gracefully
+                }
+            }
+        });
+        
+        System.out.println("State: " + worker.getState()); // NEW
+        worker.start();
+        System.out.println("State: " + worker.getState()); // RUNNABLE
+        
+        try {
+            Thread.sleep(2000); // Let worker run for 2 seconds
+            worker.interrupt(); // Send interrupt signal
+            worker.join(); // Wait for worker to finish
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        
+        System.out.println("State: " + worker.getState()); // TERMINATED
+        System.out.println("Is alive: " + worker.isAlive()); // false
+    }
+}
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Thread Priority:</h4>
+                            <pre><code data-trim>
+public class ThreadPriorityExample {
+    public static void main(String[] args) {
+        Thread highPriority = new Thread(() -> {
+            for (int i = 0; i < 5; i++) {
+                System.out.println("High Priority: " + i);
+            }
+        });
+        
+        Thread lowPriority = new Thread(() -> {
+            for (int i = 0; i < 5; i++) {
+                System.out.println("Low Priority: " + i);
+            }
+        });
+        
+        // Set priorities (1-10, default is 5)
+        highPriority.setPriority(Thread.MAX_PRIORITY); // 10
+        lowPriority.setPriority(Thread.MIN_PRIORITY);  // 1
+        
+        lowPriority.start();
+        highPriority.start();
+        
+        // Join threads
+        try {
+            highPriority.join();
+            lowPriority.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Thread Synchronization -->
+            <section>
+                <section>
+                    <h2>Thread Synchronization</h2>
+                    <div class="highlight">
+                        <p><strong>Synchronization</strong> prevents race conditions and ensures thread safety</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Race Condition Problem</h3>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>Unsynchronized Counter:</h4>
+                            <pre><code data-trim>
+class UnsafeCounter {
+    private int count = 0;
+    
+    public void increment() {
+        count++; // Not atomic operation!
+        // 1. Read count
+        // 2. Add 1
+        // 3. Write back
+    }
+    
+    public int getCount() {
+        return count;
+    }
+}
+
+public class RaceConditionExample {
+    public static void main(String[] args) {
+        UnsafeCounter counter = new UnsafeCounter();
+        
+        // Create multiple threads incrementing counter
+        Thread[] threads = new Thread[10];
+        for (int i = 0; i < 10; i++) {
+            threads[i] = new Thread(() -> {
+                for (int j = 0; j < 1000; j++) {
+                    counter.increment();
+                }
+            });
+            threads[i].start();
+        }
+        
+        // Wait for all threads to complete
+        for (Thread t : threads) {
+            try {
+                t.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        
+        System.out.println("Expected: 10000");
+        System.out.println("Actual: " + counter.getCount());
+        // Output might be less than 10000 due to race condition
+    }
+}
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Synchronized Solution:</h4>
+                            <pre><code data-trim>
+class SafeCounter {
+    private int count = 0;
+    
+    // Method-level synchronization
+    public synchronized void increment() {
+        count++;
+    }
+    
+    public synchronized int getCount() {
+        return count;
+    }
+}
+
+// Alternative: Block-level synchronization
+class SafeCounter2 {
+    private int count = 0;
+    private final Object lock = new Object();
+    
+    public void increment() {
+        synchronized(lock) {
+            count++;
+        }
+    }
+    
+    public int getCount() {
+        synchronized(lock) {
+            return count;
+        }
+    }
+}
+
+public class SynchronizedExample {
+    public static void main(String[] args) {
+        SafeCounter counter = new SafeCounter();
+        
+        Thread[] threads = new Thread[10];
+        for (int i = 0; i < 10; i++) {
+            threads[i] = new Thread(() -> {
+                for (int j = 0; j < 1000; j++) {
+                    counter.increment();
+                }
+            });
+            threads[i].start();
+        }
+        
+        for (Thread t : threads) {
+            try {
+                t.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        
+        System.out.println("Count: " + counter.getCount());
+        // Output: Always 10000
+    }
+}
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Synchronization Mechanisms</h3>
+                    <div class="two-column">
+                        <div class="column">
+                            <div class="sync-box">
+                                <h4>synchronized keyword</h4>
+                                <ul class="compact-list">
+                                    <li>Method-level synchronization</li>
+                                    <li>Block-level synchronization</li>
+                                    <li>Uses intrinsic locks (monitors)</li>
+                                    <li>Automatic lock acquisition/release</li>
+                                </ul>
+                            </div>
+                            <h4>volatile keyword:</h4>
+                            <pre><code data-trim>
+class VolatileExample {
+    private volatile boolean flag = false;
+    
+    public void writer() {
+        flag = true; // Visible to all threads immediately
+    }
+    
+    public void reader() {
+        if (flag) {
+            // Will see the updated value
+            System.out.println("Flag is true");
+        }
+    }
+}
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <div class="sync-box">
+                                <h4>Lock Interface (java.util.concurrent)</h4>
+                                <ul class="compact-list">
+                                    <li>More flexible than synchronized</li>
+                                    <li>Explicit lock/unlock operations</li>
+                                    <li>Trylock with timeout</li>
+                                    <li>Interruptible lock acquisition</li>
+                                </ul>
+                            </div>
+                            <h4>ReentrantLock Example:</h4>
+                            <pre><code data-trim>
+import java.util.concurrent.locks.ReentrantLock;
+
+class LockCounter {
+    private int count = 0;
+    private final ReentrantLock lock = new ReentrantLock();
+    
+    public void increment() {
+        lock.lock();
+        try {
+            count++;
+        } finally {
+            lock.unlock(); // Always unlock in finally
+        }
+    }
+    
+    public int getCount() {
+        lock.lock();
+        try {
+            return count;
+        } finally {
+            lock.unlock();
+        }
+    }
+}
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Inter-thread Communication -->
+            <section>
+                <section>
+                    <h2>Inter-thread Communication</h2>
+                    <div class="highlight">
+                        <p><strong>wait(), notify(), notifyAll()</strong> enable threads to communicate</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Producer-Consumer Example</h3>
+                    <pre><code data-trim>
+import java.util.LinkedList;
+import java.util.Queue;
+
+class ProducerConsumer {
+    private final Queue<Integer> queue = new LinkedList<>();
+    private final int CAPACITY = 5;
+    
+    public synchronized void produce(int item) throws InterruptedException {
+        while (queue.size() == CAPACITY) {
+            System.out.println("Queue is full, producer waiting...");
+            wait(); // Release lock and wait
+        }
+        
+        queue.offer(item);
+        System.out.println("Produced: " + item + ", Queue size: " + queue.size());
+        notifyAll(); // Notify waiting consumers
+    }
+    
+    public synchronized int consume() throws InterruptedException {
+        while (queue.isEmpty()) {
+            System.out.println("Queue is empty, consumer waiting...");
+            wait(); // Release lock and wait
+        }
+        
+        int item = queue.poll();
+        System.out.println("Consumed: " + item + ", Queue size: " + queue.size());
+        notifyAll(); // Notify waiting producers
+        return item;
+    }
+}
+
+public class ProducerConsumerExample {
+    public static void main(String[] args) {
+        ProducerConsumer pc = new ProducerConsumer();
+        
+        // Producer thread
+        Thread producer = new Thread(() -> {
+            try {
+                for (int i = 1; i <= 10; i++) {
+                    pc.produce(i);
+                    Thread.sleep(100);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+        
+        // Consumer thread
+        Thread consumer = new Thread(() -> {
+            try {
+                for (int i = 1; i <= 10; i++) {
+                    pc.consume();
+                    Thread.sleep(150);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+        
+        producer.start();
+        consumer.start();
+        
+        try {
+            producer.join();
+            consumer.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+                    </code></pre>
+                </section>
+            </section>
+
+            <!-- Thread Pool -->
+            <section>
+                <section>
+                    <h2>Thread Pool and Executor Framework</h2>
+                    <div class="highlight">
+                        <p><strong>Executor Framework</strong> provides high-level thread management</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Using ExecutorService</h3>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>Fixed Thread Pool:</h4>
+                            <pre><code data-trim>
+import java.util.concurrent.*;
+
+public class ThreadPoolExample {
+    public static void main(String[] args) {
+        // Create thread pool with 3 threads
+        ExecutorService executor = 
+            Executors.newFixedThreadPool(3);
+        
+        // Submit tasks
+        for (int i = 1; i <= 10; i++) {
+            final int taskId = i;
+            executor.submit(() -> {
+                System.out.println("Task " + taskId + 
+                    " executed by " + 
+                    Thread.currentThread().getName());
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+        
+        // Shutdown executor
+        executor.shutdown();
+        try {
+            if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
+                executor.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            executor.shutdownNow();
+        }
+    }
+}
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Different Executor Types:</h4>
+                            <pre><code data-trim>
+// Fixed thread pool
+ExecutorService fixed = 
+    Executors.newFixedThreadPool(4);
+
+// Cached thread pool (dynamic sizing)
+ExecutorService cached = 
+    Executors.newCachedThreadPool();
+
+// Single thread executor
+ExecutorService single = 
+    Executors.newSingleThreadExecutor();
+
+// Scheduled executor
+ScheduledExecutorService scheduled = 
+    Executors.newScheduledThreadPool(2);
+
+// Schedule task with delay
+scheduled.schedule(() -> {
+    System.out.println("Delayed task executed");
+}, 5, TimeUnit.SECONDS);
+
+// Schedule recurring task
+scheduled.scheduleAtFixedRate(() -> {
+    System.out.println("Recurring task: " + 
+        new Date());
+}, 0, 2, TimeUnit.SECONDS);
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Common Issues and Best Practices -->
+            <section>
+                <section>
+                    <h2>Common Threading Issues</h2>
+                </section>
+
+                <section>
+                    <h3>Deadlock Example and Prevention</h3>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>❌ Deadlock Scenario:</h4>
+                            <pre><code data-trim>
+public class DeadlockExample {
+    private static final Object lock1 = new Object();
+    private static final Object lock2 = new Object();
+    
+    public static void main(String[] args) {
+        Thread thread1 = new Thread(() -> {
+            synchronized(lock1) {
+                System.out.println("Thread 1: Holding lock 1");
+                try { Thread.sleep(100); } 
+                catch (InterruptedException e) {}
+                
+                System.out.println("Thread 1: Waiting for lock 2");
+                synchronized(lock2) {
+                    System.out.println("Thread 1: Holding both locks");
+                }
+            }
+        });
+        
+        Thread thread2 = new Thread(() -> {
+            synchronized(lock2) {
+                System.out.println("Thread 2: Holding lock 2");
+                try { Thread.sleep(100); } 
+                catch (InterruptedException e) {}
+                
+                System.out.println("Thread 2: Waiting for lock 1");
+                synchronized(lock1) {
+                    System.out.println("Thread 2: Holding both locks");
+                }
+            }
+        });
+        
+        thread1.start();
+        thread2.start();
+        // Both threads will wait forever!
+    }
+}
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>✅ Deadlock Prevention:</h4>
+                            <pre><code data-trim>
+public class DeadlockPrevention {
+    private static final Object lock1 = new Object();
+    private static final Object lock2 = new Object();
+    
+    public static void main(String[] args) {
+        Thread thread1 = new Thread(() -> {
+            acquireLocksInOrder(lock1, lock2, "Thread 1");
+        });
+        
+        Thread thread2 = new Thread(() -> {
+            acquireLocksInOrder(lock1, lock2, "Thread 2");
+        });
+        
+        thread1.start();
+        thread2.start();
+    }
+    
+    // Always acquire locks in the same order
+    private static void acquireLocksInOrder(
+            Object firstLock, Object secondLock, String threadName) {
+        synchronized(firstLock) {
+            System.out.println(threadName + ": Holding first lock");
+            try { Thread.sleep(100); } 
+            catch (InterruptedException e) {}
+            
+            synchronized(secondLock) {
+                System.out.println(threadName + ": Holding both locks");
+            }
+        }
+    }
+}
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Best Practices</h3>
+                    <div class="two-column">
+                        <div class="column">
+                            <div class="thread-box">
+                                <h4>✅ Do's</h4>
+                                <ul class="compact-list">
+                                    <li>Use thread pools instead of creating threads manually</li>
+                                    <li>Prefer Runnable over extending Thread</li>
+                                    <li>Use concurrent collections (ConcurrentHashMap)</li>
+                                    <li>Handle InterruptedException properly</li>
+                                    <li>Use AtomicXXX classes for simple operations</li>
+                                    <li>Always release locks in finally blocks</li>
+                                    <li>Use volatile for simple flags</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="sync-box">
+                                <h4>❌ Don'ts</h4>
+                                <ul class="compact-list">
+                                    <li>Don't call Thread.stop(), suspend(), or resume()</li>
+                                    <li>Don't ignore InterruptedException</li>
+                                    <li>Don't synchronize on public objects</li>
+                                    <li>Don't hold locks for too long</li>
+                                    <li>Don't create too many threads</li>
+                                    <li>Don't use busy waiting (polling)</li>
+                                    <li>Don't forget to shutdown ExecutorService</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Summary -->
+            <section>
+                <h2>Chapter Summary</h2>
+                <div class="two-column">
+                    <div class="column">
+                        <h3>Thread Concepts:</h3>
+                        <ul class="compact-list">
+                            <li>Thread creation (extend Thread vs implement Runnable)</li>
+                            <li>Thread lifecycle and states</li>
+                            <li>Thread synchronization mechanisms</li>
+                            <li>Inter-thread communication</li>
+                            <li>ExecutorService and thread pools</li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <h3>Practical Skills:</h3>
+                        <ul class="compact-list">
+                            <li>Creating and managing threads safely</li>
+                            <li>Preventing race conditions</li>
+                            <li>Using synchronized blocks and methods</li>
+                            <li>Implementing producer-consumer patterns</li>
+                            <li>Avoiding deadlocks and other threading issues</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="highlight center">
+                    <p><strong>Next:</strong> File Handling</p>
+                </div>
+            </section>
+
+            <!-- Thank You -->
+            <section class="title-slide">
+                <h1>Thank You!</h1>
+                <h2>Questions?</h2>
+                <br>
+                <p>Ready to explore File Handling!</p>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/highlight/highlight.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            transition: 'slide',
+            transitionSpeed: 'default',
+            backgroundTransition: 'fade',
+            plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+        });
+    </script>
+</body>
+</html>

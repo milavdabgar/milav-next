@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="980" viewBox="0 0 1200 980">
+  <title>HTTP Request–Response Lifecycle with Cookies and Caching</title>
+  <desc>
+    End-to-end HTTP flow: client request, server response, headers, cookies, keep-alive, TLS, and caching behaviors.
+    Course: 4343202 Computer Networking — Unit-IV (Application Layer: HTTP &amp; cookies)
+  </desc>
+  <defs>
+    <style type="text/css"><![CDATA[
+      .h1 { font: 700 30px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial; fill: #111; }
+      .h2 { font: 600 20px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial; fill: #111; }
+      .lab { font: 600 13px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial; fill: #111; }
+      .txt { font: 400 13px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Arial; fill: #111; }
+      .small { font: 400 12px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial; fill: #333; }
+      .panel { fill: #fafafa; stroke: #ddd; stroke-width: 1.2; rx: 12; }
+      .box { fill: #fff; stroke: #333; stroke-width: 1.5; rx: 10; }
+      .client { fill: #eef7ff; stroke: #0b74de; stroke-width: 1.2; rx: 10; }
+      .server { fill: #e9f7ef; stroke: #1a7f37; stroke-width: 1.2; rx: 10; }
+      .cache { fill: #fff7e6; stroke: #d9480f; stroke-width: 1.2; rx: 10; }
+      .tls { fill: #f3e8ff; stroke: #7e22ce; stroke-width: 1.2; rx: 10; }
+      .arrow { marker-end: url(#arrowhead); stroke: #333; stroke-width: 1.6; fill: none; }
+      .arrow-blue { marker-end: url(#arrowhead); stroke: #0b74de; stroke-width: 1.8; fill: none; }
+      .arrow-green { marker-end: url(#arrowhead); stroke: #1a7f37; stroke-width: 1.8; fill: none; }
+      .arrow-orange { marker-end: url(#arrowhead); stroke: #d9480f; stroke-width: 1.8; fill: none; }
+    ]]></style>
+    <marker id="arrowhead" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">>
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#333" />
+    </marker>
+  </defs>>
+
+  <text class="h1" x="40" y="50">HTTP Request–Response Lifecycle</text>
+  <text class="txt" x="40" y="78">>Request line, headers, cookies, persistent connections, TLS, cache validators.</text>
+
+  <rect class="panel" x="40" y="110" width="1120" height="820" />>
+
+  <!-- Client and Server Boxes -->
+  <rect class="client" x="60" y="140" width="320" height="120" />
+  <text class="h2" x="80" y="170">Client (Browser)</text>
+  <text class="small" x="80" y="194">>URL → DNS → TCP/TLS → HTTP</text>
+  <text class="small" x="80" y="214">>Cookie Jar; Cache (memory/disk)</text>
+
+  <rect class="server" x="840" y="140" width="300" height="120" />>
+  <text class="h2" x="860" y="170">Web Server / App</text>
+  <text class="small" x="860" y="194">>HTTP/1.1 or HTTP/2 over TLS</text>
+  <text class="small" x="860" y="214">>Sets cookies; cache headers</text>
+
+  <!-- TLS handshake note -->>
+  <rect class="tls" x="420" y="140" width="380" height="120" />
+  <text class="lab" x="432" y="170">TLS Handshake (HTTPS)</text>
+  <text class="txt" x="432" y="194">>ClientHello/ServerHello → cert verify → key exchange → secure channel</text>
+  <text class="txt" x="432" y="216">>Then: HTTP over TLS (HTTP/1.1 or HTTP/2 multiplexed streams)</text>
+
+  <!-- Request Example -->>
+  <rect class="box" x="60" y="290" width="500" height="160" />
+  <text class="lab" x="72" y="312">HTTP Request</text>
+  <text class="mono small" x="72" y="334">>GET /index.html HTTP/1.1</text>
+  <text class="mono small" x="72" y="352">>Host: example.com</text>
+  <text class="mono small" x="72" y="370">>User-Agent: Browser/123</text>
+  <text class="mono small" x="72" y="388">>Accept: text/html</text>
+  <text class="mono small" x="72" y="406">>Cookie: SID=abc; prefs=tz%3DIST</text>
+
+  <path class="arrow-blue" d="M 560 350 L 840 350" />>
+  <text class="small" x="610" y="340">TCP connection: keep-alive by default (HTTP/1.1)</text>
+
+  <!-- Response Example -->>
+  <rect class="box" x="640" y="290" width="500" height="200" />
+  <text class="lab" x="652" y="312">HTTP Response</text>
+  <text class="mono small" x="652" y="334">>HTTP/1.1 200 OK</text>
+  <text class="mono small" x="652" y="352">>Content-Type: text/html; charset=UTF-8</text>
+  <text class="mono small" x="652" y="370">>Cache-Control: max-age=3600</text>
+  <text class="mono small" x="652" y="388">>ETag: "v1.2.3"</text>
+  <text class="mono small" x="652" y="406">>Set-Cookie: SID=abc; HttpOnly; Secure; Path=/</text>
+  <text class="mono small" x="652" y="424">>Content-Length: 1024</text>
+  <text class="small" x="652" y="446">>Body → HTML bytes</text>
+
+  <path class="arrow-green" d="M 840 420 L 560 420" />>
+  <text class="small" x="610" y="456">Client stores cookies (domain/path rules) and caches per headers</text>
+
+  <!-- Caching Behavior -->>
+  <rect class="cache" x="60" y="500" width="500" height="120" />
+  <text class="lab" x="72" y="524">Freshness &amp; Validation</text>
+  <text class="txt" x="72" y="548">>Fresh if age &lt; max-age (or unexpired Expires). Otherwise, revalidate with If-None-Match/If-Modified-Since.</text>
+  <text class="txt" x="72" y="572">>Private/public controls shared caches; no-store prevents caching; must-revalidate enforces validators.</text>
+
+  <rect class="box" x="640" y="500" width="500" height="140" />>
+  <text class="lab" x="652" y="524">Revalidation Request</text>
+  <text class="mono small" x="652" y="546">>GET /index.html HTTP/1.1</text>
+  <text class="mono small" x="652" y="564">>Host: example.com</text>
+  <text class="mono small" x="652" y="582">>If-None-Match: "v1.2.3"</text>
+  <text class="mono small" x="652" y="600">>If-Modified-Since: Tue, 10 Sep 2024 10:00:00 GMT</text>
+  <path class="arrow-orange" d="M 560 560 L 640 560" />>
+  <text class="small" x="560" y="548">Cache miss or stale → forward</text>
+
+  <rect class="box" x="60" y="640" width="500" height="80" />>
+  <text class="lab" x="72" y="664">Validation Response</text>
+  <text class="mono small" x="72" y="686">>HTTP/1.1 304 Not Modified</text>
+  <text class="small" x="320" y="686">>→ use cached body</text>
+
+  <!-- Cookies Details -->>
+  <rect class="box" x="60" y="740" width="1080" height="80" />
+  <text class="lab" x="72" y="764">Cookies</text>
+  <text class="txt" x="72" y="788">>Set-Cookie attributes: Secure (HTTPS only), HttpOnly (no JS), SameSite (Lax/Strict/None), Path/Domain, Expires/Max-Age. Cookie header sent on matching domain/path, per-site limits apply.</text>
+
+  <!-- HTTP/2 note -->>
+  <rect class="panel" x="60" y="840" width="1080" height="70" />
+  <text class="lab" x="72" y="864">HTTP/2/3</text>
+  <text class="txt" x="72" y="888">>HTTP/2 multiplexes streams over one TCP+TLS connection; HTTP/3 uses QUIC over UDP to reduce head-of-line blocking.</text>
+</svg>
+

@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="600" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .title { font-family: Arial, sans-serif; font-size: 24px; font-weight: bold; text-anchor: middle; }
+      .subtitle { font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; text-anchor: middle; }
+      .label { font-family: Arial, sans-serif; font-size: 12px; text-anchor: middle; }
+      .small-label { font-family: Arial, sans-serif; font-size: 10px; text-anchor: middle; }
+      .dma-block { fill: #e6f3ff; stroke: #0066cc; stroke-width: 2; }
+      .device-block { fill: #fff2e6; stroke: #cc6600; stroke-width: 1; }
+      .memory-block { fill: #e6ffe6; stroke: #009900; stroke-width: 1; }
+      .cpu-block { fill: #ffe6e6; stroke: #cc0000; stroke-width: 2; }
+      .data-flow { stroke: #009900; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+      .control-flow { stroke: #cc0000; stroke-width: 1.5; fill: none; marker-end: url(#arrowhead); }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#009900"/>
+    </marker>
+  </defs>
+  
+  <!-- Title -->
+  <text x="400" y="30" class="title" fill="#333">8085 DMA (Direct Memory Access)</text>
+  
+  <!-- DMA Controller -->
+  <g id="dma-controller">
+    <rect x="300" y="80" width="200" height="120" class="dma-block"/>
+    <text x="400" y="110" class="subtitle" fill="#333">8257 DMA Controller</text>
+    
+    <!-- DMA Channels -->
+    <rect x="320" y="130" width="40" height="20" class="device-block"/>
+    <text x="340" y="145" class="small-label" fill="#333">CH 0</text>
+    
+    <rect x="370" y="130" width="40" height="20" class="device-block"/>
+    <text x="390" y="145" class="small-label" fill="#333">CH 1</text>
+    
+    <rect x="420" y="130" width="40" height="20" class="device-block"/>
+    <text x="440" y="145" class="small-label" fill="#333">CH 2</text>
+    
+    <rect x="470" y="130" width="40" height="20" class="device-block"/>
+    <text x="490" y="145" class="small-label" fill="#333">CH 3</text>
+    
+    <!-- Control Registers -->
+    <rect x="320" y="160" width="160" height="30" class="memory-block"/>
+    <text x="400" y="180" class="label" fill="#333">Control &amp; Status Registers</text>
+  </g>
+  
+  <!-- CPU -->
+  <g id="cpu">
+    <rect x="50" y="120" width="120" height="80" class="cpu-block"/>
+    <text x="110" y="150" class="subtitle" fill="#333">8085 CPU</text>
+    <text x="110" y="170" class="small-label" fill="#333">Initially controls</text>
+    <text x="110" y="185" class="small-label" fill="#333">system buses</text>
+  </g>
+  
+  <!-- Memory -->
+  <g id="memory">
+    <rect x="600" y="120" width="120" height="80" class="memory-block"/>
+    <text x="660" y="150" class="subtitle" fill="#333">Memory</text>
+    <text x="660" y="170" class="small-label" fill="#333">RAM/ROM</text>
+    <text x="660" y="185" class="small-label" fill="#333">Data Storage</text>
+  </g>
+  
+  <!-- I/O Devices -->
+  <g id="io-devices">
+    <rect x="300" y="240" width="80" height="60" class="device-block"/>
+    <text x="340" y="265" class="label" fill="#333">Disk Drive</text>
+    <text x="340" y="280" class="small-label" fill="#333">High Speed</text>
+    <text x="340" y="295" class="small-label" fill="#333">Device</text>
+    
+    <rect x="420" y="240" width="80" height="60" class="device-block"/>
+    <text x="460" y="265" class="label" fill="#333">Printer</text>
+    <text x="460" y="280" class="small-label" fill="#333">Medium Speed</text>
+    <text x="460" y="295" class="small-label" fill="#333">Device</text>
+  </g>
+  
+  <!-- Bus Connections -->
+  <g id="bus-connections">
+    <!-- CPU to DMA -->
+    <path d="M 170 160 L 300 160" class="control-flow"/>
+    <text x="235" y="155" class="small-label" fill="#cc0000">HOLD/HLDA</text>
+    
+    <!-- DMA to Memory -->
+    <path d="M 500 140 L 600 140" class="data-flow"/>
+    <text x="550" y="135" class="small-label" fill="#009900">Address/Data</text>
+    
+    <!-- DMA to I/O -->
+    <path d="M 400 200 L 400 240" class="data-flow"/>
+    <text x="420" y="220" class="small-label" fill="#009900">DMA Req/Ack</text>
+  </g>
+  
+  <!-- DMA Operation Steps -->
+  <g id="dma-steps">
+    <text x="150" y="350" class="subtitle" fill="#0066cc">DMA Operation Steps</text>
+    
+    <!-- Step 1 -->
+    <rect x="50" y="370" width="200" height="30" class="device-block"/>
+    <text x="150" y="390" class="label" fill="#333">1. I/O Device sends DMA Request</text>
+    
+    <!-- Step 2 -->
+    <rect x="50" y="410" width="200" height="30" class="device-block"/>
+    <text x="150" y="430" class="label" fill="#333">2. DMA Controller sends HOLD to CPU</text>
+    
+    <!-- Step 3 -->
+    <rect x="50" y="450" width="200" height="30" class="device-block"/>
+    <text x="150" y="470" class="label" fill="#333">3. CPU sends HLDA and tri-states buses</text>
+    
+    <!-- Step 4 -->
+    <rect x="50" y="490" width="200" height="30" class="device-block"/>
+    <text x="150" y="510" class="label" fill="#333">4. DMA Controller takes control</text>
+    
+    <!-- Step 5 -->
+    <rect x="50" y="530" width="200" height="30" class="device-block"/>
+    <text x="150" y="550" class="label" fill="#333">5. Data transfer without CPU</text>
+  </g>
+  
+  <!-- DMA Modes -->
+  <g id="dma-modes">
+    <text x="450" y="350" class="subtitle" fill="#0066cc">DMA Transfer Modes</text>
+    
+    <!-- Single Transfer -->
+    <rect x="300" y="370" width="120" height="40" class="dma-block"/>
+    <text x="360" y="385" class="label" fill="#333">Single Transfer</text>
+    <text x="360" y="400" class="small-label" fill="#333">One byte at a time</text>
+    
+    <!-- Block Transfer -->
+    <rect x="430" y="370" width="120" height="40" class="dma-block"/>
+    <text x="490" y="385" class="label" fill="#333">Block Transfer</text>
+    <text x="490" y="400" class="small-label" fill="#333">Entire block</text>
+    
+    <!-- Demand Transfer -->
+    <rect x="560" y="370" width="120" height="40" class="dma-block"/>
+    <text x="620" y="385" class="label" fill="#333">Demand Transfer</text>
+    <text x="620" y="400" class="small-label" fill="#333">Until DREQ goes low</text>
+    
+    <!-- Cascade Mode -->
+    <rect x="300" y="420" width="120" height="40" class="dma-block"/>
+    <text x="360" y="435" class="label" fill="#333">Cascade Mode</text>
+    <text x="360" y="450" class="small-label" fill="#333">Multiple controllers</text>
+  </g>
+  
+  <!-- DMA Advantages -->
+  <g id="advantages">
+    <text x="450" y="490" class="subtitle" fill="#009900">DMA Advantages</text>
+    
+    <rect x="300" y="510" width="300" height="80" class="memory-block"/>
+    <text x="450" y="530" class="label" fill="#333">Benefits of DMA:</text>
+    <text x="450" y="545" class="small-label" fill="#333">• High-speed data transfer</text>
+    <text x="450" y="560" class="small-label" fill="#333">• CPU free for other tasks</text>
+    <text x="450" y="575" class="small-label" fill="#333">• Reduced CPU overhead</text>
+  </g>
+  
+  <!-- Control Signals -->
+  <g id="control-signals">
+    <text x="700" y="280" class="subtitle" fill="#cc0000">DMA Control Signals</text>
+    
+    <rect x="630" y="300" width="140" height="20" class="cpu-block"/>
+    <text x="700" y="315" class="small-label" fill="#333">HOLD: DMA Request to CPU</text>
+    
+    <rect x="630" y="330" width="140" height="20" class="cpu-block"/>
+    <text x="700" y="345" class="small-label" fill="#333">HLDA: CPU Acknowledgment</text>
+    
+    <rect x="630" y="360" width="140" height="20" class="device-block"/>
+    <text x="700" y="375" class="small-label" fill="#333">DREQ: Device DMA Request</text>
+    
+    <rect x="630" y="390" width="140" height="20" class="device-block"/>
+    <text x="700" y="405" class="small-label" fill="#333">DACK: DMA Acknowledge</text>
+  </g>
+</svg>

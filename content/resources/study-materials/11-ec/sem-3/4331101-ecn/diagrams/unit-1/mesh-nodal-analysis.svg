@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1200" viewBox="0 0 1400 1200">
+  <title>Electronic Circuits &amp; Networks - Unit I: Mesh and Nodal Analysis</title>
+  <desc>
+    Comprehensive diagram showing mesh analysis and nodal analysis methods
+    with step-by-step examples, matrix formulation, and practical applications.
+    Course: 4331101 Electronic Circuits &amp; Networks — Unit-I
+  </desc>
+  <defs>
+    <style type="text/css"><![CDATA[
+      .title { font: bold 24px Arial, sans-serif; fill: #2c3e50; text-anchor: middle; }
+      .subtitle { font: bold 18px Arial, sans-serif; fill: #34495e; text-anchor: middle; }
+      .section-title { font: bold 16px Arial, sans-serif; fill: #e74c3c; text-anchor: middle; }
+      .method-title { font: bold 14px Arial, sans-serif; fill: #2980b9; text-anchor: middle; }
+      .step-title { font: bold 12px Arial, sans-serif; fill: #8e44ad; text-anchor: middle; }
+      .label-text { font: 12px Arial, sans-serif; fill: #2c3e50; }
+      .formula-text { font: 12px Courier, monospace; fill: #8e44ad; font-weight: bold; }
+      .value-text { font: 11px Arial, sans-serif; fill: #27ae60; font-weight: bold; }
+      .description-text { font: 10px Arial, sans-serif; fill: #7f8c8d; }
+      .circuit-line { stroke: #2c3e50; stroke-width: 2; fill: none; }
+      .mesh-fill { fill: #fff3cd; stroke: #ffc107; stroke-width: 2; }
+      .nodal-fill { fill: #e8f5e8; stroke: #4caf50; stroke-width: 2; }
+      .step-fill { fill: #e3f2fd; stroke: #2196f3; stroke-width: 2; }
+      .matrix-fill { fill: #f3e5f5; stroke: #9c27b0; stroke-width: 2; }
+      .mesh-current { stroke: #ff9800; stroke-width: 3; fill: none; stroke-dasharray: 5,5; }
+      .node-voltage { stroke: #2196f3; stroke-width: 2; fill: #2196f3; }
+      .node-circle { fill: #e74c3c; stroke: #c0392b; stroke-width: 2; }
+    ]]></style>
+
+    <!-- Arrow markers -->
+    <marker id="mesh-arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#ff9800"/>
+    </marker>
+
+    <marker id="voltage-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#2196f3"/>
+    </marker>
+
+    <marker id="current-arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#e91e63"/>
+    </marker>
+
+    <!-- Circuit symbols -->
+    <g id="resistor">
+      <rect x="0" y="0" width="40" height="15" fill="none" stroke="#2c3e50" stroke-width="2"/>
+      <text x="20" y="10" class="description-text" text-anchor="middle" fill="white" font-size="8">R</text>
+    </g>
+
+    <g id="voltage-source">
+      <circle cx="15" cy="15" r="15" fill="none" stroke="#2c3e50" stroke-width="2"/>
+      <line x1="10" y1="15" x2="20" y2="15" stroke="#2c3e50" stroke-width="2"/>
+      <line x1="15" y1="10" x2="15" y2="20" stroke="#2c3e50" stroke-width="2"/>
+    </g>
+
+    <g id="ground">
+      <line x1="0" y1="0" x2="0" y2="10" stroke="#2c3e50" stroke-width="2"/>
+      <line x1="-8" y1="10" x2="8" y2="10" stroke="#2c3e50" stroke-width="2"/>
+      <line x1="-5" y1="13" x2="5" y2="13" stroke="#2c3e50" stroke-width="2"/>
+      <line x1="-2" y1="16" x2="2" y2="16" stroke="#2c3e50" stroke-width="2"/>
+    </g>
+  </defs>
+
+  <!-- Title -->
+  <text x="700" y="30" class="title">Mesh Analysis and Nodal Analysis</text>
+  <text x="700" y="55" class="subtitle">Systematic Circuit Analysis Methods</text>
+
+  <!-- INTRODUCTION -->
+  <rect x="50" y="80" width="1300" height="60" class="mesh-fill" rx="10"/>
+  <text x="700" y="105" class="section-title">Circuit Analysis Methods</text>
+  <text x="100" y="130" class="label-text">Mesh Analysis: Based on KVL, uses loop currents as unknowns. Best for circuits with many nodes and fewer loops.</text>
+  <text x="750" y="130" class="label-text">Nodal Analysis: Based on KCL, uses node voltages as unknowns. Best for circuits with many loops and fewer nodes.</text>
+
+  <!-- MESH ANALYSIS -->
+  <text x="350" y="180" class="section-title">MESH ANALYSIS METHOD</text>
+
+  <!-- Mesh Circuit Example -->
+  <rect x="50" y="200" width="600" height="280" class="mesh-fill" rx="10"/>
+  <text x="350" y="225" class="method-title">Step-by-Step Mesh Analysis</text>
+
+  <g transform="translate(100, 250)">
+    <text x="250" y="0" class="label-text" text-anchor="middle">Two-Mesh Circuit Example</text>
+
+    <!-- Circuit with two meshes -->
+    <!-- Voltage source 1 -->
+    <use href="#voltage-source" x="30" y="30"/>
+    <text x="45" y="25" class="value-text" text-anchor="middle">V₁</text>
+    <text x="45" y="75" class="value-text" text-anchor="middle">12V</text>
+
+    <!-- Resistor R1 (top left) -->
+    <use href="#resistor" x="80" y="37"/>
+    <text x="100" y="30" class="value-text" text-anchor="middle">R₁</text>
+    <text x="100" y="75" class="value-text" text-anchor="middle">4Ω</text>
+
+    <!-- Resistor R2 (shared - vertical center) -->
+    <g transform="translate(170, 30)">
+      <rect x="0" y="0" width="15" height="40" fill="none" stroke="#2c3e50" stroke-width="2"/>
+      <text x="7" y="23" class="description-text" text-anchor="middle" fill="white" font-size="7">R₂</text>
+    </g>
+    <text x="200" y="25" class="value-text">R₂ = 6Ω</text>
+
+    <!-- Resistor R3 (top right) -->
+    <use href="#resistor" x="220" y="37"/>
+    <text x="240" y="30" class="value-text" text-anchor="middle">R₃</text>
+    <text x="240" y="75" class="value-text" text-anchor="middle">8Ω</text>
+
+    <!-- Voltage source 2 -->
+    <use href="#voltage-source" x="300" y="30"/>
+    <text x="315" y="25" class="value-text" text-anchor="middle">V₂</text>
+    <text x="315" y="75" class="value-text" text-anchor="middle">8V</text>
+
+    <!-- Resistor R4 (bottom) -->
+    <use href="#resistor" x="150" y="105"/>
+    <text x="170" y="95" class="value-text" text-anchor="middle">R₄</text>
+    <text x="170" y="135" class="value-text" text-anchor="middle">3Ω</text>
+
+    <!-- Circuit connections -->
+    <line x1="60" y1="44" x2="80" y2="44" class="circuit-line"/>
+    <line x1="120" y1="44" x2="170" y2="44" class="circuit-line"/>
+    <line x1="185" y1="44" x2="220" y2="44" class="circuit-line"/>
+    <line x1="260" y1="44" x2="300" y2="44" class="circuit-line"/>
+
+    <!-- Bottom connections -->
+    <line x1="60" y1="60" x2="60" y2="90" class="circuit-line"/>
+    <line x1="60" y1="90" x2="150" y2="90" class="circuit-line"/>
+    <line x1="150" y1="90" x2="150" y2="105" class="circuit-line"/>
+
+    <line x1="190" y1="112" x2="315" y2="112" class="circuit-line"/>
+    <line x1="315" y1="112" x2="315" y2="60" class="circuit-line"/>
+
+    <!-- Shared vertical connection -->
+    <line x1="177" y1="70" x2="177" y2="90" class="circuit-line"/>
+
+    <!-- Mesh current loops -->
+    <!-- Mesh 1 (left loop) -->
+    <path d="M 90 55 L 140 55 L 140 90 L 90 90 Z" class="mesh-current" marker-end="url(#mesh-arrow)"/>
+    <text x="115" y="72" class="label-text" text-anchor="middle" fill="#ff9800">I₁</text>
+
+    <!-- Mesh 2 (right loop) -->
+    <path d="M 200 55 L 250 55 L 250 90 L 200 90 Z" class="mesh-current" marker-end="url(#mesh-arrow)"/>
+    <text x="225" y="72" class="label-text" text-anchor="middle" fill="#ff9800">I₂</text>
+
+    <!-- Node labels -->
+    <circle cx="177" cy="44" r="3" class="node-circle"/>
+    <text x="190" y="40" class="label-text">A</text>
+    <circle cx="177" cy="90" r="3" class="node-circle"/>
+    <text x="190" y="105" class="label-text">B</text>
+  </g>
+
+  <!-- Mesh equations -->
+  <text x="70" y="400" class="label-text">Step 1: Define mesh currents (clockwise)</text>
+  <text x="70" y="420" class="label-text">Step 2: Apply KVL to each mesh</text>
+  <text x="70" y="440" class="formula-text">Mesh 1: V₁ - I₁R₁ - (I₁-I₂)R₂ = 0</text>
+  <text x="70" y="460" class="formula-text">Mesh 2: (I₁-I₂)R₂ - I₂R₃ - V₂ - I₂R₄ = 0</text>
+
+  <!-- NODAL ANALYSIS -->
+  <rect x="700" y="200" width="650" height="280" class="nodal-fill" rx="10"/>
+  <text x="1025" y="225" class="method-title">Step-by-Step Nodal Analysis</text>
+
+  <g transform="translate(750, 250)">
+    <text x="250" y="0" class="label-text" text-anchor="middle">Same Circuit - Nodal Approach</text>
+
+    <!-- Same circuit but with node voltage emphasis -->
+    <use href="#voltage-source" x="30" y="30"/>
+    <text x="45" y="25" class="value-text" text-anchor="middle">V₁</text>
+    <text x="45" y="75" class="value-text" text-anchor="middle">12V</text>
+
+    <use href="#resistor" x="80" y="37"/>
+    <text x="100" y="30" class="value-text" text-anchor="middle">R₁</text>
+
+    <g transform="translate(170, 30)">
+      <rect x="0" y="0" width="15" height="40" fill="none" stroke="#2c3e50" stroke-width="2"/>
+      <text x="7" y="23" class="description-text" text-anchor="middle" fill="white" font-size="7">R₂</text>
+    </g>
+
+    <use href="#resistor" x="220" y="37"/>
+    <text x="240" y="30" class="value-text" text-anchor="middle">R₃</text>
+
+    <use href="#voltage-source" x="300" y="30"/>
+    <text x="315" y="25" class="value-text" text-anchor="middle">V₂</text>
+    <text x="315" y="75" class="value-text" text-anchor="middle">8V</text>
+
+    <use href="#resistor" x="150" y="105"/>
+    <text x="170" y="95" class="value-text" text-anchor="middle">R₄</text>
+
+    <!-- Circuit connections (same as mesh) -->
+    <line x1="60" y1="44" x2="80" y2="44" class="circuit-line"/>
+    <line x1="120" y1="44" x2="170" y2="44" class="circuit-line"/>
+    <line x1="185" y1="44" x2="220" y2="44" class="circuit-line"/>
+    <line x1="260" y1="44" x2="300" y2="44" class="circuit-line"/>
+
+    <line x1="60" y1="60" x2="60" y2="90" class="circuit-line"/>
+    <line x1="60" y1="90" x2="150" y2="90" class="circuit-line"/>
+    <line x1="150" y1="90" x2="150" y2="105" class="circuit-line"/>
+
+    <line x1="190" y1="112" x2="315" y2="112" class="circuit-line"/>
+    <line x1="315" y1="112" x2="315" y2="60" class="circuit-line"/>
+
+    <line x1="177" y1="70" x2="177" y2="90" class="circuit-line"/>
+
+    <!-- Node voltage indicators -->
+    <circle cx="177" cy="44" r="5" class="node-circle"/>
+    <text x="190" y="40" class="label-text" fill="#2196f3">VA</text>
+
+    <circle cx="177" cy="90" r="5" class="node-circle"/>
+    <text x="190" y="105" class="label-text" fill="#2196f3">VB</text>
+
+    <!-- Ground reference -->
+    <use href="#ground" x="60" y="90"/>
+    <text x="50" y="110" class="description-text">Ref (0V)</text>
+
+    <!-- Current directions for KCL -->
+    <line x1="140" y1="35" x2="150" y2="35" stroke="#e91e63" stroke-width="2" marker-end="url(#current-arrow)"/>
+    <text x="145" y="30" class="description-text" text-anchor="middle" font-size="8">i₁</text>
+
+    <line x1="197" y1="35" x2="207" y2="35" stroke="#e91e63" stroke-width="2" marker-end="url(#current-arrow)"/>
+    <text x="202" y="30" class="description-text" text-anchor="middle" font-size="8">i₃</text>
+
+    <line x1="165" y1="52" x2="165" y2="62" stroke="#e91e63" stroke-width="2" marker-end="url(#current-arrow)"/>
+    <text x="150" y="57" class="description-text" font-size="8">i₂</text>
+
+    <line x1="165" y1="82" x2="165" y2="92" stroke="#e91e63" stroke-width="2" marker-end="url(#current-arrow)"/>
+    <text x="150" y="87" class="description-text" font-size="8">i₄</text>
+  </g>
+
+  <!-- Nodal equations -->
+  <text x="720" y="400" class="label-text">Step 1: Select reference node (ground)</text>
+  <text x="720" y="420" class="label-text">Step 2: Apply KCL to each non-reference node</text>
+  <text x="720" y="440" class="formula-text">Node A: (12-VA)/R₁ + (VB-VA)/R₂ - VA/R₃ = 0</text>
+  <text x="720" y="460" class="formula-text">Node B: (VA-VB)/R₂ + (8-VB)/R₄ = 0</text>
+
+  <!-- MATRIX FORMULATION -->
+  <text x="700" y="520" class="section-title">MATRIX FORMULATION</text>
+
+  <!-- Mesh matrix -->
+  <rect x="50" y="540" width="650" height="200" class="matrix-fill" rx="10"/>
+  <text x="375" y="565" class="method-title">Mesh Analysis Matrix Form</text>
+
+  <text x="70" y="590" class="label-text">Standard form: [R][I] = [V]</text>
+  <text x="70" y="615" class="formula-text">Mesh equations rearranged:</text>
+  <text x="70" y="635" class="formula-text">(R₁ + R₂)I₁ - R₂I₂ = V₁</text>
+  <text x="70" y="655" class="formula-text">-R₂I₁ + (R₂ + R₃ + R₄)I₂ = -V₂</text>
+
+  <text x="70" y="685" class="label-text">Matrix form:</text>
+  <g transform="translate(200, 685)">
+    <!-- Matrix brackets and elements -->
+    <text x="0" y="0" class="formula-text">[</text>
+    <text x="10" y="0" class="formula-text">R₁+R₂</text>
+    <text x="70" y="0" class="formula-text">-R₂</text>
+    <text x="120" y="0" class="formula-text">] [</text>
+    <text x="135" y="0" class="formula-text">I₁</text>
+    <text x="155" y="0" class="formula-text">] = [</text>
+    <text x="175" y="0" class="formula-text">V₁</text>
+    <text x="195" y="0" class="formula-text">]</text>
+
+    <text x="0" y="20" class="formula-text">[</text>
+    <text x="10" y="20" class="formula-text">-R₂</text>
+    <text x="40" y="20" class="formula-text">R₂+R₃+R₄</text>
+    <text x="120" y="20" class="formula-text">] [</text>
+    <text x="135" y="20" class="formula-text">I₂</text>
+    <text x="155" y="20" class="formula-text">] = [</text>
+    <text x="175" y="20" class="formula-text">-V₂</text>
+    <text x="200" y="20" class="formula-text">]</text>
+  </g>
+
+  <!-- Nodal matrix -->
+  <rect x="750" y="540" width="600" height="200" class="matrix-fill" rx="10"/>
+  <text x="1050" y="565" class="method-title">Nodal Analysis Matrix Form</text>
+
+  <text x="770" y="590" class="label-text">Standard form: [G][V] = [I]</text>
+  <text x="770" y="615" class="formula-text">Nodal equations rearranged:</text>
+  <text x="770" y="635" class="formula-text">(1/R₁ + 1/R₂ + 1/R₃)VA - (1/R₂)VB = 12/R₁</text>
+  <text x="770" y="655" class="formula-text">-(1/R₂)VA + (1/R₂ + 1/R₄)VB = 8/R₄</text>
+
+  <text x="770" y="685" class="label-text">Matrix form (G = conductance):</text>
+  <g transform="translate(850, 705)">
+    <text x="0" y="0" class="formula-text">[</text>
+    <text x="10" y="0" class="formula-text">G₁+G₂+G₃</text>
+    <text x="90" y="0" class="formula-text">-G₂</text>
+    <text x="120" y="0" class="formula-text">] [</text>
+    <text x="135" y="0" class="formula-text">VA</text>
+    <text x="155" y="0" class="formula-text">] = [</text>
+    <text x="175" y="0" class="formula-text">V₁G₁</text>
+    <text x="210" y="0" class="formula-text">]</text>
+
+    <text x="0" y="20" class="formula-text">[</text>
+    <text x="10" y="20" class="formula-text">-G₂</text>
+    <text x="50" y="20" class="formula-text">G₂+G₄</text>
+    <text x="120" y="20" class="formula-text">] [</text>
+    <text x="135" y="20" class="formula-text">VB</text>
+    <text x="155" y="20" class="formula-text">] = [</text>
+    <text x="175" y="20" class="formula-text">V₂G₄</text>
+    <text x="210" y="20" class="formula-text">]</text>
+  </g>
+
+  <!-- COMPARISON AND APPLICATIONS -->
+  <rect x="50" y="770" width="650" height="150" class="step-fill" rx="10"/>
+  <text x="375" y="795" class="method-title">Method Selection Guidelines</text>
+
+  <text x="70" y="820" class="label-text">Choose Mesh Analysis When:</text>
+  <text x="70" y="840" class="description-text">• Circuit has fewer independent loops than nodes</text>
+  <text x="70" y="855" class="description-text">• Circuit contains many current sources</text>
+  <text x="70" y="870" class="description-text">• Planar circuits (can be drawn without crossing branches)</text>
+  <text x="70" y="885" class="description-text">• Need to find loop currents directly</text>
+
+  <text x="370" y="820" class="label-text">Choose Nodal Analysis When:</text>
+  <text x="370" y="840" class="description-text">• Circuit has fewer nodes than independent loops</text>
+  <text x="370" y="855" class="description-text">• Circuit contains many voltage sources</text>
+  <text x="370" y="870" class="description-text">• Non-planar circuits</text>
+  <text x="370" y="885" class="description-text">• Need to find node voltages directly</text>
+
+  <text x="70" y="905" class="label-text">Rule of thumb: n nodes → (n-1) equations for nodal; m meshes → m equations for mesh analysis</text>
+
+  <rect x="750" y="770" width="600" height="150" class="application-fill" rx="10"/>
+  <text x="1050" y="795" class="method-title">Practical Applications</text>
+
+  <text x="770" y="820" class="label-text">Electronic Circuit Design:</text>
+  <text x="770" y="840" class="description-text">• Amplifier bias point calculation</text>
+  <text x="770" y="855" class="description-text">• Filter network analysis</text>
+  <text x="770" y="870" class="description-text">• Power supply circuit design</text>
+
+  <text x="770" y="890" class="label-text">Software Implementation:</text>
+  <text x="770" y="910" class="description-text">• SPICE simulators use nodal analysis</text>
+
+  <!-- NUMERICAL EXAMPLE -->
+  <rect x="50" y="950" width="1300" height="120" fill="#f8f9fa" stroke="#dee2e6" stroke-width="2" rx="10"/>
+  <text x="700" y="975" class="section-title">Numerical Solution Example</text>
+
+  <text x="70" y="1000" class="label-text">Given: R₁=4Ω, R₂=6Ω, R₃=8Ω, R₄=3Ω, V₁=12V, V₂=8V</text>
+
+  <text x="70" y="1025" class="label-text">Mesh Analysis Solution:</text>
+  <text x="70" y="1045" class="formula-text">10I₁ - 6I₂ = 12  and  -6I₁ + 17I₂ = -8</text>
+  <text x="70" y="1060" class="formula-text">Solution: I₁ = 1.5A, I₂ = -0.5A</text>
+
+  <text x="700" y="1025" class="label-text">Nodal Analysis Solution:</text>
+  <text x="700" y="1045" class="formula-text">0.458VA - 0.167VB = 3  and  -0.167VA + 0.5VB = 2.67</text>
+  <text x="700" y="1060" class="formula-text">Solution: VA = 9V, VB = 6.5V</text>
+
+</svg>

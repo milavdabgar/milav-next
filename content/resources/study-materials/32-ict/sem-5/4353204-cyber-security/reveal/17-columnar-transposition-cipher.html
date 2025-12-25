@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Columnar Transposition Cipher</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/white.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/monokai.css">
+    <style>
+        .reveal h1, .reveal h2, .reveal h3 {
+            color: #2c3e50;
+        }
+        .reveal .slides section {
+            text-align: left;
+        }
+        .reveal .title-slide {
+            text-align: center;
+        }
+        .reveal .highlight {
+            background-color: #3498db;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        .reveal .transposition-box {
+            background-color: #e8f5e8;
+            border-left: 4px solid #27ae60;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .reveal .example-box {
+            background-color: #f8f9fa;
+            border: 2px solid #6c757d;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 0.8em;
+            line-height: 1.3;
+        }
+        .reveal .algorithm-box {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .reveal .security-box {
+            background-color: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .reveal .variation-box {
+            background-color: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .reveal img {
+            border: none !important;
+            box-shadow: none !important;
+        }
+        .reveal .grid-display {
+            font-family: monospace;
+            font-size: 0.9em;
+            line-height: 1.4;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- Title Slide -->
+            <section class="title-slide">
+                <h1>Columnar Transposition Cipher</h1>
+                <h3>Advanced Transposition Cryptography</h3>
+                <p>
+                    <small>Rearranging Text for Security</small>
+                </p>
+                <div style="text-align: center; margin-top: 30px;">
+                    <img src="diagrams/columnar-transposition-cipher.svg" alt="Columnar Transposition Cipher Process" style="width: 70%; height: auto; max-width: 700px;">
+                </div>
+            </section>
+
+            <!-- Introduction -->
+            <section>
+                <h2>What is Columnar Transposition?</h2>
+                <div class="transposition-box">
+                    <strong>Columnar Transposition Cipher</strong> is a transposition cipher that arranges plaintext in a rectangular grid and reads out the ciphertext by columns in a specified order.
+                </div>
+                <h3>Key Characteristics:</h3>
+                <ul>
+                    <li><strong>Grid-based:</strong> Text arranged in rows and columns</li>
+                    <li><strong>Character preservation:</strong> Original letters maintained</li>
+                    <li><strong>Position rearrangement:</strong> Only positions change</li>
+                    <li><strong>Key-dependent:</strong> Column order determined by key</li>
+                </ul>
+            </section>
+
+            <!-- Simple vs Keyed -->
+            <section>
+                <h2>Types of Columnar Transposition</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="algorithm-box">
+                        <h4>Simple Columnar:</h4>
+                        <ul>
+                            <li>Fixed column width</li>
+                            <li>Read columns in order (1,2,3...)</li>
+                            <li>No keyword needed</li>
+                            <li>Easier to break</li>
+                        </ul>
+                    </div>
+                    <div class="algorithm-box">
+                        <h4>Keyed Columnar:</h4>
+                        <ul>
+                            <li>Keyword determines column order</li>
+                            <li>Columns read in key sequence</li>
+                            <li>More secure</li>
+                            <li>Harder to cryptanalyze</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Simple Columnar Example -->
+            <section>
+                <h2>Simple Columnar Transposition</h2>
+                <div class="example-box">
+                    <strong>Plaintext:</strong> "ATTACKATDAWN"<br>
+                    <strong>Columns:</strong> 4<br><br>
+                    
+                    <strong>Step 1:</strong> Write text in rows of 4 columns<br>
+                    <div class="grid-display">
+                    A T T A<br>
+                    C K A T<br>
+                    D A W N
+                    </div><br>
+                    
+                    <strong>Step 2:</strong> Read columns from left to right<br>
+                    Column 1: A C D → "ACD"<br>
+                    Column 2: T K A → "TKA"<br>
+                    Column 3: T A W → "TAW"<br>
+                    Column 4: A T N → "ATN"<br><br>
+                    
+                    <strong>Ciphertext:</strong> "ACDTKATWATN"
+                </div>
+            </section>
+
+            <!-- Keyed Columnar Example -->
+            <section>
+                <h2>Keyed Columnar Transposition</h2>
+                <div class="example-box">
+                    <strong>Plaintext:</strong> "ATTACKATDAWN"<br>
+                    <strong>Keyword:</strong> "ZEBRA"<br><br>
+                    
+                    <strong>Step 1:</strong> Number keyword letters alphabetically<br>
+                    Z E B R A<br>
+                    5 2 1 4 3<br><br>
+                    
+                    <strong>Step 2:</strong> Write plaintext under keyword<br>
+                    <div class="grid-display">
+                    Z E B R A<br>
+                    5 2 1 4 3<br>
+                    -----------<br>
+                    A T T A C<br>
+                    K A T D A<br>
+                    W N X X X  ← padding
+                    </div>
+                </div>
+            </section>
+
+            <!-- Keyed Columnar Continued -->
+            <section>
+                <h2>Keyed Columnar - Reading Columns</h2>
+                <div class="example-box">
+                    <strong>Step 3:</strong> Read columns in numerical order (1,2,3,4,5)<br><br>
+                    
+                    <div class="grid-display">
+                    Z E B R A<br>
+                    5 2 1 4 3<br>
+                    -----------<br>
+                    A T T A C<br>
+                    K A T D A<br>
+                    W N X X X
+                    </div><br>
+                    
+                    Column B(1): T T X → "TTX"<br>
+                    Column E(2): T A N → "TAN"<br>
+                    Column A(3): C A X → "CAX"<br>
+                    Column R(4): A D X → "ADX"<br>
+                    Column Z(5): A K W → "AKW"<br><br>
+                    
+                    <strong>Ciphertext:</strong> "TTXTANCAXADXAKW"
+                </div>
+            </section>
+
+            <!-- Keyword Numbering -->
+            <section>
+                <h2>Keyword Numbering Process</h2>
+                <div class="algorithm-box">
+                    <strong>Rule:</strong> Number letters based on alphabetical order
+                </div>
+                <div class="example-box">
+                    <strong>Example Keywords:</strong><br><br>
+                    
+                    <strong>ZEBRA:</strong><br>
+                    A=1, B=2, E=3, R=4, Z=5<br>
+                    Z E B R A<br>
+                    5 3 2 4 1<br><br>
+                    
+                    <strong>CRYPTO:</strong><br>
+                    C=1, O=2, P=3, R=4, T=5, Y=6<br>
+                    C R Y P T O<br>
+                    1 4 6 3 5 2<br><br>
+                    
+                    <strong>SECURITY:</strong><br>
+                    C=1, E=2, I=3, R=4, S=5, T=6, U=7, Y=8<br>
+                    S E C U R I T Y<br>
+                    5 2 1 7 4 3 6 8
+                </div>
+            </section>
+
+            <!-- Handling Duplicate Letters -->
+            <section>
+                <h2>Duplicate Letters in Keyword</h2>
+                <div class="algorithm-box">
+                    <strong>Rule:</strong> Number duplicates in order of appearance
+                </div>
+                <div class="example-box">
+                    <strong>Keyword:</strong> "LETTER"<br><br>
+                    
+                    Letters in alphabetical order: E, L, R, T, T<br>
+                    E=1, L=2, R=3, T=4, T=5<br><br>
+                    
+                    <div class="grid-display">
+                    L E T T E R<br>
+                    2 1 4 5 1 3
+                    </div><br>
+                    
+                    Wait! E appears twice - number in sequence:<br>
+                    E(first)=1, E(second)=2, L=3, R=4, T(first)=5, T(second)=6<br><br>
+                    
+                    <div class="grid-display">
+                    L E T T E R<br>
+                    3 1 5 6 2 4
+                    </div>
+                </div>
+            </section>
+
+            <!-- Decryption Process -->
+            <section>
+                <h2>Decryption Process</h2>
+                <div class="algorithm-box">
+                    <strong>Reverse the encryption process</strong>
+                </div>
+                <div class="example-box">
+                    <strong>Ciphertext:</strong> "TTXTANCAXADXAKW"<br>
+                    <strong>Keyword:</strong> "ZEBRA"<br>
+                    <strong>Grid size:</strong> 3 rows × 5 columns<br><br>
+                    
+                    <strong>Step 1:</strong> Calculate column lengths<br>
+                    15 characters ÷ 5 columns = 3 characters per column<br><br>
+                    
+                    <strong>Step 2:</strong> Split ciphertext by column order<br>
+                    Column 1: TTX (3 chars)<br>
+                    Column 2: TAN (3 chars)<br>
+                    Column 3: CAX (3 chars)<br>
+                    Column 4: ADX (3 chars)<br>
+                    Column 5: AKW (3 chars)
+                </div>
+            </section>
+
+            <!-- Decryption Continued -->
+            <section>
+                <h2>Decryption - Rebuilding Grid</h2>
+                <div class="example-box">
+                    <strong>Step 3:</strong> Place columns in keyword positions<br><br>
+                    
+                    <div class="grid-display">
+                    Z E B R A<br>
+                    5 2 1 4 3<br>
+                    -----------<br>
+                    A T T A C  ← Row 1<br>
+                    K A T D A  ← Row 2<br>
+                    W N X X X  ← Row 3
+                    </div><br>
+                    
+                    Column B(1): TTX goes to position 3<br>
+                    Column E(2): TAN goes to position 2<br>
+                    Column A(3): CAX goes to position 5<br>
+                    Column R(4): ADX goes to position 4<br>
+                    Column Z(5): AKW goes to position 1<br><br>
+                    
+                    <strong>Step 4:</strong> Read rows left to right<br>
+                    <strong>Plaintext:</strong> "ATTACKATDAWN" (removing X padding)
+                </div>
+            </section>
+
+            <!-- Padding Considerations -->
+            <section>
+                <h2>Padding Strategies</h2>
+                <div class="variation-box">
+                    <h3>Why Padding is Needed:</h3>
+                    <p>Text length may not fit evenly into rectangular grid</p>
+                </div>
+                <h3>Common Padding Methods:</h3>
+                <ul>
+                    <li><strong>X Padding:</strong> Fill with 'X' characters</li>
+                    <li><strong>Null Padding:</strong> Use rare letters (Z, Q, J)</li>
+                    <li><strong>Random Padding:</strong> Random letters to confuse</li>
+                    <li><strong>Repeated Padding:</strong> Repeat last letter</li>
+                </ul>
+                <div class="security-box">
+                    <strong>Security Note:</strong> Padding can reveal information about original message length
+                </div>
+            </section>
+
+            <!-- Double Transposition -->
+            <section>
+                <h2>Double Columnar Transposition</h2>
+                <div class="variation-box">
+                    <strong>Enhanced Security:</strong> Apply columnar transposition twice with different keywords
+                </div>
+                <div class="example-box">
+                    <strong>Process:</strong><br><br>
+                    
+                    1. Apply first columnar transposition with Key1<br>
+                    2. Take result as input for second transposition<br>
+                    3. Apply second columnar transposition with Key2<br>
+                    4. Result is much more secure than single transposition<br><br>
+                    
+                    <strong>Example:</strong><br>
+                    Plaintext → [Key1: ZEBRA] → Intermediate → [Key2: CRYPTO] → Final Ciphertext<br><br>
+                    
+                    <strong>Decryption:</strong><br>
+                    Apply transpositions in reverse order with same keys
+                </div>
+            </section>
+
+            <!-- Security Analysis -->
+            <section>
+                <h2>Security Strengths</h2>
+                <div class="transposition-box">
+                    <h3>Advantages:</h3>
+                    <ul>
+                        <li><strong>Frequency Preservation:</strong> Resists frequency analysis</li>
+                        <li><strong>Character Intact:</strong> Original letters unchanged</li>
+                        <li><strong>Key-dependent:</strong> Security depends on keyword secrecy</li>
+                        <li><strong>Scalable:</strong> Longer keywords = better security</li>
+                        <li><strong>No Equipment:</strong> Can be done manually</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Security Weaknesses -->
+            <section>
+                <h2>Security Weaknesses</h2>
+                <div class="security-box">
+                    <h3>Vulnerabilities:</h3>
+                    <ul>
+                        <li><strong>Anagram Property:</strong> Ciphertext is anagram of plaintext</li>
+                        <li><strong>Pattern Analysis:</strong> Word patterns may remain visible</li>
+                        <li><strong>Known Plaintext:</strong> If part known, key can be deduced</li>
+                        <li><strong>Limited Key Space:</strong> Depends on keyword length</li>
+                        <li><strong>Digraph Analysis:</strong> Letter pair frequency analysis</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Cryptanalysis Methods -->
+            <section>
+                <h2>Breaking Columnar Transposition</h2>
+                <h3>Attack Methods:</h3>
+                <ul>
+                    <li><strong>Anagram Solving:</strong> Rearrange letters to form words</li>
+                    <li><strong>Frequency Analysis:</strong> Look for common letter combinations</li>
+                    <li><strong>Brute Force:</strong> Try different grid dimensions</li>
+                    <li><strong>Dictionary Attack:</strong> Test common keywords</li>
+                    <li><strong>Simulated Annealing:</strong> Computational optimization</li>
+                </ul>
+                <div class="algorithm-box">
+                    <strong>Modern Reality:</strong> Computer algorithms can break most columnar transpositions quickly
+                </div>
+            </section>
+
+            <!-- Implementation Tips -->
+            <section>
+                <h2>Implementation Guidelines</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="algorithm-box">
+                        <h4>Best Practices:</h4>
+                        <ul>
+                            <li>Use long, random keywords</li>
+                            <li>Avoid common words</li>
+                            <li>Consider double transposition</li>
+                            <li>Use irregular padding</li>
+                        </ul>
+                    </div>
+                    <div class="security-box">
+                        <h4>Avoid:</h4>
+                        <ul>
+                            <li>Short keywords</li>
+                            <li>Dictionary words</li>
+                            <li>Predictable padding</li>
+                            <li>Regular grid sizes</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Programming Implementation -->
+            <section>
+                <h2>Algorithm Implementation</h2>
+                <div class="example-box">
+                    <strong>Python Pseudocode:</strong><br><br>
+                    
+                    def columnar_encrypt(plaintext, keyword):<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;# 1. Calculate grid dimensions<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;cols = len(keyword)<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;rows = ceil(len(plaintext) / cols)<br><br>
+                    
+                    &nbsp;&nbsp;&nbsp;&nbsp;# 2. Pad plaintext if needed<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;padded_text = plaintext + 'X' * (rows * cols - len(plaintext))<br><br>
+                    
+                    &nbsp;&nbsp;&nbsp;&nbsp;# 3. Create grid and fill row by row<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;grid = [padded_text[i:i+cols] for i in range(0, len(padded_text), cols)]<br><br>
+                    
+                    &nbsp;&nbsp;&nbsp;&nbsp;# 4. Sort keyword and read columns<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;sorted_keyword = sorted(enumerate(keyword), key=lambda x: x[1])<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;ciphertext = ''.join([''.join(row[i] for row in grid) <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for i, char in sorted_keyword])<br><br>
+                    
+                    &nbsp;&nbsp;&nbsp;&nbsp;return ciphertext
+                </div>
+            </section>
+
+            <!-- Historical Applications -->
+            <section>
+                <h2>Historical Usage</h2>
+                <div class="variation-box">
+                    <h3>Real-World Applications:</h3>
+                    <ul>
+                        <li><strong>Military Communications:</strong> Field commanders</li>
+                        <li><strong>Diplomatic Messages:</strong> Embassy communications</li>
+                        <li><strong>Commercial Telegrams:</strong> Business secrets</li>
+                        <li><strong>Personal Correspondence:</strong> Private letters</li>
+                    </ul>
+                </div>
+                <div class="algorithm-box">
+                    <strong>World War I & II:</strong> Used by various nations, often combined with other ciphers for enhanced security
+                </div>
+            </section>
+
+            <!-- Modern Relevance -->
+            <section>
+                <h2>Educational Value Today</h2>
+                <h3>Why Study This Cipher?</h3>
+                <ul>
+                    <li><strong>Transposition Concepts:</strong> Foundation for understanding permutations</li>
+                    <li><strong>Algorithm Design:</strong> Grid-based thinking</li>
+                    <li><strong>Cryptanalysis Skills:</strong> Pattern recognition techniques</li>
+                    <li><strong>Historical Context:</strong> Pre-computer cryptography</li>
+                    <li><strong>Programming Practice:</strong> Array and string manipulation</li>
+                </ul>
+                <div class="transposition-box">
+                    <strong>Modern Context:</strong> Principles used in block ciphers and data shuffling algorithms
+                </div>
+            </section>
+
+            <!-- Exercise -->
+            <section>
+                <h2>Practice Exercise</h2>
+                <div class="example-box">
+                    <strong>Try This:</strong><br><br>
+                    
+                    <strong>Encrypt:</strong> "MEETMEATTHETOWER"<br>
+                    <strong>Keyword:</strong> "CIPHER"<br><br>
+                    
+                    <strong>Steps:</strong><br>
+                    1. Number the keyword letters<br>
+                    2. Create a grid (how many rows?)<br>
+                    3. Fill grid row by row<br>
+                    4. Read columns in alphabetical order<br><br>
+                    
+                    <strong>Challenge:</strong> What's the ciphertext?<br><br>
+                    
+                    <strong>Bonus:</strong> Now decrypt this message:<br>
+                    "HENTEHMEETEWTTOAR"<br>
+                    Same keyword: "CIPHER"
+                </div>
+            </section>
+
+            <!-- Key Takeaways -->
+            <section>
+                <h2>Key Takeaways</h2>
+                <ul>
+                    <li>Columnar transposition rearranges character positions</li>
+                    <li>Uses keyword to determine column reading order</li>
+                    <li>Preserves character frequency but changes positions</li>
+                    <li>More secure than simple substitution ciphers</li>
+                    <li>Vulnerable to anagram and pattern analysis</li>
+                    <li>Foundation for understanding modern transposition</li>
+                </ul>
+                <div class="transposition-box">
+                    <strong>Remember:</strong> Security increases with keyword length and complexity
+                </div>
+            </section>
+
+            <!-- Thank You -->
+            <section class="title-slide">
+                <h1>Thank You</h1>
+                <h3>Questions & Discussion</h3>
+                <p>Next: Symmetric Encryption Deep Dive</p>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/notes/notes.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/markdown/markdown.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/highlight.min.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            transition: 'slide',
+            plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+        });
+    </script>
+</body>
+</html>

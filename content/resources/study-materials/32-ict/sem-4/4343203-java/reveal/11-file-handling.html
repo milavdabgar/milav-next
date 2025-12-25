@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Java Programming - File Handling</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/theme/white.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/highlight/monokai.css">
+    <style>
+        .reveal h1, .reveal h2, .reveal h3 { color: #2c3e50; }
+        .reveal .slides section { text-align: left; padding: 10px 30px; height: 90vh; box-sizing: border-box; overflow: hidden; }
+        .reveal .title-slide { text-align: center; }
+        .reveal .center { text-align: center; }
+        .reveal pre code { font-size: 0.7em; line-height: 1.1; max-height: 300px; overflow-y: auto; }
+        .reveal h2 { font-size: 1.6em; margin-bottom: 0.4em; }
+        .reveal h3 { font-size: 1.3em; margin-bottom: 0.3em; }
+        .reveal h4 { font-size: 1.0em; margin-bottom: 0.2em; }
+        .reveal ul, .reveal ol { font-size: 0.85em; margin: 0.4em 0; }
+        .reveal li { margin: 0.2em 0; }
+        .highlight { background-color: #fff3cd; padding: 6px; border-left: 4px solid #ffc107; margin: 6px 0; font-size: 0.85em; }
+        .concept-box { background-color: #e8f4f8; padding: 8px; border-radius: 5px; margin: 6px 0; font-size: 0.8em; }
+        .two-column { display: flex; gap: 15px; font-size: 0.8em; }
+        .three-column { display: flex; gap: 10px; font-size: 0.75em; }
+        .column { flex: 1; }
+        .compact-list li { margin: 0.1em 0; font-size: 0.8em; }
+        .small-text { font-size: 0.75em; }
+        .table-style { font-size: 0.7em; width: 100%; border-collapse: collapse; }
+        .table-style th, .table-style td { border: 1px solid #ddd; padding: 4px; text-align: center; }
+        .table-style th { background-color: #f2f2f2; font-weight: bold; }
+        .file-box { background: #e8f5e8; padding: 8px; border-radius: 5px; margin: 6px 0; font-size: 0.8em; border-left: 4px solid #4caf50; }
+        .stream-box { background: #e3f2fd; padding: 8px; border-radius: 5px; margin: 6px 0; font-size: 0.8em; border-left: 4px solid #2196f3; }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- Title Slide -->
+            <section class="title-slide">
+                <h1>Java Programming Language</h1>
+                <h2>Chapter 11: File Handling</h2>
+                <p>Input/Output Operations in Java</p>
+                <br>
+                <p><small>Course: 4343203 - Java Programming</small></p>
+            </section>
+
+            <!-- Table of Contents -->
+            <section>
+                <h2>What We'll Cover</h2>
+                <ul class="compact-list">
+                    <li>File and Directory Operations</li>
+                    <li>Stream-based I/O</li>
+                    <li>Character and Byte Streams</li>
+                    <li>Buffered I/O</li>
+                    <li>Object Serialization</li>
+                    <li>NIO (New I/O) Overview</li>
+                    <li>File Exception Handling</li>
+                    <li>Best Practices</li>
+                </ul>
+            </section>
+
+            <!-- File I/O Overview -->
+            <section>
+                <h2>Java I/O Stream Hierarchy</h2>
+                <div class="center">
+                    <img src="diagrams/file-io-streams-hierarchy.svg" alt="Java I/O Streams Hierarchy and Usage" style="width: 95%; max-height: 75vh;">
+                </div>
+            </section>
+
+            <!-- File and Directory Operations -->
+            <section>
+                <section>
+                    <h2>File and Directory Operations</h2>
+                    <div class="highlight">
+                        <p><strong>File class</strong> provides methods for file and directory manipulation</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>File Class Basics</h3>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>Creating File Objects:</h4>
+                            <pre><code data-trim>
+import java.io.File;
+
+public class FileBasics {
+    public static void main(String[] args) {
+        // Different ways to create File objects
+        File file1 = new File("data.txt");
+        File file2 = new File("/home/user/documents/data.txt");
+        File file3 = new File("C:\\Users\\User\\data.txt");
+        
+        // Using parent directory and filename
+        File parentDir = new File("/home/user/documents");
+        File file4 = new File(parentDir, "data.txt");
+        
+        // Using File.separator for platform independence
+        String path = "documents" + File.separator + "data.txt";
+        File file5 = new File(path);
+        
+        System.out.println("File separator: " + File.separator);
+        System.out.println("Path separator: " + File.pathSeparator);
+        
+        // File information
+        System.out.println("Absolute path: " + file1.getAbsolutePath());
+        System.out.println("Parent: " + file1.getParent());
+        System.out.println("Name: " + file1.getName());
+    }
+}
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>File Properties and Tests:</h4>
+                            <pre><code data-trim>
+public class FileProperties {
+    public static void testFile(String filename) {
+        File file = new File(filename);
+        
+        System.out.println("File: " + filename);
+        System.out.println("Exists: " + file.exists());
+        System.out.println("Is file: " + file.isFile());
+        System.out.println("Is directory: " + file.isDirectory());
+        System.out.println("Can read: " + file.canRead());
+        System.out.println("Can write: " + file.canWrite());
+        System.out.println("Can execute: " + file.canExecute());
+        System.out.println("Is hidden: " + file.isHidden());
+        
+        if (file.exists()) {
+            System.out.println("Size: " + file.length() + " bytes");
+            System.out.println("Last modified: " + 
+                new Date(file.lastModified()));
+        }
+        
+        System.out.println("------------------------");
+    }
+    
+    public static void main(String[] args) {
+        testFile("data.txt");
+        testFile("documents");
+        testFile("nonexistent.txt");
+    }
+}
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>File and Directory Operations</h3>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>Creating Files and Directories:</h4>
+                            <pre><code data-trim>
+import java.io.*;
+
+public class FileOperations {
+    public static void main(String[] args) {
+        try {
+            // Create a new file
+            File newFile = new File("example.txt");
+            if (newFile.createNewFile()) {
+                System.out.println("File created: " + newFile.getName());
+            } else {
+                System.out.println("File already exists");
+            }
+            
+            // Create directory
+            File dir = new File("myDirectory");
+            if (dir.mkdir()) {
+                System.out.println("Directory created: " + dir.getName());
+            }
+            
+            // Create directory with parent directories
+            File nestedDir = new File("parent/child/grandchild");
+            if (nestedDir.mkdirs()) {
+                System.out.println("Nested directories created");
+            }
+            
+            // Create temporary file
+            File tempFile = File.createTempFile("temp", ".txt");
+            System.out.println("Temp file: " + tempFile.getAbsolutePath());
+            tempFile.deleteOnExit(); // Delete when JVM exits
+            
+        } catch (IOException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+}
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Listing Directory Contents:</h4>
+                            <pre><code data-trim>
+public class DirectoryListing {
+    public static void listDirectory(String dirPath) {
+        File directory = new File(dirPath);
+        
+        if (!directory.exists()) {
+            System.out.println("Directory doesn't exist: " + dirPath);
+            return;
+        }
+        
+        if (!directory.isDirectory()) {
+            System.out.println("Not a directory: " + dirPath);
+            return;
+        }
+        
+        System.out.println("Contents of: " + directory.getAbsolutePath());
+        
+        // List all files and directories
+        File[] files = directory.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                String type = file.isDirectory() ? "[DIR]" : "[FILE]";
+                System.out.println(type + " " + file.getName());
+            }
+        }
+        
+        // List only files with specific extension
+        File[] txtFiles = directory.listFiles((dir, name) -> 
+            name.toLowerCase().endsWith(".txt"));
+        
+        System.out.println("\n.txt files:");
+        if (txtFiles != null) {
+            for (File file : txtFiles) {
+                System.out.println(file.getName());
+            }
+        }
+    }
+    
+    public static void main(String[] args) {
+        listDirectory(".");
+        listDirectory("documents");
+    }
+}
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Stream-based I/O -->
+            <section>
+                <section>
+                    <h2>Stream-based I/O</h2>
+                    <div class="highlight">
+                        <p><strong>Streams</strong> provide a unified way to handle input and output operations</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Stream Types</h3>
+                    <div class="concept-box">
+                        <h4>Stream Categories:</h4>
+                        <ul class="compact-list">
+                            <li><strong>Byte Streams:</strong> Handle binary data (8-bit bytes)</li>
+                            <li><strong>Character Streams:</strong> Handle text data (16-bit Unicode)</li>
+                            <li><strong>Input Streams:</strong> Read data from source</li>
+                            <li><strong>Output Streams:</strong> Write data to destination</li>
+                        </ul>
+                    </div>
+                    <div class="two-column">
+                        <div class="column">
+                            <div class="stream-box">
+                                <h4>Byte Streams</h4>
+                                <ul class="compact-list">
+                                    <li><strong>InputStream:</strong> Abstract base class</li>
+                                    <li><strong>OutputStream:</strong> Abstract base class</li>
+                                    <li><strong>FileInputStream:</strong> Read from files</li>
+                                    <li><strong>FileOutputStream:</strong> Write to files</li>
+                                    <li><strong>BufferedInputStream:</strong> Buffered reading</li>
+                                    <li><strong>BufferedOutputStream:</strong> Buffered writing</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="stream-box">
+                                <h4>Character Streams</h4>
+                                <ul class="compact-list">
+                                    <li><strong>Reader:</strong> Abstract base class</li>
+                                    <li><strong>Writer:</strong> Abstract base class</li>
+                                    <li><strong>FileReader:</strong> Read text from files</li>
+                                    <li><strong>FileWriter:</strong> Write text to files</li>
+                                    <li><strong>BufferedReader:</strong> Buffered text reading</li>
+                                    <li><strong>BufferedWriter:</strong> Buffered text writing</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Byte Stream Example</h3>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>Writing Bytes:</h4>
+                            <pre><code data-trim>
+import java.io.*;
+
+public class ByteStreamWrite {
+    public static void main(String[] args) {
+        String data = "Hello, File I/O!";
+        
+        // Using FileOutputStream
+        try (FileOutputStream fos = new FileOutputStream("data.bin")) {
+            byte[] bytes = data.getBytes();
+            fos.write(bytes);
+            System.out.println("Data written to file");
+            
+        } catch (IOException e) {
+            System.out.println("Error writing file: " + e.getMessage());
+        }
+        
+        // Using BufferedOutputStream for efficiency
+        try (BufferedOutputStream bos = new BufferedOutputStream(
+                new FileOutputStream("buffered_data.bin"))) {
+            
+            for (int i = 0; i < 1000; i++) {
+                bos.write(("Line " + i + "\n").getBytes());
+            }
+            bos.flush(); // Ensure all data is written
+            System.out.println("Buffered data written");
+            
+        } catch (IOException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+}
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Reading Bytes:</h4>
+                            <pre><code data-trim>
+public class ByteStreamRead {
+    public static void main(String[] args) {
+        // Reading with FileInputStream
+        try (FileInputStream fis = new FileInputStream("data.bin")) {
+            int byteData;
+            System.out.print("File content: ");
+            while ((byteData = fis.read()) != -1) {
+                System.out.print((char) byteData);
+            }
+            System.out.println();
+            
+        } catch (IOException e) {
+            System.out.println("Error reading file: " + e.getMessage());
+        }
+        
+        // Reading chunks of data
+        try (FileInputStream fis = new FileInputStream("data.bin")) {
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            
+            while ((bytesRead = fis.read(buffer)) != -1) {
+                String content = new String(buffer, 0, bytesRead);
+                System.out.print(content);
+            }
+            
+        } catch (IOException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+        
+        // Using BufferedInputStream
+        try (BufferedInputStream bis = new BufferedInputStream(
+                new FileInputStream("buffered_data.bin"))) {
+            
+            int data;
+            int lineCount = 0;
+            while ((data = bis.read()) != -1) {
+                if ((char) data == '\n') {
+                    lineCount++;
+                }
+            }
+            System.out.println("Lines read: " + lineCount);
+            
+        } catch (IOException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+}
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Character Streams -->
+            <section>
+                <section>
+                    <h2>Character Streams</h2>
+                    <div class="highlight">
+                        <p><strong>Character streams</strong> are optimized for text data handling</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Text File Operations</h3>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>Writing Text Files:</h4>
+                            <pre><code data-trim>
+import java.io.*;
+
+public class TextFileWrite {
+    public static void main(String[] args) {
+        // Using FileWriter
+        try (FileWriter writer = new FileWriter("sample.txt")) {
+            writer.write("Hello, World!\n");
+            writer.write("This is a text file.\n");
+            writer.write("Java File I/O is powerful!");
+            System.out.println("Text written to file");
+            
+        } catch (IOException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+        
+        // Using BufferedWriter for better performance
+        try (BufferedWriter bufferedWriter = new BufferedWriter(
+                new FileWriter("large_file.txt"))) {
+            
+            for (int i = 1; i <= 10000; i++) {
+                bufferedWriter.write("Line number: " + i);
+                bufferedWriter.newLine(); // Platform-independent newline
+            }
+            System.out.println("Large file written with BufferedWriter");
+            
+        } catch (IOException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+        
+        // Using PrintWriter for formatted output
+        try (PrintWriter printWriter = new PrintWriter("formatted.txt")) {
+            printWriter.println("Student Report");
+            printWriter.println("==============");
+            printWriter.printf("Name: %s%n", "John Doe");
+            printWriter.printf("Grade: %.2f%n", 87.5);
+            printWriter.printf("Attendance: %d%%%n", 95);
+            
+        } catch (IOException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+}
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Reading Text Files:</h4>
+                            <pre><code data-trim>
+public class TextFileRead {
+    public static void main(String[] args) {
+        // Using FileReader
+        try (FileReader reader = new FileReader("sample.txt")) {
+            int character;
+            System.out.print("File content: ");
+            while ((character = reader.read()) != -1) {
+                System.out.print((char) character);
+            }
+            System.out.println();
+            
+        } catch (IOException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+        
+        // Using BufferedReader for line-by-line reading
+        try (BufferedReader bufferedReader = new BufferedReader(
+                new FileReader("sample.txt"))) {
+            
+            String line;
+            int lineNumber = 1;
+            System.out.println("\nLine by line:");
+            while ((line = bufferedReader.readLine()) != null) {
+                System.out.println(lineNumber + ": " + line);
+                lineNumber++;
+            }
+            
+        } catch (IOException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+        
+        // Reading entire file into a String
+        try (BufferedReader reader = new BufferedReader(
+                new FileReader("sample.txt"))) {
+            
+            StringBuilder content = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                content.append(line).append("\n");
+            }
+            
+            System.out.println("Entire file content:");
+            System.out.println(content.toString());
+            
+        } catch (IOException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+}
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>File Copy Example</h3>
+                    <pre><code data-trim>
+import java.io.*;
+
+public class FileCopyExample {
+    
+    // Copy using byte streams
+    public static void copyFileBytes(String source, String destination) {
+        try (FileInputStream fis = new FileInputStream(source);
+             FileOutputStream fos = new FileOutputStream(destination)) {
+            
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            
+            while ((bytesRead = fis.read(buffer)) != -1) {
+                fos.write(buffer, 0, bytesRead);
+            }
+            
+            System.out.println("File copied successfully (byte streams)");
+            
+        } catch (IOException e) {
+            System.out.println("Error copying file: " + e.getMessage());
+        }
+    }
+    
+    // Copy using character streams (for text files)
+    public static void copyFileChars(String source, String destination) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(source));
+             BufferedWriter writer = new BufferedWriter(new FileWriter(destination))) {
+            
+            String line;
+            while ((line = reader.readLine()) != null) {
+                writer.write(line);
+                writer.newLine();
+            }
+            
+            System.out.println("Text file copied successfully (character streams)");
+            
+        } catch (IOException e) {
+            System.out.println("Error copying file: " + e.getMessage());
+        }
+    }
+    
+    // Copy with progress indication
+    public static void copyFileWithProgress(String source, String destination) {
+        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(source));
+             BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(destination))) {
+            
+            File sourceFile = new File(source);
+            long totalBytes = sourceFile.length();
+            long copiedBytes = 0;
+            
+            byte[] buffer = new byte[8192];
+            int bytesRead;
+            
+            while ((bytesRead = bis.read(buffer)) != -1) {
+                bos.write(buffer, 0, bytesRead);
+                copiedBytes += bytesRead;
+                
+                // Show progress
+                int progress = (int) ((copiedBytes * 100) / totalBytes);
+                System.out.print("\rProgress: " + progress + "%");
+            }
+            
+            System.out.println("\nFile copied with progress tracking");
+            
+        } catch (IOException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+    
+    public static void main(String[] args) {
+        copyFileBytes("source.txt", "destination_bytes.txt");
+        copyFileChars("source.txt", "destination_chars.txt");
+        copyFileWithProgress("large_file.txt", "large_file_copy.txt");
+    }
+}
+                    </code></pre>
+                </section>
+            </section>
+
+            <!-- Object Serialization -->
+            <section>
+                <section>
+                    <h2>Object Serialization</h2>
+                    <div class="highlight">
+                        <p><strong>Serialization</strong> converts objects to byte streams for storage or transmission</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Serializable Objects</h3>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>Creating Serializable Class:</h4>
+                            <pre><code data-trim>
+import java.io.*;
+
+// Serializable class
+class Student implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
+    private String name;
+    private int age;
+    private double grade;
+    private transient String password; // Won't be serialized
+    
+    public Student(String name, int age, double grade, String password) {
+        this.name = name;
+        this.age = age;
+        this.grade = grade;
+        this.password = password;
+    }
+    
+    // Getters and setters
+    public String getName() { return name; }
+    public int getAge() { return age; }
+    public double getGrade() { return grade; }
+    public String getPassword() { return password; }
+    
+    @Override
+    public String toString() {
+        return "Student{name='" + name + "', age=" + age + 
+               ", grade=" + grade + ", password='" + password + "'}";
+    }
+}
+
+// Non-serializable field example
+class Course implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
+    private String courseName;
+    private Student[] students;
+    private static String university = "XYZ University"; // Static fields not serialized
+    
+    public Course(String courseName, Student[] students) {
+        this.courseName = courseName;
+        this.students = students;
+    }
+    
+    public String getCourseName() { return courseName; }
+    public Student[] getStudents() { return students; }
+    public static String getUniversity() { return university; }
+}
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Serialization Example:</h4>
+                            <pre><code data-trim>
+public class SerializationExample {
+    
+    // Serialize object to file
+    public static void serializeStudent(Student student, String filename) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(
+                new FileOutputStream(filename))) {
+            
+            oos.writeObject(student);
+            System.out.println("Student serialized to " + filename);
+            
+        } catch (IOException e) {
+            System.out.println("Serialization error: " + e.getMessage());
+        }
+    }
+    
+    // Deserialize object from file
+    public static Student deserializeStudent(String filename) {
+        try (ObjectInputStream ois = new ObjectInputStream(
+                new FileInputStream(filename))) {
+            
+            Student student = (Student) ois.readObject();
+            System.out.println("Student deserialized from " + filename);
+            return student;
+            
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("Deserialization error: " + e.getMessage());
+            return null;
+        }
+    }
+    
+    public static void main(String[] args) {
+        // Create and serialize student
+        Student student = new Student("Alice", 20, 85.5, "secret123");
+        System.out.println("Original: " + student);
+        
+        serializeStudent(student, "student.ser");
+        
+        // Deserialize student
+        Student deserializedStudent = deserializeStudent("student.ser");
+        if (deserializedStudent != null) {
+            System.out.println("Deserialized: " + deserializedStudent);
+            // Note: password will be null (transient field)
+        }
+    }
+}
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Advanced Serialization</h3>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>Custom Serialization:</h4>
+                            <pre><code data-trim>
+class BankAccount implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
+    private String accountNumber;
+    private String holderName;
+    private transient double balance; // Don't serialize balance directly
+    
+    public BankAccount(String accountNumber, String holderName, double balance) {
+        this.accountNumber = accountNumber;
+        this.holderName = holderName;
+        this.balance = balance;
+    }
+    
+    // Custom serialization method
+    private void writeObject(ObjectOutputStream oos) throws IOException {
+        oos.defaultWriteObject(); // Serialize non-transient fields
+        
+        // Encrypt balance before serialization
+        double encryptedBalance = balance * 1.5 + 1000; // Simple encryption
+        oos.writeDouble(encryptedBalance);
+    }
+    
+    // Custom deserialization method
+    private void readObject(ObjectInputStream ois) 
+            throws IOException, ClassNotFoundException {
+        ois.defaultReadObject(); // Deserialize non-transient fields
+        
+        // Decrypt balance after deserialization
+        double encryptedBalance = ois.readDouble();
+        this.balance = (encryptedBalance - 1000) / 1.5; // Simple decryption
+    }
+    
+    public double getBalance() { return balance; }
+    
+    @Override
+    public String toString() {
+        return "BankAccount{accountNumber='" + accountNumber + 
+               "', holderName='" + holderName + "', balance=" + balance + "}";
+    }
+}
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Serialization Best Practices:</h4>
+                            <div class="file-box">
+                                <h5>Do's:</h5>
+                                <ul class="compact-list">
+                                    <li>Always declare serialVersionUID</li>
+                                    <li>Use transient for sensitive data</li>
+                                    <li>Implement custom serialization when needed</li>
+                                    <li>Handle version compatibility</li>
+                                    <li>Close streams properly</li>
+                                </ul>
+                            </div>
+                            <div class="file-box">
+                                <h5>Don'ts:</h5>
+                                <ul class="compact-list">
+                                    <li>Don't serialize sensitive information</li>
+                                    <li>Don't serialize large objects unnecessarily</li>
+                                    <li>Don't ignore ClassNotFoundException</li>
+                                    <li>Don't serialize without versioning</li>
+                                </ul>
+                            </div>
+                            <h4>Testing Custom Serialization:</h4>
+                            <pre><code data-trim>
+public class CustomSerializationTest {
+    public static void main(String[] args) {
+        BankAccount account = new BankAccount(
+            "123456789", "John Doe", 1500.75);
+        
+        System.out.println("Original: " + account);
+        
+        // Serialize
+        try (ObjectOutputStream oos = new ObjectOutputStream(
+                new FileOutputStream("account.ser"))) {
+            oos.writeObject(account);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        // Deserialize
+        try (ObjectInputStream ois = new ObjectInputStream(
+                new FileInputStream("account.ser"))) {
+            BankAccount restoredAccount = (BankAccount) ois.readObject();
+            System.out.println("Restored: " + restoredAccount);
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+}
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Exception Handling in File I/O -->
+            <section>
+                <section>
+                    <h2>File I/O Exception Handling</h2>
+                    <div class="highlight">
+                        <p><strong>Proper exception handling</strong> is crucial for robust file operations</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Common File Exceptions</h3>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>Exception Types:</h4>
+                            <div class="concept-box">
+                                <ul class="compact-list">
+                                    <li><strong>FileNotFoundException:</strong> File doesn't exist</li>
+                                    <li><strong>IOException:</strong> General I/O error</li>
+                                    <li><strong>SecurityException:</strong> Access denied</li>
+                                    <li><strong>OutOfMemoryError:</strong> Large file operations</li>
+                                    <li><strong>ClassNotFoundException:</strong> Deserialization error</li>
+                                </ul>
+                            </div>
+                            <h4>Robust File Operations:</h4>
+                            <pre><code data-trim>
+public class SafeFileOperations {
+    
+    public static String readFileContent(String filename) {
+        StringBuilder content = new StringBuilder();
+        
+        try (BufferedReader reader = new BufferedReader(
+                new FileReader(filename))) {
+            
+            String line;
+            while ((line = reader.readLine()) != null) {
+                content.append(line).append("\n");
+            }
+            
+        } catch (FileNotFoundException e) {
+            System.err.println("File not found: " + filename);
+            return null;
+        } catch (IOException e) {
+            System.err.println("Error reading file: " + e.getMessage());
+            return null;
+        }
+        
+        return content.toString();
+    }
+    
+    public static boolean writeFileContent(String filename, String content) {
+        try (BufferedWriter writer = new BufferedWriter(
+                new FileWriter(filename))) {
+            
+            writer.write(content);
+            return true;
+            
+        } catch (IOException e) {
+            System.err.println("Error writing file: " + e.getMessage());
+            return false;
+        }
+    }
+}
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Try-with-Resources Best Practice:</h4>
+                            <pre><code data-trim>
+public class ResourceManagement {
+    
+    // Bad practice - manual resource management
+    public static void badExample(String filename) {
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new FileReader(filename));
+            String line = reader.readLine();
+            System.out.println(line);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+    
+    // Good practice - try-with-resources
+    public static void goodExample(String filename) {
+        try (BufferedReader reader = new BufferedReader(
+                new FileReader(filename))) {
+            
+            String line = reader.readLine();
+            System.out.println(line);
+            // Reader automatically closed
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    // Multiple resources
+    public static void copyFile(String source, String destination) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(source));
+             BufferedWriter writer = new BufferedWriter(new FileWriter(destination))) {
+            
+            String line;
+            while ((line = reader.readLine()) != null) {
+                writer.write(line);
+                writer.newLine();
+            }
+            
+        } catch (IOException e) {
+            System.err.println("Error copying file: " + e.getMessage());
+        }
+    }
+}
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- NIO Overview -->
+            <section>
+                <section>
+                    <h2>NIO (New I/O) Overview</h2>
+                    <div class="highlight">
+                        <p><strong>Java NIO</strong> provides more efficient and flexible I/O operations</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>NIO vs Traditional I/O</h3>
+                    <table class="table-style">
+                        <tr>
+                            <th>Feature</th>
+                            <th>Traditional I/O</th>
+                            <th>NIO</th>
+                        </tr>
+                        <tr>
+                            <td>Approach</td>
+                            <td>Stream-oriented</td>
+                            <td>Buffer-oriented</td>
+                        </tr>
+                        <tr>
+                            <td>Blocking</td>
+                            <td>Blocking I/O</td>
+                            <td>Non-blocking I/O</td>
+                        </tr>
+                        <tr>
+                            <td>Performance</td>
+                            <td>Good for small files</td>
+                            <td>Better for large files</td>
+                        </tr>
+                        <tr>
+                            <td>Memory Usage</td>
+                            <td>Direct to JVM heap</td>
+                            <td>Direct memory access</td>
+                        </tr>
+                        <tr>
+                            <td>File Operations</td>
+                            <td>Limited file operations</td>
+                            <td>Rich file operations</td>
+                        </tr>
+                    </table>
+                    
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>Simple NIO Example:</h4>
+                            <pre><code data-trim>
+import java.nio.file.*;
+import java.io.IOException;
+
+public class NIOExample {
+    public static void main(String[] args) {
+        try {
+            // Read entire file
+            Path path = Paths.get("sample.txt");
+            String content = Files.readString(path);
+            System.out.println(content);
+            
+            // Write to file
+            String data = "Hello NIO!";
+            Files.writeString(path, data);
+            
+            // Copy file
+            Files.copy(path, Paths.get("copy.txt"), 
+                StandardCopyOption.REPLACE_EXISTING);
+            
+            // Check file properties
+            System.out.println("File size: " + Files.size(path));
+            System.out.println("Is readable: " + Files.isReadable(path));
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Directory Operations with NIO:</h4>
+                            <pre><code data-trim>
+import java.nio.file.*;
+import java.io.IOException;
+
+public class NIODirectories {
+    public static void main(String[] args) {
+        try {
+            Path dir = Paths.get("testdir");
+            
+            // Create directory
+            Files.createDirectories(dir);
+            
+            // List directory contents
+            Files.list(dir).forEach(System.out::println);
+            
+            // Walk directory tree
+            Files.walk(dir)
+                 .filter(Files::isRegularFile)
+                 .forEach(System.out::println);
+            
+            // Find files by pattern
+            Files.find(dir, 2, 
+                (path, attrs) -> path.toString().endsWith(".txt"))
+                .forEach(System.out::println);
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Best Practices -->
+            <section>
+                <h2>File I/O Best Practices</h2>
+                <div class="two-column">
+                    <div class="column">
+                        <div class="file-box">
+                            <h4>✅ Best Practices</h4>
+                            <ul class="compact-list">
+                                <li>Use try-with-resources for automatic cleanup</li>
+                                <li>Use buffered streams for better performance</li>
+                                <li>Handle specific exceptions appropriately</li>
+                                <li>Use character streams for text files</li>
+                                <li>Use byte streams for binary files</li>
+                                <li>Check file existence before operations</li>
+                                <li>Use platform-independent file separators</li>
+                                <li>Consider NIO for large file operations</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="stream-box">
+                            <h4>⚠️ Common Pitfalls</h4>
+                            <ul class="compact-list">
+                                <li>Forgetting to close streams</li>
+                                <li>Not handling FileNotFoundException</li>
+                                <li>Using wrong stream type for data</li>
+                                <li>Ignoring character encoding issues</li>
+                                <li>Not checking file permissions</li>
+                                <li>Loading entire large files into memory</li>
+                                <li>Hardcoding file paths</li>
+                                <li>Not validating user-provided file paths</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Summary -->
+            <section>
+                <h2>Chapter Summary</h2>
+                <div class="two-column">
+                    <div class="column">
+                        <h3>File Operations:</h3>
+                        <ul class="compact-list">
+                            <li>File and directory manipulation</li>
+                            <li>Stream-based I/O (byte and character)</li>
+                            <li>Buffered I/O for performance</li>
+                            <li>Object serialization</li>
+                            <li>Exception handling in file operations</li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <h3>Practical Skills:</h3>
+                        <ul class="compact-list">
+                            <li>Reading and writing files safely</li>
+                            <li>Copying and moving files</li>
+                            <li>Serializing objects for persistence</li>
+                            <li>Using try-with-resources</li>
+                            <li>Understanding NIO basics</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="highlight center">
+                    <p><strong>Next:</strong> Collections Framework</p>
+                </div>
+            </section>
+
+            <!-- Thank You -->
+            <section class="title-slide">
+                <h1>Thank You!</h1>
+                <h2>Questions?</h2>
+                <br>
+                <p>Ready to explore Collections Framework!</p>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/highlight/highlight.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            transition: 'slide',
+            transitionSpeed: 'default',
+            backgroundTransition: 'fade',
+            plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+        });
+    </script>
+</body>
+</html>

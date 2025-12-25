@@ -1,0 +1,901 @@
+---
+title: "Unit 4: 8051 Programming"
+description: "Guide to 8051 programming concepts and instruction set"
+summary: "Learn about 8051 addressing modes, instruction set architecture, and assembly language programming techniques."
+date: 2024-04-03
+weight: 4
+tags: ["study-material", "programming", "8051", "4341101", "unit-4", "assembly"]
+---
+
+## Addressing Modes
+
+**What is an Addressing Mode?**
+
+An Addressing Mode is a way to locate a target Data, which is also called as Operand. The 8051 Family of Microcontrollers allows five types of Addressing Modes for addressing the Operands. They are:
+
+- Register Addressing
+- Direct Addressing
+- Indirect Addressing
+- Immediate Addressing
+- Indexed(Base Relative Addressing with DPTR) Addressing
+- Relative Addressing
+- Bit Addressing
+
+**Key Addressing Modes in the 8051**
+
+1. **Register Addressing**
+
+   - **How it Works:** The operand of the instruction directly specifies one of the 8051's registers (A, B, R0-R7).
+   - **Example:** `MOV A, R2` (Copy the contents of R2 into the accumulator)
+   - **Fast and Efficient:** No additional memory accesses are needed.
+
+2. **Direct Addressing**
+
+   - **How it Works:** The instruction contains an 8-bit address that directly points to a location in the internal RAM or Special Function Registers (SFRs).
+   - **Example:** `MOV 45H, A` (Store the value in the accumulator into internal RAM location 45H)
+   - **Accesses only first 256 bytes:** Limited to accessing the lower portion of internal RAM and SFRs.
+
+3. **Indirect Addressing**
+
+   - **How it Works:** The instruction specifies a register (R0 or R1) that holds the memory address of where the data actually resides.
+   - **Example:** `MOV A, @R0` (Copy the byte pointed to by the address in R0 into the accumulator).
+   - **Flexibility:** Allows dynamic calculation of data locations.
+
+4. **Immediate Addressing**
+
+   - **How it Works:** The data to be used is embedded directly within the instruction itself. Preceded by the '#' symbol.
+   - **Example:** `MOV A, #60H` (Load the value 60H into the accumulator).
+   - **Convenient for constants:** Useful for loading fixed values.
+
+5. **Indexed(Base Relative Addressing with DPTR)**
+
+   - **How it Works**: Used for accessing external RAM. The Data Pointer (DPTR) provides a 16-bit base address, and an 8-bit offset within the instruction specifies a location relative to that base.
+   - **Example**: `MOVX A, @DPTR` (Copy byte from external RAM pointed to by DPTR into the accumulator)
+   - **Expanded Memory:** Access up to 64KB of external memory
+
+6. **Relative Addressing**
+
+   - **How it Works:** The instruction provides an offset that's relative to the Program Counter (PC). This offset (usually a signed 8-bit value) is added to the address of the _next_ instruction to determine the target address for a jump or branch.
+   - **Example:** JRNE 20H (Jump if Zero flag is not set, relative to an address 20H bytes away from the next instruction).
+   - **Advantages:**
+     - **Position-independent code:** Allows relocatable code blocks as the jump target is calculated relative to the current position.
+     - **Compact encoding:** Typically uses a smaller offset within the instruction, saving program memory space.
+
+7. **Bit Addressing**
+
+   - **How it Works:** Instructions directly address individual bits within three areas:
+     1. **Internal RAM (bit-addressable area):** Certain bytes of internal RAM have bits that can be addressed individually.
+     2. **Special Function Registers (SFRs):** Many control and status bits within SFRs can be directly manipulated.
+     3. **I/O Ports (sometimes):** Certain I/O devices have bit-level control.
+   - **Example:** SETB 20H (Set the bit at location 20H within the bit-addressable area of internal RAM).
+   - **Advantages:**
+     - **Fine-grained control:** Allows modification or checking of single bits within registers or memory locations.
+     - **Efficient for flags and control bits:** Avoids the need to manipulate entire bytes when dealing with single-bit flags.
+
+### Immediate addressing mode
+
+**Immediate Addressing Mode: What is it?**
+
+- In immediate addressing mode, the data (or value) to be operated on is directly included within the instruction itself.
+- The symbol "#" usually indicates that the value following it is immediate data.
+
+**Key Advantages**
+
+- **Speed:** Immediate addressing is fast because the data is immediately available to the processor; no additional memory fetching is needed.
+- **Simplicity:** This is a simple addressing mode, great for using fixed constants within your code.
+
+**Examples**
+
+Here are some examples of 8051 instructions using immediate addressing mode:
+
+1. **Loading a value into the accumulator:**
+
+   ```assembly
+   MOV A, #50H  ; Load the value 50 (hexadecimal) into the accumulator (register A)
+   ```
+
+2. **Adding an immediate value to a register:**
+
+   ```assembly
+   ADD R2, #10  ; Add the value 10 to register R2
+   ```
+
+3. **Moving data using the Data Pointer (DPTR):**
+
+   ```assembly
+   MOV DPTR, #2500H ; Load the immediate value 2500H into the Data Pointer,
+                     ; pointing to an external memory location
+   ```
+
+**Important Note:** In the 8051, immediate data is generally limited to 8-bits (0-255 or 00H to FFH).
+
+**When to Use Immediate Addressing Mode**
+
+Immediate addressing is ideal in the following situations:
+
+- **Working with constants:** When you know the exact value at the time of writing the code.
+- **Initializing variables:** Setting initial values for variables at the start of your program.
+- **Performing simple calculations:** When you need to add or subtract small, fixed values.
+
+### Register addressing mode
+
+**Register Addressing Mode: The Basics**
+
+- In this mode, the operands (the data the instruction works with) are stored within the 8051's internal registers.
+- The 8051 has a set of general-purpose registers named R0 through R7, along with the accumulator (A).
+
+**Why Use It**
+
+- **Speed:** Register addressing is the fastest addressing mode since data is accessed directly from the CPU's internal registers. No time is spent fetching data from external memory.
+- **Efficiency:** It uses fewer instruction bytes, making your code more compact.
+
+**Example Instructions**
+
+Let's see register addressing in action:
+
+1. **Moving data between registers:**
+
+   ```assembly
+   MOV R5, R1  ; Move the contents of register R1 into register R5
+   ```
+
+2. **Adding the contents of two registers:**
+
+   ```assembly
+   ADD A, R6   ; Add the contents of register R6 to the accumulator (A) and store the result in the accumulator
+   ```
+
+3. **Clearing a register:**
+
+   ```assembly
+   CLR R0      ; Clear register R0 (set its value to 0)
+   ```
+
+**Key Points**
+
+- Register addressing mode is heavily used in 8051 programs because of its speed and efficiency.
+- You can't directly move data between two registers that aren't the Accumulator (A). You'll often see instructions temporarily using the accumulator to facilitate data transfers between registers.
+
+### Direct addressing mode
+
+**Direct Addressing Mode: Core Concept**
+
+- In direct addressing mode, the instruction contains the direct 8-bit address of the data within the 8051's internal RAM or Special Function Registers (SFRs).
+
+**Restrictions**
+
+- **Address Space:** Direct addressing can only access the following:
+  - Internal RAM locations from 00H to 7FH.
+  - Special Function Registers (SFRs) from 80H to FFH.
+
+**Advantages**
+
+- **Reasonable speed:** It's slower than register addressing, but still relatively fast since you're accessing the internal memory.
+- **Variable data:** Useful when working with variables whose location in memory might change.
+
+**Examples**
+
+1. **Loading data from Internal RAM:**
+
+   ```assembly
+   MOV A, 35H  ; Load the contents of internal RAM location 35H into the accumulator (A)
+   ```
+
+2. **Storing data in Internal RAM:**
+
+   ```assembly
+   MOV 50H, A  ; Store the contents of the accumulator (A) into internal RAM location 50H
+   ```
+
+3. **Controlling an output port:**
+
+   ```assembly
+   MOV P1, #90H ; Send the value 90H (hexadecimal) to port 1 (SFR address 90H)
+   ```
+
+**Important Notes**
+
+- Direct addressing mode does **not** use the "#" symbol to differentiate between immediate data and addresses.
+- SFRs (Special Function Registers) control the 8051's hardware peripherals and are accessed using direct addressing.
+
+### Indirect addressing mode
+
+**Indirect Addressing Mode: The Basics**
+
+- In indirect addressing mode, the instruction doesn't contain the actual data address. Instead, it holds the address of a register that points to where the data is located in memory.
+- The "@" symbol precedes the register name to indicate indirect addressing.
+- Indirect addressing supports two register pairs in the 8051:
+  - **R0 and R1:** For accessing internal RAM
+  - **DPTR (Data Pointer):** For accessing internal RAM and external RAM (if present)
+
+**Why Use It**
+
+- **Flexibility:** This is the key advantage. It allows you to calculate or dynamically change the memory location to be accessed during program execution.
+- **Data Structures:** Perfect for arrays, tables, and other data structures where you need to access data elements sequentially.
+
+**Examples**
+
+1. **Accessing internal RAM using R0:**
+
+   ```assembly
+   MOV R0, #40H  ; Load the value 40H into register R0
+   MOV A, @R0    ; Load the contents of the internal RAM location pointed to by R0 (which is 40H) into the accumulator
+   ```
+
+2. **Accessing external RAM using DPTR:**
+
+   ```assembly
+   MOV DPTR, #3000H  ; Load the value 3000H into the Data Pointer
+   MOVX A, @DPTR     ; Load the contents of external RAM location 3000H into the accumulator
+                         ; (note the use of MOVX for external memory)
+   ```
+
+3. **Table Lookup:**
+
+   ```assembly
+   MOV R0, #TABLE_START  ; Load the starting address of a table into R0
+   MOV A, @R0            ; Load the first element of the table into the accumulator
+   INC R0                ; Increment R0 to point to the next element
+   ; ... repeat as needed
+   ```
+
+**Key Points**
+
+- Indirect addressing gives you much more flexibility for accessing data in different memory locations.
+- Using 'MOVX' is necessary for accessing external memory with indirect addressing.
+
+### Indexed addressing mode
+
+**Indexed Addressing Mode: Combining Base + Offset**
+
+- Indexed addressing mode provides a way to access data in the Program Memory (code memory) of the 8051.
+- It combines the contents of a base register (either the Data Pointer - DPTR – or the Program Counter - PC) with the contents of the Accumulator (A) to form the effective address of the data you want to access.
+
+**Why use it?**
+
+- **Accessing data tables in program memory:** Ideal for working with tables or arrays of data stored in the code space of the 8051.
+
+**Key Points**
+
+- The instruction "MOVC" is used for indexed addressing in the 8051. The 'C' indicates that the instruction is accessing Code memory.
+
+**Examples**
+
+1. **Using the Data Pointer (DPTR):**
+
+   ```assembly
+   MOV DPTR, #MY_TABLE   ; Load the starting address of 'MY_TABLE' into DPTR
+   MOV A, #03H           ; Load index '3' into accumulator
+   MOVC A, @A+DPTR       ; Fetch the data at the address (DPTR value + 3)
+                             ; from program memory and load it into the accumulator
+   ```
+
+2. **Using the Program Counter (PC):**
+
+   ```assembly
+   MOV A, #05H           ; Load index '5' into accumulator
+   MOVC A, @A+PC         ; Fetch the data at the address (PC value + 5)
+                             ; from program memory and load it into the accumulator
+   ```
+
+**Explanation of Example 1**
+
+- Let's say 'MY_TABLE' starts at program memory address 2000H.
+- With the index (offset) of 3 in the accumulator, the instruction `MOVC A, @A+DPTR` will access the data stored at address 2003H in program memory.
+
+**Important Notes**
+
+- Indexed addressing is limited to accessing data within the program memory of the 8051 microcontroller.
+- It cannot be used to modify the program memory itself (ROM is read-only).
+
+### Relative addressing mode
+
+**Relative Addressing Mode: Jumping by Offset**
+
+- In relative addressing mode, the instruction contains an 8-bit signed offset (a value that can be positive or negative). This offset is added to the Program Counter (PC) to determine the address of the next instruction to be executed.
+- Primarily used for conditional jumps and branching within your code.
+
+**Why Use It?**
+
+- **Code Relocatability:** Code using relative addressing becomes position-independent. This means you can move the code block to a different memory location without modifying branch instructions.
+- **Conditional Branching:** Ideal for instructions like `SJMP` (Short Jump), `JZ` (Jump if Zero), etc.
+
+**Example**
+
+```assembly
+HERE:   MOV A, R0   ; Some instructions...
+        JZ  TARGET  ; Jump to 'TARGET' if the accumulator is zero
+        ...         ; More instructions...
+TARGET: INC R5      ; Target location if the jump was taken
+```
+
+**Explanation**
+
+- Let's say the instruction `JZ TARGET` is at memory location 1000H.
+- The assembler figures out the offset needed to reach `TARGET` from the current location and includes it as a second byte in the instruction.
+- If `TARGET` is 10 bytes ahead, the offset will be +10. If `TARGET` is 5 bytes behind, the offset will be -5.
+- The range of a relative jump is limited to -128 to +127 bytes from the current instruction.
+
+**Key Points**
+
+- Relative addressing makes your code more compact, as you don't need full target addresses within the jump instructions.
+- Watch out for jump range limits! It can only jump a limited distance forward or backward.
+
+### Bit addressing mode
+
+**Bit Addressing Mode: Manipulating Individual Bits**
+
+- Bit addressing mode provides fine-grained control by allowing you to directly address and manipulate individual bits within:
+  - **Internal RAM (bit-addressable area):** Locations 20H to 2FH
+  - **Special Function Registers (SFRs): ** Many SFRs have individual bits that control specific hardware functions.
+
+**Key Points**
+
+- Bit addresses range from 00H to 7FH.
+- Bit addressing uses a direct addressing approach, where the instruction includes the full bit address.
+
+**Instructions for Bit Addressing**
+
+- **SETB:** Sets a specified bit to 1.
+- **CLR:** Clears a specified bit to 0.
+- **CPL:** Complements a specified bit (changes 0 to 1, or 1 to 0).
+
+**Examples**
+
+1. **Controlling a bit in the P1 SFR (Port 1):**
+
+   ```assembly
+   SETB P1.0  ; Set bit 0 of Port 1 (making output pin P1.0 go high)
+   CLR P1.5   ; Clear bit 5 of Port 1 (making output pin P1.5 go low)
+   ```
+
+2. **Checking the status of a flag bit in the TCON SFR:**
+
+   ```assembly
+   JB TF0, OVERFLOW_ROUTINE  ; Jump to 'OVERFLOW_ROUTINE' if the Timer 0 overflow flag (TF0) in the TCON register is set.
+   ```
+
+**Why Use Bit Addressing**
+
+- **Direct Hardware Control:** Modifying specific bits in SFRs allows you to configure and control various hardware peripherals of the 8051 microcontroller.
+- **Efficient use of RAM:** You can pack multiple flags or status indicators into a single byte of internal RAM.
+
+**Important Notes**
+
+- Not all SFRs are bit-addressable. You'll need to consult the 8051 datasheet for details.
+- Remember, bit addresses are different from regular byte addresses.
+
+## 8051 Instruction Set
+
+- The 8051 has a variable-length instruction set. Instructions range from 1 to 3 bytes long.
+- There are 111 core instructions in the 8051.
+- These instructions are broadly classified into the following groups:
+
+**1. Data Transfer Instructions**
+
+- **Moving data between registers:** MOV, XCH, XCHD
+- **Moving data between internal RAM and registers:** MOV
+- **Moving data to/from external RAM (if present):** MOVX
+- **Stack operations:** PUSH, POP
+- **Loading immediate values:** MOV
+- **Absolute and relative jumps:** LJMP, SJMP
+- **Conditional jumps:** JZ, JNZ, JC, JBC, etc.
+- **Subroutine calls and returns:** ACALL, LCALL, RET, RETI
+
+**2. Arithmetic Instructions**
+
+- **Addition:** ADD, ADDC (add with carry)
+- **Subtraction:** SUBB (subtract with borrow)
+- **Increment/Decrement:** INC, DEC
+- **Multiplication:** MUL
+- **Division:** DIV
+- **Comparison:** CJNE
+
+**3. Logical Instructions**
+
+- **AND:** ANL
+- **OR:** ORL
+- **XOR:** XRL
+
+**4. Program Branching Instructions**
+
+- **Unconditional jumps:** LJMP, SJMP
+- **Conditional jumps based on flags and accumulator status:** JZ (Jump if Zero), JNZ (Jump if Not Zero), JC (Jump if Carry), etc.
+- **Conditional jumps based on single bits:** JB (Jump if Bit set), JNB (Jump if Bit Not set), JBC (Jump if Bit and Clear)
+- **Subroutine calls:** ACALL, LCALL
+- **Subroutine returns:** RET, RETI
+
+**5. Boolean or Bit Manipulation Instructions**
+
+- **Setting bits:** SETB
+- **Clearing bits:** CLR
+- **Complementing (inverting) bits:** CPL
+- **Logical operations on bits:** ANL, ORL, XRL,
+- **Conditional jumps based on individual bit states:** JB, JNB, JBC
+
+The following nomenclatures for register, data, address and variables are used while write instructions.
+
+- A: Accumulator
+- B: "B" register
+- C: Carry bit
+- Rn: Register R0 - R7 of the currently selected register bank
+- Direct: 8-bit internal direct address for data. The data could be in lower 128bytes of RAM (00 - 7FH) or it could be in the special function register (80 - FFH).
+- @Ri: 8-bit external or internal RAM address available in register R0 or R1. This is used for indirect addressing mode.
+- \#data8: Immediate 8-bit data available in the instruction.
+- \#data16: Immediate 16-bit data available in the instruction.
+- Addr11: 11-bit destination address for short absolute jump. Used by instructions AJMP & ACALL. Jump range is 2 kbyte (one page).
+- Addr16: 16-bit destination address for long call or long jump.
+- Rel: 2's complement 8-bit offset (one - byte) used for short jump (SJMP) and all conditional jumps.
+- bit: Directly addressed bit in internal RAM or SFR
+
+### Data Transfer Instructions
+
+Data transfer instructions move the content of one register to another. The register the content of which is moved remains unchanged. If they have the suffix “X” (MOVX), the data is exchanged with external memory.
+
+These instructions move data between various registers, internal RAM, external RAM, and I/O ports of the 8051. Here's a breakdown of the key types:
+
+**1. Register-to-Register Transfers**
+
+- **MOV instruction:** The most versatile data transfer instruction.
+- **Examples:**
+  - `MOV A, R5` - Copies the contents of register R5 into the accumulator.
+  - `MOV R2, #45H` - Loads the immediate value 45H into register R2.
+  - `MOV P1, A` - Copies the accumulator's contents to port P1 (output).
+
+**2. Direct Addressing**
+
+- **MOV instruction with 'direct' addressing mode:** Accesses internal RAM or Special Function Registers (SFRs).
+- **Examples:**
+  - `MOV 50H, A` - Stores the value in the accumulator to internal RAM location 50H.
+  - `MOV ACC, 55H` - Loads the byte from internal RAM location 55H into the accumulator.
+  - `MOV TMOD, #01H` - Sets Timer 0 into mode 1.
+
+**3. Indirect Addressing**
+
+- **MOV instruction using registers as pointers:** The register holds the address of the data.
+- **Examples:**
+  - `MOV A, @R0` - Copies the byte pointed to by register R0 into the accumulator.
+  - `MOV @R1, 33H` - Stores the value 33H at the address pointed to by R1.
+
+**4. External Memory Transfers**
+
+- **MOVX instruction:** Used to access external RAM.
+- **Examples:**
+  - `MOVX A, @DPTR` – Copies a byte from external RAM (address in DPTR) into the accumulator.
+  - `MOVX @DPTR, A` – Copies the contents of the accumulator into external RAM (address in DPTR).
+
+**5. Special Data Transfers**
+
+- **PUSH instruction:** Pushes data onto the stack (internal RAM).
+- **POP instruction:** Pops data off the stack.
+
+**Example: Data Sorting Routine**
+
+Consider a simple routine to sort three numbers stored at internal RAM locations 40H, 41H, and 42H:
+
+```assembly
+COMPARE: MOV A, 40H    ; Load the first number
+         MOVC A, @A+DPTR ; Load the second number (assuming DPTR points to RAM)
+         JC  SWAP        ; Jump to SWAP if the first is greater than the second
+
+         MOV A, 41H     ; Load the second number
+         MOVC A, @A+DPTR ; Load the third number
+         JC  SWAP        ; Jump to SWAP if the second is greater than the third
+         ; ... (rest of your code)
+
+SWAP:    ; ... (Code to swap values)
+```
+
+| **Mnemonic**      | **Description**                                                              | **Byte** | **Cycle** |
+| ----------------- | ---------------------------------------------------------------------------- | -------- | --------- |
+| MOV A,Rn          | Moves the register to the accumulator                                        | 1        | 1         |
+| MOV A,direct      | Moves the direct byte to the accumulator                                     | 2        | 2         |
+| MOV A,@Ri         | Moves the indirect RAM to the accumulator                                    | 1        | 2         |
+| MOV A,#data       | Moves the immediate data to the accumulator                                  | 2        | 2         |
+| MOV Rn,A          | Moves the accumulator to the register                                        | 1        | 2         |
+| MOV Rn,direct     | Moves the direct byte to the register                                        | 2        | 4         |
+| MOV Rn,#data      | Moves the immediate data to the register                                     | 2        | 2         |
+| MOV direct,A      | Moves the accumulator to the direct byte                                     | 2        | 3         |
+| MOV direct,Rn     | Moves the register to the direct byte                                        | 2        | 3         |
+| MOV direct,direct | Moves the direct byte to the direct byte                                     | 3        | 4         |
+| MOV direct,@Ri    | Moves the indirect RAM to the direct byte                                    | 2        | 4         |
+| MOV direct,#data  | Moves the immediate data to the direct byte                                  | 3        | 3         |
+| MOV @Ri,A         | Moves the accumulator to the indirect RAM                                    | 1        | 3         |
+| MOV @Ri,direct    | Moves the direct byte to the indirect RAM                                    | 2        | 5         |
+| MOV @Ri,#data     | Moves the immediate data to the indirect RAM                                 | 2        | 3         |
+| MOV DPTR,#data    | Moves a 16-bit data to the data pointer                                      | 3        | 3         |
+| MOVC A,@A+DPTR    | Moves the code byte relative to the DPTR to the accumulator (address=A+DPTR) | 1        | 3         |
+| MOVC A,@A+PC      | Moves the code byte relative to the PC to the accumulator (address=A+PC)     | 1        | 3         |
+| MOVX A,@Ri        | Moves the external RAM (8-bit address) to the accumulator                    | 1        | 3-10      |
+| MOVX A,@DPTR      | Moves the external RAM (16-bit address) to the accumulator                   | 1        | 3-10      |
+| MOVX @Ri,A        | Moves the accumulator to the external RAM (8-bit address)                    | 1        | 4-11      |
+| MOVX @DPTR,A      | Moves the accumulator to the external RAM (16-bit address)                   | 1        | 4-11      |
+| PUSH direct       | Pushes the direct byte onto the stack                                        | 2        | 4         |
+| POP direct        | Pops the direct byte from the stack/td>                                      | 2        | 3         |
+| XCH A,Rn          | Exchanges the register with the accumulator                                  | 1        | 2         |
+| XCH A,direct      | Exchanges the direct byte with the accumulator                               | 2        | 3         |
+| XCH A,@Ri         | Exchanges the indirect RAM with the accumulator                              | 1        | 3         |
+| XCHD A,@Ri        | Exchanges the low-order nibble indirect RAM with the accumulator             | 1        | 3         |
+
+Table: Data Transfer Instructions
+
+### Arithmetic Instructions
+
+Arithmetic instructions perform several basic operations such as addition, subtraction, division, multiplication etc. After execution, the result is stored in the first operand. For example: ADD A,R1 - The result of addition (A+R1) will be stored in the accumulator.
+
+**Core Arithmetic Instructions**
+
+- **ADD (Addition):** Adds the value of a source operand to the accumulator (A).
+  - Example: `ADD A, R2` (Adds contents of register R2 to the accumulator)
+- **ADDC (Addition with Carry):** Adds a source operand plus the previous carry flag (CF) to the accumulator (A)
+  - Example: `ADDC A, #30H` (Adds 30H and the carry flag to the accumulator)
+- **SUBB (Subtraction with Borrow):** Subtracts the value of a source operand and the carry flag (CF) from the accumulator (A).
+  - Example: `SUBB A, @R0` (Subtracts the value pointed to by R0 and the carry flag from the accumulator)
+- **INC (Increment):** Increments the value of a register or direct memory location by 1.
+  - Example: `INC R5` (Increments the value of register R5)
+- **DEC (Decrement):** Decrements the value of a register or direct memory location by 1.
+  - Example: `DEC 50H` (Decrements the value at internal RAM location 50H)
+- **MUL (Multiplication):** Multiplies the accumulator (A) with register B. Result stored in both the accumulator and register B.
+  - Example: `MUL AB`
+- **DIV (Division):** Divides the accumulator (A) by register B. Quotient is stored in the accumulator and the remainder in register B.
+  - Example: `DIV AB`
+
+**Important Notes**
+
+- Arithmetic operations affect the following flags:
+  - C (Carry Flag)
+  - AC (Auxiliary Carry Flag)
+  - OV (Overflow Flag)
+- **DAA (Decimal Adjust Accumulator):** A special instruction used after addition to adjust the result if you're working with BCD (Binary Coded Decimal) numbers.
+
+**Example: A Simple Calculation**
+
+```assembly
+MOV A, #25H   ; Load 25 into the accumulator
+ADD A, #10H   ; Add 10 to the accumulator (result 35 in Accumulator)
+INC A         ; Increment the accumulator (result 36 in Accumulator)
+DEC R0        ; Decrement register R0
+```
+
+| **Mnemonic**  | **Description**                                                 | **Byte** | **Cycle** |
+| ------------- | --------------------------------------------------------------- | -------- | --------- |
+| ADD A,Rn      | Adds the register to the accumulator                            | 1        | 1         |
+| ADD A,direct  | Adds the direct byte to the accumulator                         | 2        | 2         |
+| ADD A,@Ri     | Adds the indirect RAM to the accumulator                        | 1        | 2         |
+| ADD A,#data   | Adds the immediate data to the accumulator                      | 2        | 2         |
+| ADDC A,Rn     | Adds the register to the accumulator with a carry flag          | 1        | 1         |
+| ADDC A,direct | Adds the direct byte to the accumulator with a carry flag       | 2        | 2         |
+| ADDC A,@Ri    | Adds the indirect RAM to the accumulator with a carry flag      | 1        | 2         |
+| ADDC A,#data  | Adds the immediate data to the accumulator with a carry flag    | 2        | 2         |
+| SUBB A,Rn     | Subtracts the register from the accumulator with a borrow       | 1        | 1         |
+| SUBB A,direct | Subtracts the direct byte from the accumulator with a borrow    | 2        | 2         |
+| SUBB A,@Ri    | Subtracts the indirect RAM from the accumulator with a borrow   | 1        | 2         |
+| SUBB A,#data  | Subtracts the immediate data from the accumulator with a borrow | 2        | 2         |
+| INC A         | Increments the accumulator by 1                                 | 1        | 1         |
+| INC Rn        | Increments the register by 1                                    | 1        | 2         |
+| INC Rx        | Increments the direct byte by 1                                 | 2        | 3         |
+| INC @Ri       | Increments the indirect RAM by 1                                | 1        | 3         |
+| DEC A         | Decrements the accumulator by 1                                 | 1        | 1         |
+| DEC Rn        | Decrements the register by 1                                    | 1        | 1         |
+| DEC Rx        | Decrements the direct byte by 1                                 | 1        | 2         |
+| DEC @Ri       | Decrements the indirect RAM by 1                                | 2        | 3         |
+| INC DPTR      | Increments the Data Pointer by 1                                | 1        | 3         |
+| MUL AB        | Multiplies A and B                                              | 1        | 5         |
+| DIV AB        | Divides A by B                                                  | 1        | 5         |
+| DA A          | Decimal adjustment of the accumulator according to BCD code     | 1        | 1         |
+
+Table: Arithmetic Instructions
+
+### Logical Instructions
+
+**What are Logical Instructions?**
+
+Logical instructions perform logic operations on individual bits within registers or between a register and an immediate value. These include:
+
+- **AND:** Bitwise logical AND operation.
+- **OR:** Bitwise logical OR operation.
+- **XOR:** Bitwise logical XOR (Exclusive OR) operation.
+- **NOT:** Bitwise inversion (Complement)
+- **Rotate/Shift:** Move bits within a register or memory location
+
+**How they work**
+
+Each bit of the first operand is compared to the corresponding bit of the second operand according to the following truth tables:
+
+| Input A | Input B | AND | OR  | XOR |
+| ------- | ------- | --- | --- | --- |
+| 0       | 0       | 0   | 0   | 0   |
+| 0       | 1       | 0   | 1   | 1   |
+| 1       | 0       | 0   | 1   | 1   |
+| 1       | 1       | 1   | 1   | 0   |
+
+Table: Truth Table of AND, OR, XOR
+
+**Key Takeaways:**
+
+- **AND:** Outputs 1 only when both inputs are 1.
+- **OR:** Outputs 1 when at least one input is 1.
+- **XOR:** Outputs 1 when the inputs are different.
+
+**Examples**
+
+1. **Masking Bits (AND)**
+
+   ```assembly
+   MOV A, #53H  ; A = 0101 0011
+   ANL A, #0FH  ; AND with 0000 1111 (mask to keep only the lower 4 bits)
+   ; A now holds 0000 0011
+   ```
+
+2. **Setting Bits (OR)**
+
+   ```assembly
+   MOV A, #7BH  ; A = 0111 1011
+   ORL A, #80H  ; OR with 1000 0000 (set the most significant bit)
+   ; A now holds 1111 1011
+   ```
+
+3. **Toggling Bits (XOR)**
+
+   ```assembly
+   MOV A, #96H  ; A = 1001 0110
+   XOR A, #05H  ; XOR with 0000 0101 (toggle specific bits)
+   ; A now holds 1001 0011
+   ```
+
+4. **Rotating Bits**
+
+   ```assembly
+   MOV A, #0AH  ; A = 0000 1010
+   RL A         ; Rotate left through carry (assume Carry flag is 0)
+   ; A now holds 0001 0100
+   ```
+
+**Common Uses**
+
+- **Testing if specific bits are set or clear.**
+- **Manipulating flags (e.g., setting the Carry flag).**
+- **Isolating sections of data within a byte.**
+- **Implementing simple cryptographic functions.**
+
+| **Mnemonic**      | **Description**                                     | **Byte** | **Cycle** |
+| ----------------- | --------------------------------------------------- | -------- | --------- |
+| ANL A,Rn          | AND register to accumulator                         | 1        | 1         |
+| ANL A,direct      | AND direct byte to accumulator                      | 2        | 2         |
+| ANL A,@Ri         | AND indirect RAM to accumulator                     | 1        | 2         |
+| ANL A,#data       | AND immediate data to accumulator                   | 2        | 2         |
+| ANL direct,A      | AND accumulator to direct byte                      | 2        | 3         |
+| ANL direct,#data  | AND immediae data to direct register                | 3        | 4         |
+| ORL A,Rn          | OR register to accumulator                          | 1        | 1         |
+| ORL A,direct      | OR direct byte to accumulator                       | 2        | 2         |
+| ORL A,@Ri         | OR indirect RAM to accumulator                      | 1        | 2         |
+| ORL direct,A      | OR accumulator to direct byte                       | 2        | 3         |
+| ORL direct,#data  | OR immediate data to direct byte                    | 3        | 4         |
+| XRL A,Rn          | Exclusive OR register to accumulator                | 1        | 1         |
+| XRL A,direct      | Exclusive OR direct byte to accumulator             | 2        | 2         |
+| XRL A,@Ri         | Exclusive OR indirect RAM to accumulator            | 1        | 2         |
+| XRL A,#data       | Exclusive OR immediate data to accumulator          | 2        | 2         |
+| XRL direct,A      | Exclusive OR accumulator to direct byte             | 2        | 3         |
+| XORL direct,#data | Exclusive OR immediate data to direct byte          | 3        | 4         |
+| CLR A             | Clears the accumulator                              | 1        | 1         |
+| CPL A             | Complements the accumulator (1=0, 0=1)              | 1        | 1         |
+| SWAP A            | Swaps nibbles within the accumulator                | 1        | 1         |
+| RL A              | Rotates bits in the accumulator left                | 1        | 1         |
+| RLC A             | Rotates bits in the accumulator left through carry  | 1        | 1         |
+| RR A              | Rotates bits in the accumulator right               | 1        | 1         |
+| RRC A             | Rotates bits in the accumulator right through carry | 1        | 1         |
+
+Table: Logical Instructions
+
+### Program Branching Instructions
+
+Program Branching instructions, often also called jump instructions, allow you to alter the normal sequential flow of program execution. They cause the Program Counter (PC) to jump to a different memory location, breaking the usual 'execute the next instruction' pattern.
+
+**Types of Program Branching Instructions**
+
+1. **Unconditional Branching:** upon their execution a jump to a new location from where the program continues execution is executed.
+
+   - **LJMP (Long Jump):** Jumps to the specified 16-bit address.
+     - _Example:_ `LJMP 2050H` (jumps to memory location 2050H)
+
+2. **Conditional Branching:** a jump to a new program location is executed only if a specified condition is met. Otherwise, the program normally proceeds with the next instruction.
+
+   - **These depend on the status of flags (Carry, Parity, Overflow, etc.) set by previous operations**
+   - **Examples:**
+     - `JC LABEL` (Jump if Carry flag is set)
+     - `JNC LABEL` (Jump if Carry flag is not set)
+     - `JZ LABEL` (Jump if Zero flag is set)
+     - `JNZ LABEL` (Jump if Zero flag is not set)
+
+3. **Short Jump (Relative Jump)**
+
+   - **SJMP:** Jumps to an address within a limited range relative (+127 or -128 bytes) to the current instruction.
+   - _Example:_ `SJMP LOOP_START` (jumps to a label relatively nearby)
+
+**Example: Conditional Loop**
+
+```assembly
+MOV R0, #10    ; Initialize a counter
+LOOP:
+   ; ... some code here ...
+   DJNZ R0, LOOP  ; Decrement and jump if not zero
+```
+
+**Explanation**
+
+1. The counter register R0 is loaded with 10.
+2. The code in the `LOOP` section executes.
+3. `DJNZ R0, LOOP`
+   - Decrements R0 by one.
+   - If the Zero flag is NOT set (R0 is not zero), jumps back to the `LOOP` label.
+
+**Key Points**
+
+- Branching instructions are core to creating loops, decision structures (if-else), and subroutines within programs.
+- The destination of a jump can be an explicit address (e.g., `LJMP 2050H`) or often a label that the assembler translates to the correct address.
+
+| **Mnemonic**       | **Description**                                                                  | **Byte** | **Cycle** |
+| ------------------ | -------------------------------------------------------------------------------- | -------- | --------- |
+| ACALL addr11       | Absolute subroutine call                                                         | 2        | 6         |
+| LCALL addr16       | Long subroutine call                                                             | 3        | 6         |
+| RET                | Returns from subroutine                                                          | 1        | 4         |
+| RETI               | Returns from interrupt subroutine                                                | 1        | 4         |
+| AJMP addr11        | Absolute jump                                                                    | 2        | 3         |
+| LJMP addr16        | Long jump                                                                        | 3        | 4         |
+| SJMP rel           | Short jump (from –128 to +127 locations relative to the following instruction)   | 2        | 3         |
+| JC rel             | Jump if carry flag is set. Short jump.                                           | 2        | 3         |
+| JNC rel            | Jump if carry flag is not set. Short jump.                                       | 2        | 3         |
+| JB bit,rel         | Jump if direct bit is set. Short jump.                                           | 3        | 4         |
+| JBC bit,rel        | Jump if direct bit is set and clears bit. Short jump.                            | 3        | 4         |
+| JMP @A+DPTR        | Jump indirect relative to the DPTR                                               | 1        | 2         |
+| JZ rel             | Jump if the accumulator is zero. Short jump.                                     | 2        | 3         |
+| JNZ rel            | Jump if the accumulator is not zero. Short jump.                                 | 2        | 3         |
+| CJNE A,direct,rel  | Compares direct byte to the accumulator and jumps if not equal. Short jump.      | 3        | 4         |
+| CJNE A,#data,rel   | Compares immediate data to the accumulator and jumps if not equal. Short jump.   | 3        | 4         |
+| CJNE Rn,#data,rel  | Compares immediate data to the register and jumps if not equal. Short jump.      | 3        | 4         |
+| CJNE @Ri,#data,rel | Compares immediate data to indirect register and jumps if not equal. Short jump. | 3        | 4         |
+| DJNZ Rn,rel        | Decrements register and jumps if not 0. Short jump.                              | 2        | 3         |
+| DJNZ Rx,rel        | Decrements direct byte and jump if not 0. Short jump.                            | 3        | 4         |
+| NOP                | No operation                                                                     | 1        | 1         |
+
+Table: Program Branching Instructions
+
+### Boolean or Bit-manipulation Instructions
+
+Similar to logic instructions, bit-oriented instructions perform logic operations. The difference is that these are performed upon single bits.
+
+**Core Boolean/Bit Instructions**
+
+- **ANL (Logical AND):** Performs a bitwise AND operation between a source operand and the accumulator.
+  - Example: `ANL A, 52H` (ANDs the accumulator with the value 52H)
+  - Example: `ANL P1.2, C` (ANDs port bit P1.2 with the Carry flag)
+- **ORL (Logical OR):** Performs a bitwise OR operation between a source operand and the accumulator.
+  - Example: `ORL A, #03H` (ORs the accumulator with the value 03H)
+  - Example: `ORL 25H, C` (ORs the memory location 25H with the Carry flag)
+- **XRL (Logical XOR):** Performs a bitwise XOR operation between a source operand and the accumulator.
+  - Example: `XRL A, R3` (XORs the accumulator with register R3)
+- **CLR (Clear):** Sets a specified register or bit to 0.
+  - Example: `CLR A` (Clears the accumulator)
+  - Example: `CLR P2.0` (Sets the bit P2.0 to zero)
+- **SETB (Set):** Sets a specified bit to 1.
+  - Example: `SETB 30H` (Sets a bit in the bit-addressable area of RAM)
+  - Example: `SETB P3.7` (Sets the bit P3.7 to one)
+- **CPL (Complement):** Inverts the value of a particular bit (changes 0 to 1 and 1 to 0).
+  - Example: `CPL A` (Inverts all bits in the accumulator)
+  - Example: `CPL P1.5` (Inverts the bit P1.5)
+
+**Bit-Based Conditional Jumps**
+
+- **JB (Jump if Bit set):** Jumps if the specified bit is '1'.
+  - Example: `JB P2.3, LABEL`
+- **JNB (Jump if Bit not set):** Jumps if the specified bit is '0'.
+- **JBC (Jump if Bit set and Clear):** Jumps if the specified bit is '1', then clears the bit.
+
+**Example: Controlling an Output Pin**
+
+```assembly
+MOV P1, #00H    ; Initialize Port 1 output as 0
+
+; ... some other code ...
+
+SETB P1.5       ; Turn ON the output connected to P1.5
+
+; ... more code ...
+
+CLR P1.5       ; Turn OFF the output connected to P1.5
+```
+
+**Important Notes**
+
+- Bit manipulation instructions work with the bit-addressable areas of internal RAM (20H-2FH) and specific bits within SFRs.
+- Bit operations often control hardware functionality, flags, and status bits.
+
+| **Mnemonic** | **Description**                                 | **Byte** | **Cycle** |
+| ------------ | ----------------------------------------------- | -------- | --------- |
+| CLR C        | Clears the carry flag                           | 1        | 1         |
+| CLR bit      | Clears the direct bit                           | 2        | 3         |
+| SETB C       | Sets the carry flag                             | 1        | 1         |
+| SETB bit     | Sets the direct bit                             | 2        | 3         |
+| CPL C        | Complements the carry flag                      | 1        | 1         |
+| CPL bit      | Complements the direct bit                      | 2        | 3         |
+| ANL C,bit    | AND direct bit to the carry flag                | 2        | 2         |
+| ANL C,/bit   | AND complements of direct bit to the carry flag | 2        | 2         |
+| ORL C,bit    | OR direct bit to the carry flag                 | 2        | 2         |
+| ORL C,/bit   | OR complements of direct bit to the carry flag  | 2        | 2         |
+| MOV C,bit    | Moves the direct bit to the carry flag          | 2        | 2         |
+| MOV bit,C    | Moves the carry flag to the direct bit          | 2        | 3         |
+
+Table: Bit-manipulation Instructions
+
+### Machine Control
+
+These instructions don't primarily target data manipulation, but instead, they control the processor's behavior.
+
+**Key Machine Control Instructions**
+
+- **NOP (No Operation):** Does nothing for one machine cycle (consumes some time). Uses:
+  - Introducing small delays
+  - Aligning instructions in memory
+- **AJMP (Absolute Jump):** Similar to LJMP, but only allows a 2-byte address, limiting jump range. It's designed for jumping within code segments.
+- **ACALL (Absolute Call):** Similar to LCALL, but uses a 2-byte address for calling subroutines within code segments.
+- **RET (Return):** Returns from a subroutine called using ACALL or LCALL.
+- **RETI (Return from Interrupt):** Returns from an interrupt service routine.
+- **SJMP (Short Jump):** Allows relative jumps within a range of -128 to +127 bytes from the current instruction. Used for shorter jumps within code.
+- **EI (Enable Interrupt):** Globally enables interrupts.
+- **DI (Disable Interrupt):** Globally disables interrupts.
+- **SIM (Set Interrupt Mask):** Used for finer-grained control of specific interrupt sources (setting the interrupt mask) and sending serial data out.
+- **RIM (Read Interrupt Mask):** Used to read the status of the interrupt mask and read serial data in.
+- **HLT (Halt):** Places the microcontroller in a low-power halt state. An interrupt or reset is needed to resume execution.
+
+**Note:** SIM and RIM provide more specialized functionality than simple enable and disable.
+
+**Examples**
+
+1. **Generating a small delay:**
+
+   ```assembly
+   MOV R0, #50   ; Load counter value
+   DELAY: NOP    ; One machine cycle delay
+          DJNZ R0, DELAY ; Decrement and jump if not zero
+   ```
+
+2. **Enabling interrupts:**
+
+   ```assembly
+   EI   ; Enable interrupts globally
+   ```
+
+3. **Handling an interrupt routine:**
+
+   ```assembly
+   ORG 0013H  ; Interrupt vector for timer 1
+   ; Timer 1 Interrupt Service Routine (ISR)
+   ; ... Code to handle the timer interrupt
+   RETI       ; Return from interrupt
+   ```
+
+**Important Considerations**
+
+- Incorrect use of machine control instructions can lead to unexpected behavior of your microcontroller.
+- Interrupts require careful planning to avoid conflicts and ensure proper program execution.
+
+| Mnemonic     | Description                                     | Bytes | Cycles |
+| ------------ | ----------------------------------------------- | ----- | ------ |
+| NOP          | No Operation                                    | 1     | 1      |
+| EJMP addr16  | Extended Jump (not frequently used)             | 3     | 2      |
+| AJMP addr11  | Absolute Jump (within code segment)             | 2     | 2      |
+| ACALL addr11 | Absolute Call (within code segment)             | 2     | 2      |
+| RET          | Return from subroutine                          | 1     | 2      |
+| RETI         | Return from interrupt                           | 1     | 2      |
+| SJMP rel8    | Short Relative Jump (-128 to +127 range)        | 2     | 2      |
+| EI           | Enable Interrupts (globally)                    | 1     | 1      |
+| DI           | Disable Interrupts (globally)                   | 1     | 1      |
+| SIM          | Set Interrupt Mask (specific interrupt control) | 1     | 1      |
+| RIM          | Read Interrupt Mask (specific interrupt status) | 1     | 1      |
+| HLT          | Halt (low-power mode)                           | 1     | 1      |
+
+Table: Machine Control Instructions
+
+## Assembly Language Programming Examples
+
+### Refer Dedicated Notes for Programming Examples

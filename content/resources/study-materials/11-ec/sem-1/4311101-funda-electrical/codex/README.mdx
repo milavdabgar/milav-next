@@ -1,0 +1,15 @@
+# Slides Assets (4311101) — Codex
+
+This folder contains unit‑wise SVG diagrams for Fundamentals of Electrical Engineering (4311101).
+
+Usage in Markdown/Slidev:
+
+- Markdown: `![](./unit-2/impedance-triangle.svg)`
+- Slidev (Markdown): `![](/content/resources/study-materials/11-ec/sem-1/4311101-funda-electrical/codex/unit-2/impedance-triangle.svg)`
+
+Tips
+
+- Prefer relative paths when slides live near this repo, or absolute repo paths when building from elsewhere.
+- Gujarati variants use the `.gu.svg` suffix, e.g., `impedance-triangle.gu.svg`.
+- Index launchers: open `unit-map.svg` or a unit’s `index.svg` to browse.
+

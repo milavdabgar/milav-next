@@ -1,0 +1,1431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Lecture 21: Stream API and Parallel Processing | Java Programming (4343203)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <style>
+        .reveal { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; height: 90vh; }
+        .reveal .slides section { text-align: left; font-size: 0.85em; }
+        .reveal h1, .reveal h2, .reveal h3 { color: #2c3e50; text-align: center; }
+        .reveal h1 { font-size: 2.2em; }
+        .reveal h2 { font-size: 1.8em; margin-bottom: 30px; }
+        .reveal h3 { font-size: 1.4em; margin-bottom: 20px; }
+        .reveal pre { width: 100%; font-size: 0.75em; line-height: 1.2; }
+        .reveal code { background-color: #f8f9fa; padding: 2px 4px; border-radius: 3px; color: #e83e8c; }
+        .reveal .hljs { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 5px; padding: 15px; }
+        .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+        .highlight-box { background-color: #e8f4fd; border-left: 5px solid #3498db; padding: 15px; margin: 15px 0; border-radius: 5px; }
+        .warning-box { background-color: #fff3cd; border-left: 5px solid #ffc107; padding: 15px; margin: 15px 0; border-radius: 5px; }
+        .success-box { background-color: #d4edda; border-left: 5px solid #28a745; padding: 15px; margin: 15px 0; border-radius: 5px; }
+        .reveal ul, .reveal ol { margin-left: 1em; }
+        .reveal li { margin-bottom: 8px; }
+        .gtu-question { background-color: #f0f8ff; border: 2px solid #4682b4; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        .gtu-question h4 { color: #4682b4; margin: 0 0 15px 0; font-size: 1.1em; }
+        .reveal table { font-size: 0.7em; border-collapse: collapse; width: 100%; margin: 15px 0; }
+        .reveal td, .reveal th { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        .reveal th { background-color: #f2f2f2; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- Title Slide -->
+            <section>
+                <h1>Stream API and Parallel Processing</h1>
+                <h3>Java Programming (4343203)</h3>
+                <h3>Lecture 21</h3>
+                <p style="text-align: center; margin-top: 50px;">
+                    <strong>Unit 5: Modern Java Features - Streams</strong><br>
+                    GTU Computer Engineering Semester 4
+                </p>
+            </section>
+
+            <!-- Learning Objectives -->
+            <section>
+                <h2>Learning Objectives</h2>
+                <ul>
+                    <li>Understand Java 8 Stream API concepts and benefits</li>
+                    <li>Master intermediate and terminal stream operations</li>
+                    <li>Implement data processing pipelines with streams</li>
+                    <li>Work with collectors and grouping operations</li>
+                    <li>Apply parallel streams for performance optimization</li>
+                    <li>Compare traditional vs functional programming approaches</li>
+                </ul>
+                <div class="highlight-box">
+                    <strong>Focus:</strong> Modern data processing techniques using Java's Stream API for efficient and readable code.
+                </div>
+            </section>
+
+            <!-- Introduction to Streams -->
+            <section>
+                <h2>What are Java Streams?</h2>
+                <div class="two-column">
+                    <div>
+                        <h3>Traditional Approach</h3>
+                        <pre><code class="java">
+List<String> names = Arrays.asList(
+    "Alice", "Bob", "Charlie", "Diana", "Eve"
+);
+
+// Filter names starting with 'A' and convert to uppercase
+List<String> result = new ArrayList<>();
+for (String name : names) {
+    if (name.startsWith("A")) {
+        result.add(name.toUpperCase());
+    }
+}
+
+// Sort the result
+Collections.sort(result);
+
+System.out.println(result); // [ALICE]
+                        </code></pre>
+                        
+                        <h3>Problems with Traditional Approach</h3>
+                        <ul>
+                            <li>Verbose and imperative</li>
+                            <li>Multiple intermediate collections</li>
+                            <li>Hard to parallelize</li>
+                            <li>Not easily composable</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Stream API Approach</h3>
+                        <pre><code class="java">
+List<String> names = Arrays.asList(
+    "Alice", "Bob", "Charlie", "Diana", "Eve"
+);
+
+// Same operation using streams
+List<String> result = names.stream()
+    .filter(name -> name.startsWith("A"))
+    .map(String::toUpperCase)
+    .sorted()
+    .collect(Collectors.toList());
+
+System.out.println(result); // [ALICE]
+
+// Even more concise
+names.stream()
+     .filter(name -> name.startsWith("A"))
+     .map(String::toUpperCase)
+     .sorted()
+     .forEach(System.out::println);
+                        </code></pre>
+                        
+                        <div class="success-box">
+                            <strong>Stream Benefits:</strong>
+                            <ul>
+                                <li>Functional programming style</li>
+                                <li>Lazy evaluation</li>
+                                <li>Easy parallelization</li>
+                                <li>Composable operations</li>
+                                <li>More readable code</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Stream Creation -->
+            <section>
+                <h2>Creating Streams</h2>
+                <pre><code class="java">
+import java.util.*;
+import java.util.stream.*;
+
+public class StreamCreationDemo {
+    public static void main(String[] args) {
+        System.out.println("=== Stream Creation Methods ===\n");
+        
+        // 1. From collections
+        List<String> list = Arrays.asList("Java", "Python", "C++", "JavaScript");
+        Stream<String> streamFromList = list.stream();
+        
+        Set<Integer> set = Set.of(1, 2, 3, 4, 5);
+        Stream<Integer> streamFromSet = set.stream();
+        
+        // 2. From arrays
+        String[] array = {"Apple", "Banana", "Cherry"};
+        Stream<String> streamFromArray = Arrays.stream(array);
+        
+        int[] intArray = {1, 2, 3, 4, 5};
+        IntStream intStreamFromArray = Arrays.stream(intArray);
+        
+        // 3. Using Stream.of()
+        Stream<String> streamOf = Stream.of("Hello", "World", "Streams");
+        Stream<Integer> numberStream = Stream.of(10, 20, 30, 40, 50);
+        
+        // 4. Empty stream
+        Stream<String> emptyStream = Stream.empty();
+        
+        // 5. Infinite streams
+        Stream<Integer> infiniteStream = Stream.iterate(0, n -> n + 2); // 0, 2, 4, 6...
+        Stream<Double> randomStream = Stream.generate(Math::random);
+        
+        // 6. Range streams
+        IntStream range = IntStream.range(1, 10); // 1 to 9
+        IntStream rangeClosed = IntStream.rangeClosed(1, 10); // 1 to 10
+        
+        // 7. Stream from String
+        IntStream charStream = "Hello".chars();
+        
+        // 8. Stream from file lines
+        // Stream<String> fileStream = Files.lines(Paths.get("file.txt"));
+        
+        // Demonstrate usage
+        System.out.println("--- Examples ---");
+        
+        // From list
+        System.out.print("Languages: ");
+        list.stream().forEach(lang -> System.out.print(lang + " "));
+        System.out.println();
+        
+        // From array
+        System.out.print("Fruits: ");
+        Arrays.stream(array).forEach(fruit -> System.out.print(fruit + " "));
+        System.out.println();
+        
+        // Range stream
+        System.out.print("Range 1-5: ");
+        IntStream.rangeClosed(1, 5).forEach(n -> System.out.print(n + " "));
+        System.out.println();
+        
+        // Infinite stream (limited)
+        System.out.print("First 5 even numbers: ");
+        Stream.iterate(0, n -> n + 2)
+              .limit(5)
+              .forEach(n -> System.out.print(n + " "));
+        System.out.println();
+        
+        // Random numbers
+        System.out.print("3 random numbers: ");
+        Stream.generate(Math::random)
+              .limit(3)
+              .forEach(n -> System.out.printf("%.2f ", n));
+        System.out.println();
+        
+        // Character stream
+        System.out.print("Characters in 'Stream': ");
+        "Stream".chars()
+               .mapToObj(c -> (char) c)
+               .forEach(c -> System.out.print(c + " "));
+        System.out.println();
+        
+        System.out.println();
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- Stream Operations -->
+            <section>
+                <h2>Stream Operations Overview</h2>
+                <div class="two-column">
+                    <div>
+                        <h3>Intermediate Operations</h3>
+                        <p>Return a stream (lazy evaluation)</p>
+                        
+                        <table>
+                            <tr>
+                                <th>Operation</th>
+                                <th>Description</th>
+                            </tr>
+                            <tr>
+                                <td>filter()</td>
+                                <td>Filter elements by predicate</td>
+                            </tr>
+                            <tr>
+                                <td>map()</td>
+                                <td>Transform elements</td>
+                            </tr>
+                            <tr>
+                                <td>flatMap()</td>
+                                <td>Flatten nested streams</td>
+                            </tr>
+                            <tr>
+                                <td>distinct()</td>
+                                <td>Remove duplicates</td>
+                            </tr>
+                            <tr>
+                                <td>sorted()</td>
+                                <td>Sort elements</td>
+                            </tr>
+                            <tr>
+                                <td>limit()</td>
+                                <td>Limit to n elements</td>
+                            </tr>
+                            <tr>
+                                <td>skip()</td>
+                                <td>Skip first n elements</td>
+                            </tr>
+                            <tr>
+                                <td>peek()</td>
+                                <td>Debug/side effects</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div>
+                        <h3>Terminal Operations</h3>
+                        <p>Produce result (trigger evaluation)</p>
+                        
+                        <table>
+                            <tr>
+                                <th>Operation</th>
+                                <th>Description</th>
+                            </tr>
+                            <tr>
+                                <td>collect()</td>
+                                <td>Collect to collection</td>
+                            </tr>
+                            <tr>
+                                <td>forEach()</td>
+                                <td>Execute action on each</td>
+                            </tr>
+                            <tr>
+                                <td>reduce()</td>
+                                <td>Reduce to single value</td>
+                            </tr>
+                            <tr>
+                                <td>count()</td>
+                                <td>Count elements</td>
+                            </tr>
+                            <tr>
+                                <td>min()/max()</td>
+                                <td>Find minimum/maximum</td>
+                            </tr>
+                            <tr>
+                                <td>anyMatch()</td>
+                                <td>Any element matches</td>
+                            </tr>
+                            <tr>
+                                <td>allMatch()</td>
+                                <td>All elements match</td>
+                            </tr>
+                            <tr>
+                                <td>noneMatch()</td>
+                                <td>No elements match</td>
+                            </tr>
+                            <tr>
+                                <td>findFirst()</td>
+                                <td>Find first element</td>
+                            </tr>
+                            <tr>
+                                <td>findAny()</td>
+                                <td>Find any element</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Intermediate Operations Demo -->
+            <section>
+                <h2>Intermediate Operations</h2>
+                <pre><code class="java">
+import java.util.*;
+import java.util.stream.*;
+
+public class IntermediateOperationsDemo {
+    public static void main(String[] args) {
+        System.out.println("=== Intermediate Operations Demo ===\n");
+        
+        List<String> words = Arrays.asList(
+            "java", "stream", "api", "functional", "programming", 
+            "lambda", "java", "collection", "stream", "filter"
+        );
+        
+        List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+        
+        // 1. filter() - Filter elements based on predicate
+        System.out.println("--- filter() ---");
+        System.out.println("Original words: " + words);
+        
+        List<String> longWords = words.stream()
+            .filter(word -> word.length() > 4)
+            .collect(Collectors.toList());
+        System.out.println("Words longer than 4 chars: " + longWords);
+        
+        List<Integer> evenNumbers = numbers.stream()
+            .filter(n -> n % 2 == 0)
+            .collect(Collectors.toList());
+        System.out.println("Even numbers: " + evenNumbers);
+        
+        // 2. map() - Transform each element
+        System.out.println("\n--- map() ---");
+        List<String> upperCaseWords = words.stream()
+            .map(String::toUpperCase)
+            .collect(Collectors.toList());
+        System.out.println("Uppercase words: " + upperCaseWords);
+        
+        List<Integer> squares = numbers.stream()
+            .map(n -> n * n)
+            .collect(Collectors.toList());
+        System.out.println("Squares: " + squares);
+        
+        // Transform to different type
+        List<Integer> wordLengths = words.stream()
+            .map(String::length)
+            .collect(Collectors.toList());
+        System.out.println("Word lengths: " + wordLengths);
+        
+        // 3. distinct() - Remove duplicates
+        System.out.println("\n--- distinct() ---");
+        List<String> uniqueWords = words.stream()
+            .distinct()
+            .collect(Collectors.toList());
+        System.out.println("Unique words: " + uniqueWords);
+        
+        // 4. sorted() - Sort elements
+        System.out.println("\n--- sorted() ---");
+        List<String> sortedWords = words.stream()
+            .distinct()
+            .sorted()
+            .collect(Collectors.toList());
+        System.out.println("Sorted unique words: " + sortedWords);
+        
+        // Custom sorting
+        List<String> sortedByLength = words.stream()
+            .distinct()
+            .sorted(Comparator.comparing(String::length))
+            .collect(Collectors.toList());
+        System.out.println("Sorted by length: " + sortedByLength);
+        
+        // 5. limit() and skip()
+        System.out.println("\n--- limit() and skip() ---");
+        List<Integer> firstFive = numbers.stream()
+            .limit(5)
+            .collect(Collectors.toList());
+        System.out.println("First 5 numbers: " + firstFive);
+        
+        List<Integer> skipFirstThree = numbers.stream()
+            .skip(3)
+            .collect(Collectors.toList());
+        System.out.println("Skip first 3: " + skipFirstThree);
+        
+        // Pagination example
+        List<String> page2 = words.stream()
+            .distinct()
+            .sorted()
+            .skip(3)  // Skip first 3 (page 1)
+            .limit(3) // Take next 3 (page 2)
+            .collect(Collectors.toList());
+        System.out.println("Page 2 (items 4-6): " + page2);
+        
+        // 6. peek() - Debug intermediate results
+        System.out.println("\n--- peek() for debugging ---");
+        List<String> processedWords = words.stream()
+            .filter(word -> word.length() > 4)
+            .peek(word -> System.out.println("After filter: " + word))
+            .map(String::toUpperCase)
+            .peek(word -> System.out.println("After map: " + word))
+            .distinct()
+            .peek(word -> System.out.println("After distinct: " + word))
+            .collect(Collectors.toList());
+        System.out.println("Final result: " + processedWords);
+        
+        // 7. flatMap() - Flatten nested structures
+        System.out.println("\n--- flatMap() ---");
+        List<List<String>> nestedLists = Arrays.asList(
+            Arrays.asList("a", "b"),
+            Arrays.asList("c", "d", "e"),
+            Arrays.asList("f")
+        );
+        
+        List<String> flattened = nestedLists.stream()
+            .flatMap(List::stream)
+            .collect(Collectors.toList());
+        System.out.println("Nested lists: " + nestedLists);
+        System.out.println("Flattened: " + flattened);
+        
+        // flatMap with splitting strings
+        List<String> sentences = Arrays.asList(
+            "Hello World",
+            "Java Streams",
+            "Functional Programming"
+        );
+        
+        List<String> allWords = sentences.stream()
+            .flatMap(sentence -> Arrays.stream(sentence.split(" ")))
+            .collect(Collectors.toList());
+        System.out.println("All words from sentences: " + allWords);
+        
+        // Complex pipeline example
+        System.out.println("\n--- Complex Pipeline ---");
+        List<String> result = words.stream()
+            .filter(word -> word.length() >= 4)     // Only words with 4+ chars
+            .map(String::toUpperCase)               // Convert to uppercase
+            .distinct()                             // Remove duplicates
+            .sorted(Comparator.comparing(String::length)
+                   .thenComparing(String::compareTo)) // Sort by length, then alphabetically
+            .peek(word -> System.out.println("Processing: " + word))
+            .collect(Collectors.toList());
+        
+        System.out.println("Final processed result: " + result);
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- Terminal Operations Demo -->
+            <section>
+                <h2>Terminal Operations</h2>
+                <pre><code class="java">
+public class TerminalOperationsDemo {
+    public static void main(String[] args) {
+        System.out.println("=== Terminal Operations Demo ===\n");
+        
+        List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+        List<String> words = Arrays.asList("apple", "banana", "cherry", "date", "elderberry");
+        
+        // 1. collect() - Collect to various collections
+        System.out.println("--- collect() ---");
+        
+        // To List
+        List<Integer> evenNumbers = numbers.stream()
+            .filter(n -> n % 2 == 0)
+            .collect(Collectors.toList());
+        System.out.println("Even numbers (List): " + evenNumbers);
+        
+        // To Set
+        Set<String> upperCaseWords = words.stream()
+            .map(String::toUpperCase)
+            .collect(Collectors.toSet());
+        System.out.println("Uppercase words (Set): " + upperCaseWords);
+        
+        // To Map
+        Map<String, Integer> wordLengthMap = words.stream()
+            .collect(Collectors.toMap(
+                word -> word,           // Key mapper
+                String::length          // Value mapper
+            ));
+        System.out.println("Word-Length Map: " + wordLengthMap);
+        
+        // 2. forEach() and forEachOrdered()
+        System.out.println("\n--- forEach() ---");
+        System.out.print("Numbers: ");
+        numbers.stream()
+               .filter(n -> n <= 5)
+               .forEach(n -> System.out.print(n + " "));
+        System.out.println();
+        
+        // 3. reduce() - Reduce to single value
+        System.out.println("\n--- reduce() ---");
+        
+        // Sum using reduce
+        Optional<Integer> sum = numbers.stream()
+            .reduce(Integer::sum);
+        System.out.println("Sum: " + sum.orElse(0));
+        
+        // Sum with identity value
+        Integer sumWithIdentity = numbers.stream()
+            .reduce(0, Integer::sum);
+        System.out.println("Sum with identity: " + sumWithIdentity);
+        
+        // Product
+        Integer product = numbers.stream()
+            .reduce(1, (a, b) -> a * b);
+        System.out.println("Product: " + product);
+        
+        // Concatenate strings
+        String concatenated = words.stream()
+            .reduce("", (a, b) -> a + b + " ");
+        System.out.println("Concatenated: " + concatenated.trim());
+        
+        // 4. count()
+        System.out.println("\n--- count() ---");
+        long count = words.stream()
+            .filter(word -> word.startsWith("a"))
+            .count();
+        System.out.println("Words starting with 'a': " + count);
+        
+        // 5. min() and max()
+        System.out.println("\n--- min() and max() ---");
+        Optional<Integer> min = numbers.stream().min(Integer::compareTo);
+        Optional<Integer> max = numbers.stream().max(Integer::compareTo);
+        
+        System.out.println("Min: " + min.orElse(0));
+        System.out.println("Max: " + max.orElse(0));
+        
+        // Custom comparator
+        Optional<String> longestWord = words.stream()
+            .max(Comparator.comparing(String::length));
+        System.out.println("Longest word: " + longestWord.orElse(""));
+        
+        Optional<String> shortestWord = words.stream()
+            .min(Comparator.comparing(String::length));
+        System.out.println("Shortest word: " + shortestWord.orElse(""));
+        
+        // 6. anyMatch(), allMatch(), noneMatch()
+        System.out.println("\n--- Match Operations ---");
+        
+        boolean hasEvenNumber = numbers.stream()
+            .anyMatch(n -> n % 2 == 0);
+        System.out.println("Has even number: " + hasEvenNumber);
+        
+        boolean allPositive = numbers.stream()
+            .allMatch(n -> n > 0);
+        System.out.println("All numbers positive: " + allPositive);
+        
+        boolean noneNegative = numbers.stream()
+            .noneMatch(n -> n < 0);
+        System.out.println("None negative: " + noneNegative);
+        
+        // String matching
+        boolean hasLongWord = words.stream()
+            .anyMatch(word -> word.length() > 8);
+        System.out.println("Has word longer than 8 chars: " + hasLongWord);
+        
+        // 7. findFirst() and findAny()
+        System.out.println("\n--- Find Operations ---");
+        
+        Optional<Integer> firstEven = numbers.stream()
+            .filter(n -> n % 2 == 0)
+            .findFirst();
+        System.out.println("First even number: " + firstEven.orElse(-1));
+        
+        Optional<String> anyLongWord = words.stream()
+            .filter(word -> word.length() > 5)
+            .findAny();
+        System.out.println("Any long word: " + anyLongWord.orElse("none"));
+        
+        // 8. Complex example combining multiple operations
+        System.out.println("\n--- Complex Analysis ---");
+        
+        List<Person> people = Arrays.asList(
+            new Person("Alice", 25, 50000),
+            new Person("Bob", 30, 60000),
+            new Person("Charlie", 35, 70000),
+            new Person("Diana", 28, 55000),
+            new Person("Eve", 32, 65000)
+        );
+        
+        // Find average salary of people older than 28
+        OptionalDouble averageSalary = people.stream()
+            .filter(person -> person.getAge() > 28)
+            .mapToDouble(Person::getSalary)
+            .average();
+        
+        System.out.printf("Average salary of people > 28: $%.2f%n", 
+                         averageSalary.orElse(0.0));
+        
+        // Find highest paid person
+        Optional<Person> highestPaid = people.stream()
+            .max(Comparator.comparing(Person::getSalary));
+        
+        System.out.println("Highest paid: " + highestPaid
+            .map(Person::getName).orElse("None"));
+        
+        // Count people by age groups
+        Map<String, Long> ageGroups = people.stream()
+            .collect(Collectors.groupingBy(
+                person -> person.getAge() < 30 ? "Young" : "Experienced",
+                Collectors.counting()
+            ));
+        
+        System.out.println("Age groups: " + ageGroups);
+    }
+}
+
+class Person {
+    private String name;
+    private int age;
+    private double salary;
+    
+    public Person(String name, int age, double salary) {
+        this.name = name;
+        this.age = age;
+        this.salary = salary;
+    }
+    
+    public String getName() { return name; }
+    public int getAge() { return age; }
+    public double getSalary() { return salary; }
+    
+    @Override
+    public String toString() {
+        return String.format("%s(age=%d, salary=%.0f)", name, age, salary);
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- Collectors -->
+            <section>
+                <h2>Advanced Collectors</h2>
+                <pre><code class="java">
+public class CollectorsDemo {
+    public static void main(String[] args) {
+        System.out.println("=== Advanced Collectors Demo ===\n");
+        
+        List<Employee> employees = Arrays.asList(
+            new Employee("Alice", "Engineering", 75000, 25),
+            new Employee("Bob", "Sales", 55000, 30),
+            new Employee("Charlie", "Engineering", 80000, 35),
+            new Employee("Diana", "Marketing", 60000, 28),
+            new Employee("Eve", "Sales", 65000, 32),
+            new Employee("Frank", "Engineering", 85000, 40)
+        );
+        
+        // 1. Basic collectors
+        System.out.println("--- Basic Collectors ---");
+        
+        List<String> names = employees.stream()
+            .map(Employee::getName)
+            .collect(Collectors.toList());
+        System.out.println("Names: " + names);
+        
+        Set<String> departments = employees.stream()
+            .map(Employee::getDepartment)
+            .collect(Collectors.toSet());
+        System.out.println("Departments: " + departments);
+        
+        // 2. Joining strings
+        String namesList = employees.stream()
+            .map(Employee::getName)
+            .collect(Collectors.joining(", "));
+        System.out.println("Names joined: " + namesList);
+        
+        String formattedNames = employees.stream()
+            .map(Employee::getName)
+            .collect(Collectors.joining(", ", "[", "]"));
+        System.out.println("Formatted names: " + formattedNames);
+        
+        // 3. Grouping
+        System.out.println("\n--- Grouping ---");
+        
+        Map<String, List<Employee>> byDepartment = employees.stream()
+            .collect(Collectors.groupingBy(Employee::getDepartment));
+        
+        byDepartment.forEach((dept, empList) -> {
+            System.out.println(dept + ": " + empList.size() + " employees");
+            empList.forEach(emp -> System.out.println("  " + emp));
+        });
+        
+        // Group by age ranges
+        Map<String, List<Employee>> byAgeGroup = employees.stream()
+            .collect(Collectors.groupingBy(emp -> {
+                if (emp.getAge() < 30) return "Young";
+                else if (emp.getAge() < 40) return "Middle";
+                else return "Senior";
+            }));
+        
+        System.out.println("\nBy age group:");
+        byAgeGroup.forEach((group, empList) -> {
+            System.out.println(group + ": " + empList.size() + " employees");
+        });
+        
+        // 4. Counting and summarizing
+        System.out.println("\n--- Statistics ---");
+        
+        Map<String, Long> countByDepartment = employees.stream()
+            .collect(Collectors.groupingBy(
+                Employee::getDepartment,
+                Collectors.counting()
+            ));
+        System.out.println("Count by department: " + countByDepartment);
+        
+        Map<String, Double> avgSalaryByDept = employees.stream()
+            .collect(Collectors.groupingBy(
+                Employee::getDepartment,
+                Collectors.averagingDouble(Employee::getSalary)
+            ));
+        System.out.println("Average salary by department:");
+        avgSalaryByDept.forEach((dept, avg) -> 
+            System.out.printf("  %s: $%.2f%n", dept, avg));
+        
+        // 5. Partitioning
+        System.out.println("\n--- Partitioning ---");
+        
+        Map<Boolean, List<Employee>> partitionedBySalary = employees.stream()
+            .collect(Collectors.partitioningBy(emp -> emp.getSalary() > 70000));
+        
+        System.out.println("High earners (>$70k): " + 
+            partitionedBySalary.get(true).size());
+        System.out.println("Others: " + 
+            partitionedBySalary.get(false).size());
+        
+        // 6. Custom collectors
+        System.out.println("\n--- Custom Collectors ---");
+        
+        // Collect to a specific Map type
+        Map<String, Set<String>> employeesByDept = employees.stream()
+            .collect(Collectors.groupingBy(
+                Employee::getDepartment,
+                LinkedHashMap::new,  // Preserve order
+                Collectors.mapping(
+                    Employee::getName,
+                    Collectors.toSet()
+                )
+            ));
+        
+        System.out.println("Employees by department (names only):");
+        employeesByDept.forEach((dept, names) -> 
+            System.out.println(dept + ": " + names));
+        
+        // 7. Statistical summary
+        DoubleSummaryStatistics salaryStats = employees.stream()
+            .collect(Collectors.summarizingDouble(Employee::getSalary));
+        
+        System.out.println("\nSalary Statistics:");
+        System.out.printf("  Count: %d%n", salaryStats.getCount());
+        System.out.printf("  Min: $%.2f%n", salaryStats.getMin());
+        System.out.printf("  Max: $%.2f%n", salaryStats.getMax());
+        System.out.printf("  Average: $%.2f%n", salaryStats.getAverage());
+        System.out.printf("  Sum: $%.2f%n", salaryStats.getSum());
+    }
+}
+
+class Employee {
+    private String name;
+    private String department;
+    private double salary;
+    private int age;
+    
+    public Employee(String name, String department, double salary, int age) {
+        this.name = name;
+        this.department = department;
+        this.salary = salary;
+        this.age = age;
+    }
+    
+    public String getName() { return name; }
+    public String getDepartment() { return department; }
+    public double getSalary() { return salary; }
+    public int getAge() { return age; }
+    
+    @Override
+    public String toString() {
+        return String.format("%s(%s, $%.0f, age %d)", 
+            name, department, salary, age);
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- Parallel Streams -->
+            <section>
+                <h2>Parallel Streams and Performance</h2>
+                <pre><code class="java">
+import java.util.concurrent.ForkJoinPool;
+
+public class ParallelStreamsDemo {
+    public static void main(String[] args) {
+        System.out.println("=== Parallel Streams Demo ===\n");
+        
+        // Generate large dataset
+        List<Integer> largeDataset = IntStream.rangeClosed(1, 10_000_000)
+            .boxed()
+            .collect(Collectors.toList());
+        
+        // Demonstrate sequential vs parallel processing
+        performanceComparison(largeDataset);
+        
+        // Show when parallel streams are beneficial
+        demonstrateParallelBenefits();
+        
+        // Show parallel stream pitfalls
+        demonstrateParallelPitfalls();
+    }
+    
+    private static void performanceComparison(List<Integer> data) {
+        System.out.println("--- Performance Comparison ---");
+        System.out.println("Dataset size: " + data.size());
+        
+        // Sequential processing
+        long startTime = System.currentTimeMillis();
+        long sequentialSum = data.stream()
+            .filter(n -> n % 2 == 0)
+            .mapToLong(n -> n * n)
+            .sum();
+        long sequentialTime = System.currentTimeMillis() - startTime;
+        
+        // Parallel processing
+        startTime = System.currentTimeMillis();
+        long parallelSum = data.parallelStream()
+            .filter(n -> n % 2 == 0)
+            .mapToLong(n -> n * n)
+            .sum();
+        long parallelTime = System.currentTimeMillis() - startTime;
+        
+        System.out.println("Sequential result: " + sequentialSum);
+        System.out.println("Parallel result: " + parallelSum);
+        System.out.println("Sequential time: " + sequentialTime + " ms");
+        System.out.println("Parallel time: " + parallelTime + " ms");
+        System.out.printf("Speedup: %.2fx%n", (double) sequentialTime / parallelTime);
+        
+        // Show available processors
+        System.out.println("Available processors: " + 
+            Runtime.getRuntime().availableProcessors());
+        System.out.println("ForkJoinPool parallelism: " + 
+            ForkJoinPool.commonPool().getParallelism());
+        
+        System.out.println();
+    }
+    
+    private static void demonstrateParallelBenefits() {
+        System.out.println("--- When Parallel Streams Help ---");
+        
+        List<Integer> numbers = IntStream.rangeClosed(1, 1000)
+            .boxed()
+            .collect(Collectors.toList());
+        
+        // CPU-intensive operation
+        Supplier<Double> expensiveCalculation = () -> {
+            return numbers.parallelStream()
+                .mapToDouble(n -> {
+                    // Simulate expensive calculation
+                    double result = 0;
+                    for (int i = 0; i < 1000; i++) {
+                        result += Math.sin(n) * Math.cos(n) * Math.sqrt(n);
+                    }
+                    return result;
+                })
+                .sum();
+        };
+        
+        // Measure time
+        long startTime = System.nanoTime();
+        Double result = expensiveCalculation.get();
+        long duration = System.nanoTime() - startTime;
+        
+        System.out.printf("Expensive calculation result: %.2f%n", result);
+        System.out.printf("Time taken: %.2f ms%n", duration / 1_000_000.0);
+        
+        // Thread information
+        System.out.println("Threads used in parallel stream:");
+        Set<String> threadNames = Collections.synchronizedSet(new HashSet<>());
+        IntStream.range(0, 100)
+                 .parallel()
+                 .forEach(i -> threadNames.add(Thread.currentThread().getName()));
+        
+        threadNames.forEach(name -> System.out.println("  " + name));
+        System.out.println("Total threads used: " + threadNames.size());
+        
+        System.out.println();
+    }
+    
+    private static void demonstrateParallelPitfalls() {
+        System.out.println("--- Parallel Stream Pitfalls ---");
+        
+        // 1. Race conditions with shared state
+        System.out.println("1. Race condition example:");
+        
+        List<Integer> numbers = IntStream.rangeClosed(1, 1000)
+            .boxed()
+            .collect(Collectors.toList());
+        
+        // BAD: Using shared mutable state
+        List<Integer> sharedList = new ArrayList<>();
+        numbers.parallelStream()
+               .filter(n -> n % 2 == 0)
+               .forEach(sharedList::add); // Race condition!
+        
+        System.out.println("Expected even numbers: " + 
+            numbers.stream().filter(n -> n % 2 == 0).count());
+        System.out.println("Actually collected: " + sharedList.size());
+        System.out.println("Data race occurred: " + 
+            (sharedList.size() != 500));
+        
+        // GOOD: Using collect instead
+        List<Integer> correctList = numbers.parallelStream()
+            .filter(n -> n % 2 == 0)
+            .collect(Collectors.toList());
+        System.out.println("Correct collection size: " + correctList.size());
+        
+        // 2. Order dependency
+        System.out.println("\n2. Order dependency:");
+        
+        String sequential = Stream.of("a", "b", "c", "d", "e")
+            .collect(Collectors.joining());
+        
+        String parallel = Stream.of("a", "b", "c", "d", "e")
+            .parallel()
+            .collect(Collectors.joining());
+        
+        System.out.println("Sequential join: " + sequential);
+        System.out.println("Parallel join: " + parallel);
+        System.out.println("Order preserved: " + sequential.equals(parallel));
+        
+        // Use forEachOrdered for order
+        System.out.print("Parallel with forEachOrdered: ");
+        Stream.of("a", "b", "c", "d", "e")
+              .parallel()
+              .forEachOrdered(System.out::print);
+        System.out.println();
+        
+        // 3. Overhead for simple operations
+        System.out.println("\n3. Overhead example:");
+        
+        List<Integer> smallList = Arrays.asList(1, 2, 3, 4, 5);
+        
+        long startTime = System.nanoTime();
+        int sequentialSum = smallList.stream()
+            .mapToInt(Integer::intValue)
+            .sum();
+        long sequentialTime = System.nanoTime() - startTime;
+        
+        startTime = System.nanoTime();
+        int parallelSum = smallList.parallelStream()
+            .mapToInt(Integer::intValue)
+            .sum();
+        long parallelTime = System.nanoTime() - startTime;
+        
+        System.out.println("Small list sequential time: " + sequentialTime + " ns");
+        System.out.println("Small list parallel time: " + parallelTime + " ns");
+        System.out.println("Parallel overhead: " + 
+            (parallelTime > sequentialTime ? "Yes" : "No"));
+        
+        System.out.println();
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- GTU Previous Year Question -->
+            <section>
+                <div class="gtu-question">
+                    <h4>GTU Previous Year Question (Summer 2023)</h4>
+                    <p><strong>Q: Write a Java program using Stream API to process a list of students. Perform the following operations: 1) Filter students with marks > 75, 2) Group students by grade, 3) Find average marks by department, 4) Sort students by marks in descending order. Also demonstrate the difference between sequential and parallel stream processing.</strong></p>
+                </div>
+                
+                <h3>Solution:</h3>
+                <pre><code class="java">
+import java.util.*;
+import java.util.stream.*;
+
+class Student {
+    private String name;
+    private String department;
+    private int marks;
+    private String grade;
+    
+    public Student(String name, String department, int marks) {
+        this.name = name;
+        this.department = department;
+        this.marks = marks;
+        this.grade = calculateGrade(marks);
+    }
+    
+    private String calculateGrade(int marks) {
+        if (marks >= 90) return "A+";
+        if (marks >= 80) return "A";
+        if (marks >= 70) return "B";
+        if (marks >= 60) return "C";
+        if (marks >= 50) return "D";
+        return "F";
+    }
+    
+    // Getters
+    public String getName() { return name; }
+    public String getDepartment() { return department; }
+    public int getMarks() { return marks; }
+    public String getGrade() { return grade; }
+    
+    @Override
+    public String toString() {
+        return String.format("%s(%s, %d marks, %s grade)", 
+            name, department, marks, grade);
+    }
+}
+
+public class StudentStreamProcessing {
+    public static void main(String[] args) {
+        System.out.println("=== Student Stream Processing Demo ===\n");
+        
+        // Create sample student data
+        List<Student> students = createSampleStudents();
+        
+        System.out.println("Original student list (" + students.size() + " students):");
+        students.forEach(System.out::println);
+        
+        // 1. Filter students with marks > 75
+        filterHighPerformers(students);
+        
+        // 2. Group students by grade
+        groupByGrade(students);
+        
+        // 3. Find average marks by department
+        averageMarksByDepartment(students);
+        
+        // 4. Sort students by marks (descending)
+        sortByMarksDescending(students);
+        
+        // Demonstrate sequential vs parallel processing
+        compareSequentialVsParallel(students);
+        
+        // Additional complex operations
+        performComplexAnalysis(students);
+    }
+    
+    private static List<Student> createSampleStudents() {
+        return Arrays.asList(
+            new Student("Alice Johnson", "Computer Science", 92),
+            new Student("Bob Smith", "Electrical", 78),
+            new Student("Charlie Brown", "Computer Science", 85),
+            new Student("Diana Prince", "Mechanical", 96),
+            new Student("Eve Wilson", "Electrical", 73),
+            new Student("Frank Miller", "Computer Science", 88),
+            new Student("Grace Lee", "Mechanical", 94),
+            new Student("Henry Davis", "Electrical", 67),
+            new Student("Ivy Chen", "Computer Science", 91),
+            new Student("Jack Taylor", "Mechanical", 82),
+            new Student("Kate Adams", "Electrical", 75),
+            new Student("Liam Parker", "Computer Science", 87),
+            new Student("Mia Rodriguez", "Mechanical", 89),
+            new Student("Noah Thompson", "Electrical", 71),
+            new Student("Olivia Martinez", "Computer Science", 93)
+        );
+    }
+    
+    private static void filterHighPerformers(List<Student> students) {
+        System.out.println("\n=== 1. Filter Students with Marks > 75 ===");
+        
+        List<Student> highPerformers = students.stream()
+            .filter(student -> student.getMarks() > 75)
+            .collect(Collectors.toList());
+        
+        System.out.println("High performers (marks > 75): " + highPerformers.size());
+        highPerformers.forEach(student -> 
+            System.out.printf("  %-20s: %3d marks (%s)%n", 
+                student.getName(), student.getMarks(), student.getGrade()));
+        
+        // Statistics for high performers
+        OptionalDouble averageMarks = highPerformers.stream()
+            .mapToInt(Student::getMarks)
+            .average();
+        
+        System.out.printf("Average marks of high performers: %.2f%n", 
+            averageMarks.orElse(0.0));
+    }
+    
+    private static void groupByGrade(List<Student> students) {
+        System.out.println("\n=== 2. Group Students by Grade ===");
+        
+        Map<String, List<Student>> groupedByGrade = students.stream()
+            .collect(Collectors.groupingBy(Student::getGrade));
+        
+        // Sort grades for better display
+        groupedByGrade.entrySet().stream()
+            .sorted(Map.Entry.<String, List<Student>>comparingByKey())
+            .forEach(entry -> {
+                String grade = entry.getKey();
+                List<Student> gradeStudents = entry.getValue();
+                System.out.printf("Grade %s (%d students):%n", grade, gradeStudents.size());
+                gradeStudents.stream()
+                    .sorted(Comparator.comparing(Student::getName))
+                    .forEach(student -> 
+                        System.out.printf("  %-20s (%s, %d marks)%n",
+                            student.getName(), 
+                            student.getDepartment(), 
+                            student.getMarks()));
+            });
+        
+        // Count by grade
+        Map<String, Long> gradeCount = students.stream()
+            .collect(Collectors.groupingBy(
+                Student::getGrade,
+                Collectors.counting()
+            ));
+        
+        System.out.println("Grade distribution:");
+        gradeCount.entrySet().stream()
+            .sorted(Map.Entry.<String, Long>comparingByKey())
+            .forEach(entry -> 
+                System.out.printf("  %s: %d students%n", entry.getKey(), entry.getValue()));
+    }
+    
+    private static void averageMarksByDepartment(List<Student> students) {
+        System.out.println("\n=== 3. Average Marks by Department ===");
+        
+        Map<String, Double> avgMarksByDept = students.stream()
+            .collect(Collectors.groupingBy(
+                Student::getDepartment,
+                Collectors.averagingInt(Student::getMarks)
+            ));
+        
+        System.out.println("Department-wise average marks:");
+        avgMarksByDept.entrySet().stream()
+            .sorted(Map.Entry.<String, Double>comparingByValue().reversed())
+            .forEach(entry -> 
+                System.out.printf("  %-20s: %.2f%n", entry.getKey(), entry.getValue()));
+        
+        // Find best performing department
+        Optional<Map.Entry<String, Double>> bestDepartment = avgMarksByDept.entrySet().stream()
+            .max(Map.Entry.comparingByValue());
+        
+        bestDepartment.ifPresent(entry -> 
+            System.out.printf("Best performing department: %s (%.2f average)%n", 
+                entry.getKey(), entry.getValue()));
+        
+        // Additional statistics by department
+        Map<String, DoubleSummaryStatistics> deptStats = students.stream()
+            .collect(Collectors.groupingBy(
+                Student::getDepartment,
+                Collectors.summarizingDouble(Student::getMarks)
+            ));
+        
+        System.out.println("\nDetailed department statistics:");
+        deptStats.forEach((dept, stats) -> {
+            System.out.printf("%s:%n", dept);
+            System.out.printf("  Count: %d, Min: %.0f, Max: %.0f, Avg: %.2f%n",
+                stats.getCount(), stats.getMin(), stats.getMax(), stats.getAverage());
+        });
+    }
+    
+    private static void sortByMarksDescending(List<Student> students) {
+        System.out.println("\n=== 4. Sort Students by Marks (Descending) ===");
+        
+        List<Student> sortedStudents = students.stream()
+            .sorted(Comparator.comparingInt(Student::getMarks).reversed())
+            .collect(Collectors.toList());
+        
+        System.out.println("Students ranked by marks (highest to lowest):");
+        for (int i = 0; i < sortedStudents.size(); i++) {
+            Student student = sortedStudents.get(i);
+            System.out.printf("%2d. %-20s: %3d marks (%s, %s)%n",
+                i + 1,
+                student.getName(),
+                student.getMarks(),
+                student.getDepartment(),
+                student.getGrade()
+            );
+        }
+        
+        // Top 5 students
+        System.out.println("\nTop 5 students:");
+        students.stream()
+            .sorted(Comparator.comparingInt(Student::getMarks).reversed())
+            .limit(5)
+            .forEach(student -> 
+                System.out.printf("  %s: %d marks%n", student.getName(), student.getMarks()));
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- Sequential vs Parallel Processing -->
+            <section>
+                <h3>Sequential vs Parallel Processing:</h3>
+                <pre><code class="java">
+    private static void compareSequentialVsParallel(List<Student> students) {
+        System.out.println("\n=== Sequential vs Parallel Processing ===");
+        
+        // Create larger dataset for meaningful comparison
+        List<Student> largeStudentList = createLargeStudentDataset(100000);
+        
+        System.out.println("Dataset size: " + largeStudentList.size() + " students");
+        System.out.println("Available processors: " + Runtime.getRuntime().availableProcessors());
+        
+        // Complex processing operation
+        Supplier<Map<String, Double>> complexOperation = () -> {
+            return largeStudentList.stream()
+                .filter(s -> s.getMarks() > 60) // Filter passing students
+                .collect(Collectors.groupingBy(
+                    Student::getDepartment,
+                    Collectors.averagingDouble(s -> {
+                        // Simulate complex calculation
+                        double result = s.getMarks();
+                        for (int i = 0; i < 1000; i++) {
+                            result = Math.sqrt(result * 1.1);
+                        }
+                        return result;
+                    })
+                ));
+        };
+        
+        Supplier<Map<String, Double>> parallelOperation = () -> {
+            return largeStudentList.parallelStream()
+                .filter(s -> s.getMarks() > 60)
+                .collect(Collectors.groupingBy(
+                    Student::getDepartment,
+                    Collectors.averagingDouble(s -> {
+                        // Same complex calculation
+                        double result = s.getMarks();
+                        for (int i = 0; i < 1000; i++) {
+                            result = Math.sqrt(result * 1.1);
+                        }
+                        return result;
+                    })
+                ));
+        };
+        
+        // Measure sequential processing
+        long startTime = System.currentTimeMillis();
+        Map<String, Double> sequentialResult = complexOperation.get();
+        long sequentialTime = System.currentTimeMillis() - startTime;
+        
+        // Measure parallel processing
+        startTime = System.currentTimeMillis();
+        Map<String, Double> parallelResult = parallelOperation.get();
+        long parallelTime = System.currentTimeMillis() - startTime;
+        
+        System.out.println("Sequential processing time: " + sequentialTime + " ms");
+        System.out.println("Parallel processing time: " + parallelTime + " ms");
+        System.out.printf("Speedup: %.2fx%n", (double) sequentialTime / parallelTime);
+        
+        // Verify results are identical
+        boolean resultsIdentical = sequentialResult.equals(parallelResult);
+        System.out.println("Results identical: " + resultsIdentical);
+        
+        if (resultsIdentical) {
+            System.out.println("Department averages:");
+            sequentialResult.entrySet().stream()
+                .sorted(Map.Entry.<String, Double>comparingByValue().reversed())
+                .forEach(entry -> 
+                    System.out.printf("  %s: %.2f%n", entry.getKey(), entry.getValue()));
+        }
+    }
+    
+    private static List<Student> createLargeStudentDataset(int size) {
+        Random random = new Random();
+        String[] departments = {"Computer Science", "Electrical", "Mechanical", "Civil", "Chemical"};
+        String[] firstNames = {"Alice", "Bob", "Charlie", "Diana", "Eve", "Frank", "Grace", "Henry", "Ivy", "Jack"};
+        String[] lastNames = {"Smith", "Johnson", "Brown", "Davis", "Wilson", "Miller", "Lee", "Taylor", "Chen", "Garcia"};
+        
+        return Stream.generate(() -> {
+            String name = firstNames[random.nextInt(firstNames.length)] + " " +
+                         lastNames[random.nextInt(lastNames.length)];
+            String dept = departments[random.nextInt(departments.length)];
+            int marks = 40 + random.nextInt(60); // 40-99 marks
+            return new Student(name, dept, marks);
+        }).limit(size).collect(Collectors.toList());
+    }
+    
+    private static void performComplexAnalysis(List<Student> students) {
+        System.out.println("\n=== Complex Analysis ===");
+        
+        // Multi-level grouping: Department -> Grade -> Count
+        Map<String, Map<String, Long>> complexGrouping = students.stream()
+            .collect(Collectors.groupingBy(
+                Student::getDepartment,
+                Collectors.groupingBy(
+                    Student::getGrade,
+                    Collectors.counting()
+                )
+            ));
+        
+        System.out.println("Students by Department and Grade:");
+        complexGrouping.forEach((dept, gradeMap) -> {
+            System.out.println(dept + ":");
+            gradeMap.entrySet().stream()
+                .sorted(Map.Entry.<String, Long>comparingByKey())
+                .forEach(entry -> 
+                    System.out.printf("  Grade %s: %d students%n", 
+                        entry.getKey(), entry.getValue()));
+        });
+        
+        // Find departments with most A+ students
+        Map<String, Long> aPlusStudentsByDept = students.stream()
+            .filter(s -> "A+".equals(s.getGrade()))
+            .collect(Collectors.groupingBy(
+                Student::getDepartment,
+                Collectors.counting()
+            ));
+        
+        System.out.println("\nDepartments with A+ students:");
+        aPlusStudentsByDept.entrySet().stream()
+            .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+            .forEach(entry -> 
+                System.out.printf("  %s: %d A+ students%n", entry.getKey(), entry.getValue()));
+        
+        // Performance distribution analysis
+        long excellentCount = students.stream()
+            .mapToInt(Student::getMarks)
+            .filter(marks -> marks >= 90)
+            .count();
+        
+        long goodCount = students.stream()
+            .mapToInt(Student::getMarks)
+            .filter(marks -> marks >= 80 && marks < 90)
+            .count();
+        
+        long averageCount = students.stream()
+            .mapToInt(Student::getMarks)
+            .filter(marks -> marks >= 70 && marks < 80)
+            .count();
+        
+        System.out.println("\nPerformance Distribution:");
+        System.out.printf("  Excellent (90+): %d (%.1f%%)%n", 
+            excellentCount, 100.0 * excellentCount / students.size());
+        System.out.printf("  Good (80-89): %d (%.1f%%)%n", 
+            goodCount, 100.0 * goodCount / students.size());
+        System.out.printf("  Average (70-79): %d (%.1f%%)%n", 
+            averageCount, 100.0 * averageCount / students.size());
+    }
+}
+                </code></pre>
+                
+                <div class="success-box">
+                    <strong>Solution Features:</strong>
+                    <ul>
+                        <li>Complete student data processing with Stream API</li>
+                        <li>All requested operations: filter, group, average, sort</li>
+                        <li>Performance comparison between sequential and parallel streams</li>
+                        <li>Complex multi-level data analysis and statistics</li>
+                        <li>Realistic dataset generation for performance testing</li>
+                        <li>Professional data presentation and formatting</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Summary -->
+            <section>
+                <h2>📚 Lecture Summary</h2>
+                <div class="two-column">
+                    <div>
+                        <h3>Key Concepts Covered</h3>
+                        <ul>
+                            <li>Stream creation and pipeline operations</li>
+                            <li>Intermediate operations (filter, map, sorted)</li>
+                            <li>Terminal operations (collect, reduce, forEach)</li>
+                            <li>Advanced collectors and grouping</li>
+                            <li>Parallel streams and performance</li>
+                            <li>Stream vs traditional processing</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Best Practices</h3>
+                        <ul>
+                            <li>Use streams for data transformation pipelines</li>
+                            <li>Prefer method references when applicable</li>
+                            <li>Avoid side effects in stream operations</li>
+                            <li>Use parallel streams for CPU-intensive tasks</li>
+                            <li>Consider overhead for small datasets</li>
+                            <li>Chain operations efficiently</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="highlight-box" style="margin-top: 30px;">
+                    <h3>🎯 Next Lecture Preview</h3>
+                    <p><strong>Lecture 22: Date/Time API and Utilities</strong></p>
+                    <ul>
+                        <li>Java 8 Date/Time API fundamentals</li>
+                        <li>LocalDate, LocalTime, LocalDateTime</li>
+                        <li>Formatting and parsing dates</li>
+                        <li>Time zones and period calculations</li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/notes/notes.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/highlight.min.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            transition: 'slide',
+            transitionSpeed: 'fast',
+            center: true,
+            plugins: [RevealNotes, RevealHighlight]
+        });
+    </script>
+</body>
+</html>

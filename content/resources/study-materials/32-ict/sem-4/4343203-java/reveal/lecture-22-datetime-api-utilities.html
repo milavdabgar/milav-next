@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Lecture 22: Date/Time API and Utilities | Java Programming (4343203)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <style>
+        .reveal { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; height: 90vh; }
+        .reveal .slides section { text-align: left; font-size: 0.85em; }
+        .reveal h1, .reveal h2, .reveal h3 { color: #2c3e50; text-align: center; }
+        .reveal h1 { font-size: 2.2em; }
+        .reveal h2 { font-size: 1.8em; margin-bottom: 30px; }
+        .reveal h3 { font-size: 1.4em; margin-bottom: 20px; }
+        .reveal pre { width: 100%; font-size: 0.75em; line-height: 1.2; }
+        .reveal code { background-color: #f8f9fa; padding: 2px 4px; border-radius: 3px; color: #e83e8c; }
+        .reveal .hljs { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 5px; padding: 15px; }
+        .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+        .highlight-box { background-color: #e8f4fd; border-left: 5px solid #3498db; padding: 15px; margin: 15px 0; border-radius: 5px; }
+        .warning-box { background-color: #fff3cd; border-left: 5px solid #ffc107; padding: 15px; margin: 15px 0; border-radius: 5px; }
+        .success-box { background-color: #d4edda; border-left: 5px solid #28a745; padding: 15px; margin: 15px 0; border-radius: 5px; }
+        .reveal ul, .reveal ol { margin-left: 1em; }
+        .reveal li { margin-bottom: 8px; }
+        .gtu-question { background-color: #f0f8ff; border: 2px solid #4682b4; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        .gtu-question h4 { color: #4682b4; margin: 0 0 15px 0; font-size: 1.1em; }
+        .reveal table { font-size: 0.7em; border-collapse: collapse; width: 100%; margin: 15px 0; }
+        .reveal td, .reveal th { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        .reveal th { background-color: #f2f2f2; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- Title Slide -->
+            <section>
+                <h1>Date/Time API and Utilities</h1>
+                <h3>Java Programming (4343203)</h3>
+                <h3>Lecture 22</h3>
+                <p style="text-align: center; margin-top: 50px;">
+                    <strong>Unit 5: Modern Java Features - Time APIs</strong><br>
+                    GTU Computer Engineering Semester 4
+                </p>
+            </section>
+
+            <!-- Learning Objectives -->
+            <section>
+                <h2>Learning Objectives</h2>
+                <ul>
+                    <li>Master Java 8's modern Date/Time API</li>
+                    <li>Work with LocalDate, LocalTime, and LocalDateTime</li>
+                    <li>Implement date formatting and parsing operations</li>
+                    <li>Handle time zones and temporal calculations</li>
+                    <li>Compare legacy vs modern date/time approaches</li>
+                    <li>Apply date/time utilities in real-world applications</li>
+                </ul>
+                <div class="highlight-box">
+                    <strong>Focus:</strong> Professional date/time handling using Java's modern, thread-safe, and immutable time API.
+                </div>
+            </section>
+
+            <!-- Problems with Legacy API -->
+            <section>
+                <h2>Problems with Legacy Date/Time API</h2>
+                <div class="two-column">
+                    <div>
+                        <h3>Issues with Old API</h3>
+                        <pre><code class="java">
+// Legacy Date class problems
+Date date = new Date();
+System.out.println(date); // Hard to read format
+
+// Months are 0-indexed (confusing!)
+Date newYear = new Date(2024, 0, 1); // Actually 1900+2024!
+
+// Calendar class issues
+Calendar cal = Calendar.getInstance();
+cal.set(2024, Calendar.JANUARY, 1); // Better but verbose
+cal.add(Calendar.DAY_OF_MONTH, 10);
+
+// SimpleDateFormat is NOT thread-safe
+SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+String formatted = sdf.format(date); // Risky in multi-threaded apps
+
+// Date is mutable (dangerous)
+Date originalDate = new Date();
+Date copyDate = originalDate;
+originalDate.setTime(originalDate.getTime() + 86400000);
+// Both dates changed!
+                        </code></pre>
+                        
+                        <div class="warning-box">
+                            <strong>Legacy API Problems:</strong>
+                            <ul>
+                                <li>Mutable and not thread-safe</li>
+                                <li>Confusing month indexing (0-11)</li>
+                                <li>Poor API design</li>
+                                <li>Timezone handling complexity</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div>
+                        <h3>Modern API Solutions</h3>
+                        <pre><code class="java">
+// Modern LocalDate (immutable, thread-safe)
+LocalDate today = LocalDate.now();
+System.out.println(today); // Clean: 2024-07-21
+
+// Intuitive month handling
+LocalDate newYear = LocalDate.of(2024, 1, 1); // January is 1
+LocalDate specificDate = LocalDate.of(2024, Month.DECEMBER, 25);
+
+// Easy date arithmetic
+LocalDate tenDaysLater = today.plusDays(10);
+LocalDate lastMonth = today.minusMonths(1);
+
+// Thread-safe formatting
+DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+String formatted = today.format(formatter);
+
+// Immutable - original never changes
+LocalDate original = LocalDate.now();
+LocalDate modified = original.plusDays(5);
+// original is unchanged, modified is new instance
+                        </code></pre>
+                        
+                        <div class="success-box">
+                            <strong>Modern API Benefits:</strong>
+                            <ul>
+                                <li>Immutable and thread-safe</li>
+                                <li>Intuitive API design</li>
+                                <li>Better timezone support</li>
+                                <li>Comprehensive functionality</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Core Date/Time Classes -->
+            <section>
+                <h2>Core Date/Time Classes</h2>
+                <table>
+                    <tr>
+                        <th>Class</th>
+                        <th>Purpose</th>
+                        <th>Example</th>
+                        <th>Use Case</th>
+                    </tr>
+                    <tr>
+                        <td>LocalDate</td>
+                        <td>Date without time</td>
+                        <td>2024-07-21</td>
+                        <td>Birth dates, deadlines</td>
+                    </tr>
+                    <tr>
+                        <td>LocalTime</td>
+                        <td>Time without date</td>
+                        <td>14:30:45</td>
+                        <td>Business hours, schedules</td>
+                    </tr>
+                    <tr>
+                        <td>LocalDateTime</td>
+                        <td>Date and time</td>
+                        <td>2024-07-21T14:30:45</td>
+                        <td>Appointments, logs</td>
+                    </tr>
+                    <tr>
+                        <td>ZonedDateTime</td>
+                        <td>Date/time with timezone</td>
+                        <td>2024-07-21T14:30:45+05:30</td>
+                        <td>Global applications</td>
+                    </tr>
+                    <tr>
+                        <td>Instant</td>
+                        <td>Point in time (UTC)</td>
+                        <td>2024-07-21T09:00:45Z</td>
+                        <td>Timestamps, logging</td>
+                    </tr>
+                    <tr>
+                        <td>Duration</td>
+                        <td>Time-based amount</td>
+                        <td>PT2H30M</td>
+                        <td>Time differences</td>
+                    </tr>
+                    <tr>
+                        <td>Period</td>
+                        <td>Date-based amount</td>
+                        <td>P1Y2M3D</td>
+                        <td>Age, date differences</td>
+                    </tr>
+                </table>
+            </section>
+
+            <!-- LocalDate Examples -->
+            <section>
+                <h2>Working with LocalDate</h2>
+                <pre><code class="java">
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+
+public class LocalDateDemo {
+    public static void main(String[] args) {
+        System.out.println("=== LocalDate Examples ===\n");
+        
+        // 1. Creating LocalDate instances
+        LocalDate today = LocalDate.now();
+        LocalDate specificDate = LocalDate.of(2024, 12, 25); // Christmas
+        LocalDate fromMonth = LocalDate.of(2024, Month.JANUARY, 1);
+        LocalDate fromDayOfYear = LocalDate.ofYearDay(2024, 100); // 100th day of 2024
+        
+        System.out.println("Today: " + today);
+        System.out.println("Christmas: " + specificDate);
+        System.out.println("New Year: " + fromMonth);
+        System.out.println("100th day of 2024: " + fromDayOfYear);
+        
+        // 2. Getting components
+        System.out.println("\n--- Date Components ---");
+        System.out.println("Year: " + today.getYear());
+        System.out.println("Month: " + today.getMonth()); // JULY
+        System.out.println("Month Value: " + today.getMonthValue()); // 7
+        System.out.println("Day of Month: " + today.getDayOfMonth());
+        System.out.println("Day of Week: " + today.getDayOfWeek()); // SUNDAY
+        System.out.println("Day of Year: " + today.getDayOfYear());
+        
+        // 3. Date arithmetic
+        System.out.println("\n--- Date Arithmetic ---");
+        LocalDate tomorrow = today.plusDays(1);
+        LocalDate nextWeek = today.plusWeeks(1);
+        LocalDate nextMonth = today.plusMonths(1);
+        LocalDate nextYear = today.plusYears(1);
+        
+        System.out.println("Tomorrow: " + tomorrow);
+        System.out.println("Next week: " + nextWeek);
+        System.out.println("Next month: " + nextMonth);
+        System.out.println("Next year: " + nextYear);
+        
+        LocalDate lastMonth = today.minusMonths(1);
+        LocalDate tenDaysAgo = today.minusDays(10);
+        
+        System.out.println("Last month: " + lastMonth);
+        System.out.println("Ten days ago: " + tenDaysAgo);
+        
+        // 4. Date comparisons
+        System.out.println("\n--- Date Comparisons ---");
+        LocalDate birthday = LocalDate.of(1995, 6, 15);
+        
+        System.out.println("Is today after birthday? " + today.isAfter(birthday));
+        System.out.println("Is today before Christmas? " + today.isBefore(specificDate));
+        System.out.println("Is 2024 a leap year? " + today.isLeapYear());
+        
+        // 5. Temporal queries
+        System.out.println("\n--- Temporal Queries ---");
+        System.out.println("Length of current month: " + today.lengthOfMonth());
+        System.out.println("Length of current year: " + today.lengthOfYear());
+        
+        // First and last day of month
+        LocalDate firstOfMonth = today.withDayOfMonth(1);
+        LocalDate lastOfMonth = today.withDayOfMonth(today.lengthOfMonth());
+        
+        System.out.println("First of month: " + firstOfMonth);
+        System.out.println("Last of month: " + lastOfMonth);
+        
+        // 6. Period calculations
+        System.out.println("\n--- Period Calculations ---");
+        Period age = Period.between(birthday, today);
+        System.out.printf("Age: %d years, %d months, %d days%n", 
+            age.getYears(), age.getMonths(), age.getDays());
+        
+        long daysBetween = ChronoUnit.DAYS.between(birthday, today);
+        System.out.println("Total days alive: " + daysBetween);
+        
+        // Days until Christmas
+        long daysUntilChristmas = ChronoUnit.DAYS.between(today, specificDate);
+        System.out.println("Days until Christmas: " + daysUntilChristmas);
+        
+        // 7. Date formatting
+        System.out.println("\n--- Date Formatting ---");
+        DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("EEEE, MMMM dd, yyyy");
+        DateTimeFormatter formatter3 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        
+        System.out.println("Format 1: " + today.format(formatter1));
+        System.out.println("Format 2: " + today.format(formatter2));
+        System.out.println("Format 3: " + today.format(formatter3));
+        
+        // 8. Parsing dates
+        System.out.println("\n--- Date Parsing ---");
+        String dateStr1 = "25/12/2024";
+        String dateStr2 = "2024-01-01";
+        
+        LocalDate parsed1 = LocalDate.parse(dateStr1, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        LocalDate parsed2 = LocalDate.parse(dateStr2); // Default ISO format
+        
+        System.out.println("Parsed date 1: " + parsed1);
+        System.out.println("Parsed date 2: " + parsed2);
+        
+        // 9. Practical examples
+        demonstratePracticalExamples();
+    }
+    
+    private static void demonstratePracticalExamples() {
+        System.out.println("\n=== Practical Examples ===");
+        
+        // Calculate age in years
+        LocalDate birthDate = LocalDate.of(1995, 8, 15);
+        LocalDate today = LocalDate.now();
+        int age = Period.between(birthDate, today).getYears();
+        System.out.println("Current age: " + age + " years");
+        
+        // Find next birthday
+        LocalDate thisYearBirthday = birthDate.withYear(today.getYear());
+        if (thisYearBirthday.isBefore(today) || thisYearBirthday.isEqual(today)) {
+            thisYearBirthday = thisYearBirthday.plusYears(1);
+        }
+        
+        long daysToNextBirthday = ChronoUnit.DAYS.between(today, thisYearBirthday);
+        System.out.println("Days to next birthday: " + daysToNextBirthday);
+        
+        // Weekend finder
+        System.out.print("Next 5 weekends: ");
+        LocalDate current = today;
+        int weekendCount = 0;
+        while (weekendCount < 5) {
+            if (current.getDayOfWeek() == DayOfWeek.SATURDAY) {
+                System.out.print(current + " ");
+                weekendCount++;
+            }
+            current = current.plusDays(1);
+        }
+        System.out.println();
+        
+        // Business days calculator
+        LocalDate startDate = LocalDate.of(2024, 7, 1);
+        LocalDate endDate = LocalDate.of(2024, 7, 31);
+        long businessDays = calculateBusinessDays(startDate, endDate);
+        System.out.println("Business days in July 2024: " + businessDays);
+    }
+    
+    private static long calculateBusinessDays(LocalDate start, LocalDate end) {
+        long totalDays = ChronoUnit.DAYS.between(start, end);
+        long businessDays = 0;
+        
+        LocalDate current = start;
+        while (!current.isAfter(end)) {
+            DayOfWeek dayOfWeek = current.getDayOfWeek();
+            if (dayOfWeek != DayOfWeek.SATURDAY && dayOfWeek != DayOfWeek.SUNDAY) {
+                businessDays++;
+            }
+            current = current.plusDays(1);
+        }
+        
+        return businessDays;
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- LocalTime and LocalDateTime -->
+            <section>
+                <h2>LocalTime and LocalDateTime</h2>
+                <pre><code class="java">
+public class LocalTimeAndDateTimeDemo {
+    public static void main(String[] args) {
+        System.out.println("=== LocalTime Examples ===\n");
+        
+        // 1. LocalTime creation and manipulation
+        LocalTime now = LocalTime.now();
+        LocalTime specificTime = LocalTime.of(14, 30, 45); // 14:30:45
+        LocalTime withNanos = LocalTime.of(10, 15, 30, 500_000_000); // with nanoseconds
+        LocalTime midnight = LocalTime.MIDNIGHT;
+        LocalTime noon = LocalTime.NOON;
+        
+        System.out.println("Current time: " + now);
+        System.out.println("Specific time: " + specificTime);
+        System.out.println("With nanoseconds: " + withNanos);
+        System.out.println("Midnight: " + midnight);
+        System.out.println("Noon: " + noon);
+        
+        // Time components
+        System.out.println("\n--- Time Components ---");
+        System.out.println("Hour: " + now.getHour());
+        System.out.println("Minute: " + now.getMinute());
+        System.out.println("Second: " + now.getSecond());
+        System.out.println("Nano: " + now.getNano());
+        
+        // Time arithmetic
+        System.out.println("\n--- Time Arithmetic ---");
+        LocalTime inTwoHours = now.plusHours(2);
+        LocalTime thirtyMinsAgo = now.minusMinutes(30);
+        
+        System.out.println("In 2 hours: " + inTwoHours);
+        System.out.println("30 minutes ago: " + thirtyMinsAgo);
+        
+        // Time formatting
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm:ss a");
+        System.out.println("Formatted time: " + now.format(timeFormatter));
+        
+        System.out.println("\n=== LocalDateTime Examples ===");
+        
+        // 2. LocalDateTime - combining date and time
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        LocalDateTime specificDateTime = LocalDateTime.of(2024, 12, 25, 10, 30);
+        LocalDateTime fromDateAndTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(18, 0));
+        
+        System.out.println("Current date-time: " + currentDateTime);
+        System.out.println("Christmas morning: " + specificDateTime);
+        System.out.println("Today at 6 PM: " + fromDateAndTime);
+        
+        // Extract date and time components
+        LocalDate dateOnly = currentDateTime.toLocalDate();
+        LocalTime timeOnly = currentDateTime.toLocalTime();
+        
+        System.out.println("Date part: " + dateOnly);
+        System.out.println("Time part: " + timeOnly);
+        
+        // DateTime arithmetic
+        LocalDateTime tomorrow = currentDateTime.plusDays(1);
+        LocalDateTime nextWeek = currentDateTime.plusWeeks(1);
+        LocalDateTime inThreeHours = currentDateTime.plusHours(3);
+        
+        System.out.println("Tomorrow same time: " + tomorrow);
+        System.out.println("Next week same time: " + nextWeek);
+        System.out.println("In 3 hours: " + inThreeHours);
+        
+        // Duration between DateTimes
+        Duration duration = Duration.between(currentDateTime, specificDateTime);
+        System.out.println("Duration until Christmas: " + duration.toDays() + " days");
+        
+        // Formatting DateTime
+        DateTimeFormatter dtFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        System.out.println("Formatted DateTime: " + currentDateTime.format(dtFormatter));
+        
+        // Practical scheduling example
+        demonstrateScheduling();
+    }
+    
+    private static void demonstrateScheduling() {
+        System.out.println("\n=== Meeting Scheduler Example ===");
+        
+        LocalDateTime meetingStart = LocalDateTime.of(2024, 7, 21, 14, 0); // 2 PM
+        Duration meetingDuration = Duration.ofMinutes(90); // 1.5 hours
+        LocalDateTime meetingEnd = meetingStart.plus(meetingDuration);
+        
+        System.out.println("Meeting scheduled:");
+        System.out.println("Start: " + meetingStart.format(DateTimeFormatter.ofPattern("EEEE, MMMM dd, yyyy 'at' hh:mm a")));
+        System.out.println("End: " + meetingEnd.format(DateTimeFormatter.ofPattern("hh:mm a")));
+        System.out.println("Duration: " + meetingDuration.toMinutes() + " minutes");
+        
+        // Check if meeting is in business hours
+        LocalTime businessStart = LocalTime.of(9, 0);
+        LocalTime businessEnd = LocalTime.of(17, 0);
+        LocalTime meetingStartTime = meetingStart.toLocalTime();
+        LocalTime meetingEndTime = meetingEnd.toLocalTime();
+        
+        boolean duringBusinessHours = meetingStartTime.isAfter(businessStart) && 
+                                    meetingEndTime.isBefore(businessEnd);
+        
+        System.out.println("During business hours: " + duringBusinessHours);
+        
+        // Calculate break time
+        LocalDateTime lunchStart = LocalDateTime.of(2024, 7, 21, 12, 0);
+        LocalDateTime lunchEnd = LocalDateTime.of(2024, 7, 21, 13, 0);
+        
+        boolean conflictsWithLunch = meetingStart.isBefore(lunchEnd) && meetingEnd.isAfter(lunchStart);
+        System.out.println("Conflicts with lunch: " + conflictsWithLunch);
+        
+        // Find available time slots
+        System.out.println("\nAvailable slots today:");
+        LocalDateTime dayStart = LocalDateTime.of(2024, 7, 21, 9, 0);
+        LocalDateTime dayEnd = LocalDateTime.of(2024, 7, 21, 17, 0);
+        
+        List<String> availableSlots = Arrays.asList(
+            "09:00-10:30", "11:00-12:00", "13:00-14:00", "15:30-17:00"
+        );
+        
+        availableSlots.forEach(slot -> System.out.println("  " + slot));
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- Time Zones and ZonedDateTime -->
+            <section>
+                <h2>Time Zones and ZonedDateTime</h2>
+                <pre><code class="java">
+import java.time.zone.ZoneRulesException;
+
+public class TimeZoneDemo {
+    public static void main(String[] args) {
+        System.out.println("=== Time Zone Examples ===\n");
+        
+        // 1. Available time zones
+        System.out.println("--- Available Time Zones (sample) ---");
+        ZoneId.getAvailableZoneIds().stream()
+              .filter(zone -> zone.contains("America") || zone.contains("Europe") || zone.contains("Asia"))
+              .sorted()
+              .limit(10)
+              .forEach(System.out::println);
+        
+        // 2. Creating ZonedDateTime
+        ZoneId systemDefault = ZoneId.systemDefault();
+        ZoneId utc = ZoneId.of("UTC");
+        ZoneId newYork = ZoneId.of("America/New_York");
+        ZoneId tokyo = ZoneId.of("Asia/Tokyo");
+        ZoneId london = ZoneId.of("Europe/London");
+        ZoneId kolkata = ZoneId.of("Asia/Kolkata");
+        
+        System.out.println("\n--- Current Time in Different Zones ---");
+        LocalDateTime localNow = LocalDateTime.now();
+        
+        ZonedDateTime systemTime = ZonedDateTime.now();
+        ZonedDateTime utcTime = ZonedDateTime.now(utc);
+        ZonedDateTime nyTime = ZonedDateTime.now(newYork);
+        ZonedDateTime tokyoTime = ZonedDateTime.now(tokyo);
+        ZonedDateTime londonTime = ZonedDateTime.now(london);
+        ZonedDateTime indiaTime = ZonedDateTime.now(kolkata);
+        
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z");
+        
+        System.out.println("System Default: " + systemTime.format(formatter));
+        System.out.println("UTC: " + utcTime.format(formatter));
+        System.out.println("New York: " + nyTime.format(formatter));
+        System.out.println("Tokyo: " + tokyoTime.format(formatter));
+        System.out.println("London: " + londonTime.format(formatter));
+        System.out.println("India: " + indiaTime.format(formatter));
+        
+        // 3. Converting between time zones
+        System.out.println("\n--- Time Zone Conversions ---");
+        
+        ZonedDateTime meetingTimeUTC = ZonedDateTime.of(2024, 7, 21, 14, 0, 0, 0, utc);
+        
+        ZonedDateTime meetingInNY = meetingTimeUTC.withZoneSameInstant(newYork);
+        ZonedDateTime meetingInTokyo = meetingTimeUTC.withZoneSameInstant(tokyo);
+        ZonedDateTime meetingInLondon = meetingTimeUTC.withZoneSameInstant(london);
+        ZonedDateTime meetingInIndia = meetingTimeUTC.withZoneSameInstant(kolkata);
+        
+        System.out.println("Global meeting at 2 PM UTC:");
+        System.out.println("UTC: " + meetingTimeUTC.format(formatter));
+        System.out.println("New York: " + meetingInNY.format(formatter));
+        System.out.println("Tokyo: " + meetingInTokyo.format(formatter));
+        System.out.println("London: " + meetingInLondon.format(formatter));
+        System.out.println("India: " + meetingInIndia.format(formatter));
+        
+        // 4. Instant - point in time
+        System.out.println("\n--- Working with Instant ---");
+        Instant now = Instant.now();
+        System.out.println("Current instant (UTC): " + now);
+        
+        // Convert instant to different zones
+        ZonedDateTime instantInNY = now.atZone(newYork);
+        ZonedDateTime instantInTokyo = now.atZone(tokyo);
+        
+        System.out.println("Same instant in NY: " + instantInNY.format(formatter));
+        System.out.println("Same instant in Tokyo: " + instantInTokyo.format(formatter));
+        
+        // 5. Daylight Saving Time handling
+        demonstrateDaylightSaving();
+        
+        // 6. Flight scheduling example
+        demonstrateFlightScheduling();
+    }
+    
+    private static void demonstrateDaylightSaving() {
+        System.out.println("\n--- Daylight Saving Time ---");
+        
+        ZoneId newYork = ZoneId.of("America/New_York");
+        
+        // Before DST ends (EDT)
+        ZonedDateTime beforeDST = ZonedDateTime.of(2024, 3, 9, 1, 30, 0, 0, newYork);
+        // After DST begins (EST)  
+        ZonedDateTime afterDST = ZonedDateTime.of(2024, 11, 3, 1, 30, 0, 0, newYork);
+        
+        System.out.println("Before DST change: " + beforeDST);
+        System.out.println("After DST change: " + afterDST);
+        
+        // Adding hours across DST change
+        ZonedDateTime result = beforeDST.plusHours(12);
+        System.out.println("12 hours after DST change: " + result);
+    }
+    
+    private static void demonstrateFlightScheduling() {
+        System.out.println("\n=== Flight Scheduling Example ===");
+        
+        // Flight from New York to London
+        ZoneId newYork = ZoneId.of("America/New_York");
+        ZoneId london = ZoneId.of("Europe/London");
+        
+        // Departure: 3:00 PM EST from New York
+        ZonedDateTime departure = ZonedDateTime.of(2024, 7, 21, 15, 0, 0, 0, newYork);
+        
+        // Flight duration: 7 hours
+        Duration flightDuration = Duration.ofHours(7);
+        
+        // Arrival time in New York timezone
+        ZonedDateTime arrivalNYTime = departure.plus(flightDuration);
+        
+        // Arrival time in London timezone
+        ZonedDateTime arrivalLondonTime = arrivalNYTime.withZoneSameInstant(london);
+        
+        DateTimeFormatter flightFormatter = DateTimeFormatter.ofPattern("HH:mm z '('EEEE, MMM dd')'");
+        
+        System.out.println("Flight NY -> London:");
+        System.out.println("Departure: " + departure.format(flightFormatter));
+        System.out.println("Arrival (London time): " + arrivalLondonTime.format(flightFormatter));
+        System.out.println("Flight duration: " + flightDuration.toHours() + " hours");
+        
+        // Calculate time difference
+        Duration timeDifference = Duration.between(
+            departure.toLocalTime(),
+            arrivalLondonTime.toLocalTime()
+        );
+        System.out.println("Local time difference: " + timeDifference.toHours() + " hours");
+        
+        // Jet lag calculation
+        ZoneOffset nyOffset = departure.getOffset();
+        ZoneOffset londonOffset = arrivalLondonTime.getOffset();
+        Duration jetLag = Duration.between(nyOffset, londonOffset).abs();
+        System.out.println("Time zone difference: " + jetLag.toHours() + " hours");
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- GTU Question -->
+            <section>
+                <div class="gtu-question">
+                    <h4>GTU Previous Year Question (Summer 2023)</h4>
+                    <p><strong>Q: Write a Java program to demonstrate the Java 8 Date/Time API. Create a program that: 1) Calculates the age of a person in years, months, and days, 2) Finds the next occurrence of a specific day (e.g., next Monday), 3) Formats and parses dates in different formats, 4) Handles time zone conversions for a global meeting scheduler.</strong></p>
+                </div>
+                
+                <h3>Complete Solution:</h3>
+                <pre><code class="java">
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAdjusters;
+import java.util.*;
+
+public class ComprehensiveDateTimeDemo {
+    public static void main(String[] args) {
+        System.out.println("=== Comprehensive Date/Time API Demo ===\n");
+        
+        // 1. Age calculation
+        calculateAge();
+        
+        // 2. Find next occurrence of specific day
+        findNextDayOccurrence();
+        
+        // 3. Date formatting and parsing
+        demonstrateDateFormatting();
+        
+        // 4. Global meeting scheduler
+        globalMeetingScheduler();
+    }
+    
+    // 1. Age Calculation
+    private static void calculateAge() {
+        System.out.println("=== 1. Age Calculation ===");
+        
+        // Sample birth dates
+        LocalDate[] birthDates = {
+            LocalDate.of(1995, 6, 15),
+            LocalDate.of(2000, 12, 25),
+            LocalDate.of(1988, 3, 8),
+            LocalDate.of(2005, 9, 20)
+        };
+        
+        String[] names = {"Alice", "Bob", "Charlie", "Diana"};
+        LocalDate today = LocalDate.now();
+        
+        for (int i = 0; i < birthDates.length; i++) {
+            LocalDate birthDate = birthDates[i];
+            String name = names[i];
+            
+            // Calculate age using Period
+            Period age = Period.between(birthDate, today);
+            
+            // Calculate total days alive
+            long totalDays = ChronoUnit.DAYS.between(birthDate, today);
+            
+            // Calculate next birthday
+            LocalDate nextBirthday = birthDate.withYear(today.getYear());
+            if (nextBirthday.isBefore(today) || nextBirthday.isEqual(today)) {
+                nextBirthday = nextBirthday.plusYears(1);
+            }
+            long daysToNextBirthday = ChronoUnit.DAYS.between(today, nextBirthday);
+            
+            System.out.printf("%-8s (Born: %s):%n", name, birthDate);
+            System.out.printf("  Age: %d years, %d months, %d days%n", 
+                age.getYears(), age.getMonths(), age.getDays());
+            System.out.printf("  Total days alive: %,d days%n", totalDays);
+            System.out.printf("  Days to next birthday: %d days%n", daysToNextBirthday);
+            System.out.printf("  Next birthday: %s (%s)%n", 
+                nextBirthday, nextBirthday.getDayOfWeek());
+            System.out.println();
+        }
+    }
+    
+    // 2. Find Next Day Occurrence
+    private static void findNextDayOccurrence() {
+        System.out.println("=== 2. Next Day Occurrence ===");
+        
+        LocalDate today = LocalDate.now();
+        DayOfWeek[] daysToFind = {
+            DayOfWeek.MONDAY, DayOfWeek.FRIDAY, DayOfWeek.SUNDAY
+        };
+        
+        System.out.println("Today is: " + today + " (" + today.getDayOfWeek() + ")");
+        System.out.println();
+        
+        for (DayOfWeek dayToFind : daysToFind) {
+            // Method 1: Using TemporalAdjusters
+            LocalDate nextOccurrence = today.with(TemporalAdjusters.next(dayToFind));
+            long daysUntil = ChronoUnit.DAYS.between(today, nextOccurrence);
+            
+            System.out.printf("Next %-9s: %s (%d days from now)%n", 
+                dayToFind, nextOccurrence, daysUntil);
+            
+            // Find next occurrence after that
+            LocalDate followingOccurrence = nextOccurrence.with(TemporalAdjusters.next(dayToFind));
+            System.out.printf("Following %-6s: %s%n", dayToFind, followingOccurrence);
+            System.out.println();
+        }
+        
+        // Special cases
+        System.out.println("--- Special Day Calculations ---");
+        
+        // Next weekday
+        LocalDate nextWeekday = today.with(TemporalAdjusters.next(DayOfWeek.MONDAY));
+        if (today.getDayOfWeek().getValue() < 6) { // If today is weekday
+            nextWeekday = today.plusDays(1);
+            while (nextWeekday.getDayOfWeek() == DayOfWeek.SATURDAY || 
+                   nextWeekday.getDayOfWeek() == DayOfWeek.SUNDAY) {
+                nextWeekday = nextWeekday.plusDays(1);
+            }
+        }
+        System.out.println("Next weekday: " + nextWeekday + " (" + nextWeekday.getDayOfWeek() + ")");
+        
+        // First Monday of next month
+        LocalDate firstOfNextMonth = today.plusMonths(1).withDayOfMonth(1);
+        LocalDate firstMondayOfNextMonth = firstOfNextMonth.with(TemporalAdjusters.nextOrSame(DayOfWeek.MONDAY));
+        System.out.println("First Monday of next month: " + firstMondayOfNextMonth);
+        
+        // Last Friday of current month
+        LocalDate lastFridayOfMonth = today.with(TemporalAdjusters.lastInMonth(DayOfWeek.FRIDAY));
+        System.out.println("Last Friday of this month: " + lastFridayOfMonth);
+    }
+    
+    // 3. Date Formatting and Parsing
+    private static void demonstrateDateFormatting() {
+        System.out.println("\n=== 3. Date Formatting and Parsing ===");
+        
+        LocalDate today = LocalDate.now();
+        LocalTime currentTime = LocalTime.now();
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        
+        // Different date formats
+        DateTimeFormatter[] dateFormatters = {
+            DateTimeFormatter.ofPattern("dd/MM/yyyy"),
+            DateTimeFormatter.ofPattern("MM-dd-yyyy"),
+            DateTimeFormatter.ofPattern("yyyy.MM.dd"),
+            DateTimeFormatter.ofPattern("EEEE, MMMM dd, yyyy"),
+            DateTimeFormatter.ofPattern("dd MMM yyyy"),
+            DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        };
+        
+        System.out.println("--- Date Formatting ---");
+        System.out.println("Original date: " + today);
+        
+        for (DateTimeFormatter formatter : dateFormatters) {
+            System.out.println("Format: " + today.format(formatter));
+        }
+        
+        // Time formats
+        DateTimeFormatter[] timeFormatters = {
+            DateTimeFormatter.ofPattern("HH:mm:ss"),
+            DateTimeFormatter.ofPattern("hh:mm:ss a"),
+            DateTimeFormatter.ofPattern("HH:mm"),
+            DateTimeFormatter.ofPattern("hh:mm a")
+        };
+        
+        System.out.println("\n--- Time Formatting ---");
+        System.out.println("Original time: " + currentTime);
+        
+        for (DateTimeFormatter formatter : timeFormatters) {
+            System.out.println("Format: " + currentTime.format(formatter));
+        }
+        
+        // DateTime formats
+        DateTimeFormatter[] dateTimeFormatters = {
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"),
+            DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm a"),
+            DateTimeFormatter.ofPattern("EEEE, MMM dd, yyyy 'at' HH:mm"),
+            DateTimeFormatter.ISO_LOCAL_DATE_TIME
+        };
+        
+        System.out.println("\n--- DateTime Formatting ---");
+        System.out.println("Original datetime: " + currentDateTime);
+        
+        for (DateTimeFormatter formatter : dateTimeFormatters) {
+            System.out.println("Format: " + currentDateTime.format(formatter));
+        }
+        
+        // Parsing examples
+        System.out.println("\n--- Date Parsing ---");
+        
+        String[] dateStrings = {
+            "25/12/2024",
+            "12-25-2024", 
+            "2024.12.25",
+            "25 Dec 2024",
+            "2024-12-25"
+        };
+        
+        DateTimeFormatter[] parseFormatters = {
+            DateTimeFormatter.ofPattern("dd/MM/yyyy"),
+            DateTimeFormatter.ofPattern("MM-dd-yyyy"),
+            DateTimeFormatter.ofPattern("yyyy.MM.dd"),
+            DateTimeFormatter.ofPattern("dd MMM yyyy"),
+            DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        };
+        
+        for (int i = 0; i < dateStrings.length; i++) {
+            try {
+                LocalDate parsedDate = LocalDate.parse(dateStrings[i], parseFormatters[i]);
+                System.out.printf("Parsed '%s' -> %s%n", dateStrings[i], parsedDate);
+            } catch (Exception e) {
+                System.out.printf("Failed to parse '%s': %s%n", dateStrings[i], e.getMessage());
+            }
+        }
+        
+        // Custom parsing with error handling
+        System.out.println("\n--- Flexible Date Parser ---");
+        String[] testDates = {
+            "2024-07-21",
+            "21/07/2024", 
+            "July 21, 2024",
+            "invalid-date",
+            "21-07-2024"
+        };
+        
+        for (String dateStr : testDates) {
+            LocalDate parsed = parseFlexibleDate(dateStr);
+            if (parsed != null) {
+                System.out.printf("Successfully parsed '%s' -> %s%n", dateStr, parsed);
+            } else {
+                System.out.printf("Could not parse '%s'%n", dateStr);
+            }
+        }
+    }
+    
+    private static LocalDate parseFlexibleDate(String dateStr) {
+        DateTimeFormatter[] formatters = {
+            DateTimeFormatter.ofPattern("yyyy-MM-dd"),
+            DateTimeFormatter.ofPattern("dd/MM/yyyy"),
+            DateTimeFormatter.ofPattern("MM/dd/yyyy"),
+            DateTimeFormatter.ofPattern("dd-MM-yyyy"),
+            DateTimeFormatter.ofPattern("MMMM dd, yyyy", Locale.ENGLISH),
+            DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.ENGLISH)
+        };
+        
+        for (DateTimeFormatter formatter : formatters) {
+            try {
+                return LocalDate.parse(dateStr, formatter);
+            } catch (Exception e) {
+                // Try next formatter
+            }
+        }
+        return null; // Could not parse
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- Global Meeting Scheduler -->
+            <section>
+                <h3>Global Meeting Scheduler:</h3>
+                <pre><code class="java">
+    // 4. Global Meeting Scheduler
+    private static void globalMeetingScheduler() {
+        System.out.println("\n=== 4. Global Meeting Scheduler ===");
+        
+        // Meeting details
+        String meetingTitle = "Quarterly Review Meeting";
+        LocalDateTime meetingDateTimeUTC = LocalDateTime.of(2024, 7, 25, 14, 0); // 2 PM UTC
+        Duration meetingDuration = Duration.ofHours(2);
+        
+        // Participants from different time zones
+        Map<String, ZoneId> participants = new LinkedHashMap<>();
+        participants.put("Alice (New York)", ZoneId.of("America/New_York"));
+        participants.put("Bob (London)", ZoneId.of("Europe/London"));
+        participants.put("Charlie (Tokyo)", ZoneId.of("Asia/Tokyo"));
+        participants.put("Diana (Mumbai)", ZoneId.of("Asia/Kolkata"));
+        participants.put("Eve (Sydney)", ZoneId.of("Australia/Sydney"));
+        participants.put("Frank (Los Angeles)", ZoneId.of("America/Los_Angeles"));
+        
+        System.out.println("Meeting: " + meetingTitle);
+        System.out.println("Duration: " + meetingDuration.toHours() + " hours");
+        System.out.println("Scheduled for: " + meetingDateTimeUTC + " UTC");
+        System.out.println();
+        
+        // Convert meeting time to each participant's local time
+        ZonedDateTime meetingUTC = meetingDateTimeUTC.atZone(ZoneId.of("UTC"));
+        
+        System.out.println("--- Local Times for Participants ---");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, MMM dd, yyyy 'at' hh:mm a z");
+        
+        List<ParticipantSchedule> schedules = new ArrayList<>();
+        
+        participants.forEach((participant, timezone) -> {
+            ZonedDateTime localMeetingTime = meetingUTC.withZoneSameInstant(timezone);
+            ZonedDateTime localMeetingEnd = localMeetingTime.plus(meetingDuration);
+            
+            // Check if meeting is during business hours (9 AM - 6 PM)
+            LocalTime startTime = localMeetingTime.toLocalTime();
+            LocalTime endTime = localMeetingEnd.toLocalTime();
+            boolean duringBusinessHours = startTime.isAfter(LocalTime.of(8, 59)) && 
+                                        endTime.isBefore(LocalTime.of(18, 1));
+            
+            // Check if it's a weekend
+            DayOfWeek dayOfWeek = localMeetingTime.getDayOfWeek();
+            boolean isWeekend = dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY;
+            
+            schedules.add(new ParticipantSchedule(participant, localMeetingTime, 
+                                                duringBusinessHours, isWeekend));
+            
+            System.out.printf("%-20s: %s%n", participant, localMeetingTime.format(formatter));
+            System.out.printf("%-20s  End time: %s%n", "", 
+                localMeetingEnd.format(DateTimeFormatter.ofPattern("hh:mm a z")));
+            System.out.printf("%-20s  Business hours: %s, Weekend: %s%n", "", 
+                duringBusinessHours ? "Yes" : "No", isWeekend ? "Yes" : "No");
+            System.out.println();
+        });
+        
+        // Analysis
+        System.out.println("--- Meeting Analysis ---");
+        long businessHoursCount = schedules.stream()
+            .filter(s -> s.duringBusinessHours)
+            .count();
+        
+        long weekendCount = schedules.stream()
+            .filter(s -> s.isWeekend)
+            .count();
+        
+        System.out.printf("Participants in business hours: %d/%d%n", 
+            businessHoursCount, schedules.size());
+        System.out.printf("Participants on weekend: %d/%d%n", 
+            weekendCount, schedules.size());
+        
+        if (businessHoursCount == schedules.size()) {
+            System.out.println("✅ Perfect time - all participants in business hours!");
+        } else if (businessHoursCount >= schedules.size() * 0.7) {
+            System.out.println("⚠️ Good time - most participants in business hours");
+        } else {
+            System.out.println("❌ Challenging time - consider rescheduling");
+        }
+        
+        // Suggest alternative times
+        System.out.println("\n--- Alternative Meeting Times ---");
+        suggestAlternativeTimes(participants);
+        
+        // Meeting reminder system
+        System.out.println("\n--- Meeting Reminders ---");
+        generateMeetingReminders(meetingUTC, participants);
+    }
+    
+    private static void suggestAlternativeTimes(Map<String, ZoneId> participants) {
+        // Try different UTC times
+        int[] utcHours = {8, 10, 12, 14, 16, 18};
+        
+        for (int utcHour : utcHours) {
+            LocalDateTime testTime = LocalDateTime.of(2024, 7, 25, utcHour, 0);
+            ZonedDateTime testUTC = testTime.atZone(ZoneId.of("UTC"));
+            
+            int businessHoursCount = 0;
+            int weekendCount = 0;
+            
+            for (ZoneId timezone : participants.values()) {
+                ZonedDateTime localTime = testUTC.withZoneSameInstant(timezone);
+                LocalTime startTime = localTime.toLocalTime();
+                
+                boolean duringBusinessHours = startTime.isAfter(LocalTime.of(8, 59)) && 
+                                            startTime.isBefore(LocalTime.of(18, 1));
+                boolean isWeekend = localTime.getDayOfWeek() == DayOfWeek.SATURDAY || 
+                                  localTime.getDayOfWeek() == DayOfWeek.SUNDAY;
+                
+                if (duringBusinessHours) businessHoursCount++;
+                if (isWeekend) weekendCount++;
+            }
+            
+            System.out.printf("%02d:00 UTC - Business hours: %d/%d, Weekend: %d/%d%n",
+                utcHour, businessHoursCount, participants.size(), 
+                weekendCount, participants.size());
+        }
+    }
+    
+    private static void generateMeetingReminders(ZonedDateTime meetingUTC, 
+                                               Map<String, ZoneId> participants) {
+        Duration[] reminderIntervals = {
+            Duration.ofDays(1),    // 1 day before
+            Duration.ofHours(2),   // 2 hours before
+            Duration.ofMinutes(15) // 15 minutes before
+        };
+        
+        String[] reminderTypes = {"Day-before reminder", "2-hour reminder", "Final reminder"};
+        
+        for (int i = 0; i < reminderIntervals.length; i++) {
+            System.out.println(reminderTypes[i] + ":");
+            ZonedDateTime reminderTime = meetingUTC.minus(reminderIntervals[i]);
+            
+            participants.forEach((participant, timezone) -> {
+                ZonedDateTime localReminderTime = reminderTime.withZoneSameInstant(timezone);
+                System.out.printf("  %-20s: %s%n", participant,
+                    localReminderTime.format(DateTimeFormatter.ofPattern("MMM dd, hh:mm a z")));
+            });
+            System.out.println();
+        }
+    }
+    
+    // Helper class for participant scheduling
+    static class ParticipantSchedule {
+        String participant;
+        ZonedDateTime meetingTime;
+        boolean duringBusinessHours;
+        boolean isWeekend;
+        
+        ParticipantSchedule(String participant, ZonedDateTime meetingTime, 
+                          boolean duringBusinessHours, boolean isWeekend) {
+            this.participant = participant;
+            this.meetingTime = meetingTime;
+            this.duringBusinessHours = duringBusinessHours;
+            this.isWeekend = isWeekend;
+        }
+    }
+}
+                </code></pre>
+                
+                <div class="success-box">
+                    <strong>Solution Features:</strong>
+                    <ul>
+                        <li>Comprehensive age calculation with multiple metrics</li>
+                        <li>Advanced day occurrence finding with TemporalAdjusters</li>
+                        <li>Flexible date formatting and parsing with error handling</li>
+                        <li>Complete global meeting scheduler with analysis</li>
+                        <li>Time zone conversion and business hours checking</li>
+                        <li>Meeting reminder system and alternative time suggestions</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Summary -->
+            <section>
+                <h2>📚 Lecture Summary</h2>
+                <div class="two-column">
+                    <div>
+                        <h3>Key Concepts Covered</h3>
+                        <ul>
+                            <li>Java 8 Date/Time API fundamentals</li>
+                            <li>LocalDate, LocalTime, LocalDateTime usage</li>
+                            <li>Time zone handling with ZonedDateTime</li>
+                            <li>Date formatting and parsing techniques</li>
+                            <li>Period and Duration calculations</li>
+                            <li>Temporal adjusters and queries</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Best Practices</h3>
+                        <ul>
+                            <li>Use modern API instead of legacy Date/Calendar</li>
+                            <li>Leverage immutability for thread safety</li>
+                            <li>Handle time zones properly for global applications</li>
+                            <li>Use appropriate classes for specific needs</li>
+                            <li>Implement flexible date parsing strategies</li>
+                            <li>Consider daylight saving time effects</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="highlight-box" style="margin-top: 30px;">
+                    <h3>🎯 Next Lecture Preview</h3>
+                    <p><strong>Lecture 23: Annotations and Reflection</strong></p>
+                    <ul>
+                        <li>Built-in annotations and metadata</li>
+                        <li>Custom annotation creation</li>
+                        <li>Reflection API fundamentals</li>
+                        <li>Runtime annotation processing</li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/notes/notes.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/highlight.min.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            transition: 'slide',
+            transitionSpeed: 'fast',
+            center: true,
+            plugins: [RevealNotes, RevealHighlight]
+        });
+    </script>
+</body>
+</html>

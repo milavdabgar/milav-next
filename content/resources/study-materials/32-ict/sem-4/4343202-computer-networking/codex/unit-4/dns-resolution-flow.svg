@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
+  <title>DNS Resolution Flow: Recursive and Iterative Queries</title>
+  <desc>
+    Visual sequence of DNS name resolution from host stub resolver through recursive resolver, root servers, TLD,
+    and authoritative DNS, including caching points. Course: 4343202 Computer Networking — Unit-IV (Application Layer: DNS)
+  </desc>
+  <defs>
+    <style type="text/css"><![CDATA[
+      .h1 { font: 700 30px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial; fill: #111; }
+      .h2 { font: 600 20px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial; fill: #111; }
+      .lab { font: 600 13px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial; fill: #111; }
+      .txt { font: 400 13px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Arial; fill: #111; }
+      .small { font: 400 12px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial; fill: #333; }
+      .box { fill: #fff; stroke: #333; stroke-width: 1.5; rx: 10; }
+      .srv { fill: #eef7ff; stroke: #0b74de; stroke-width: 1.2; rx: 10; }
+      .root { fill: #f3e8ff; stroke: #7e22ce; stroke-width: 1.2; rx: 10; }
+      .tld { fill: #fff7e6; stroke: #d9480f; stroke-width: 1.2; rx: 10; }
+      .auth { fill: #e9f7ef; stroke: #1a7f37; stroke-width: 1.2; rx: 10; }
+      .arrow { marker-end: url(#arrowhead); stroke: #333; stroke-width: 1.6; fill: none; }
+      .arrow-blue { marker-end: url(#arrowhead); stroke: #0b74de; stroke-width: 1.8; fill: none; }
+      .arrow-green { marker-end: url(#arrowhead); stroke: #1a7f37; stroke-width: 1.8; fill: none; }
+      .arrow-orange { marker-end: url(#arrowhead); stroke: #d9480f; stroke-width: 1.8; fill: none; }
+      .note { fill: #fafafa; stroke: #ccc; stroke-width: 1; rx: 8; }
+    ]]></style>
+    <marker id="arrowhead" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#333" />
+    </marker>
+  </defs>
+
+  <text class="h1" x="40" y="50">DNS Resolution Flow</text>
+  <text class="txt" x="40" y="78">Recursive resolver walks Root → TLD → Authoritative to resolve names, caching along the way.</text>
+
+  <!-- Host / Stub Resolver -->
+  <rect class="box" x="60" y="110" width="260" height="90" />
+  <text class="h2" x="80" y="140">Host</text>
+  <text class="small" x="80" y="164">Stub Resolver</text>
+  <text class="small" x="80" y="184">/etc/resolv.conf, DNS Client</text>
+
+  <!-- Recursive Resolver -->
+  <rect class="srv" x="360" y="110" width="300" height="90" />
+  <text class="h2" x="380" y="140">Recursive Resolver</text>
+  <text class="small" x="380" y="164">ISP / Local DNS</text>
+  <text class="small" x="380" y="184">Cache + Recursion</text>
+
+  <!-- Root, TLD, Authoritative -->
+  <rect class="root" x="720" y="90" width="180" height="70" />
+  <text class="lab" x="730" y="114">Root Servers</text>
+  <text class="small" x="730" y="134">.</text>
+
+  <rect class="tld" x="920" y="90" width="220" height="70" />
+  <text class="lab" x="930" y="114">TLD Servers</text>
+  <text class="small" x="930" y="134">.com, .org, .in, ...</text>
+
+  <rect class="auth" x="920" y="180" width="220" height="70" />
+  <text class="lab" x="930" y="204">Authoritative DNS</text>
+  <text class="small" x="930" y="224">example.com NS/A/AAAA</text>
+
+  <!-- Query Sequence (no cache) -->
+  <text class="lab" x="60" y="230">Example: Resolve www.example.com</text>
+  <path class="arrow-blue" d="M 320 150 L 360 150" />
+  <text class="small" x="220" y="144">Q: www.example.com?</text>
+  <path class="arrow-orange" d="M 660 150 L 720 125" />
+  <text class="small" x="610" y="120">Iterative Q: . → where is .com?</text>
+  <path class="arrow-green" d="M 720 125 L 660 170" />
+  <text class="small" x="670" y="170">Referral: TLD .com NS</text>
+  <path class="arrow-orange" d="M 660 150 L 920 125" />
+  <text class="small" x="780" y="118">Iterative Q: .com → who serves example.com?</text>
+  <path class="arrow-green" d="M 920 125 L 660 180" />
+  <text class="small" x="760" y="182">Referral: NS for example.com</text>
+  <path class="arrow-orange" d="M 660 150 L 920 210" />
+  <text class="small" x="760" y="206">Q: A/AAAA for www.example.com</text>
+  <path class="arrow-green" d="M 920 210 L 660 190" />
+  <text class="small" x="760" y="194">Answer: A 93.184.216.34</text>
+  <path class="arrow-blue" d="M 360 150 L 320 150" />
+  <text class="small" x="260" y="168">Answer: 93.184.216.34</text>
+
+  <!-- Caching behavior -->
+  <rect class="note" x="360" y="230" width="300" height="90" />
+  <text class="lab" x="372" y="252">Caching</text>
+  <text class="txt" x="372" y="276">Resolver caches NS referrals and A/AAAA answers with TTL.</text>
+  <text class="txt" x="372" y="298">Subsequent queries avoid full walk until TTL expiry.</text>
+
+  <!-- Negative caching / NXDOMAIN -->
+  <rect class="note" x="360" y="340" width="300" height="80" />
+  <text class="lab" x="372" y="364">Negative Caching</text>
+  <text class="txt" x="372" y="388">NXDOMAIN results may be cached briefly (per RFC 2308).</text>
+
+  <!-- Record Types -->
+  <rect class="note" x="700" y="280" width="440" height="160" />
+  <text class="lab" x="712" y="304">Common DNS Records</text>
+  <text class="txt" x="712" y="328">A/AAAA: Host IPv4/IPv6 address; CNAME: Alias to canonical name</text>
+  <text class="txt" x="712" y="350">NS: Delegation name servers; MX: Mail exchangers; TXT: arbitrary text</text>
+  <text class="txt" x="712" y="372">SOA: Zone metadata &amp; timers (serial, refresh, retry, expire)</text>
+
+  <!-- Security & Extensions -->
+  <rect class="note" x="60" y="440" width="1080" height="120" />
+  <text class="lab" x="72" y="464">DNSSEC (Integrity &amp; Authentication)</text>
+  <text class="txt" x="72" y="488">Adds RRSIG, DNSKEY, DS records. Validates chain of trust: Root → TLD → Zone.</text>
+  <text class="txt" x="72" y="510">Prevents cache poisoning by signing responses; requires validating resolver.</text>
+
+  <!-- Stub vs Recursive behavior -->
+  <rect class="note" x="60" y="580" width="1080" height="220" />
+  <text class="lab" x="72" y="604">Recursive vs Iterative</text>
+  <text class="txt" x="72" y="628">Stub resolver sends one recursive query to its configured resolver. The recursive resolver performs iterative queries to Root, TLD, and Authoritative servers.</text>
+  <text class="txt" x="72" y="652">Authoritative servers do not recurse; they answer for zones they serve or refer up hierarchy.</text>
+  <text class="txt" x="72" y="676">Caching resolvers reduce latency and load; TTL controls freshness. Clients may also cache per-OS policy.</text>
+
+  <!-- Legend -->
+  <rect class="box" x="60" y="820" width="1080" height="50" />
+  <circle cx="90" cy="845" r="6" fill="#0b74de" /><text class="small" x="105" y="850">Query (recursive from host, iterative from resolver)</text>
+  <circle cx="520" cy="845" r="6" fill="#1a7f37" /><text class="small" x="535" y="850">Response / Referral</text>
+  <circle cx="920" cy="845" r="6" fill="#d9480f" /><text class="small" x="935" y="850">Iterative step between DNS hierarchy</text>
+</svg>
+

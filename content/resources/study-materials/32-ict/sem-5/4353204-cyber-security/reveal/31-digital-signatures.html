@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Digital Signatures</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/white.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/monokai.css">
+    <style>
+        .reveal h1, .reveal h2, .reveal h3 {
+            color: #2c3e50;
+        }
+        .reveal .slides section {
+            text-align: left;
+        }
+        .reveal .title-slide {
+            text-align: center;
+        }
+        .reveal .highlight {
+            background-color: #3498db;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        .reveal .signature-box {
+            background-color: #e8f5e8;
+            border-left: 4px solid #27ae60;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .reveal .crypto-box {
+            background-color: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .reveal .process-box {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .reveal .security-box {
+            background-color: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .reveal .example-box {
+            background-color: #f8f9fa;
+            border: 2px solid #6c757d;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 0.85em;
+        }
+        .reveal img {
+            border: none !important;
+            box-shadow: none !important;
+        }
+        .reveal .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            font-size: 0.9em;
+        }
+        .reveal .property-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            font-size: 0.85em;
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- Title Slide -->
+            <section class="title-slide">
+                <h1>Digital Signatures</h1>
+                <h3>Cryptographic Authentication and Integrity</h3>
+                <p>
+                    <small>Ensuring Digital Document Authenticity and Non-repudiation</small>
+                </p>
+                <div style="text-align: center; margin-top: 30px;">
+                    <img src="diagrams/digital-signature-process.svg" alt="Digital Signature Process" style="width: 70%; height: auto; max-width: 700px;">
+                </div>
+            </section>
+
+            <!-- What are Digital Signatures? -->
+            <section>
+                <h2>Digital Signature Definition</h2>
+                <div class="signature-box">
+                    <strong>Digital Signature</strong> is a cryptographic mechanism that provides authentication, integrity, and non-repudiation for digital documents and messages using public key cryptography.
+                </div>
+                <h3>Key Properties:</h3>
+                <ul>
+                    <li><strong>Authentication:</strong> Verifies the signer's identity</li>
+                    <li><strong>Integrity:</strong> Ensures document hasn't been altered</li>
+                    <li><strong>Non-repudiation:</strong> Signer cannot deny signing</li>
+                    <li><strong>Tamper Evidence:</strong> Any modification invalidates signature</li>
+                    <li><strong>Legal Validity:</strong> Legally binding in many jurisdictions</li>
+                </ul>
+                <div class="process-box">
+                    <strong>Analogy:</strong> Digital equivalent of handwritten signatures with mathematical proof of authenticity
+                </div>
+            </section>
+
+            <!-- Digital vs Physical Signatures -->
+            <section>
+                <h2>Digital vs Physical Signatures</h2>
+                <div class="comparison-grid">
+                    <div class="security-box">
+                        <h4>Physical Signatures:</h4>
+                        <ul>
+                            <li><strong>Verification:</strong> Visual comparison</li>
+                            <li><strong>Security:</strong> Can be forged</li>
+                            <li><strong>Binding:</strong> Document attachment</li>
+                            <li><strong>Evidence:</strong> Handwriting analysis</li>
+                            <li><strong>Integrity:</strong> No tamper detection</li>
+                            <li><strong>Repudiation:</strong> Can be denied</li>
+                            <li><strong>Distribution:</strong> Physical copies</li>
+                        </ul>
+                    </div>
+                    <div class="signature-box">
+                        <h4>Digital Signatures:</h4>
+                        <ul>
+                            <li><strong>Verification:</strong> Mathematical computation</li>
+                            <li><strong>Security:</strong> Cryptographically strong</li>
+                            <li><strong>Binding:</strong> Cryptographically bound</li>
+                            <li><strong>Evidence:</strong> Digital certificate trail</li>
+                            <li><strong>Integrity:</strong> Automatic tamper detection</li>
+                            <li><strong>Repudiation:</strong> Non-repudiable with PKI</li>
+                            <li><strong>Distribution:</strong> Instant electronic sharing</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="crypto-box">
+                    <strong>Advantage:</strong> Digital signatures provide superior security and verification compared to physical signatures
+                </div>
+            </section>
+
+            <!-- How Digital Signatures Work -->
+            <section>
+                <h2>Digital Signature Process</h2>
+                <div class="example-box">
+                    <strong>Signing Process:</strong><br><br>
+                    
+                    <strong>Step 1: Hash Generation</strong><br>
+                    Document → Hash Function → Message Digest (Hash)<br>
+                    Example: SHA-256(document) = "a1b2c3d4..."<br><br>
+                    
+                    <strong>Step 2: Signature Creation</strong><br>
+                    Hash + Signer's Private Key → Digital Signature<br>
+                    Encrypt(Hash, Private Key) = Digital Signature<br><br>
+                    
+                    <strong>Step 3: Attachment</strong><br>
+                    Original Document + Digital Signature + Public Key Certificate<br><br>
+                    
+                    <strong>Verification Process:</strong><br><br>
+                    
+                    <strong>Step 1: Hash Calculation</strong><br>
+                    Received Document → Same Hash Function → New Hash<br><br>
+                    
+                    <strong>Step 2: Signature Decryption</strong><br>
+                    Digital Signature + Signer's Public Key → Original Hash<br>
+                    Decrypt(Digital Signature, Public Key) = Original Hash<br><br>
+                    
+                    <strong>Step 3: Comparison</strong><br>
+                    If New Hash = Original Hash → Signature Valid<br>
+                    If New Hash ≠ Original Hash → Document Modified
+                </div>
+            </section>
+
+            <!-- Digital Signature Algorithms -->
+            <section>
+                <h2>Digital Signature Algorithms</h2>
+                <div class="property-grid">
+                    <div class="crypto-box">
+                        <h4>RSA Signatures:</h4>
+                        <ul>
+                            <li><strong>Algorithm:</strong> RSA-PSS, PKCS#1</li>
+                            <li><strong>Key Sizes:</strong> 2048, 3072, 4096 bits</li>
+                            <li><strong>Hash:</strong> SHA-256, SHA-384, SHA-512</li>
+                            <li><strong>Usage:</strong> Most widely supported</li>
+                            <li><strong>Performance:</strong> Slower than ECDSA</li>
+                        </ul>
+                    </div>
+                    <div class="crypto-box">
+                        <h4>ECDSA Signatures:</h4>
+                        <ul>
+                            <li><strong>Algorithm:</strong> Elliptic Curve DSA</li>
+                            <li><strong>Curves:</strong> P-256, P-384, P-521</li>
+                            <li><strong>Hash:</strong> SHA-256, SHA-384, SHA-512</li>
+                            <li><strong>Usage:</strong> Growing adoption</li>
+                            <li><strong>Performance:</strong> Faster, smaller keys</li>
+                        </ul>
+                    </div>
+                    <div class="crypto-box">
+                        <h4>EdDSA Signatures:</h4>
+                        <ul>
+                            <li><strong>Algorithm:</strong> Ed25519, Ed448</li>
+                            <li><strong>Curves:</strong> Edwards curves</li>
+                            <li><strong>Hash:</strong> Integrated (Ed25519=SHA-512)</li>
+                            <li><strong>Usage:</strong> Modern alternative</li>
+                            <li><strong>Performance:</strong> Very fast</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="process-box">
+                    <strong>Legacy Algorithms:</strong> DSA (Digital Signature Algorithm) - largely superseded by ECDSA
+                </div>
+            </section>
+
+            <!-- Hash Functions in Digital Signatures -->
+            <section>
+                <h2>Role of Hash Functions</h2>
+                <div class="crypto-box">
+                    <strong>Why Hash First?</strong> Digital signatures operate on fixed-size message digests rather than variable-length documents for efficiency and security.
+                </div>
+                <div class="comparison-grid">
+                    <div class="process-box">
+                        <h4>Hash Function Requirements:</h4>
+                        <ul>
+                            <li><strong>One-way:</strong> Computationally infeasible to reverse</li>
+                            <li><strong>Deterministic:</strong> Same input produces same hash</li>
+                            <li><strong>Avalanche Effect:</strong> Small change = completely different hash</li>
+                            <li><strong>Collision Resistant:</strong> Hard to find two inputs with same hash</li>
+                            <li><strong>Fixed Output:</strong> Consistent digest size</li>
+                        </ul>
+                    </div>
+                    <div class="crypto-box">
+                        <h4>Common Hash Algorithms:</h4>
+                        <ul>
+                            <li><strong>SHA-256:</strong> 256-bit output, widely used</li>
+                            <li><strong>SHA-384:</strong> 384-bit output, higher security</li>
+                            <li><strong>SHA-512:</strong> 512-bit output, maximum security</li>
+                            <li><strong>SHA-3:</strong> Latest standard, different design</li>
+                            <li><strong>BLAKE2:</strong> High-performance alternative</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="security-box">
+                    <strong>Deprecated:</strong> MD5, SHA-1 are cryptographically broken and should not be used
+                </div>
+            </section>
+
+            <!-- Digital Signature Standards -->
+            <section>
+                <h2>Digital Signature Standards</h2>
+                <table style="font-size: 0.75em;">
+                    <tr>
+                        <th>Standard</th>
+                        <th>Organization</th>
+                        <th>Algorithm</th>
+                        <th>Key Features</th>
+                    </tr>
+                    <tr>
+                        <td>PKCS#1</td>
+                        <td>RSA Labs</td>
+                        <td>RSA</td>
+                        <td>RSA signature schemes</td>
+                    </tr>
+                    <tr>
+                        <td>FIPS 186-4</td>
+                        <td>NIST</td>
+                        <td>DSA, ECDSA, RSA</td>
+                        <td>US government standard</td>
+                    </tr>
+                    <tr>
+                        <td>RFC 3447</td>
+                        <td>IETF</td>
+                        <td>RSA-PSS</td>
+                        <td>Probabilistic signature scheme</td>
+                    </tr>
+                    <tr>
+                        <td>RFC 6979</td>
+                        <td>IETF</td>
+                        <td>DSA, ECDSA</td>
+                        <td>Deterministic signatures</td>
+                    </tr>
+                    <tr>
+                        <td>RFC 8032</td>
+                        <td>IETF</td>
+                        <td>EdDSA</td>
+                        <td>Edwards curve signatures</td>
+                    </tr>
+                    <tr>
+                        <td>ISO/IEC 14888</td>
+                        <td>ISO</td>
+                        <td>Various</td>
+                        <td>International standard</td>
+                    </tr>
+                </table>
+                <div class="signature-box">
+                    <strong>Compliance:</strong> Different industries and governments may require specific standards
+                </div>
+            </section>
+
+            <!-- Digital Signature Applications -->
+            <section>
+                <h2>Digital Signature Applications</h2>
+                <div class="property-grid">
+                    <div class="signature-box">
+                        <h4>Document Signing:</h4>
+                        <ul>
+                            <li>PDF digital signatures</li>
+                            <li>Microsoft Office documents</li>
+                            <li>Legal contracts</li>
+                            <li>Government forms</li>
+                            <li>Medical records</li>
+                            <li>Academic certificates</li>
+                        </ul>
+                    </div>
+                    <div class="process-box">
+                        <h4>Software Security:</h4>
+                        <ul>
+                            <li>Code signing certificates</li>
+                            <li>Software updates</li>
+                            <li>Mobile app signing</li>
+                            <li>Driver authentication</li>
+                            <li>Firmware validation</li>
+                            <li>Package integrity</li>
+                        </ul>
+                    </div>
+                    <div class="crypto-box">
+                        <h4>Communication:</h4>
+                        <ul>
+                            <li>Email signing (S/MIME)</li>
+                            <li>Secure messaging</li>
+                            <li>API authentication</li>
+                            <li>Transaction authorization</li>
+                            <li>Blockchain transactions</li>
+                            <li>Digital timestamps</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Digital Signature Implementation -->
+            <section>
+                <h2>Implementation Technologies</h2>
+                <div class="comparison-grid">
+                    <div class="crypto-box">
+                        <h4>PKCS Standards:</h4>
+                        <ul>
+                            <li><strong>PKCS#1:</strong> RSA cryptography standard</li>
+                            <li><strong>PKCS#7:</strong> Cryptographic message syntax</li>
+                            <li><strong>PKCS#11:</strong> Cryptographic token interface</li>
+                            <li><strong>PKCS#12:</strong> Personal information exchange</li>
+                        </ul>
+                    </div>
+                    <div class="process-box">
+                        <h4>File Formats:</h4>
+                        <ul>
+                            <li><strong>CAdES:</strong> CMS Advanced Electronic Signatures</li>
+                            <li><strong>XAdES:</strong> XML Advanced Electronic Signatures</li>
+                            <li><strong>PAdES:</strong> PDF Advanced Electronic Signatures</li>
+                            <li><strong>ASiC:</strong> Associated Signature Containers</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="signature-box">
+                    <h3>Programming Libraries:</h3>
+                    <ul>
+                        <li><strong>OpenSSL:</strong> Comprehensive cryptographic library</li>
+                        <li><strong>.NET Cryptography:</strong> Microsoft cryptographic APIs</li>
+                        <li><strong>Java Security:</strong> Java cryptographic architecture</li>
+                        <li><strong>Web Crypto API:</strong> Browser-based cryptography</li>
+                        <li><strong>Bouncy Castle:</strong> Cross-platform crypto library</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Legal Framework -->
+            <section>
+                <h2>Legal Validity of Digital Signatures</h2>
+                <div class="signature-box">
+                    <h3>Legal Recognition:</h3>
+                    <ul>
+                        <li><strong>ESIGN Act (US):</strong> Electronic signatures legally valid</li>
+                        <li><strong>eIDAS Regulation (EU):</strong> Electronic identification and signatures</li>
+                        <li><strong>IT Act (India):</strong> Digital signatures with legal standing</li>
+                        <li><strong>UNCITRAL Model Law:</strong> International electronic signature framework</li>
+                    </ul>
+                </div>
+                <div class="comparison-grid">
+                    <div class="process-box">
+                        <h4>Signature Types (eIDAS):</h4>
+                        <ul>
+                            <li><strong>Electronic Signature:</strong> Basic digital signature</li>
+                            <li><strong>Advanced Electronic Signature:</strong> Uniquely linked to signer</li>
+                            <li><strong>Qualified Electronic Signature:</strong> Highest legal status</li>
+                        </ul>
+                    </div>
+                    <div class="crypto-box">
+                        <h4>Legal Requirements:</h4>
+                        <ul>
+                            <li><strong>Signer Authentication:</strong> Verified identity</li>
+                            <li><strong>Document Integrity:</strong> Tamper evidence</li>
+                            <li><strong>Non-repudiation:</strong> Cannot deny signing</li>
+                            <li><strong>Audit Trail:</strong> Complete signing record</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Digital Signature Attacks -->
+            <section>
+                <h2>Security Threats and Attacks</h2>
+                <div class="security-box">
+                    <h3>Common Attack Vectors:</h3>
+                    <ul>
+                        <li><strong>Key Compromise:</strong> Private key theft or exposure</li>
+                        <li><strong>Weak Random Numbers:</strong> Predictable signature generation</li>
+                        <li><strong>Hash Collisions:</strong> Finding documents with same hash</li>
+                        <li><strong>Man-in-the-Middle:</strong> Intercepting and modifying signatures</li>
+                        <li><strong>Certificate Forgery:</strong> Fake certificate authorities</li>
+                        <li><strong>Timing Attacks:</strong> Analyzing signature timing</li>
+                        <li><strong>Side-Channel Attacks:</strong> Power analysis, electromagnetic</li>
+                    </ul>
+                </div>
+                <div class="comparison-grid">
+                    <div class="crypto-box">
+                        <h4>Historical Vulnerabilities:</h4>
+                        <ul>
+                            <li><strong>Sony PlayStation:</strong> Private key exposure (2010)</li>
+                            <li><strong>Flame Malware:</strong> MD5 collision attack (2012)</li>
+                            <li><strong>Debian OpenSSL:</strong> Weak random number generation</li>
+                            <li><strong>RSA Key Factorization:</strong> Shared factors in keys</li>
+                        </ul>
+                    </div>
+                    <div class="process-box">
+                        <h4>Defense Strategies:</h4>
+                        <ul>
+                            <li><strong>Strong Key Generation:</strong> Hardware random sources</li>
+                            <li><strong>Key Protection:</strong> HSM or secure storage</li>
+                            <li><strong>Certificate Validation:</strong> Proper CA verification</li>
+                            <li><strong>Algorithm Updates:</strong> Migrate from weak algorithms</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Timestamping -->
+            <section>
+                <h2>Digital Timestamping</h2>
+                <div class="process-box">
+                    <strong>Digital Timestamp:</strong> Cryptographic proof that a digital signature was created at a specific time, providing additional non-repudiation.
+                </div>
+                <div class="example-box">
+                    <strong>Timestamping Process:</strong><br><br>
+                    
+                    1. <strong>Document Signing:</strong> Create digital signature<br>
+                    2. <strong>Timestamp Request:</strong> Send signature hash to TSA<br>
+                    3. <strong>Time Stamping Authority (TSA):</strong> Adds trusted timestamp<br>
+                    4. <strong>Timestamp Token:</strong> TSA signs timestamp with its key<br>
+                    5. <strong>Attachment:</strong> Timestamp token attached to signature<br><br>
+                    
+                    <strong>Benefits:</strong><br>
+                    • Proves when signature was created<br>
+                    • Prevents backdating of signatures<br>
+                    • Required for long-term signature validity<br>
+                    • Legal evidence of signing time<br><br>
+                    
+                    <strong>Standards:</strong> RFC 3161 (Time-Stamp Protocol), ETSI TS 102 023
+                </div>
+            </section>
+
+            <!-- Long-term Validation -->
+            <section>
+                <h2>Long-term Signature Validation</h2>
+                <div class="signature-box">
+                    <strong>Challenge:</strong> Digital signatures may become invalid over time due to certificate expiration or cryptographic algorithm weakening.
+                </div>
+                <div class="comparison-grid">
+                    <div class="process-box">
+                        <h4>Archival Challenges:</h4>
+                        <ul>
+                            <li><strong>Certificate Expiration:</strong> Signing certificates expire</li>
+                            <li><strong>CA Key Rollover:</strong> Certificate authority key changes</li>
+                            <li><strong>Algorithm Deprecation:</strong> Weak algorithms over time</li>
+                            <li><strong>Key Compromise:</strong> Historical key exposure</li>
+                            <li><strong>Technology Evolution:</strong> Format obsolescence</li>
+                        </ul>
+                    </div>
+                    <div class="crypto-box">
+                        <h4>Long-term Solutions:</h4>
+                        <ul>
+                            <li><strong>Archive Timestamps:</strong> Timestamp before expiration</li>
+                            <li><strong>Signature Renewal:</strong> Re-sign with new certificates</li>
+                            <li><strong>Validation Data:</strong> Preserve OCSP/CRL responses</li>
+                            <li><strong>Evidence Records:</strong> Complete audit trail</li>
+                            <li><strong>Format Migration:</strong> Convert to newer formats</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="security-box">
+                    <strong>Standards:</strong> ETSI TS 101 733 (CAdES), ETSI TS 103 171 (XAdES), ETSI TS 102 778 (PAdES)
+                </div>
+            </section>
+
+            <!-- Practical Implementation -->
+            <section>
+                <h2>Implementation Best Practices</h2>
+                <ol>
+                    <li><strong>Choose Strong Algorithms:</strong> RSA-2048+ or ECDSA P-256+</li>
+                    <li><strong>Use Current Hash Functions:</strong> SHA-256 minimum, avoid MD5/SHA-1</li>
+                    <li><strong>Implement Proper Key Management:</strong> Secure key generation and storage</li>
+                    <li><strong>Validate Certificates:</strong> Check certificate chains and revocation</li>
+                    <li><strong>Include Timestamping:</strong> Use trusted timestamp authorities</li>
+                    <li><strong>Plan for Long-term:</strong> Consider archive signature formats</li>
+                    <li><strong>Follow Standards:</strong> Use established signature formats</li>
+                    <li><strong>Regular Updates:</strong> Migrate to stronger algorithms over time</li>
+                </ol>
+                <div class="signature-box">
+                    <strong>Testing:</strong> Validate signatures with multiple implementations and scenarios
+                </div>
+            </section>
+
+            <!-- Common Implementation Pitfalls -->
+            <section>
+                <h2>Common Implementation Mistakes</h2>
+                <div class="security-box">
+                    <h3>Avoid These Pitfalls:</h3>
+                    <ul>
+                        <li><strong>Weak Key Generation:</strong> Insufficient randomness or short keys</li>
+                        <li><strong>Insecure Key Storage:</strong> Unprotected private keys</li>
+                        <li><strong>Missing Certificate Validation:</strong> Not checking certificate validity</li>
+                        <li><strong>Ignoring Revocation:</strong> Not checking CRL/OCSP status</li>
+                        <li><strong>Poor Error Handling:</strong> Failing silently on signature errors</li>
+                        <li><strong>Inadequate Timestamping:</strong> Missing or untrusted timestamps</li>
+                        <li><strong>Format Incompatibility:</strong> Non-standard signature formats</li>
+                        <li><strong>No Upgrade Path:</strong> No plan for algorithm migration</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Future of Digital Signatures -->
+            <section>
+                <h2>Future Trends</h2>
+                <ul>
+                    <li><strong>Post-Quantum Cryptography:</strong> Quantum-resistant signature algorithms</li>
+                    <li><strong>Blockchain Integration:</strong> Distributed signature verification</li>
+                    <li><strong>Cloud Signing:</strong> HSM-as-a-Service for signatures</li>
+                    <li><strong>Mobile Signatures:</strong> Smartphone-based digital signing</li>
+                    <li><strong>Biometric Integration:</strong> Combining biometrics with digital signatures</li>
+                    <li><strong>Zero-Knowledge Proofs:</strong> Privacy-preserving signatures</li>
+                    <li><strong>Automated Validation:</strong> AI-powered signature verification</li>
+                    <li><strong>IoT Signatures:</strong> Lightweight signatures for IoT devices</li>
+                </ul>
+            </section>
+
+            <!-- Key Takeaways -->
+            <section>
+                <h2>Key Takeaways</h2>
+                <ul>
+                    <li>Digital signatures provide authentication, integrity, and non-repudiation</li>
+                    <li>They use public key cryptography and hash functions for security</li>
+                    <li>Multiple standards and algorithms are available for different needs</li>
+                    <li>Legal frameworks recognize digital signatures in many jurisdictions</li>
+                    <li>Proper implementation requires attention to key management and validation</li>
+                    <li>Timestamping is crucial for long-term signature validity</li>
+                    <li>Security threats require ongoing vigilance and algorithm updates</li>
+                    <li>Future developments will address quantum computing and enhanced usability</li>
+                </ul>
+                <div class="signature-box">
+                    <strong>Remember:</strong> Digital signatures are only as secure as the private key protection and the underlying cryptographic implementation
+                </div>
+            </section>
+
+            <!-- Thank You -->
+            <section class="title-slide">
+                <h1>Thank You</h1>
+                <h3>Questions & Discussion</h3>
+                <p>Next: TLS (Transport Layer Security)</p>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/notes/notes.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/markdown/markdown.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/highlight.min.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            transition: 'slide',
+            plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Lecture 20: Lambda Expressions and Functional Interfaces | Java Programming (4343203)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <style>
+        .reveal { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; height: 90vh; }
+        .reveal .slides section { text-align: left; font-size: 0.85em; }
+        .reveal h1, .reveal h2, .reveal h3 { color: #2c3e50; text-align: center; }
+        .reveal h1 { font-size: 2.2em; }
+        .reveal h2 { font-size: 1.8em; margin-bottom: 30px; }
+        .reveal h3 { font-size: 1.4em; margin-bottom: 20px; }
+        .reveal pre { width: 100%; font-size: 0.75em; line-height: 1.2; }
+        .reveal code { background-color: #f8f9fa; padding: 2px 4px; border-radius: 3px; color: #e83e8c; }
+        .reveal .hljs { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 5px; padding: 15px; }
+        .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+        .highlight-box { background-color: #e8f4fd; border-left: 5px solid #3498db; padding: 15px; margin: 15px 0; border-radius: 5px; }
+        .warning-box { background-color: #fff3cd; border-left: 5px solid #ffc107; padding: 15px; margin: 15px 0; border-radius: 5px; }
+        .success-box { background-color: #d4edda; border-left: 5px solid #28a745; padding: 15px; margin: 15px 0; border-radius: 5px; }
+        .reveal ul, .reveal ol { margin-left: 1em; }
+        .reveal li { margin-bottom: 8px; }
+        .gtu-question { background-color: #f0f8ff; border: 2px solid #4682b4; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        .gtu-question h4 { color: #4682b4; margin: 0 0 15px 0; font-size: 1.1em; }
+        .reveal table { font-size: 0.7em; border-collapse: collapse; width: 100%; margin: 15px 0; }
+        .reveal td, .reveal th { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        .reveal th { background-color: #f2f2f2; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- Title Slide -->
+            <section>
+                <h1>Lambda Expressions and Functional Interfaces</h1>
+                <h3>Java Programming (4343203)</h3>
+                <h3>Lecture 20</h3>
+                <p style="text-align: center; margin-top: 50px;">
+                    <strong>Unit 5: Modern Java Features</strong><br>
+                    GTU Computer Engineering Semester 4
+                </p>
+            </section>
+
+            <!-- Learning Objectives -->
+            <section>
+                <h2>Learning Objectives</h2>
+                <ul>
+                    <li>Understand functional programming concepts in Java 8+</li>
+                    <li>Master lambda expression syntax and usage patterns</li>
+                    <li>Work with built-in functional interfaces</li>
+                    <li>Create custom functional interfaces</li>
+                    <li>Apply method references and constructor references</li>
+                    <li>Integrate lambdas with collections and streams</li>
+                </ul>
+                <div class="highlight-box">
+                    <strong>Focus:</strong> Modern functional programming techniques to write more concise, readable, and maintainable Java code.
+                </div>
+            </section>
+
+            <!-- Introduction to Lambda Expressions -->
+            <section>
+                <h2>What are Lambda Expressions?</h2>
+                <div class="two-column">
+                    <div>
+                        <h3>Traditional Anonymous Classes</h3>
+                        <pre><code class="java">
+// Before Java 8 - Anonymous class
+Runnable task = new Runnable() {
+    @Override
+    public void run() {
+        System.out.println("Hello from thread!");
+    }
+};
+
+// Comparator example
+List<String> names = Arrays.asList("John", "Jane", "Bob");
+Collections.sort(names, new Comparator<String>() {
+    @Override
+    public int compare(String a, String b) {
+        return a.compareToIgnoreCase(b);
+    }
+});
+
+// Event listener
+button.addActionListener(new ActionListener() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        System.out.println("Button clicked!");
+    }
+});
+                        </code></pre>
+                    </div>
+                    <div>
+                        <h3>Lambda Expressions (Java 8+)</h3>
+                        <pre><code class="java">
+// Java 8+ - Lambda expressions
+Runnable task = () -> {
+    System.out.println("Hello from thread!");
+};
+
+// Even more concise
+Runnable task = () -> System.out.println("Hello from thread!");
+
+// Comparator with lambda
+List<String> names = Arrays.asList("John", "Jane", "Bob");
+Collections.sort(names, (a, b) -> a.compareToIgnoreCase(b));
+
+// Even shorter with method reference
+Collections.sort(names, String::compareToIgnoreCase);
+
+// Event listener with lambda
+button.addActionListener(e -> System.out.println("Button clicked!"));
+                        </code></pre>
+                        
+                        <div class="success-box">
+                            <strong>Benefits:</strong>
+                            <ul>
+                                <li>Less verbose code</li>
+                                <li>Better readability</li>
+                                <li>Functional programming style</li>
+                                <li>Improved performance</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Lambda Syntax -->
+            <section>
+                <h2>Lambda Expression Syntax</h2>
+                <pre><code class="java">
+public class LambdaSyntaxDemo {
+    public static void main(String[] args) {
+        System.out.println("=== Lambda Expression Syntax ===\n");
+        
+        // 1. No parameters
+        Runnable noParams = () -> System.out.println("No parameters");
+        noParams.run();
+        
+        // 2. Single parameter (parentheses optional)
+        Consumer<String> singleParam = name -> System.out.println("Hello, " + name);
+        Consumer<String> singleParamWithParens = (name) -> System.out.println("Hello, " + name);
+        singleParam.accept("Alice");
+        
+        // 3. Multiple parameters
+        BinaryOperator<Integer> add = (a, b) -> a + b;
+        System.out.println("5 + 3 = " + add.apply(5, 3));
+        
+        // 4. Block body (multiple statements)
+        Consumer<String> blockBody = (message) -> {
+            System.out.println("Processing: " + message);
+            System.out.println("Message length: " + message.length());
+            System.out.println("Uppercase: " + message.toUpperCase());
+        };
+        blockBody.accept("lambda expressions");
+        
+        // 5. Returning values
+        Function<String, Integer> getLength = str -> str.length();
+        Function<String, Integer> getLengthBlock = str -> {
+            return str.length(); // explicit return needed in block
+        };
+        
+        System.out.println("Length of 'Java': " + getLength.apply("Java"));
+        
+        // 6. Type inference
+        BiFunction<Integer, Integer, Integer> multiply = (x, y) -> x * y;
+        BiFunction<Integer, Integer, Integer> multiplyExplicit = (Integer x, Integer y) -> x * y;
+        
+        System.out.println("4 × 7 = " + multiply.apply(4, 7));
+        
+        // 7. Lambda expressions in different contexts
+        demonstrateLambdaContexts();
+    }
+    
+    private static void demonstrateLambdaContexts() {
+        System.out.println("\n--- Lambda in Different Contexts ---");
+        
+        // In collections
+        List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5);
+        
+        // forEach
+        System.out.print("Numbers: ");
+        numbers.forEach(n -> System.out.print(n + " "));
+        System.out.println();
+        
+        // removeIf
+        List<Integer> mutableNumbers = new ArrayList<>(numbers);
+        mutableNumbers.removeIf(n -> n % 2 == 0);
+        System.out.println("Odd numbers: " + mutableNumbers);
+        
+        // sort
+        List<String> words = Arrays.asList("banana", "apple", "cherry", "date");
+        words.sort((a, b) -> Integer.compare(a.length(), b.length()));
+        System.out.println("Sorted by length: " + words);
+        
+        // replaceAll
+        List<String> names = Arrays.asList("alice", "bob", "charlie");
+        names.replaceAll(name -> name.toUpperCase());
+        System.out.println("Uppercase names: " + names);
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- Functional Interfaces -->
+            <section>
+                <h2>Functional Interfaces</h2>
+                <div class="two-column">
+                    <div>
+                        <h3>What is a Functional Interface?</h3>
+                        <ul>
+                            <li>Interface with exactly one abstract method</li>
+                            <li>Can have default and static methods</li>
+                            <li>Annotated with <code>@FunctionalInterface</code></li>
+                            <li>Target type for lambda expressions</li>
+                        </ul>
+                        
+                        <h3>Key Built-in Functional Interfaces</h3>
+                        <table>
+                            <tr>
+                                <th>Interface</th>
+                                <th>Method</th>
+                                <th>Purpose</th>
+                            </tr>
+                            <tr>
+                                <td>Predicate&lt;T&gt;</td>
+                                <td>boolean test(T)</td>
+                                <td>Condition testing</td>
+                            </tr>
+                            <tr>
+                                <td>Function&lt;T,R&gt;</td>
+                                <td>R apply(T)</td>
+                                <td>Transform input</td>
+                            </tr>
+                            <tr>
+                                <td>Consumer&lt;T&gt;</td>
+                                <td>void accept(T)</td>
+                                <td>Consume input</td>
+                            </tr>
+                            <tr>
+                                <td>Supplier&lt;T&gt;</td>
+                                <td>T get()</td>
+                                <td>Supply values</td>
+                            </tr>
+                            <tr>
+                                <td>UnaryOperator&lt;T&gt;</td>
+                                <td>T apply(T)</td>
+                                <td>Same type transform</td>
+                            </tr>
+                            <tr>
+                                <td>BinaryOperator&lt;T&gt;</td>
+                                <td>T apply(T, T)</td>
+                                <td>Combine two values</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div>
+                        <pre><code class="java">
+import java.util.function.*;
+
+public class FunctionalInterfaceDemo {
+    public static void main(String[] args) {
+        // Predicate - test conditions
+        Predicate<Integer> isEven = x -> x % 2 == 0;
+        Predicate<String> isEmpty = String::isEmpty;
+        
+        System.out.println("Is 4 even? " + isEven.test(4));
+        System.out.println("Is '' empty? " + isEmpty.test(""));
+        
+        // Function - transform data
+        Function<String, Integer> stringLength = String::length;
+        Function<Integer, String> intToHex = Integer::toHexString;
+        
+        System.out.println("Length of 'Java': " + stringLength.apply("Java"));
+        System.out.println("255 in hex: " + intToHex.apply(255));
+        
+        // Consumer - side effects
+        Consumer<String> printer = System.out::println;
+        Consumer<String> upperPrinter = s -> System.out.println(s.toUpperCase());
+        
+        printer.accept("Hello World");
+        upperPrinter.accept("hello world");
+        
+        // Supplier - provide values
+        Supplier<String> randomUUID = () -> java.util.UUID.randomUUID().toString();
+        Supplier<Integer> randomInt = () -> (int)(Math.random() * 100);
+        
+        System.out.println("Random UUID: " + randomUUID.get());
+        System.out.println("Random int: " + randomInt.get());
+        
+        // UnaryOperator - same type transformation
+        UnaryOperator<String> toUpper = String::toUpperCase;
+        UnaryOperator<Integer> square = x -> x * x;
+        
+        System.out.println("Uppercase: " + toUpper.apply("java"));
+        System.out.println("5 squared: " + square.apply(5));
+        
+        // BinaryOperator - combine two values
+        BinaryOperator<Integer> add = Integer::sum;
+        BinaryOperator<String> concat = String::concat;
+        
+        System.out.println("3 + 7 = " + add.apply(3, 7));
+        System.out.println("Concat: " + concat.apply("Hello", "World"));
+    }
+}
+                        </code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Custom Functional Interfaces -->
+            <section>
+                <h2>Creating Custom Functional Interfaces</h2>
+                <pre><code class="java">
+// Custom functional interfaces
+@FunctionalInterface
+interface MathOperation {
+    double calculate(double a, double b);
+    
+    // Default methods are allowed
+    default String getDescription() {
+        return "A mathematical operation";
+    }
+    
+    // Static methods are allowed
+    static MathOperation getAddition() {
+        return (a, b) -> a + b;
+    }
+}
+
+@FunctionalInterface
+interface StringProcessor {
+    String process(String input);
+}
+
+@FunctionalInterface
+interface TriFunction<T, U, V, R> {
+    R apply(T t, U u, V v);
+}
+
+@FunctionalInterface
+interface Validator<T> {
+    ValidationResult validate(T input);
+}
+
+// Supporting classes
+class ValidationResult {
+    private boolean valid;
+    private String message;
+    
+    public ValidationResult(boolean valid, String message) {
+        this.valid = valid;
+        this.message = message;
+    }
+    
+    public boolean isValid() { return valid; }
+    public String getMessage() { return message; }
+    
+    @Override
+    public String toString() {
+        return String.format("ValidationResult{valid=%s, message='%s'}", valid, message);
+    }
+}
+
+public class CustomFunctionalInterfaceDemo {
+    public static void main(String[] args) {
+        System.out.println("=== Custom Functional Interfaces ===\n");
+        
+        // MathOperation examples
+        MathOperation addition = (a, b) -> a + b;
+        MathOperation multiplication = (a, b) -> a * b;
+        MathOperation power = Math::pow;
+        
+        System.out.println("5 + 3 = " + addition.calculate(5, 3));
+        System.out.println("5 × 3 = " + multiplication.calculate(5, 3));
+        System.out.println("2^8 = " + power.calculate(2, 8));
+        
+        // Using static method
+        MathOperation staticAddition = MathOperation.getAddition();
+        System.out.println("Static addition 10 + 15 = " + staticAddition.calculate(10, 15));
+        
+        // StringProcessor examples
+        StringProcessor reverser = s -> new StringBuilder(s).reverse().toString();
+        StringProcessor capitalizer = s -> s.toUpperCase();
+        StringProcessor addPrefix = s -> "PREFIX_" + s;
+        
+        String input = "Hello World";
+        System.out.println("Original: " + input);
+        System.out.println("Reversed: " + reverser.process(input));
+        System.out.println("Capitalized: " + capitalizer.process(input));
+        System.out.println("With prefix: " + addPrefix.process(input));
+        
+        // TriFunction example
+        TriFunction<String, Integer, Integer, String> substring = String::substring;
+        TriFunction<Integer, Integer, Integer, Integer> addThree = (a, b, c) -> a + b + c;
+        
+        System.out.println("Substring of 'Programming' from 3 to 7: " + substring.apply("Programming", 3, 7));
+        System.out.println("Sum of 5, 10, 15: " + addThree.apply(5, 10, 15));
+        
+        // Validator examples
+        demonstrateValidators();
+        
+        // Calculator with custom operations
+        demonstrateCalculator();
+    }
+    
+    private static void demonstrateValidators() {
+        System.out.println("\n--- Custom Validators ---");
+        
+        // Email validator
+        Validator<String> emailValidator = email -> {
+            if (email == null || email.trim().isEmpty()) {
+                return new ValidationResult(false, "Email cannot be empty");
+            }
+            if (!email.contains("@") || !email.contains(".")) {
+                return new ValidationResult(false, "Invalid email format");
+            }
+            return new ValidationResult(true, "Email is valid");
+        };
+        
+        // Age validator
+        Validator<Integer> ageValidator = age -> {
+            if (age == null) {
+                return new ValidationResult(false, "Age cannot be null");
+            }
+            if (age < 0 || age > 150) {
+                return new ValidationResult(false, "Age must be between 0 and 150");
+            }
+            return new ValidationResult(true, "Age is valid");
+        };
+        
+        // Test validators
+        String[] emails = {"user@example.com", "invalid-email", "", null};
+        Integer[] ages = {25, -5, 200, null, 30};
+        
+        System.out.println("Email validation:");
+        for (String email : emails) {
+            ValidationResult result = emailValidator.validate(email);
+            System.out.printf("  %-20s -> %s%n", email, result);
+        }
+        
+        System.out.println("\nAge validation:");
+        for (Integer age : ages) {
+            ValidationResult result = ageValidator.validate(age);
+            System.out.printf("  %-5s -> %s%n", age, result);
+        }
+    }
+    
+    private static void demonstrateCalculator() {
+        System.out.println("\n--- Custom Calculator ---");
+        
+        Calculator calc = new Calculator();
+        
+        // Register custom operations
+        calc.registerOperation("add", (a, b) -> a + b);
+        calc.registerOperation("multiply", (a, b) -> a * b);
+        calc.registerOperation("power", Math::pow);
+        calc.registerOperation("max", Math::max);
+        calc.registerOperation("min", Math::min);
+        
+        // Perform calculations
+        System.out.println("10 add 5 = " + calc.calculate("add", 10, 5));
+        System.out.println("3 power 4 = " + calc.calculate("power", 3, 4));
+        System.out.println("max of 15 and 8 = " + calc.calculate("max", 15, 8));
+        
+        // List available operations
+        System.out.println("Available operations: " + calc.getAvailableOperations());
+    }
+}
+
+// Calculator class using functional interfaces
+class Calculator {
+    private Map<String, MathOperation> operations = new HashMap<>();
+    
+    public void registerOperation(String name, MathOperation operation) {
+        operations.put(name, operation);
+    }
+    
+    public double calculate(String operation, double a, double b) {
+        MathOperation op = operations.get(operation);
+        if (op == null) {
+            throw new IllegalArgumentException("Unknown operation: " + operation);
+        }
+        return op.calculate(a, b);
+    }
+    
+    public Set<String> getAvailableOperations() {
+        return operations.keySet();
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- Method References -->
+            <section>
+                <h2>Method References</h2>
+                <pre><code class="java">
+import java.util.*;
+import java.util.function.*;
+
+public class MethodReferencesDemo {
+    public static void main(String[] args) {
+        System.out.println("=== Method References ===\n");
+        
+        // 1. Static method references
+        demonstrateStaticMethodReferences();
+        
+        // 2. Instance method references
+        demonstrateInstanceMethodReferences();
+        
+        // 3. Constructor references
+        demonstrateConstructorReferences();
+        
+        // 4. Method references with collections
+        demonstrateMethodReferencesWithCollections();
+    }
+    
+    private static void demonstrateStaticMethodReferences() {
+        System.out.println("--- Static Method References ---");
+        
+        // Static method reference: ClassName::methodName
+        Function<String, Integer> parseInt = Integer::parseInt;
+        Function<Double, Long> round = Math::round;
+        BinaryOperator<Integer> max = Integer::max;
+        
+        System.out.println("Parse '123': " + parseInt.apply("123"));
+        System.out.println("Round 3.7: " + round.apply(3.7));
+        System.out.println("Max of 5 and 8: " + max.apply(5, 8));
+        
+        // Comparison with lambda
+        Function<String, Integer> parseIntLambda = s -> Integer.parseInt(s);
+        System.out.println("Lambda equivalent: " + parseIntLambda.apply("456"));
+        
+        System.out.println();
+    }
+    
+    private static void demonstrateInstanceMethodReferences() {
+        System.out.println("--- Instance Method References ---");
+        
+        // Instance method reference of particular object: instance::methodName
+        String greeting = "Hello, World!";
+        Supplier<String> toUpperCase = greeting::toUpperCase;
+        Supplier<Integer> getLength = greeting::length;
+        
+        System.out.println("Original: " + greeting);
+        System.out.println("Uppercase: " + toUpperCase.get());
+        System.out.println("Length: " + getLength.get());
+        
+        // Instance method reference of arbitrary object: ClassName::methodName
+        Function<String, String> toUpper = String::toUpperCase;
+        Function<String, Integer> stringLength = String::length;
+        BiPredicate<String, String> startsWith = String::startsWith;
+        
+        System.out.println("Arbitrary object uppercase: " + toUpper.apply("java"));
+        System.out.println("Arbitrary object length: " + stringLength.apply("programming"));
+        System.out.println("'Java' starts with 'Ja': " + startsWith.test("Java", "Ja"));
+        
+        // Custom object method references
+        Person person = new Person("Alice", 25);
+        Supplier<String> getName = person::getName;
+        Supplier<Integer> getAge = person::getAge;
+        
+        System.out.println("Person name: " + getName.get());
+        System.out.println("Person age: " + getAge.get());
+        
+        System.out.println();
+    }
+    
+    private static void demonstrateConstructorReferences() {
+        System.out.println("--- Constructor References ---");
+        
+        // Constructor reference: ClassName::new
+        Supplier<StringBuilder> sbSupplier = StringBuilder::new;
+        Function<String, StringBuilder> sbFromString = StringBuilder::new;
+        BiFunction<String, Integer, Person> personCreator = Person::new;
+        
+        StringBuilder sb1 = sbSupplier.get();
+        sb1.append("Created with constructor reference");
+        System.out.println("StringBuilder: " + sb1);
+        
+        StringBuilder sb2 = sbFromString.apply("Initial content");
+        System.out.println("StringBuilder with content: " + sb2);
+        
+        Person newPerson = personCreator.apply("Bob", 30);
+        System.out.println("Created person: " + newPerson);
+        
+        // Array constructor reference
+        Function<Integer, int[]> intArrayCreator = int[]::new;
+        Function<Integer, String[]> stringArrayCreator = String[]::new;
+        
+        int[] intArray = intArrayCreator.apply(5);
+        String[] stringArray = stringArrayCreator.apply(3);
+        System.out.println("Created int array of length: " + intArray.length);
+        System.out.println("Created String array of length: " + stringArray.length);
+        
+        System.out.println();
+    }
+    
+    private static void demonstrateMethodReferencesWithCollections() {
+        System.out.println("--- Method References with Collections ---");
+        
+        List<String> words = Arrays.asList("apple", "banana", "cherry", "date", "elderberry");
+        
+        // forEach with method reference
+        System.out.print("Words: ");
+        words.forEach(System.out::print);
+        System.out.println();
+        
+        // map with method reference
+        List<Integer> lengths = words.stream()
+                                    .map(String::length)
+                                    .collect(Collectors.toList());
+        System.out.println("Word lengths: " + lengths);
+        
+        // filter with method reference
+        Predicate<String> isEmpty = String::isEmpty;
+        List<String> nonEmptyWords = words.stream()
+                                         .filter(isEmpty.negate())
+                                         .collect(Collectors.toList());
+        System.out.println("Non-empty words: " + nonEmptyWords);
+        
+        // sort with method reference
+        List<Person> people = Arrays.asList(
+            new Person("Alice", 25),
+            new Person("Bob", 30),
+            new Person("Charlie", 20)
+        );
+        
+        people.sort(Comparator.comparing(Person::getAge));
+        System.out.println("People sorted by age: " + people);
+        
+        // Creating objects from strings
+        List<String> personStrings = Arrays.asList("David,35", "Eve,28", "Frank,32");
+        List<Person> personsFromStrings = personStrings.stream()
+            .map(s -> s.split(","))
+            .map(parts -> new Person(parts[0], Integer.parseInt(parts[1])))
+            .collect(Collectors.toList());
+        
+        System.out.println("Persons from strings: " + personsFromStrings);
+        
+        System.out.println();
+    }
+}
+
+// Supporting class
+class Person {
+    private String name;
+    private int age;
+    
+    public Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+    
+    public String getName() { return name; }
+    public int getAge() { return age; }
+    
+    @Override
+    public String toString() {
+        return String.format("%s(%d)", name, age);
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- GTU Previous Year Question -->
+            <section>
+                <div class="gtu-question">
+                    <h4>GTU Previous Year Question (Summer 2022)</h4>
+                    <p><strong>Q: Write a Java program to demonstrate lambda expressions and functional interfaces. Create a custom functional interface for mathematical operations and show different ways to implement it using lambda expressions. Also demonstrate the use of built-in functional interfaces like Predicate, Function, and Consumer.</strong></p>
+                </div>
+                
+                <h3>Solution:</h3>
+                <pre><code class="java">
+import java.util.*;
+import java.util.function.*;
+
+// Custom functional interface for mathematical operations
+@FunctionalInterface
+interface MathOperation {
+    double execute(double a, double b);
+    
+    // Default method
+    default String getOperationType() {
+        return "Mathematical Operation";
+    }
+    
+    // Static method for creating common operations
+    static MathOperation createAddition() {
+        return (a, b) -> a + b;
+    }
+    
+    static MathOperation createMultiplication() {
+        return (a, b) -> a * b;
+    }
+}
+
+// Another custom functional interface
+@FunctionalInterface
+interface NumberProcessor {
+    double process(double number);
+}
+
+// Custom functional interface for validation
+@FunctionalInterface
+interface NumberValidator {
+    boolean isValid(double number);
+}
+
+public class LambdaFunctionalInterfaceDemo {
+    public static void main(String[] args) {
+        System.out.println("=== Lambda Expressions and Functional Interfaces Demo ===\n");
+        
+        // Demonstrate custom functional interface
+        demonstrateCustomFunctionalInterface();
+        
+        // Demonstrate built-in functional interfaces
+        demonstrateBuiltInFunctionalInterfaces();
+        
+        // Demonstrate practical examples
+        demonstratePracticalExamples();
+    }
+    
+    private static void demonstrateCustomFunctionalInterface() {
+        System.out.println("--- Custom Functional Interface: MathOperation ---");
+        
+        // Different ways to implement MathOperation using lambdas
+        
+        // 1. Addition
+        MathOperation addition = (a, b) -> a + b;
+        
+        // 2. Subtraction with explicit return
+        MathOperation subtraction = (a, b) -> {
+            return a - b;
+        };
+        
+        // 3. Multiplication
+        MathOperation multiplication = (a, b) -> a * b;
+        
+        // 4. Division with validation
+        MathOperation division = (a, b) -> {
+            if (b == 0) {
+                throw new ArithmeticException("Division by zero");
+            }
+            return a / b;
+        };
+        
+        // 5. Power operation using Math.pow
+        MathOperation power = Math::pow; // Method reference
+        
+        // 6. Maximum operation
+        MathOperation maximum = Math::max;
+        
+        // 7. Custom complex operation
+        MathOperation customOperation = (a, b) -> {
+            double result = Math.sqrt(a * a + b * b); // Euclidean distance
+            System.out.println("Computing Euclidean distance of " + a + " and " + b);
+            return result;
+        };
+        
+        // Test all operations
+        double x = 12.0, y = 5.0;
+        
+        System.out.printf("Numbers: %.1f and %.1f%n", x, y);
+        System.out.printf("Addition: %.1f + %.1f = %.2f%n", x, y, addition.execute(x, y));
+        System.out.printf("Subtraction: %.1f - %.1f = %.2f%n", x, y, subtraction.execute(x, y));
+        System.out.printf("Multiplication: %.1f × %.1f = %.2f%n", x, y, multiplication.execute(x, y));
+        System.out.printf("Division: %.1f ÷ %.1f = %.2f%n", x, y, division.execute(x, y));
+        System.out.printf("Power: %.1f ^ %.1f = %.2f%n", x, y, power.execute(x, y));
+        System.out.printf("Maximum: max(%.1f, %.1f) = %.2f%n", x, y, maximum.execute(x, y));
+        System.out.printf("Custom (Euclidean): %.2f%n", customOperation.execute(x, y));
+        
+        // Using static methods
+        MathOperation staticAdd = MathOperation.createAddition();
+        MathOperation staticMult = MathOperation.createMultiplication();
+        
+        System.out.printf("Static addition: %.1f + %.1f = %.2f%n", x, y, staticAdd.execute(x, y));
+        System.out.printf("Static multiplication: %.1f × %.1f = %.2f%n", x, y, staticMult.execute(x, y));
+        
+        // Calculator using custom interface
+        Calculator calculator = new Calculator();
+        calculator.performOperations();
+        
+        System.out.println();
+    }
+    
+    private static void demonstrateBuiltInFunctionalInterfaces() {
+        System.out.println("--- Built-in Functional Interfaces ---");
+        
+        // 1. Predicate<T> - boolean test(T t)
+        System.out.println("=== Predicate Examples ===");
+        
+        Predicate<Integer> isEven = n -> n % 2 == 0;
+        Predicate<Integer> isPositive = n -> n > 0;
+        Predicate<String> isEmpty = String::isEmpty;
+        Predicate<String> isLongWord = word -> word.length() > 5;
+        
+        // Combine predicates
+        Predicate<Integer> isEvenAndPositive = isEven.and(isPositive);
+        Predicate<Integer> isOddOrNegative = isEven.negate().or(isPositive.negate());
+        
+        List<Integer> numbers = Arrays.asList(-2, -1, 0, 1, 2, 3, 4, 5, 6);
+        List<String> words = Arrays.asList("", "hi", "hello", "world", "programming", "java");
+        
+        System.out.println("Numbers: " + numbers);
+        System.out.print("Even numbers: ");
+        numbers.stream().filter(isEven).forEach(n -> System.out.print(n + " "));
+        System.out.println();
+        
+        System.out.print("Even and positive: ");
+        numbers.stream().filter(isEvenAndPositive).forEach(n -> System.out.print(n + " "));
+        System.out.println();
+        
+        System.out.println("Words: " + words);
+        System.out.print("Long words: ");
+        words.stream().filter(isLongWord).forEach(w -> System.out.print(w + " "));
+        System.out.println();
+        
+        // 2. Function<T, R> - R apply(T t)
+        System.out.println("\n=== Function Examples ===");
+        
+        Function<String, Integer> stringLength = String::length;
+        Function<Integer, String> intToHex = Integer::toHexString;
+        Function<String, String> toUpperCase = String::toUpperCase;
+        Function<Double, Integer> roundToInt = d -> (int) Math.round(d);
+        
+        // Function composition
+        Function<String, String> lengthToHex = stringLength.andThen(intToHex);
+        Function<String, String> upperCaseLength = toUpperCase.compose(s -> s + " (original)");
+        
+        List<String> testWords = Arrays.asList("Java", "Lambda", "Function", "Programming");
+        
+        System.out.println("Original words: " + testWords);
+        
+        testWords.forEach(word -> {
+            System.out.printf("%-12s -> Length: %d, Hex: %s, Upper: %s%n",
+                word,
+                stringLength.apply(word),
+                lengthToHex.apply(word),
+                toUpperCase.apply(word)
+            );
+        });
+        
+        List<Double> decimals = Arrays.asList(3.14, 2.718, 1.414, 0.707);
+        System.out.println("Decimals: " + decimals);
+        System.out.print("Rounded to integers: ");
+        decimals.stream().map(roundToInt).forEach(i -> System.out.print(i + " "));
+        System.out.println();
+        
+        // 3. Consumer<T> - void accept(T t)
+        System.out.println("\n=== Consumer Examples ===");
+        
+        Consumer<String> printWithBrackets = s -> System.out.println("[" + s + "]");
+        Consumer<String> printLength = s -> System.out.println("Length of '" + s + "' is " + s.length());
+        Consumer<Integer> printSquare = n -> System.out.println(n + "² = " + (n * n));
+        
+        // Chain consumers
+        Consumer<String> combinedConsumer = printWithBrackets.andThen(printLength);
+        
+        List<String> names = Arrays.asList("Alice", "Bob", "Charlie");
+        System.out.println("Processing names with combined consumer:");
+        names.forEach(combinedConsumer);
+        
+        System.out.println("Processing numbers:");
+        Arrays.asList(1, 2, 3, 4, 5).forEach(printSquare);
+        
+        // 4. Supplier<T> - T get()
+        System.out.println("\n=== Supplier Examples ===");
+        
+        Supplier<String> currentTime = () -> new Date().toString();
+        Supplier<Integer> randomNumber = () -> (int) (Math.random() * 100);
+        Supplier<String> greeting = () -> "Hello from Supplier!";
+        
+        System.out.println("Current time: " + currentTime.get());
+        System.out.println("Random number: " + randomNumber.get());
+        System.out.println("Greeting: " + greeting.get());
+        
+        // Using supplier for lazy evaluation
+        List<Integer> lazyNumbers = generateNumbers(5, randomNumber);
+        System.out.println("Lazy generated numbers: " + lazyNumbers);
+        
+        System.out.println();
+    }
+    
+    private static List<Integer> generateNumbers(int count, Supplier<Integer> numberSupplier) {
+        List<Integer> numbers = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            numbers.add(numberSupplier.get());
+        }
+        return numbers;
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- Practical Examples Continuation -->
+            <section>
+                <h3>Practical Examples Implementation:</h3>
+                <pre><code class="java">
+    private static void demonstratePracticalExamples() {
+        System.out.println("--- Practical Examples ---");
+        
+        // Student grade processing system
+        StudentGradeProcessor processor = new StudentGradeProcessor();
+        processor.demonstrateGradeProcessing();
+        
+        // Event handling system
+        EventHandlingSystem eventSystem = new EventHandlingSystem();
+        eventSystem.demonstrateEventHandling();
+        
+        // Data validation system
+        DataValidationSystem validationSystem = new DataValidationSystem();
+        validationSystem.demonstrateValidation();
+    }
+}
+
+// Calculator class using functional interfaces
+class Calculator {
+    private Map<String, MathOperation> operations = new HashMap<>();
+    
+    public Calculator() {
+        // Register operations using lambdas
+        operations.put("add", (a, b) -> a + b);
+        operations.put("subtract", (a, b) -> a - b);
+        operations.put("multiply", (a, b) -> a * b);
+        operations.put("divide", (a, b) -> {
+            if (b == 0) throw new ArithmeticException("Division by zero");
+            return a / b;
+        });
+        operations.put("power", Math::pow);
+        operations.put("mod", (a, b) -> a % b);
+    }
+    
+    public double calculate(String operation, double a, double b) {
+        MathOperation op = operations.get(operation.toLowerCase());
+        if (op == null) {
+            throw new IllegalArgumentException("Unknown operation: " + operation);
+        }
+        return op.execute(a, b);
+    }
+    
+    public void performOperations() {
+        System.out.println("\n--- Calculator Demo ---");
+        double x = 20.0, y = 4.0;
+        
+        operations.forEach((name, operation) -> {
+            try {
+                double result = operation.execute(x, y);
+                System.out.printf("%-10s: %.1f %s %.1f = %.2f%n", 
+                    name, x, getSymbol(name), y, result);
+            } catch (Exception e) {
+                System.out.printf("%-10s: Error - %s%n", name, e.getMessage());
+            }
+        });
+    }
+    
+    private String getSymbol(String operation) {
+        switch (operation) {
+            case "add": return "+";
+            case "subtract": return "-";
+            case "multiply": return "×";
+            case "divide": return "÷";
+            case "power": return "^";
+            case "mod": return "%";
+            default: return "?";
+        }
+    }
+}
+
+// Student grade processing system
+class StudentGradeProcessor {
+    public void demonstrateGradeProcessing() {
+        System.out.println("\n=== Student Grade Processing ===");
+        
+        List<Student> students = Arrays.asList(
+            new Student("Alice", 85),
+            new Student("Bob", 92),
+            new Student("Charlie", 78),
+            new Student("Diana", 96),
+            new Student("Eve", 67)
+        );
+        
+        // Predicate for different grade categories
+        Predicate<Student> isExcellent = student -> student.getGrade() >= 90;
+        Predicate<Student> isGood = student -> student.getGrade() >= 80;
+        Predicate<Student> needsImprovement = student -> student.getGrade() < 70;
+        
+        // Function to get grade letter
+        Function<Integer, String> getGradeLetter = grade -> {
+            if (grade >= 90) return "A";
+            if (grade >= 80) return "B";
+            if (grade >= 70) return "C";
+            if (grade >= 60) return "D";
+            return "F";
+        };
+        
+        // Consumer for printing student info
+        Consumer<Student> printStudentInfo = student -> 
+            System.out.printf("%-10s: %3d (%s)%n", 
+                student.getName(), 
+                student.getGrade(), 
+                getGradeLetter.apply(student.getGrade())
+            );
+        
+        System.out.println("All students:");
+        students.forEach(printStudentInfo);
+        
+        System.out.println("\nExcellent students (A grade):");
+        students.stream().filter(isExcellent).forEach(printStudentInfo);
+        
+        System.out.println("\nStudents needing improvement:");
+        students.stream().filter(needsImprovement).forEach(printStudentInfo);
+        
+        // Statistics using built-in functions
+        double averageGrade = students.stream()
+            .mapToInt(Student::getGrade)
+            .average()
+            .orElse(0.0);
+        
+        System.out.printf("Class average: %.2f%n", averageGrade);
+    }
+}
+
+// Event handling system
+class EventHandlingSystem {
+    public void demonstrateEventHandling() {
+        System.out.println("\n=== Event Handling System ===");
+        
+        // Event handlers using functional interfaces
+        Consumer<String> logHandler = event -> System.out.println("LOG: " + event);
+        Consumer<String> emailHandler = event -> System.out.println("EMAIL: Sending notification for " + event);
+        Consumer<String> databaseHandler = event -> System.out.println("DB: Recording " + event);
+        
+        // Combine handlers
+        Consumer<String> combinedHandler = logHandler.andThen(emailHandler).andThen(databaseHandler);
+        
+        // Event filter
+        Predicate<String> isImportantEvent = event -> 
+            event.contains("ERROR") || event.contains("CRITICAL");
+        
+        List<String> events = Arrays.asList(
+            "User login successful",
+            "ERROR: Database connection failed",
+            "File uploaded",
+            "CRITICAL: Server overload detected",
+            "User logout"
+        );
+        
+        System.out.println("Processing all events:");
+        events.forEach(event -> {
+            System.out.println("Event: " + event);
+            if (isImportantEvent.test(event)) {
+                System.out.println("  -> IMPORTANT EVENT - Full processing");
+                combinedHandler.accept(event);
+            } else {
+                System.out.println("  -> Regular event - Log only");
+                logHandler.accept(event);
+            }
+            System.out.println();
+        });
+    }
+}
+
+// Data validation system
+class DataValidationSystem {
+    public void demonstrateValidation() {
+        System.out.println("\n=== Data Validation System ===");
+        
+        // Validation predicates
+        Predicate<String> isValidEmail = email -> 
+            email != null && email.contains("@") && email.contains(".");
+        
+        Predicate<String> isValidPassword = password ->
+            password != null && password.length() >= 8;
+        
+        Predicate<Integer> isValidAge = age ->
+            age != null && age >= 0 && age <= 150;
+        
+        // Validation functions that return messages
+        Function<String, String> validateEmail = email -> 
+            isValidEmail.test(email) ? "Email is valid" : "Invalid email format";
+        
+        Function<String, String> validatePassword = password ->
+            isValidPassword.test(password) ? "Password is valid" : "Password must be at least 8 characters";
+        
+        Function<Integer, String> validateAge = age ->
+            isValidAge.test(age) ? "Age is valid" : "Age must be between 0 and 150";
+        
+        // Test data
+        String[] emails = {"user@example.com", "invalid-email", "", null};
+        String[] passwords = {"password123", "short", "verylongpassword", null};
+        Integer[] ages = {25, -5, 200, null, 0, 150};
+        
+        System.out.println("Email validation:");
+        for (String email : emails) {
+            System.out.printf("  %-20s -> %s%n", email, validateEmail.apply(email));
+        }
+        
+        System.out.println("\nPassword validation:");
+        for (String password : passwords) {
+            System.out.printf("  %-20s -> %s%n", password, validatePassword.apply(password));
+        }
+        
+        System.out.println("\nAge validation:");
+        for (Integer age : ages) {
+            System.out.printf("  %-20s -> %s%n", age, validateAge.apply(age));
+        }
+    }
+}
+
+// Supporting classes
+class Student {
+    private String name;
+    private int grade;
+    
+    public Student(String name, int grade) {
+        this.name = name;
+        this.grade = grade;
+    }
+    
+    public String getName() { return name; }
+    public int getGrade() { return grade; }
+    
+    @Override
+    public String toString() {
+        return String.format("%s(%d)", name, grade);
+    }
+}
+                </code></pre>
+                
+                <div class="success-box">
+                    <strong>Solution Features:</strong>
+                    <ul>
+                        <li>Custom MathOperation functional interface with multiple implementations</li>
+                        <li>Comprehensive demonstration of Predicate, Function, Consumer, and Supplier</li>
+                        <li>Practical examples: Calculator, Student grades, Event handling, Validation</li>
+                        <li>Method references and function composition</li>
+                        <li>Real-world applications of functional programming concepts</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Summary -->
+            <section>
+                <h2>📚 Lecture Summary</h2>
+                <div class="two-column">
+                    <div>
+                        <h3>Key Concepts Covered</h3>
+                        <ul>
+                            <li>Lambda expression syntax and usage</li>
+                            <li>Functional interfaces and @FunctionalInterface</li>
+                            <li>Built-in functional interfaces (Predicate, Function, Consumer, Supplier)</li>
+                            <li>Method references (static, instance, constructor)</li>
+                            <li>Custom functional interfaces</li>
+                            <li>Function composition and chaining</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Benefits and Best Practices</h3>
+                        <ul>
+                            <li>More concise and readable code</li>
+                            <li>Functional programming paradigm</li>
+                            <li>Better integration with collections and streams</li>
+                            <li>Improved code reusability</li>
+                            <li>Use appropriate functional interface for the task</li>
+                            <li>Prefer method references when applicable</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="highlight-box" style="margin-top: 30px;">
+                    <h3>🎯 Next Lecture Preview</h3>
+                    <p><strong>Lecture 21: Stream API and Parallel Processing</strong></p>
+                    <ul>
+                        <li>Stream creation and operations</li>
+                        <li>Intermediate and terminal operations</li>
+                        <li>Collectors and grouping</li>
+                        <li>Parallel streams and performance</li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/notes/notes.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/highlight.min.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            transition: 'slide',
+            transitionSpeed: 'fast',
+            center: true,
+            plugins: [RevealNotes, RevealHighlight]
+        });
+    </script>
+</body>
+</html>

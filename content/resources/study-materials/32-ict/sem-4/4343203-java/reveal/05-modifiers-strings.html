@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Java Programming - Modifiers and String Handling</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/theme/white.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/highlight/monokai.css">
+    <style>
+        .reveal h1, .reveal h2, .reveal h3 { color: #2c3e50; }
+        .reveal .slides section { text-align: left; padding: 10px 30px; height: 90vh; box-sizing: border-box; overflow: hidden; }
+        .reveal .title-slide { text-align: center; }
+        .reveal .center { text-align: center; }
+        .reveal pre code { font-size: 0.7em; line-height: 1.1; max-height: 300px; overflow-y: auto; }
+        .reveal h2 { font-size: 1.6em; margin-bottom: 0.4em; }
+        .reveal h3 { font-size: 1.3em; margin-bottom: 0.3em; }
+        .reveal h4 { font-size: 1.0em; margin-bottom: 0.2em; }
+        .reveal ul, .reveal ol { font-size: 0.85em; margin: 0.4em 0; }
+        .reveal li { margin: 0.2em 0; }
+        .highlight { background-color: #fff3cd; padding: 6px; border-left: 4px solid #ffc107; margin: 6px 0; font-size: 0.85em; }
+        .modifier-box { background-color: #e8f4f8; padding: 8px; border-radius: 5px; margin: 6px 0; font-size: 0.8em; }
+        .two-column { display: flex; gap: 15px; font-size: 0.8em; }
+        .three-column { display: flex; gap: 10px; font-size: 0.75em; }
+        .column { flex: 1; }
+        .compact-list li { margin: 0.1em 0; font-size: 0.8em; }
+        .small-text { font-size: 0.75em; }
+        .table-style { font-size: 0.7em; width: 100%; border-collapse: collapse; }
+        .table-style th, .table-style td { border: 1px solid #ddd; padding: 4px; text-align: center; }
+        .table-style th { background-color: #f2f2f2; font-weight: bold; }
+        .access-box { background: #f8f9fa; padding: 8px; border-radius: 5px; margin: 6px 0; font-size: 0.8em; }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- Title Slide -->
+            <section class="title-slide">
+                <h1>Java Programming Language</h1>
+                <h2>Chapter 5: Modifiers and String Handling</h2>
+                <p>Access Control and Text Processing</p>
+                <br>
+                <p><small>Course: 4343203 - Java Programming</small></p>
+            </section>
+
+            <!-- Table of Contents -->
+            <section>
+                <h2>What We'll Cover</h2>
+                <ul class="compact-list">
+                    <li>Access Modifiers (public, private, protected, default)</li>
+                    <li>Non-Access Modifiers (final, static, abstract, etc.)</li>
+                    <li>String Class and String Immutability</li>
+                    <li>String Methods and Operations</li>
+                    <li>Escape Sequences and Special Characters</li>
+                    <li>Scanner Class for User Input</li>
+                    <li>Command-line Arguments</li>
+                </ul>
+            </section>
+
+            <!-- Access Modifiers -->
+            <section>
+                <section>
+                    <h2>Access Modifiers</h2>
+                    <div class="highlight">
+                        <p><strong>Access modifiers</strong> control the visibility of classes, methods, and variables</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Types of Access Modifiers</h3>
+                    <table class="table-style">
+                        <tr>
+                            <th>Modifier</th>
+                            <th>Class</th>
+                            <th>Package</th>
+                            <th>Subclass</th>
+                            <th>Other Packages</th>
+                        </tr>
+                        <tr>
+                            <td><strong>public</strong></td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                        </tr>
+                        <tr>
+                            <td><strong>protected</strong></td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✗</td>
+                        </tr>
+                        <tr>
+                            <td><strong>default</strong></td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✗</td>
+                            <td>✗</td>
+                        </tr>
+                        <tr>
+                            <td><strong>private</strong></td>
+                            <td>✓</td>
+                            <td>✗</td>
+                            <td>✗</td>
+                            <td>✗</td>
+                        </tr>
+                    </table>
+                    <div class="highlight small-text">
+                        <p><strong>Remember:</strong> Scope decreases from public → protected → default → private</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>public Modifier</h3>
+                    <div class="access-box">
+                        <p><strong>public:</strong> Accessible from anywhere</p>
+                    </div>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>Example:</h4>
+                            <pre><code data-trim>
+public class PublicExample {
+    public int publicVar = 10;
+    
+    public void publicMethod() {
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Usage:</h4>
+                            <pre><code data-trim>
+// From any class, any package
+PublicExample obj = new PublicExample();
+obj.publicVar = 20;        // Accessible
+obj.publicMethod();        // Accessible
+
+// Even from different packages
+import com.example.PublicExample;
+PublicExample obj2 = new PublicExample();
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>private Modifier</h3>
+                    <div class="access-box">
+                        <p><strong>private:</strong> Accessible only within the same class</p>
+                    </div>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>Example:</h4>
+                            <pre><code data-trim>
+public class PrivateExample {
+    private int privateVar = 10;
+    private String secret = "hidden";
+    
+    private void privateMethod() {
+        System.out.println("Private method");
+    }
+    
+    public void accessPrivate() {
+        privateVar = 20;     // OK - same class
+        privateMethod();     // OK - same class
+    }
+}
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Usage:</h4>
+                            <pre><code data-trim>
+// From another class
+PrivateExample obj = new PrivateExample();
+// obj.privateVar = 30;     // ERROR!
+// obj.privateMethod();     // ERROR!
+obj.accessPrivate();        // OK - public method
+
+// Encapsulation example
+public class BankAccount {
+    private double balance;  // Hidden
+    
+    public void deposit(double amount) {
+        if (amount > 0) {
+            balance += amount;
+        }
+    }
+    
+    public double getBalance() {
+        return balance;
+    }
+}
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>protected and default Modifiers</h3>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>protected Modifier:</h4>
+                            <div class="access-box">
+                                <p>Accessible within package and by subclasses</p>
+                            </div>
+                            <pre><code data-trim>
+// In package com.example
+public class Parent {
+    protected int protectedVar = 10;
+    
+    protected void protectedMethod() {
+        System.out.println("Protected method");
+    }
+}
+
+// In package com.example
+class Child extends Parent {
+    public void test() {
+        protectedVar = 20;      // OK - subclass
+        protectedMethod();      // OK - subclass
+    }
+}
+
+// In different package
+class AnotherChild extends Parent {
+    public void test() {
+        protectedVar = 30;      // OK - subclass
+        protectedMethod();      // OK - subclass
+    }
+}
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>default Modifier:</h4>
+                            <div class="access-box">
+                                <p>Accessible only within the same package</p>
+                            </div>
+                            <pre><code data-trim>
+// In package com.example
+class DefaultExample {
+    int defaultVar = 10;        // default access
+    
+    void defaultMethod() {      // default access
+        System.out.println("Default method");
+    }
+}
+
+// In same package com.example
+class SamePackageClass {
+    public void test() {
+        DefaultExample obj = new DefaultExample();
+        obj.defaultVar = 20;    // OK - same package
+        obj.defaultMethod();    // OK - same package
+    }
+}
+
+// In different package
+class DifferentPackageClass {
+    public void test() {
+        DefaultExample obj = new DefaultExample();
+        // obj.defaultVar = 30;    // ERROR!
+        // obj.defaultMethod();    // ERROR!
+    }
+}
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Non-Access Modifiers -->
+            <section>
+                <section>
+                    <h2>Non-Access Modifiers</h2>
+                    <div class="highlight">
+                        <p><strong>Non-access modifiers</strong> provide additional functionality but don't control access</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>static Modifier</h3>
+                    <div class="modifier-box">
+                        <p><strong>static:</strong> Belongs to the class rather than any instance</p>
+                    </div>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>Static Variables:</h4>
+                            <pre><code data-trim>
+class Counter {
+    private static int count = 0;  // Shared by all objects
+    private int id;
+    
+    public Counter() {
+        count++;           // Increment shared counter
+        id = count;        // Assign unique ID
+    }
+    
+    public static int getCount() {
+        return count;      // Static method
+    }
+    
+    public int getId() {
+        return id;
+    }
+}
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Usage:</h4>
+                            <pre><code data-trim>
+// Static methods called on class
+System.out.println(Counter.getCount()); // 0
+
+Counter c1 = new Counter();
+Counter c2 = new Counter();
+Counter c3 = new Counter();
+
+System.out.println(Counter.getCount()); // 3
+System.out.println(c1.getId());         // 1
+System.out.println(c2.getId());         // 2
+System.out.println(c3.getId());         // 3
+
+// Static utility methods
+class MathUtils {
+    public static double square(double x) {
+        return x * x;
+    }
+    
+    public static int max(int a, int b) {
+        return (a > b) ? a : b;
+    }
+}
+
+double result = MathUtils.square(5);     // 25
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>final Modifier</h3>
+                    <div class="modifier-box">
+                        <p><strong>final:</strong> Cannot be modified, overridden, or extended</p>
+                    </div>
+                    <div class="three-column">
+                        <div class="column">
+                            <h4>Final Variables:</h4>
+                            <pre><code data-trim>
+class Constants {
+    // Final variables (constants)
+    public static final double PI = 3.14159;
+    public static final int MAX_SIZE = 100;
+    private final String name;
+    
+    public Constants(String name) {
+        this.name = name;  // Can assign once
+    }
+    
+    public void test() {
+        // PI = 3.14;      // ERROR!
+        // name = "New";   // ERROR!
+    }
+}
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Final Methods:</h4>
+                            <pre><code data-trim>
+class Parent {
+    public final void display() {
+        System.out.println("Cannot override");
+    }
+    
+    public void show() {
+        System.out.println("Can override");
+    }
+}
+
+class Child extends Parent {
+    // public void display() { } // ERROR!
+    
+    @Override
+    public void show() {         // OK
+        System.out.println("Overridden");
+    }
+}
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Final Classes:</h4>
+                            <pre><code data-trim>
+// Final class cannot be extended
+public final class FinalClass {
+    public void method() {
+        System.out.println("Final class method");
+    }
+}
+
+// class SubClass extends FinalClass { } // ERROR!
+
+// Examples of final classes in Java
+// String, Integer, Double, etc.
+final class String { ... }
+final class Integer { ... }
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>abstract Modifier</h3>
+                    <div class="modifier-box">
+                        <p><strong>abstract:</strong> Incomplete implementation, must be completed by subclasses</p>
+                    </div>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>Abstract Classes:</h4>
+                            <pre><code data-trim>
+abstract class Animal {
+    protected String name;
+    
+    public Animal(String name) {
+        this.name = name;
+    }
+    
+    // Abstract method - no implementation
+    public abstract void makeSound();
+    
+    // Concrete method - has implementation
+    public void sleep() {
+        System.out.println(name + " is sleeping");
+    }
+}
+
+// Cannot instantiate abstract class
+// Animal animal = new Animal("Pet"); // ERROR!
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Implementing Abstract Classes:</h4>
+                            <pre><code data-trim>
+class Dog extends Animal {
+    public Dog(String name) {
+        super(name);
+    }
+    
+    // Must implement abstract method
+    @Override
+    public void makeSound() {
+        System.out.println(name + " says: Woof!");
+    }
+}
+
+class Cat extends Animal {
+    public Cat(String name) {
+        super(name);
+    }
+    
+    @Override
+    public void makeSound() {
+        System.out.println(name + " says: Meow!");
+    }
+}
+
+// Usage
+Dog dog = new Dog("Buddy");
+Cat cat = new Cat("Whiskers");
+dog.makeSound();  // "Buddy says: Woof!"
+cat.makeSound();  // "Whiskers says: Meow!"
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Other Non-Access Modifiers</h3>
+                    <table class="table-style">
+                        <tr>
+                            <th>Modifier</th>
+                            <th>Description</th>
+                            <th>Used With</th>
+                        </tr>
+                        <tr>
+                            <td><strong>synchronized</strong></td>
+                            <td>Thread-safe method access</td>
+                            <td>Methods, blocks</td>
+                        </tr>
+                        <tr>
+                            <td><strong>volatile</strong></td>
+                            <td>Variable not cached thread-locally</td>
+                            <td>Variables</td>
+                        </tr>
+                        <tr>
+                            <td><strong>transient</strong></td>
+                            <td>Skip during serialization</td>
+                            <td>Variables</td>
+                        </tr>
+                        <tr>
+                            <td><strong>native</strong></td>
+                            <td>Implemented in platform-specific code</td>
+                            <td>Methods</td>
+                        </tr>
+                        <tr>
+                            <td><strong>strictfp</strong></td>
+                            <td>Strict floating-point calculations</td>
+                            <td>Classes, methods</td>
+                        </tr>
+                    </table>
+                    <div class="small-text">
+                        <pre><code data-trim>
+// Examples
+public synchronized void synchronizedMethod() { } // Thread-safe
+private volatile boolean flag;                    // Not cached
+private transient String password;               // Not serialized
+public native void nativeMethod();               // Platform-specific
+public strictfp double calculate(double x) { }   // Strict floating-point
+                        </code></pre>
+                    </div>
+                </section>
+            </section>
+
+            <!-- String Class -->
+            <section>
+                <section>
+                    <h2>String Class</h2>
+                    <div class="highlight">
+                        <p><strong>String</strong> is a reference type representing sequences of characters</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>String Characteristics</h3>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>Key Properties:</h4>
+                            <ul class="compact-list">
+                                <li><strong>Immutable:</strong> Cannot be changed once created</li>
+                                <li><strong>Reference Type:</strong> Stored in heap memory</li>
+                                <li><strong>Object:</strong> Has methods and properties</li>
+                                <li><strong>Thread-Safe:</strong> Due to immutability</li>
+                            </ul>
+                        </div>
+                        <div class="column">
+                            <h4>String Creation:</h4>
+                            <pre><code data-trim>
+// String literals (recommended)
+String str1 = "Hello";
+String str2 = "World";
+
+// Using new keyword
+String str3 = new String("Hello");
+String str4 = new String("World");
+
+// Immutability demonstration
+String original = "Hello";
+String modified = original.concat(" World");
+System.out.println(original);  // Still "Hello"
+System.out.println(modified);  // "Hello World"
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>String Memory Management & Manipulation</h3>
+                    <div class="center">
+                        <img src="diagrams/string-memory-manipulation.svg" alt="String Memory Management and Manipulation" style="width: 95%; max-width: 900px;">
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Escape Sequences</h3>
+                    <div class="modifier-box">
+                        <p><strong>Escape sequences</strong> represent special characters in strings</p>
+                    </div>
+                    <table class="table-style">
+                        <tr>
+                            <th>Escape Sequence</th>
+                            <th>Character</th>
+                            <th>Description</th>
+                        </tr>
+                        <tr>
+                            <td><code>\"</code></td>
+                            <td>"</td>
+                            <td>Double quote</td>
+                        </tr>
+                        <tr>
+                            <td><code>\'</code></td>
+                            <td>'</td>
+                            <td>Single quote</td>
+                        </tr>
+                        <tr>
+                            <td><code>\\</code></td>
+                            <td>\</td>
+                            <td>Backslash</td>
+                        </tr>
+                        <tr>
+                            <td><code>\n</code></td>
+                            <td></td>
+                            <td>New line</td>
+                        </tr>
+                        <tr>
+                            <td><code>\t</code></td>
+                            <td></td>
+                            <td>Tab</td>
+                        </tr>
+                        <tr>
+                            <td><code>\r</code></td>
+                            <td></td>
+                            <td>Carriage return</td>
+                        </tr>
+                        <tr>
+                            <td><code>\b</code></td>
+                            <td></td>
+                            <td>Backspace</td>
+                        </tr>
+                    </table>
+                    <div class="small-text">
+                        <pre><code data-trim>
+String quotes = "She said \"Hello World!\"";
+String path = "C:\\Users\\John\\Documents";
+String multiline = "First line\nSecond line\nThird line";
+String tabbed = "Name:\tJohn\nAge:\t25";
+                        </code></pre>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>String Concatenation</h3>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>Using + Operator:</h4>
+                            <pre><code data-trim>
+String firstName = "John";
+String lastName = "Doe";
+String fullName = firstName + " " + lastName;
+System.out.println(fullName); // "John Doe"
+
+// With other data types
+String name = "Age: ";
+int age = 25;
+String info = name + age;     // "Age: 25"
+
+// Multiple concatenations
+String result = "The answer is " + (2 + 3) + "!";
+System.out.println(result);   // "The answer is 5!"
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Using concat() Method:</h4>
+                            <pre><code data-trim>
+String str1 = "Hello";
+String str2 = " World";
+String result = str1.concat(str2);
+System.out.println(result);   // "Hello World"
+
+// Method chaining
+String greeting = "Hello"
+    .concat(" ")
+    .concat("Beautiful")
+    .concat(" World");
+System.out.println(greeting); // "Hello Beautiful World"
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Common String Methods</h3>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>Length and Character Access:</h4>
+                            <pre><code data-trim>
+String str = "Hello World";
+
+// Length
+int len = str.length();        // 11
+
+// Character at index
+char ch = str.charAt(0);       // 'H'
+char lastCh = str.charAt(len-1); // 'd'
+
+// Index of character/substring
+int index = str.indexOf('o');   // 4 (first occurrence)
+int lastIndex = str.lastIndexOf('o'); // 7
+int wordIndex = str.indexOf("World"); // 6
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Case Conversion:</h4>
+                            <pre><code data-trim>
+String original = "Hello World";
+
+String upper = original.toUpperCase();  // "HELLO WORLD"
+String lower = original.toLowerCase();  // "hello world"
+
+// Check case
+boolean hasUpper = Character.isUpperCase(original.charAt(0)); // true
+boolean hasLower = Character.isLowerCase(original.charAt(1)); // true
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>String Comparison and Searching</h3>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>Comparison Methods:</h4>
+                            <pre><code data-trim>
+String str1 = "Hello";
+String str2 = "hello";
+String str3 = "Hello";
+
+// Exact comparison
+boolean equal1 = str1.equals(str3);       // true
+boolean equal2 = str1.equals(str2);       // false
+
+// Case-insensitive comparison
+boolean equalIgnore = str1.equalsIgnoreCase(str2); // true
+
+// Lexicographic comparison
+int compare = str1.compareTo(str2);       // negative (H < h)
+int compareIgnore = str1.compareToIgnoreCase(str2); // 0
+
+// WARNING: Don't use == for string comparison
+boolean wrong = (str1 == str3);           // May be true or false
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Searching Methods:</h4>
+                            <pre><code data-trim>
+String text = "Java Programming Language";
+
+// Contains
+boolean hasJava = text.contains("Java");     // true
+boolean hasPython = text.contains("Python"); // false
+
+// Starts/Ends with
+boolean startsWithJava = text.startsWith("Java");  // true
+boolean endsWithLang = text.endsWith("Language");  // true
+
+// Empty/Blank checks
+String empty = "";
+String spaces = "   ";
+boolean isEmpty1 = empty.isEmpty();          // true
+boolean isEmpty2 = spaces.isEmpty();         // false
+boolean isBlank = spaces.trim().isEmpty();   // true
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>String Manipulation Methods</h3>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>Substring Operations:</h4>
+                            <pre><code data-trim>
+String text = "Java Programming";
+
+// Substring from index
+String sub1 = text.substring(5);     // "Programming"
+
+// Substring with start and end
+String sub2 = text.substring(0, 4);  // "Java"
+String sub3 = text.substring(5, 9);  // "Prog"
+
+// Replace operations
+String replaced = text.replace('a', 'A'); // "JAvA ProgrAmming"
+String newText = text.replace("Java", "Python"); // "Python Programming"
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Trimming and Splitting:</h4>
+                            <pre><code data-trim>
+String messy = "  Hello World  ";
+String clean = messy.trim();         // "Hello World"
+
+// Split string
+String sentence = "Java,Python,C++,JavaScript";
+String[] languages = sentence.split(",");
+// ["Java", "Python", "C++", "JavaScript"]
+
+for (String lang : languages) {
+    System.out.println(lang.trim());
+}
+
+// Format strings
+String formatted = String.format("Hello %s, you are %d years old", 
+    "John", 25);
+// "Hello John, you are 25 years old"
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Scanner Class -->
+            <section>
+                <section>
+                    <h2>Scanner Class for User Input</h2>
+                    <div class="highlight">
+                        <p><strong>Scanner</strong> class reads input from various sources including keyboard</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Scanner Basics</h3>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>Import and Create Scanner:</h4>
+                            <pre><code data-trim>
+import java.util.Scanner;
+
+public class InputExample {
+    public static void main(String[] args) {
+        // Create Scanner for keyboard input
+        Scanner scanner = new Scanner(System.in);
+        
+        System.out.print("Enter your name: ");
+        String name = scanner.nextLine();
+        
+        System.out.print("Enter your age: ");
+        int age = scanner.nextInt();
+        
+        System.out.println("Hello " + name + 
+            ", you are " + age + " years old");
+        
+        scanner.close(); // Important!
+    }
+}
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Scanner Methods:</h4>
+                            <table class="table-style">
+                                <tr><th>Method</th><th>Description</th></tr>
+                                <tr><td><code>nextLine()</code></td><td>Read complete line</td></tr>
+                                <tr><td><code>next()</code></td><td>Read single word</td></tr>
+                                <tr><td><code>nextInt()</code></td><td>Read integer</td></tr>
+                                <tr><td><code>nextDouble()</code></td><td>Read double</td></tr>
+                                <tr><td><code>nextFloat()</code></td><td>Read float</td></tr>
+                                <tr><td><code>nextBoolean()</code></td><td>Read boolean</td></tr>
+                                <tr><td><code>hasNext()</code></td><td>Check if input available</td></tr>
+                                <tr><td><code>hasNextInt()</code></td><td>Check if next is integer</td></tr>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Scanner Input Types and Examples</h3>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>Reading Different Data Types:</h4>
+                            <pre><code data-trim>
+import java.util.Scanner;
+
+public class MultipleInputs {
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        
+        System.out.println("Enter details:");
+        
+        System.out.print("Name: ");
+        String name = input.nextLine();
+        
+        System.out.print("Age: ");
+        int age = input.nextInt();
+        
+        System.out.print("Height (m): ");
+        double height = input.nextDouble();
+        
+        System.out.print("Is student (true/false): ");
+        boolean isStudent = input.nextBoolean();
+        
+        System.out.println("\nSummary:");
+        System.out.println("Name: " + name);
+        System.out.println("Age: " + age);
+        System.out.println("Height: " + height + "m");
+        System.out.println("Student: " + isStudent);
+        
+        input.close();
+    }
+}
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Input Validation:</h4>
+                            <pre><code data-trim>
+import java.util.Scanner;
+
+public class InputValidation {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        // Validate integer input
+        int number;
+        while (true) {
+            System.out.print("Enter a number: ");
+            if (scanner.hasNextInt()) {
+                number = scanner.nextInt();
+                break;
+            } else {
+                System.out.println("Invalid! Please enter a number.");
+                scanner.next(); // Clear invalid input
+            }
+        }
+        
+        // Validate positive number
+        double amount;
+        do {
+            System.out.print("Enter positive amount: ");
+            amount = scanner.nextDouble();
+            if (amount <= 0) {
+                System.out.println("Amount must be positive!");
+            }
+        } while (amount <= 0);
+        
+        System.out.println("Number: " + number);
+        System.out.println("Amount: " + amount);
+        
+        scanner.close();
+    }
+}
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Command-line Arguments -->
+            <section>
+                <section>
+                    <h2>Command-line Arguments</h2>
+                    <div class="highlight">
+                        <p><strong>Command-line arguments</strong> are passed to the main method when program starts</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Using Command-line Arguments</h3>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>Basic Usage:</h4>
+                            <pre><code data-trim>
+public class CommandLineDemo {
+    public static void main(String[] args) {
+        System.out.println("Number of arguments: " + args.length);
+        
+        if (args.length > 0) {
+            System.out.println("Arguments received:");
+            for (int i = 0; i < args.length; i++) {
+                System.out.println("args[" + i + "] = " + args[i]);
+            }
+        } else {
+            System.out.println("No arguments provided");
+        }
+    }
+}
+
+// Run with: java CommandLineDemo hello world 123
+// Output:
+// Number of arguments: 3
+// Arguments received:
+// args[0] = hello
+// args[1] = world
+// args[2] = 123
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Processing Arguments:</h4>
+                            <pre><code data-trim>
+public class Calculator {
+    public static void main(String[] args) {
+        if (args.length != 3) {
+            System.out.println("Usage: java Calculator <num1> <op> <num2>");
+            System.out.println("Example: java Calculator 10 + 5");
+            return;
+        }
+        
+        try {
+            double num1 = Double.parseDouble(args[0]);
+            String operator = args[1];
+            double num2 = Double.parseDouble(args[2]);
+            double result = 0;
+            
+            switch (operator) {
+                case "+":
+                    result = num1 + num2;
+                    break;
+                case "-":
+                    result = num1 - num2;
+                    break;
+                case "*":
+                    result = num1 * num2;
+                    break;
+                case "/":
+                    if (num2 != 0) {
+                        result = num1 / num2;
+                    } else {
+                        System.out.println("Error: Division by zero");
+                        return;
+                    }
+                    break;
+                default:
+                    System.out.println("Unknown operator: " + operator);
+                    return;
+            }
+            
+            System.out.println(num1 + " " + operator + " " + num2 + " = " + result);
+            
+        } catch (NumberFormatException e) {
+            System.out.println("Error: Invalid number format");
+        }
+    }
+}
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Summary -->
+            <section>
+                <h2>Chapter Summary</h2>
+                <div class="two-column">
+                    <div class="column">
+                        <h3>Access Control:</h3>
+                        <ul class="compact-list">
+                            <li>public, private, protected, default modifiers</li>
+                            <li>Encapsulation and data hiding</li>
+                            <li>Package-level access control</li>
+                        </ul>
+                        <h3>Non-Access Modifiers:</h3>
+                        <ul class="compact-list">
+                            <li>static: Class-level members</li>
+                            <li>final: Immutable elements</li>
+                            <li>abstract: Incomplete implementation</li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <h3>String Handling:</h3>
+                        <ul class="compact-list">
+                            <li>String immutability and characteristics</li>
+                            <li>Common string methods and operations</li>
+                            <li>Escape sequences and special characters</li>
+                        </ul>
+                        <h3>Input/Output:</h3>
+                        <ul class="compact-list">
+                            <li>Scanner class for user input</li>
+                            <li>Command-line argument processing</li>
+                            <li>Input validation techniques</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="highlight center">
+                    <p><strong>Next:</strong> Inheritance and Polymorphism</p>
+                </div>
+            </section>
+
+            <!-- Thank You -->
+            <section class="title-slide">
+                <h1>Thank You!</h1>
+                <h2>Questions?</h2>
+                <br>
+                <p>Ready to explore inheritance and polymorphism!</p>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/highlight/highlight.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            transition: 'slide',
+            transitionSpeed: 'default',
+            backgroundTransition: 'fade',
+            plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+        });
+    </script>
+</body>
+</html>

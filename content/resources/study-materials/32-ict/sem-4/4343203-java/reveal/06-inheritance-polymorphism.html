@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Java Programming - Inheritance and Polymorphism</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/theme/white.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/highlight/monokai.css">
+    <style>
+        .reveal h1, .reveal h2, .reveal h3 { color: #2c3e50; }
+        .reveal .slides section { text-align: left; padding: 10px 30px; height: 90vh; box-sizing: border-box; overflow: hidden; }
+        .reveal .title-slide { text-align: center; }
+        .reveal .center { text-align: center; }
+        .reveal pre code { font-size: 0.7em; line-height: 1.1; max-height: 300px; overflow-y: auto; }
+        .reveal h2 { font-size: 1.6em; margin-bottom: 0.4em; }
+        .reveal h3 { font-size: 1.3em; margin-bottom: 0.3em; }
+        .reveal h4 { font-size: 1.0em; margin-bottom: 0.2em; }
+        .reveal ul, .reveal ol { font-size: 0.85em; margin: 0.4em 0; }
+        .reveal li { margin: 0.2em 0; }
+        .highlight { background-color: #fff3cd; padding: 6px; border-left: 4px solid #ffc107; margin: 6px 0; font-size: 0.85em; }
+        .concept-box { background-color: #e8f4f8; padding: 8px; border-radius: 5px; margin: 6px 0; font-size: 0.8em; }
+        .two-column { display: flex; gap: 15px; font-size: 0.8em; }
+        .three-column { display: flex; gap: 10px; font-size: 0.75em; }
+        .column { flex: 1; }
+        .compact-list li { margin: 0.1em 0; font-size: 0.8em; }
+        .small-text { font-size: 0.75em; }
+        .table-style { font-size: 0.7em; width: 100%; border-collapse: collapse; }
+        .table-style th, .table-style td { border: 1px solid #ddd; padding: 4px; text-align: center; }
+        .table-style th { background-color: #f2f2f2; font-weight: bold; }
+        .inheritance-box { background: #f8f9fa; padding: 8px; border-radius: 5px; margin: 6px 0; font-size: 0.8em; }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- Title Slide -->
+            <section class="title-slide">
+                <h1>Java Programming Language</h1>
+                <h2>Chapter 6: Inheritance and Polymorphism</h2>
+                <p>Advanced OOP Concepts</p>
+                <br>
+                <p><small>Course: 4343203 - Java Programming</small></p>
+            </section>
+
+            <!-- Table of Contents -->
+            <section>
+                <h2>What We'll Cover</h2>
+                <ul class="compact-list">
+                    <li>Inheritance Fundamentals</li>
+                    <li>Types of Inheritance</li>
+                    <li>super Keyword</li>
+                    <li>Method Overriding</li>
+                    <li>Polymorphism Concepts</li>
+                    <li>Method Overloading vs Overriding</li>
+                    <li>Dynamic Method Dispatch</li>
+                    <li>Final Classes and Methods</li>
+                </ul>
+            </section>
+
+            <!-- Inheritance Overview -->
+            <section>
+                <h2>Inheritance Hierarchy</h2>
+                <div class="center">
+                    <img src="diagrams/inheritance-hierarchy.svg" alt="Java Inheritance Hierarchy" style="width: 95%; max-height: 75vh;">
+                </div>
+            </section>
+
+            <!-- Inheritance Fundamentals -->
+            <section>
+                <section>
+                    <h2>Inheritance Fundamentals</h2>
+                    <div class="highlight">
+                        <p><strong>Inheritance</strong> allows a class to inherit properties and methods from another class</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Inheritance Terminology</h3>
+                    <div class="concept-box">
+                        <h4>Key Terms:</h4>
+                        <ul class="compact-list">
+                            <li><strong>Parent Class:</strong> Base class, Superclass</li>
+                            <li><strong>Child Class:</strong> Derived class, Subclass</li>
+                            <li><strong>extends:</strong> Keyword to inherit from a class</li>
+                            <li><strong>IS-A Relationship:</strong> Child IS-A type of Parent</li>
+                        </ul>
+                    </div>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>Basic Inheritance:</h4>
+                            <pre><code data-trim>
+// Parent class
+class Animal {
+    String name;
+    int age;
+    
+    void eat() {
+        System.out.println("Animal is eating");
+    }
+    
+    void sleep() {
+        System.out.println("Animal is sleeping");
+    }
+}
+
+// Child class
+class Dog extends Animal {
+    String breed;
+    
+    void bark() {
+        System.out.println("Dog is barking");
+    }
+}
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Usage:</h4>
+                            <pre><code data-trim>
+public class TestInheritance {
+    public static void main(String[] args) {
+        Dog dog = new Dog();
+        
+        // Inherited properties and methods
+        dog.name = "Buddy";
+        dog.age = 3;
+        dog.eat();    // From Animal
+        dog.sleep();  // From Animal
+        
+        // Own properties and methods
+        dog.breed = "Labrador";
+        dog.bark();   // Own method
+    }
+}
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Benefits of Inheritance</h3>
+                    <div class="three-column">
+                        <div class="column">
+                            <div class="inheritance-box">
+                                <h4>Code Reusability</h4>
+                                <ul class="compact-list">
+                                    <li>Reuse parent class code</li>
+                                    <li>Avoid duplication</li>
+                                    <li>Maintain consistency</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="inheritance-box">
+                                <h4>Extensibility</h4>
+                                <ul class="compact-list">
+                                    <li>Add new features</li>
+                                    <li>Modify behavior</li>
+                                    <li>Specialize functionality</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="inheritance-box">
+                                <h4>Polymorphism</h4>
+                                <ul class="compact-list">
+                                    <li>One interface, many forms</li>
+                                    <li>Runtime method resolution</li>
+                                    <li>Flexible code design</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Types of Inheritance -->
+            <section>
+                <section>
+                    <h2>Types of Inheritance</h2>
+                    <div class="highlight">
+                        <p><strong>Java supports single inheritance</strong> but achieves multiple inheritance through interfaces</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Single Inheritance</h3>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>One parent, one child:</h4>
+                            <pre><code data-trim>
+class Vehicle {
+    int speed;
+    String fuel;
+    
+    void start() {
+        System.out.println("Vehicle started");
+    }
+}
+
+class Car extends Vehicle {
+    int doors;
+    
+    void accelerate() {
+        speed += 10;
+        System.out.println("Car accelerating");
+    }
+}
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Multilevel Inheritance:</h4>
+                            <pre><code data-trim>
+class Vehicle {
+    void start() {
+        System.out.println("Vehicle started");
+    }
+}
+
+class Car extends Vehicle {
+    void accelerate() {
+        System.out.println("Car accelerating");
+    }
+}
+
+class SportsCar extends Car {
+    void turboBoost() {
+        System.out.println("Turbo activated!");
+    }
+}
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Hierarchical Inheritance</h3>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>One parent, multiple children:</h4>
+                            <pre><code data-trim>
+class Animal {
+    void eat() {
+        System.out.println("Animal eating");
+    }
+}
+
+class Dog extends Animal {
+    void bark() {
+        System.out.println("Dog barking");
+    }
+}
+
+class Cat extends Animal {
+    void meow() {
+        System.out.println("Cat meowing");
+    }
+}
+
+class Bird extends Animal {
+    void fly() {
+        System.out.println("Bird flying");
+    }
+}
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Why No Multiple Inheritance?</h4>
+                            <div class="inheritance-box">
+                                <h5>Diamond Problem:</h5>
+                                <ul class="compact-list">
+                                    <li>Ambiguity in method resolution</li>
+                                    <li>Conflicting implementations</li>
+                                    <li>Complexity in inheritance</li>
+                                </ul>
+                            </div>
+                            <div class="inheritance-box">
+                                <h5>Java's Solution:</h5>
+                                <ul class="compact-list">
+                                    <li>Single class inheritance</li>
+                                    <li>Multiple interface implementation</li>
+                                    <li>Clear inheritance hierarchy</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- super Keyword -->
+            <section>
+                <section>
+                    <h2>The super Keyword</h2>
+                    <div class="highlight">
+                        <p><strong>super</strong> refers to the immediate parent class object</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Uses of super Keyword</h3>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>1. Access Parent Variables:</h4>
+                            <pre><code data-trim>
+class Animal {
+    String name = "Animal";
+}
+
+class Dog extends Animal {
+    String name = "Dog";
+    
+    void printNames() {
+        System.out.println(name);        // Dog
+        System.out.println(super.name);  // Animal
+    }
+}
+                            </code></pre>
+                            <h4>2. Call Parent Methods:</h4>
+                            <pre><code data-trim>
+class Animal {
+    void eat() {
+        System.out.println("Animal eating");
+    }
+}
+
+class Dog extends Animal {
+    void eat() {
+        super.eat(); // Call parent method
+        System.out.println("Dog eating bones");
+    }
+}
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>3. Call Parent Constructor:</h4>
+                            <pre><code data-trim>
+class Animal {
+    String name;
+    int age;
+    
+    Animal(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+}
+
+class Dog extends Animal {
+    String breed;
+    
+    Dog(String name, int age, String breed) {
+        super(name, age); // Must be first statement
+        this.breed = breed;
+    }
+    
+    void displayInfo() {
+        System.out.println("Name: " + name);
+        System.out.println("Age: " + age);
+        System.out.println("Breed: " + breed);
+    }
+}
+                            </code></pre>
+                        </div>
+                    </div>
+                    <div class="highlight small-text">
+                        <p><strong>Important:</strong> super() constructor call must be the first statement in child constructor</p>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Method Overriding -->
+            <section>
+                <section>
+                    <h2>Method Overriding</h2>
+                    <div class="highlight">
+                        <p><strong>Method Overriding</strong> allows child class to provide specific implementation of parent method</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Method Overriding vs Overloading Comparison</h3>
+                    <div class="center">
+                        <img src="diagrams/method-overriding-overloading.svg" alt="Method Overriding vs Overloading Comparison" style="width: 95%; max-width: 900px;">
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Method Overriding Rules</h3>
+                    <div class="concept-box">
+                        <h4>Overriding Requirements:</h4>
+                        <ul class="compact-list">
+                            <li>Same method name, parameters, and return type</li>
+                            <li>Child class method cannot have stricter access modifier</li>
+                            <li>Cannot override static, final, or private methods</li>
+                            <li>Use @Override annotation (recommended)</li>
+                        </ul>
+                    </div>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>Example:</h4>
+                            <pre><code data-trim>
+class Animal {
+    void makeSound() {
+        System.out.println("Animal makes sound");
+    }
+    
+    void move() {
+        System.out.println("Animal moves");
+    }
+}
+
+class Dog extends Animal {
+    @Override
+    void makeSound() {
+        System.out.println("Dog barks: Woof!");
+    }
+    
+    @Override
+    void move() {
+        System.out.println("Dog runs on four legs");
+    }
+}
+
+class Cat extends Animal {
+    @Override
+    void makeSound() {
+        System.out.println("Cat meows: Meow!");
+    }
+}
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Usage:</h4>
+                            <pre><code data-trim>
+public class TestOverriding {
+    public static void main(String[] args) {
+        Animal animal1 = new Dog();
+        Animal animal2 = new Cat();
+        
+        animal1.makeSound(); // Dog barks: Woof!
+        animal1.move();      // Dog runs on four legs
+        
+        animal2.makeSound(); // Cat meows: Meow!
+        animal2.move();      // Animal moves
+    }
+}
+                            </code></pre>
+                            <div class="inheritance-box">
+                                <h5>@Override Benefits:</h5>
+                                <ul class="compact-list">
+                                    <li>Compile-time checking</li>
+                                    <li>Code readability</li>
+                                    <li>Prevents typos</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Polymorphism -->
+            <section>
+                <section>
+                    <h2>Polymorphism</h2>
+                    <div class="highlight">
+                        <p><strong>Polymorphism</strong> means "many forms" - one interface, multiple implementations</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Types of Polymorphism</h3>
+                    <div class="two-column">
+                        <div class="column">
+                            <div class="inheritance-box">
+                                <h4>Compile-time Polymorphism</h4>
+                                <h5>Method Overloading:</h5>
+                                <pre><code data-trim>
+class Calculator {
+    int add(int a, int b) {
+        return a + b;
+    }
+    
+    double add(double a, double b) {
+        return a + b;
+    }
+    
+    int add(int a, int b, int c) {
+        return a + b + c;
+    }
+}
+                                </code></pre>
+                                <ul class="compact-list">
+                                    <li>Same method name</li>
+                                    <li>Different parameters</li>
+                                    <li>Resolved at compile time</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="inheritance-box">
+                                <h4>Runtime Polymorphism</h4>
+                                <h5>Method Overriding:</h5>
+                                <pre><code data-trim>
+class Shape {
+    void draw() {
+        System.out.println("Drawing shape");
+    }
+}
+
+class Circle extends Shape {
+    @Override
+    void draw() {
+        System.out.println("Drawing circle");
+    }
+}
+
+class Rectangle extends Shape {
+    @Override
+    void draw() {
+        System.out.println("Drawing rectangle");
+    }
+}
+                                </code></pre>
+                                <ul class="compact-list">
+                                    <li>Same method signature</li>
+                                    <li>Different implementations</li>
+                                    <li>Resolved at runtime</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Practical Polymorphism Example</h3>
+                    <pre><code data-trim>
+class Employee {
+    String name;
+    double salary;
+    
+    Employee(String name, double salary) {
+        this.name = name;
+        this.salary = salary;
+    }
+    
+    double calculateBonus() {
+        return salary * 0.1; // 10% bonus
+    }
+    
+    void displayInfo() {
+        System.out.println("Name: " + name + ", Salary: " + salary);
+        System.out.println("Bonus: " + calculateBonus());
+    }
+}
+
+class Manager extends Employee {
+    Manager(String name, double salary) {
+        super(name, salary);
+    }
+    
+    @Override
+    double calculateBonus() {
+        return salary * 0.2; // 20% bonus for managers
+    }
+}
+
+class Developer extends Employee {
+    Developer(String name, double salary) {
+        super(name, salary);
+    }
+    
+    @Override
+    double calculateBonus() {
+        return salary * 0.15; // 15% bonus for developers
+    }
+}
+
+public class PolymorphismDemo {
+    public static void main(String[] args) {
+        Employee[] employees = {
+            new Employee("John", 50000),
+            new Manager("Alice", 80000),
+            new Developer("Bob", 70000)
+        };
+        
+        for (Employee emp : employees) {
+            emp.displayInfo(); // Different bonus calculations
+            System.out.println();
+        }
+    }
+}
+                    </code></pre>
+                </section>
+            </section>
+
+            <!-- Dynamic Method Dispatch -->
+            <section>
+                <section>
+                    <h2>Dynamic Method Dispatch</h2>
+                    <div class="highlight">
+                        <p><strong>Dynamic Method Dispatch</strong> is the mechanism by which a call to an overridden method is resolved at runtime</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>How Dynamic Dispatch Works</h3>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>Example:</h4>
+                            <pre><code data-trim>
+class Animal {
+    void sound() {
+        System.out.println("Animal sound");
+    }
+}
+
+class Dog extends Animal {
+    @Override
+    void sound() {
+        System.out.println("Woof!");
+    }
+}
+
+class Cat extends Animal {
+    @Override
+    void sound() {
+        System.out.println("Meow!");
+    }
+}
+
+public class DynamicDispatch {
+    public static void main(String[] args) {
+        Animal animal;
+        
+        animal = new Dog();
+        animal.sound(); // Woof! (Dog's method)
+        
+        animal = new Cat();
+        animal.sound(); // Meow! (Cat's method)
+        
+        // Array of animals
+        Animal[] animals = {
+            new Dog(), new Cat(), new Dog()
+        };
+        
+        for (Animal a : animals) {
+            a.sound(); // Different sounds
+        }
+    }
+}
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Key Points:</h4>
+                            <div class="inheritance-box">
+                                <h5>Runtime Resolution:</h5>
+                                <ul class="compact-list">
+                                    <li>Method determined by object type</li>
+                                    <li>Not by reference type</li>
+                                    <li>Happens at runtime</li>
+                                </ul>
+                            </div>
+                            <div class="inheritance-box">
+                                <h5>Benefits:</h5>
+                                <ul class="compact-list">
+                                    <li>Flexible code design</li>
+                                    <li>Easy to extend</li>
+                                    <li>Loose coupling</li>
+                                </ul>
+                            </div>
+                            <div class="inheritance-box">
+                                <h5>Requirements:</h5>
+                                <ul class="compact-list">
+                                    <li>Inheritance relationship</li>
+                                    <li>Method overriding</li>
+                                    <li>Upcasting (parent reference)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Method Overloading vs Overriding -->
+            <section>
+                <h2>Method Overloading vs Overriding</h2>
+                <table class="table-style">
+                    <tr>
+                        <th>Aspect</th>
+                        <th>Method Overloading</th>
+                        <th>Method Overriding</th>
+                    </tr>
+                    <tr>
+                        <td>Definition</td>
+                        <td>Multiple methods with same name, different parameters</td>
+                        <td>Child class redefines parent class method</td>
+                    </tr>
+                    <tr>
+                        <td>Inheritance</td>
+                        <td>Not required (same class)</td>
+                        <td>Required (parent-child relationship)</td>
+                    </tr>
+                    <tr>
+                        <td>Method Signature</td>
+                        <td>Different parameters</td>
+                        <td>Same signature</td>
+                    </tr>
+                    <tr>
+                        <td>Return Type</td>
+                        <td>Can be different</td>
+                        <td>Must be same or covariant</td>
+                    </tr>
+                    <tr>
+                        <td>Access Modifier</td>
+                        <td>Can be different</td>
+                        <td>Cannot be more restrictive</td>
+                    </tr>
+                    <tr>
+                        <td>Binding</td>
+                        <td>Compile-time (Static)</td>
+                        <td>Runtime (Dynamic)</td>
+                    </tr>
+                    <tr>
+                        <td>Polymorphism</td>
+                        <td>Compile-time polymorphism</td>
+                        <td>Runtime polymorphism</td>
+                    </tr>
+                    <tr>
+                        <td>Performance</td>
+                        <td>Faster (compile-time)</td>
+                        <td>Slower (runtime resolution)</td>
+                    </tr>
+                </table>
+            </section>
+
+            <!-- Final Classes and Methods -->
+            <section>
+                <section>
+                    <h2>Final Classes and Methods</h2>
+                    <div class="highlight">
+                        <p><strong>final</strong> keyword prevents inheritance and method overriding</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Final Methods and Classes</h3>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>Final Methods:</h4>
+                            <pre><code data-trim>
+class Animal {
+    // Cannot be overridden
+    final void breathe() {
+        System.out.println("Animal breathing");
+    }
+    
+    // Can be overridden
+    void move() {
+        System.out.println("Animal moving");
+    }
+}
+
+class Dog extends Animal {
+    // This would cause compilation error
+    // void breathe() { } // Error!
+    
+    @Override
+    void move() {
+        System.out.println("Dog running");
+    }
+}
+                            </code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Final Classes:</h4>
+                            <pre><code data-trim>
+// Cannot be extended
+final class String {
+    // String class implementation
+}
+
+// This would cause compilation error
+// class MyString extends String { } // Error!
+
+final class Math {
+    public static final double PI = 3.14159;
+    
+    public static double sqrt(double a) {
+        // Implementation
+        return 0;
+    }
+}
+                            </code></pre>
+                            <div class="inheritance-box">
+                                <h5>Use Cases:</h5>
+                                <ul class="compact-list">
+                                    <li>Security-sensitive classes</li>
+                                    <li>Immutable classes</li>
+                                    <li>Utility classes</li>
+                                    <li>Performance optimization</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Summary -->
+            <section>
+                <h2>Chapter Summary</h2>
+                <div class="two-column">
+                    <div class="column">
+                        <h3>Inheritance Concepts:</h3>
+                        <ul class="compact-list">
+                            <li>Code reusability through extends</li>
+                            <li>IS-A relationship modeling</li>
+                            <li>Single inheritance in Java</li>
+                            <li>super keyword usage</li>
+                            <li>Constructor chaining</li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <h3>Polymorphism Features:</h3>
+                        <ul class="compact-list">
+                            <li>Method overloading (compile-time)</li>
+                            <li>Method overriding (runtime)</li>
+                            <li>Dynamic method dispatch</li>
+                            <li>@Override annotation</li>
+                            <li>Final methods and classes</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="highlight center">
+                    <p><strong>Next:</strong> Interfaces and Abstract Classes</p>
+                </div>
+            </section>
+
+            <!-- Thank You -->
+            <section class="title-slide">
+                <h1>Thank You!</h1>
+                <h2>Questions?</h2>
+                <br>
+                <p>Ready to explore Interfaces and Abstract Classes!</p>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/highlight/highlight.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            transition: 'slide',
+            transitionSpeed: 'default',
+            backgroundTransition: 'fade',
+            plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1880 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Lecture 12 - Interfaces and Multiple Inheritance</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/theme/white.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/highlight/monokai.css">
+    <style>
+        .reveal h1, .reveal h2, .reveal h3 { color: #2c3e50; }
+        .reveal .slides section { text-align: left; padding: 10px 30px; height: 90vh; box-sizing: border-box; overflow: hidden; }
+        .reveal .title-slide { text-align: center; }
+        .reveal .center { text-align: center; }
+        .reveal pre code { font-size: 0.7em; line-height: 1.1; max-height: 300px; overflow-y: auto; }
+        .reveal h2 { font-size: 1.6em; margin-bottom: 0.4em; }
+        .reveal h3 { font-size: 1.3em; margin-bottom: 0.3em; }
+        .reveal ul, .reveal ol { font-size: 0.85em; margin: 0.4em 0; }
+        .reveal li { margin: 0.2em 0; }
+        .highlight { background-color: #fff3cd; padding: 6px; border-left: 4px solid #ffc107; margin: 6px 0; font-size: 0.85em; }
+        .interface-box { background-color: #e8f4f8; padding: 8px; border-radius: 5px; margin: 6px 0; font-size: 0.8em; }
+        .two-column { display: flex; gap: 15px; font-size: 0.8em; }
+        .column { flex: 1; }
+        .multiple-box { background: #f0f8ff; padding: 8px; margin: 6px 0; border-left: 4px solid #007bff; font-size: 0.8em; }
+        .exam-question { background: #e8f5e9; padding: 8px; border-left: 4px solid #28a745; margin: 8px 0; font-size: 0.8em; }
+        .solution-box { background: #f8f9fa; padding: 8px; border: 1px solid #dee2e6; border-radius: 4px; margin: 6px 0; }
+        .table-style { font-size: 0.65em; width: 100%; border-collapse: collapse; }
+        .table-style th, .table-style td { border: 1px solid #ddd; padding: 4px; text-align: center; }
+        .default-box { background: #fff0f5; padding: 8px; border-left: 4px solid #d63384; margin: 6px 0; font-size: 0.8em; }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- Title Slide -->
+            <section class="title-slide">
+                <h1>Java Programming</h1>
+                <h2>Lecture 12: Interfaces and Multiple Inheritance</h2>
+                <p>Course: 4343203 - Java Programming</p>
+                <p><small>GTU Semester 4 | Unit 2</small></p>
+                <br>
+                <p><em>Learning Objectives:</em></p>
+                <ul style="font-size: 0.8em; text-align: left; display: inline-block;">
+                    <li>Master interface concepts and implementation</li>
+                    <li>Understand multiple inheritance through interfaces</li>
+                    <li>Learn default and static methods in interfaces</li>
+                    <li>Apply interface-based design patterns</li>
+                    <li>Compare interfaces with abstract classes</li>
+                </ul>
+            </section>
+
+            <!-- Introduction to Interfaces -->
+            <section>
+                <h2>Understanding Interfaces</h2>
+                
+                <div class="highlight">
+                    <p><strong>Interface</strong> is a contract that defines what a class can do, without specifying how it does it. It's a completely abstract class that contains only abstract methods (until Java 8) and constants.</p>
+                </div>
+                
+                <div class="two-column">
+                    <div class="column">
+                        <div class="interface-box">
+                            <h3>Interface Characteristics:</h3>
+                            <ul>
+                                <li><strong>100% Abstract:</strong> All methods are implicitly abstract</li>
+                                <li><strong>Constants Only:</strong> Variables are public static final</li>
+                                <li><strong>Multiple Inheritance:</strong> Class can implement multiple interfaces</li>
+                                <li><strong>No Constructors:</strong> Cannot be instantiated</li>
+                                <li><strong>Implementation Contract:</strong> Implementing class must define all methods</li>
+                            </ul>
+                            
+                            <h3>Interface Benefits:</h3>
+                            <ul>
+                                <li>Achieves multiple inheritance</li>
+                                <li>Promotes loose coupling</li>
+                                <li>Supports design by contract</li>
+                                <li>Enables polymorphism</li>
+                                <li>Facilitates testing (mocking)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="interface-box">
+                            <h3>Basic Interface Syntax:</h3>
+                            <pre><code data-trim>
+// Interface declaration
+public interface Drawable {
+    // Constant (implicitly public static final)
+    int MAX_SIZE = 1000;
+    
+    // Abstract methods (implicitly public abstract)
+    void draw();
+    void resize(int width, int height);
+    String getType();
+}
+
+// Interface implementation
+public class Circle implements Drawable {
+    private double radius;
+    
+    public Circle(double radius) {
+        this.radius = radius;
+    }
+    
+    // Must implement all interface methods
+    @Override
+    public void draw() {
+        System.out.println("Drawing a circle with radius " + radius);
+    }
+    
+    @Override
+    public void resize(int width, int height) {
+        this.radius = Math.min(width, height) / 2.0;
+        System.out.println("Circle resized to radius " + radius);
+    }
+    
+    @Override
+    public String getType() {
+        return "Circle";
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Multiple Inheritance through Interfaces -->
+            <section>
+                <h2>Multiple Inheritance through Interfaces</h2>
+                
+                <div class="two-column">
+                    <div class="column">
+                        <div class="multiple-box">
+                            <h3>Multiple Interface Implementation:</h3>
+                            <pre><code data-trim>
+// Interface 1
+interface Flyable {
+    void fly();
+    double getMaxAltitude();
+}
+
+// Interface 2
+interface Swimmable {
+    void swim();
+    double getMaxDepth();
+}
+
+// Interface 3
+interface Walkable {
+    void walk();
+    double getMaxSpeed();
+}
+
+// Class implementing multiple interfaces
+class Duck implements Flyable, Swimmable, Walkable {
+    private String name;
+    
+    public Duck(String name) {
+        this.name = name;
+    }
+    
+    // Implement Flyable
+    @Override
+    public void fly() {
+        System.out.println(name + " is flying in the sky");
+    }
+    
+    @Override
+    public double getMaxAltitude() {
+        return 1000.0; // meters
+    }
+    
+    // Implement Swimmable
+    @Override
+    public void swim() {
+        System.out.println(name + " is swimming in water");
+    }
+    
+    @Override
+    public double getMaxDepth() {
+        return 2.0; // meters
+    }
+    
+    // Implement Walkable
+    @Override
+    public void walk() {
+        System.out.println(name + " is walking on land");
+    }
+    
+    @Override
+    public double getMaxSpeed() {
+        return 5.0; // km/h
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="multiple-box">
+                            <h3>Using Multiple Interfaces:</h3>
+                            <pre><code data-trim>
+public class MultipleInheritanceDemo {
+    public static void main(String[] args) {
+        Duck duck = new Duck("Donald");
+        
+        // Duck can be treated as any of its interfaces
+        Flyable flyer = duck;
+        Swimmable swimmer = duck;
+        Walkable walker = duck;
+        
+        // Polymorphic behavior
+        demonstrateFlight(flyer);
+        demonstrateSwimming(swimmer);
+        demonstrateWalking(walker);
+        
+        // Direct usage
+        duck.fly();
+        duck.swim();
+        duck.walk();
+        
+        System.out.println("Max altitude: " + duck.getMaxAltitude() + "m");
+        System.out.println("Max depth: " + duck.getMaxDepth() + "m");
+        System.out.println("Max speed: " + duck.getMaxSpeed() + " km/h");
+    }
+    
+    public static void demonstrateFlight(Flyable flyer) {
+        System.out.println("Testing flight capability:");
+        flyer.fly();
+    }
+    
+    public static void demonstrateSwimming(Swimmable swimmer) {
+        System.out.println("Testing swimming capability:");
+        swimmer.swim();
+    }
+    
+    public static void demonstrateWalking(Walkable walker) {
+        System.out.println("Testing walking capability:");
+        walker.walk();
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="highlight">
+                    <p><strong>Multiple Inheritance Diamond Problem:</strong> Java interfaces solve the diamond problem because they only contain method signatures (until Java 8). If a class implements multiple interfaces with same method signature, only one implementation is needed.</p>
+                </div>
+            </section>
+
+            <!-- Interface Inheritance -->
+            <section>
+                <h2>Interface Inheritance</h2>
+                
+                <div class="two-column">
+                    <div class="column">
+                        <div class="interface-box">
+                            <h3>Interface Extending Interface:</h3>
+                            <pre><code data-trim>
+// Base interface
+interface Vehicle {
+    void start();
+    void stop();
+    double getFuelEfficiency();
+}
+
+// Extended interface
+interface ElectricVehicle extends Vehicle {
+    void charge();
+    double getBatteryCapacity();
+    int getRange();
+}
+
+// Multiple interface inheritance
+interface FlyingCar extends Vehicle, Flyable {
+    void takeOff();
+    void land();
+    double getFlightRange();
+}
+
+// Implementation
+class Tesla implements ElectricVehicle {
+    private String model;
+    private double batteryCapacity;
+    private boolean isRunning;
+    
+    public Tesla(String model, double batteryCapacity) {
+        this.model = model;
+        this.batteryCapacity = batteryCapacity;
+        this.isRunning = false;
+    }
+    
+    // Implement Vehicle methods
+    @Override
+    public void start() {
+        isRunning = true;
+        System.out.println(model + " started silently");
+    }
+    
+    @Override
+    public void stop() {
+        isRunning = false;
+        System.out.println(model + " stopped");
+    }
+    
+    @Override
+    public double getFuelEfficiency() {
+        return 0.0; // Electric - no fuel
+    }
+    
+    // Implement ElectricVehicle methods
+    @Override
+    public void charge() {
+        System.out.println(model + " is charging...");
+    }
+    
+    @Override
+    public double getBatteryCapacity() {
+        return batteryCapacity;
+    }
+    
+    @Override
+    public int getRange() {
+        return (int)(batteryCapacity * 3.5); // km per kWh
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="interface-box">
+                            <h3>Complex Implementation:</h3>
+                            <pre><code data-trim>
+class FlyingCarPrototype implements FlyingCar {
+    private String name;
+    private boolean isFlying;
+    private boolean isRunning;
+    
+    public FlyingCarPrototype(String name) {
+        this.name = name;
+        this.isFlying = false;
+        this.isRunning = false;
+    }
+    
+    // Vehicle methods
+    @Override
+    public void start() {
+        isRunning = true;
+        System.out.println(name + " engine started");
+    }
+    
+    @Override
+    public void stop() {
+        isRunning = false;
+        isFlying = false;
+        System.out.println(name + " stopped");
+    }
+    
+    @Override
+    public double getFuelEfficiency() {
+        return isFlying ? 8.0 : 15.0; // km/l
+    }
+    
+    // Flyable methods
+    @Override
+    public void fly() {
+        if (isRunning) {
+            isFlying = true;
+            System.out.println(name + " is flying!");
+        }
+    }
+    
+    @Override
+    public double getMaxAltitude() {
+        return 3000.0; // meters
+    }
+    
+    // FlyingCar specific methods
+    @Override
+    public void takeOff() {
+        System.out.println(name + " taking off...");
+        fly();
+    }
+    
+    @Override
+    public void land() {
+        isFlying = false;
+        System.out.println(name + " landed safely");
+    }
+    
+    @Override
+    public double getFlightRange() {
+        return 500.0; // km
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Default Methods in Interfaces (Java 8+) -->
+            <section>
+                <h2>Default and Static Methods in Interfaces</h2>
+                
+                <div class="two-column">
+                    <div class="column">
+                        <div class="default-box">
+                            <h3>Default Methods:</h3>
+                            <p>Java 8 introduced default methods to provide implementation in interfaces without breaking existing implementations.</p>
+                            
+                            <pre><code data-trim>
+interface PaymentProcessor {
+    // Abstract method
+    void processPayment(double amount);
+    
+    // Default method with implementation
+    default void sendConfirmation(String email) {
+        System.out.println("Sending confirmation to: " + email);
+        System.out.println("Payment processed successfully!");
+    }
+    
+    // Default method
+    default void logTransaction(double amount) {
+        System.out.println("Transaction logged: $" + amount);
+        System.out.println("Timestamp: " + java.time.LocalDateTime.now());
+    }
+    
+    // Static method
+    static boolean validateAmount(double amount) {
+        return amount > 0 && amount <= 10000;
+    }
+    
+    // Static utility method
+    static String formatCurrency(double amount) {
+        return String.format("$%.2f", amount);
+    }
+}
+
+class CreditCardProcessor implements PaymentProcessor {
+    private String cardNumber;
+    
+    public CreditCardProcessor(String cardNumber) {
+        this.cardNumber = cardNumber;
+    }
+    
+    @Override
+    public void processPayment(double amount) {
+        if (PaymentProcessor.validateAmount(amount)) {
+            System.out.println("Processing credit card payment: " + 
+                              PaymentProcessor.formatCurrency(amount));
+            System.out.println("Card ending in: " + 
+                              cardNumber.substring(cardNumber.length() - 4));
+        } else {
+            System.out.println("Invalid payment amount!");
+        }
+    }
+    
+    // Can override default method if needed
+    @Override
+    public void sendConfirmation(String email) {
+        System.out.println("Credit Card Payment Confirmation");
+        System.out.println("Email: " + email);
+        System.out.println("Card used: ****" + cardNumber.substring(cardNumber.length() - 4));
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="default-box">
+                            <h3>Multiple Default Methods:</h3>
+                            <pre><code data-trim>
+interface Logger {
+    default void log(String message) {
+        System.out.println("LOG: " + message);
+    }
+}
+
+interface Auditor {
+    default void log(String message) {
+        System.out.println("AUDIT: " + message);
+    }
+}
+
+// Class implementing both interfaces with same default method
+class DatabaseService implements Logger, Auditor {
+    
+    // Must override to resolve conflict
+    @Override
+    public void log(String message) {
+        System.out.println("DATABASE: " + message);
+        // Can call specific default methods
+        Logger.super.log(message);  // Call Logger's default
+        Auditor.super.log(message); // Call Auditor's default
+    }
+    
+    public void saveData(String data) {
+        log("Saving data: " + data);
+    }
+}
+
+// Usage example
+class DefaultMethodDemo {
+    public static void main(String[] args) {
+        CreditCardProcessor processor = 
+            new CreditCardProcessor("1234567890123456");
+        
+        // Use implemented method
+        processor.processPayment(150.75);
+        
+        // Use default methods
+        processor.sendConfirmation("user@example.com");
+        processor.logTransaction(150.75);
+        
+        // Use static methods
+        System.out.println("Amount valid: " + 
+                          PaymentProcessor.validateAmount(150.75));
+        System.out.println("Formatted: " + 
+                          PaymentProcessor.formatCurrency(150.75));
+        
+        // Demonstrate multiple default method resolution
+        DatabaseService dbService = new DatabaseService();
+        dbService.saveData("User information");
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Interface vs Abstract Class -->
+            <section>
+                <h2>Interface vs Abstract Class</h2>
+                
+                <table class="table-style">
+                    <tr>
+                        <th>Feature</th>
+                        <th>Interface</th>
+                        <th>Abstract Class</th>
+                    </tr>
+                    <tr>
+                        <td>Keyword</td>
+                        <td>interface</td>
+                        <td>abstract class</td>
+                    </tr>
+                    <tr>
+                        <td>Inheritance</td>
+                        <td>Multiple (implements)</td>
+                        <td>Single (extends)</td>
+                    </tr>
+                    <tr>
+                        <td>Methods</td>
+                        <td>Abstract, default, static</td>
+                        <td>Abstract, concrete</td>
+                    </tr>
+                    <tr>
+                        <td>Variables</td>
+                        <td>public static final only</td>
+                        <td>Any type</td>
+                    </tr>
+                    <tr>
+                        <td>Constructor</td>
+                        <td>No constructors</td>
+                        <td>Can have constructors</td>
+                    </tr>
+                    <tr>
+                        <td>Access Modifiers</td>
+                        <td>public (implicitly)</td>
+                        <td>Any access modifier</td>
+                    </tr>
+                    <tr>
+                        <td>Implementation</td>
+                        <td>0% to partial (Java 8+)</td>
+                        <td>0% to 99%</td>
+                    </tr>
+                </table>
+                
+                <div class="two-column">
+                    <div class="column">
+                        <div class="interface-box">
+                            <h3>When to Use Interface:</h3>
+                            <ul>
+                                <li>Multiple inheritance needed</li>
+                                <li>Contract definition (what to do)</li>
+                                <li>Loose coupling required</li>
+                                <li>No state to maintain</li>
+                                <li>Plugin architecture</li>
+                            </ul>
+                            
+                            <h3>Interface Example:</h3>
+                            <pre><code data-trim>
+interface Sortable {
+    void sort();
+    default void shuffle() {
+        System.out.println("Shuffling elements");
+    }
+}
+
+interface Searchable {
+    boolean search(Object item);
+}
+
+class ArrayList implements Sortable, Searchable {
+    // Implementation for multiple contracts
+}</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="interface-box">
+                            <h3>When to Use Abstract Class:</h3>
+                            <ul>
+                                <li>Common implementation needed</li>
+                                <li>State to be maintained</li>
+                                <li>Constructor required</li>
+                                <li>Code reuse priority</li>
+                                <li>Related classes hierarchy</li>
+                            </ul>
+                            
+                            <h3>Abstract Class Example:</h3>
+                            <pre><code data-trim>
+abstract class Animal {
+    protected String name; // State
+    
+    public Animal(String name) { // Constructor
+        this.name = name;
+    }
+    
+    public void sleep() { // Common implementation
+        System.out.println(name + " is sleeping");
+    }
+    
+    public abstract void makeSound(); // Must implement
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Functional Interfaces -->
+            <section>
+                <h2>Functional Interfaces</h2>
+                
+                <div class="two-column">
+                    <div class="column">
+                        <div class="default-box">
+                            <h3>What are Functional Interfaces?</h3>
+                            <p>A functional interface has exactly one abstract method. They can be used with lambda expressions and method references.</p>
+                            
+                            <pre><code data-trim>
+@FunctionalInterface
+interface Calculator {
+    double calculate(double a, double b);
+    
+    // Default methods allowed
+    default void printResult(double result) {
+        System.out.println("Result: " + result);
+    }
+    
+    // Static methods allowed
+    static void printWelcome() {
+        System.out.println("Welcome to Calculator!");
+    }
+}
+
+// Implementation using lambda expression
+public class FunctionalInterfaceDemo {
+    public static void main(String[] args) {
+        // Lambda expressions
+        Calculator add = (a, b) -> a + b;
+        Calculator multiply = (a, b) -> a * b;
+        Calculator divide = (a, b) -> b != 0 ? a / b : 0;
+        
+        // Usage
+        double result1 = add.calculate(10, 5);
+        double result2 = multiply.calculate(10, 5);
+        double result3 = divide.calculate(10, 5);
+        
+        add.printResult(result1); // 15.0
+        multiply.printResult(result2); // 50.0
+        divide.printResult(result3); // 2.0
+        
+        Calculator.printWelcome();
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="default-box">
+                            <h3>Built-in Functional Interfaces:</h3>
+                            <pre><code data-trim>
+import java.util.function.*;
+import java.util.Arrays;
+import java.util.List;
+
+public class BuiltInFunctionalInterfaces {
+    public static void main(String[] args) {
+        List<String> names = Arrays.asList("Alice", "Bob", "Charlie");
+        
+        // Predicate<T> - takes T, returns boolean
+        Predicate<String> startsWithA = name -> name.startsWith("A");
+        names.stream().filter(startsWithA).forEach(System.out::println);
+        
+        // Function<T, R> - takes T, returns R
+        Function<String, Integer> getLength = String::length;
+        names.stream().map(getLength).forEach(System.out::println);
+        
+        // Consumer<T> - takes T, returns void
+        Consumer<String> printUpperCase = name -> 
+            System.out.println(name.toUpperCase());
+        names.forEach(printUpperCase);
+        
+        // Supplier<T> - takes nothing, returns T
+        Supplier<String> getRandomName = () -> 
+            names.get((int)(Math.random() * names.size()));
+        System.out.println("Random name: " + getRandomName.get());
+        
+        // BiFunction<T, U, R> - takes T and U, returns R
+        BiFunction<Integer, Integer, Integer> max = Integer::max;
+        System.out.println("Max: " + max.apply(10, 20));
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Real-world Interface Example -->
+            <section>
+                <h2>Real-world Interface Example: Plugin System</h2>
+                
+                <div class="two-column">
+                    <div class="column">
+                        <div class="interface-box">
+                            <h3>Plugin Architecture:</h3>
+                            <pre><code data-trim>
+// Base plugin interface
+interface Plugin {
+    String getName();
+    String getVersion();
+    void initialize();
+    void execute();
+    void cleanup();
+    
+    // Default method for common functionality
+    default void logActivity(String message) {
+        System.out.println("[" + getName() + " v" + getVersion() + "] " + message);
+    }
+}
+
+// Database plugin interface
+interface DatabasePlugin extends Plugin {
+    void connect(String connectionString);
+    void disconnect();
+    void executeQuery(String query);
+}
+
+// File processing plugin interface
+interface FilePlugin extends Plugin {
+    void processFile(String filePath);
+    String[] getSupportedFormats();
+}
+
+// Concrete implementations
+class MySQLPlugin implements DatabasePlugin {
+    private String name = "MySQL Connector";
+    private String version = "1.0.0";
+    private boolean connected = false;
+    
+    @Override
+    public String getName() { return name; }
+    
+    @Override
+    public String getVersion() { return version; }
+    
+    @Override
+    public void initialize() {
+        logActivity("Initializing MySQL plugin...");
+    }
+    
+    @Override
+    public void execute() {
+        logActivity("MySQL plugin ready for database operations");
+    }
+    
+    @Override
+    public void cleanup() {
+        disconnect();
+        logActivity("MySQL plugin cleanup completed");
+    }
+    
+    @Override
+    public void connect(String connectionString) {
+        connected = true;
+        logActivity("Connected to: " + connectionString);
+    }
+    
+    @Override
+    public void disconnect() {
+        connected = false;
+        logActivity("Disconnected from database");
+    }
+    
+    @Override
+    public void executeQuery(String query) {
+        if (connected) {
+            logActivity("Executing query: " + query);
+        } else {
+            logActivity("Error: Not connected to database");
+        }
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="interface-box">
+                            <h3>Plugin Manager:</h3>
+                            <pre><code data-trim>
+class PDFPlugin implements FilePlugin {
+    @Override
+    public String getName() { return "PDF Processor"; }
+    
+    @Override
+    public String getVersion() { return "2.1.0"; }
+    
+    @Override
+    public void initialize() {
+        logActivity("PDF plugin initialized");
+    }
+    
+    @Override
+    public void execute() {
+        logActivity("PDF plugin ready");
+    }
+    
+    @Override
+    public void cleanup() {
+        logActivity("PDF plugin cleanup completed");
+    }
+    
+    @Override
+    public void processFile(String filePath) {
+        logActivity("Processing PDF file: " + filePath);
+    }
+    
+    @Override
+    public String[] getSupportedFormats() {
+        return new String[]{"pdf", "PDF"};
+    }
+}
+
+// Plugin manager
+class PluginManager {
+    private List<Plugin> plugins = new ArrayList<>();
+    
+    public void registerPlugin(Plugin plugin) {
+        plugins.add(plugin);
+        plugin.initialize();
+        System.out.println("Plugin registered: " + plugin.getName());
+    }
+    
+    public void executeAllPlugins() {
+        System.out.println("\n=== Executing All Plugins ===");
+        for (Plugin plugin : plugins) {
+            plugin.execute();
+        }
+    }
+    
+    public void shutdownAllPlugins() {
+        System.out.println("\n=== Shutting Down Plugins ===");
+        for (Plugin plugin : plugins) {
+            plugin.cleanup();
+        }
+    }
+    
+    public Plugin findPlugin(String name) {
+        return plugins.stream()
+                     .filter(p -> p.getName().equals(name))
+                     .findFirst()
+                     .orElse(null);
+    }
+}
+
+// Demo
+public class PluginSystemDemo {
+    public static void main(String[] args) {
+        PluginManager manager = new PluginManager();
+        
+        // Register plugins
+        manager.registerPlugin(new MySQLPlugin());
+        manager.registerPlugin(new PDFPlugin());
+        
+        // Execute plugins
+        manager.executeAllPlugins();
+        
+        // Use specific plugin
+        DatabasePlugin dbPlugin = (DatabasePlugin) manager.findPlugin("MySQL Connector");
+        if (dbPlugin != null) {
+            dbPlugin.connect("jdbc:mysql://localhost:3306/mydb");
+            dbPlugin.executeQuery("SELECT * FROM users");
+        }
+        
+        // Shutdown
+        manager.shutdownAllPlugins();
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Previous Year Questions -->
+            <section>
+                <h2>Previous Year Exam Questions</h2>
+                
+                <div class="exam-question">
+                    <p><strong>Q1. (GTU Summer 2022)</strong> What are interfaces in Java? Explain how Java achieves multiple inheritance through interfaces with a practical example.</p>
+                </div>
+                
+                <div class="solution-box">
+                    <p><strong>Solution:</strong></p>
+                    
+                    <h4>Interfaces in Java:</h4>
+                    <p>An interface in Java is a contract that defines what a class can do, without specifying how it does it. It's a reference type that contains only abstract methods and constants.</p>
+                    
+                    <h4>Key Features of Interfaces:</h4>
+                    <ul>
+                        <li><strong>100% Abstract:</strong> All methods are implicitly public and abstract (before Java 8)</li>
+                        <li><strong>Constants:</strong> All variables are implicitly public, static, and final</li>
+                        <li><strong>No Constructors:</strong> Interfaces cannot be instantiated directly</li>
+                        <li><strong>Multiple Inheritance:</strong> A class can implement multiple interfaces</li>
+                        <li><strong>Implementation Mandatory:</strong> Implementing class must provide implementation for all abstract methods</li>
+                    </ul>
+                    
+                    <h4>Multiple Inheritance Through Interfaces:</h4>
+                    <p>Java doesn't support multiple inheritance of classes to avoid ambiguity (Diamond Problem), but it supports multiple inheritance through interfaces because interfaces only define contracts, not implementation.</p>
+                    
+                    <h4>Practical Example - Smart Device System:</h4>
+                    
+                    <pre><code>// Interface 1 - WiFi capability
+interface WiFiEnabled {
+    String WIFI_PROTOCOL = "802.11"; // Constant (implicitly public static final)
+    
+    void connectToWiFi(String networkName);
+    void disconnectFromWiFi();
+    boolean isWiFiConnected();
+    String getWiFiStatus();
+}
+
+// Interface 2 - Bluetooth capability
+interface BluetoothEnabled {
+    double BLUETOOTH_VERSION = 5.0; // Constant
+    
+    void enableBluetooth();
+    void disableBluetooth();
+    void pairDevice(String deviceName);
+    boolean isBluetoothOn();
+}
+
+// Interface 3 - Camera capability
+interface CameraEnabled {
+    int MAX_RESOLUTION = 4096; // Constant
+    
+    void takePhoto();
+    void recordVideo();
+    void setResolution(int width, int height);
+    String[] getSupportedFormats();
+}
+
+// Interface 4 - GPS capability
+interface GPSEnabled {
+    void enableGPS();
+    void disableGPS();
+    String getCurrentLocation();
+    void navigateTo(String destination);
+}
+
+// Class implementing multiple interfaces
+class Smartphone implements WiFiEnabled, BluetoothEnabled, CameraEnabled, GPSEnabled {
+    private String model;
+    private boolean wifiConnected;
+    private boolean bluetoothOn;
+    private boolean gpsEnabled;
+    private int cameraWidth = 1920;
+    private int cameraHeight = 1080;
+    
+    public Smartphone(String model) {
+        this.model = model;
+        this.wifiConnected = false;
+        this.bluetoothOn = false;
+        this.gpsEnabled = false;
+    }
+    
+    // Implement WiFiEnabled methods
+    @Override
+    public void connectToWiFi(String networkName) {
+        wifiConnected = true;
+        System.out.println(model + " connected to WiFi network: " + networkName);
+        System.out.println("Using protocol: " + WIFI_PROTOCOL);
+    }
+    
+    @Override
+    public void disconnectFromWiFi() {
+        wifiConnected = false;
+        System.out.println(model + " disconnected from WiFi");
+    }
+    
+    @Override
+    public boolean isWiFiConnected() {
+        return wifiConnected;
+    }
+    
+    @Override
+    public String getWiFiStatus() {
+        return wifiConnected ? "WiFi Connected" : "WiFi Disconnected";
+    }
+    
+    // Implement BluetoothEnabled methods
+    @Override
+    public void enableBluetooth() {
+        bluetoothOn = true;
+        System.out.println(model + " Bluetooth enabled (Version " + BLUETOOTH_VERSION + ")");
+    }
+    
+    @Override
+    public void disableBluetooth() {
+        bluetoothOn = false;
+        System.out.println(model + " Bluetooth disabled");
+    }
+    
+    @Override
+    public void pairDevice(String deviceName) {
+        if (bluetoothOn) {
+            System.out.println(model + " paired with " + deviceName);
+        } else {
+            System.out.println("Enable Bluetooth first!");
+        }
+    }
+    
+    @Override
+    public boolean isBluetoothOn() {
+        return bluetoothOn;
+    }
+    
+    // Implement CameraEnabled methods
+    @Override
+    public void takePhoto() {
+        System.out.println(model + " taking photo at " + cameraWidth + "x" + cameraHeight);
+    }
+    
+    @Override
+    public void recordVideo() {
+        System.out.println(model + " recording video at " + cameraWidth + "x" + cameraHeight);
+    }
+    
+    @Override
+    public void setResolution(int width, int height) {
+        if (width <= MAX_RESOLUTION && height <= MAX_RESOLUTION) {
+            this.cameraWidth = width;
+            this.cameraHeight = height;
+            System.out.println("Camera resolution set to " + width + "x" + height);
+        } else {
+            System.out.println("Resolution exceeds maximum: " + MAX_RESOLUTION);
+        }
+    }
+    
+    @Override
+    public String[] getSupportedFormats() {
+        return new String[]{"JPEG", "PNG", "MP4", "AVI"};
+    }
+    
+    // Implement GPSEnabled methods
+    @Override
+    public void enableGPS() {
+        gpsEnabled = true;
+        System.out.println(model + " GPS enabled");
+    }
+    
+    @Override
+    public void disableGPS() {
+        gpsEnabled = false;
+        System.out.println(model + " GPS disabled");
+    }
+    
+    @Override
+    public String getCurrentLocation() {
+        if (gpsEnabled) {
+            return "Latitude: 40.7128, Longitude: -74.0060"; // NYC coordinates
+        } else {
+            return "GPS disabled";
+        }
+    }
+    
+    @Override
+    public void navigateTo(String destination) {
+        if (gpsEnabled) {
+            System.out.println(model + " navigating to: " + destination);
+        } else {
+            System.out.println("Enable GPS for navigation!");
+        }
+    }
+    
+    // Additional smartphone-specific method
+    public void displayDeviceInfo() {
+        System.out.println("=== Device Information ===");
+        System.out.println("Model: " + model);
+        System.out.println("WiFi Status: " + getWiFiStatus());
+        System.out.println("Bluetooth: " + (bluetoothOn ? "On" : "Off"));
+        System.out.println("GPS: " + (gpsEnabled ? "Enabled" : "Disabled"));
+        System.out.println("Camera Resolution: " + cameraWidth + "x" + cameraHeight);
+        System.out.println("==========================");
+    }
+}
+
+// Demo class showing multiple inheritance through interfaces
+public class MultipleInheritanceDemo {
+    
+    // Methods demonstrating polymorphism
+    public static void testWiFiCapability(WiFiEnabled device) {
+        device.connectToWiFi("MyHomeNetwork");
+        System.out.println("WiFi Status: " + device.getWiFiStatus());
+    }
+    
+    public static void testBluetoothCapability(BluetoothEnabled device) {
+        device.enableBluetooth();
+        device.pairDevice("Wireless Headphones");
+    }
+    
+    public static void testCameraCapability(CameraEnabled device) {
+        device.setResolution(1920, 1080);
+        device.takePhoto();
+        System.out.println("Supported formats: " + 
+                          String.join(", ", device.getSupportedFormats()));
+    }
+    
+    public static void testGPSCapability(GPSEnabled device) {
+        device.enableGPS();
+        System.out.println("Current location: " + device.getCurrentLocation());
+        device.navigateTo("Times Square, New York");
+    }
+    
+    public static void main(String[] args) {
+        System.out.println("=== Multiple Inheritance Through Interfaces Demo ===\n");
+        
+        // Create smartphone object
+        Smartphone iPhone = new Smartphone("iPhone 14 Pro");
+        
+        // Display initial device info
+        iPhone.displayDeviceInfo();
+        
+        System.out.println("\n=== Testing Individual Capabilities ===");
+        
+        // Test each interface capability (polymorphic behavior)
+        System.out.println("\n1. Testing WiFi Capability:");
+        testWiFiCapability(iPhone); // iPhone treated as WiFiEnabled
+        
+        System.out.println("\n2. Testing Bluetooth Capability:");
+        testBluetoothCapability(iPhone); // iPhone treated as BluetoothEnabled
+        
+        System.out.println("\n3. Testing Camera Capability:");
+        testCameraCapability(iPhone); // iPhone treated as CameraEnabled
+        
+        System.out.println("\n4. Testing GPS Capability:");
+        testGPSCapability(iPhone); // iPhone treated as GPSEnabled
+        
+        // Demonstrate interface array (polymorphic array)
+        System.out.println("\n=== Polymorphic Array Example ===");
+        
+        WiFiEnabled[] wifiDevices = {iPhone}; // Can add more WiFi devices
+        BluetoothEnabled[] bluetoothDevices = {iPhone}; // Same object, different interface
+        
+        System.out.println("WiFi devices in array: " + wifiDevices.length);
+        System.out.println("Bluetooth devices in array: " + bluetoothDevices.length);
+        
+        // Updated device info
+        System.out.println("\n=== Final Device State ===");
+        iPhone.displayDeviceInfo();
+        
+        System.out.println("\n=== Key Benefits Demonstrated ===");
+        System.out.println("1. Single class (Smartphone) implements multiple interfaces");
+        System.out.println("2. Each interface provides specific contract/capability");
+        System.out.println("3. Same object can be treated as different interface types");
+        System.out.println("4. No ambiguity - each interface method has single implementation");
+        System.out.println("5. Easy to extend with new interfaces without modifying existing code");
+    }
+}</code></pre>
+                    
+                    <h4>How Multiple Inheritance is Achieved:</h4>
+                    <ol>
+                        <li><strong>Interface Definition:</strong> Multiple interfaces define different contracts</li>
+                        <li><strong>Implementation:</strong> Single class implements multiple interfaces using 'implements' keyword</li>
+                        <li><strong>Method Implementation:</strong> Class provides implementation for all abstract methods from all interfaces</li>
+                        <li><strong>Polymorphism:</strong> Object can be treated as any of its implemented interface types</li>
+                        <li><strong>No Ambiguity:</strong> Since interfaces don't have implementation (originally), there's no confusion about which method to call</li>
+                    </ol>
+                </div>
+            </section>
+
+            <section>
+                <div class="exam-question">
+                    <p><strong>Q2. (GTU Winter 2021)</strong> Compare interface and abstract class in Java. When would you choose one over the other? Provide examples.</p>
+                </div>
+                
+                <div class="solution-box">
+                    <p><strong>Solution:</strong></p>
+                    
+                    <h4>Comparison: Interface vs Abstract Class</h4>
+                    
+                    <table class="table-style">
+                        <tr>
+                            <th>Aspect</th>
+                            <th>Interface</th>
+                            <th>Abstract Class</th>
+                        </tr>
+                        <tr>
+                            <td>Keyword</td>
+                            <td>interface</td>
+                            <td>abstract class</td>
+                        </tr>
+                        <tr>
+                            <td>Multiple Inheritance</td>
+                            <td>Supported (class implements multiple)</td>
+                            <td>Not supported (class extends only one)</td>
+                        </tr>
+                        <tr>
+                            <td>Method Types</td>
+                            <td>Abstract, default (Java 8+), static</td>
+                            <td>Abstract, concrete</td>
+                        </tr>
+                        <tr>
+                            <td>Variable Types</td>
+                            <td>public static final only (constants)</td>
+                            <td>Any type (instance, static, final)</td>
+                        </tr>
+                        <tr>
+                            <td>Constructors</td>
+                            <td>Cannot have constructors</td>
+                            <td>Can have constructors</td>
+                        </tr>
+                        <tr>
+                            <td>Access Modifiers</td>
+                            <td>Methods implicitly public</td>
+                            <td>Any access modifier allowed</td>
+                        </tr>
+                        <tr>
+                            <td>Instantiation</td>
+                            <td>Cannot be instantiated</td>
+                            <td>Cannot be instantiated</td>
+                        </tr>
+                        <tr>
+                            <td>Implementation Level</td>
+                            <td>0% (originally), partial with Java 8+</td>
+                            <td>0% to 99% implementation</td>
+                        </tr>
+                    </table>
+                    
+                    <h4>When to Choose Interface:</h4>
+                    
+                    <h4>Use Interface When:</h4>
+                    <ul>
+                        <li><strong>Multiple inheritance is needed</strong></li>
+                        <li><strong>Defining a contract</strong> (what classes should do)</li>
+                        <li><strong>Loose coupling</strong> is important</li>
+                        <li><strong>No shared state</strong> among implementations</li>
+                        <li><strong>Plugin architecture</strong> or strategy pattern</li>
+                    </ul>
+                    
+                    <h4>Interface Example:</h4>
+                    <pre><code>// Example: Media Player Interface
+interface Playable {
+    void play();
+    void pause();
+    void stop();
+}
+
+interface Downloadable {
+    void download(String url);
+    boolean isDownloaded();
+}
+
+// Class can implement multiple interfaces
+class MusicPlayer implements Playable, Downloadable {
+    private boolean isPlaying = false;
+    private boolean downloaded = false;
+    
+    @Override
+    public void play() {
+        isPlaying = true;
+        System.out.println("Music is playing");
+    }
+    
+    @Override
+    public void pause() {
+        isPlaying = false;
+        System.out.println("Music paused");
+    }
+    
+    @Override
+    public void stop() {
+        isPlaying = false;
+        System.out.println("Music stopped");
+    }
+    
+    @Override
+    public void download(String url) {
+        downloaded = true;
+        System.out.println("Downloading from: " + url);
+    }
+    
+    @Override
+    public boolean isDownloaded() {
+        return downloaded;
+    }
+}</code></pre>
+                    
+                    <h4>When to Choose Abstract Class:</h4>
+                    
+                    <h4>Use Abstract Class When:</h4>
+                    <ul>
+                        <li><strong>Shared implementation</strong> among related classes</li>
+                        <li><strong>Common state</strong> needs to be maintained</li>
+                        <li><strong>Constructor</strong> is needed</li>
+                        <li><strong>Code reusability</strong> is priority</li>
+                        <li><strong>Template method pattern</strong></li>
+                    </ul>
+                    
+                    <h4>Abstract Class Example:</h4>
+                    <pre><code>// Example: Vehicle Abstract Class
+abstract class Vehicle {
+    // Instance variables (state)
+    protected String brand;
+    protected String model;
+    protected int year;
+    protected double fuelLevel;
+    
+    // Constructor
+    public Vehicle(String brand, String model, int year) {
+        this.brand = brand;
+        this.model = model;
+        this.year = year;
+        this.fuelLevel = 100.0; // Full tank
+    }
+    
+    // Concrete methods (shared implementation)
+    public void startEngine() {
+        if (fuelLevel > 0) {
+            System.out.println(brand + " " + model + " engine started");
+        } else {
+            System.out.println("Cannot start - no fuel!");
+        }
+    }
+    
+    public void stopEngine() {
+        System.out.println(brand + " " + model + " engine stopped");
+    }
+    
+    public void refuel(double amount) {
+        fuelLevel = Math.min(100.0, fuelLevel + amount);
+        System.out.println("Refueled. Current fuel level: " + fuelLevel + "%");
+    }
+    
+    // Template method - defines algorithm structure
+    public final void performMaintenance() {
+        System.out.println("Starting maintenance for " + brand + " " + model);
+        checkEngine();      // Abstract - subclass implements
+        changeFluids();     // Concrete - common for all
+        checkSpecificParts(); // Abstract - subclass implements
+        System.out.println("Maintenance completed");
+    }
+    
+    // Common concrete method
+    private void changeFluids() {
+        System.out.println("Changing engine oil and other fluids");
+    }
+    
+    // Abstract methods - must be implemented by subclasses
+    public abstract void accelerate();
+    public abstract void brake();
+    public abstract double getFuelEfficiency();
+    protected abstract void checkEngine();
+    protected abstract void checkSpecificParts();
+    
+    // Getters
+    public String getBrand() { return brand; }
+    public String getModel() { return model; }
+    public double getFuelLevel() { return fuelLevel; }
+}
+
+// Concrete implementation
+class Car extends Vehicle {
+    private int numberOfDoors;
+    
+    public Car(String brand, String model, int year, int doors) {
+        super(brand, model, year); // Call parent constructor
+        this.numberOfDoors = doors;
+    }
+    
+    @Override
+    public void accelerate() {
+        if (fuelLevel > 0) {
+            fuelLevel -= 0.5;
+            System.out.println("Car accelerating smoothly");
+        }
+    }
+    
+    @Override
+    public void brake() {
+        System.out.println("Car braking with ABS");
+    }
+    
+    @Override
+    public double getFuelEfficiency() {
+        return 15.0; // km per liter
+    }
+    
+    @Override
+    protected void checkEngine() {
+        System.out.println("Checking car engine and exhaust system");
+    }
+    
+    @Override
+    protected void checkSpecificParts() {
+        System.out.println("Checking doors (" + numberOfDoors + "), windows, and air conditioning");
+    }
+    
+    // Car-specific method
+    public void openTrunk() {
+        System.out.println("Car trunk opened");
+    }
+}
+
+class Motorcycle extends Vehicle {
+    private String engineType;
+    
+    public Motorcycle(String brand, String model, int year, String engineType) {
+        super(brand, model, year);
+        this.engineType = engineType;
+    }
+    
+    @Override
+    public void accelerate() {
+        if (fuelLevel > 0) {
+            fuelLevel -= 0.8;
+            System.out.println("Motorcycle accelerating quickly");
+        }
+    }
+    
+    @Override
+    public void brake() {
+        System.out.println("Motorcycle braking carefully");
+    }
+    
+    @Override
+    public double getFuelEfficiency() {
+        return 30.0; // km per liter
+    }
+    
+    @Override
+    protected void checkEngine() {
+        System.out.println("Checking " + engineType + " motorcycle engine");
+    }
+    
+    @Override
+    protected void checkSpecificParts() {
+        System.out.println("Checking chain, sprockets, and helmet storage");
+    }
+}</code></pre>
+                    
+                    <h4>Demonstration Program:</h4>
+                    <pre><code>public class InterfaceVsAbstractDemo {
+    public static void main(String[] args) {
+        System.out.println("=== Interface Example ===");
+        
+        // Interface allows multiple inheritance
+        MusicPlayer player = new MusicPlayer();
+        
+        // Can be treated as either interface
+        Playable playableDevice = player;
+        Downloadable downloadableDevice = player;
+        
+        playableDevice.play();
+        downloadableDevice.download("http://music.com/song.mp3");
+        
+        System.out.println("\n=== Abstract Class Example ===");
+        
+        // Abstract class provides shared implementation
+        Car car = new Car("Toyota", "Camry", 2023, 4);
+        Motorcycle bike = new Motorcycle("Honda", "CBR", 2023, "4-Stroke");
+        
+        // Common methods inherited
+        car.startEngine();
+        car.refuel(20);
+        car.accelerate();
+        
+        bike.startEngine();
+        bike.accelerate();
+        
+        // Template method pattern
+        System.out.println("\n=== Template Method Pattern ===");
+        car.performMaintenance();   // Follows same algorithm
+        bike.performMaintenance();  // But different implementations
+        
+        System.out.println("\n=== Decision Guidelines ===");
+        System.out.println("Choose Interface when:");
+        System.out.println("- Multiple inheritance needed");
+        System.out.println("- Defining contracts/capabilities");
+        System.out.println("- Loose coupling important");
+        
+        System.out.println("\nChoose Abstract Class when:");
+        System.out.println("- Shared state and behavior needed");
+        System.out.println("- Constructor required");
+        System.out.println("- Template method pattern");
+    }
+}</code></pre>
+                    
+                    <h4>Decision Matrix:</h4>
+                    <p><strong>Choose Interface if:</strong></p>
+                    <ul>
+                        <li>You need multiple inheritance</li>
+                        <li>You're defining what classes CAN DO (capabilities)</li>
+                        <li>Implementations are likely to be very different</li>
+                        <li>You want loose coupling</li>
+                    </ul>
+                    
+                    <p><strong>Choose Abstract Class if:</strong></p>
+                    <ul>
+                        <li>You have common code to share</li>
+                        <li>You need to maintain state</li>
+                        <li>You need constructors</li>
+                        <li>You're defining what classes ARE (identity)</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section>
+                <div class="exam-question">
+                    <p><strong>Q3. (GTU Summer 2020)</strong> Explain default methods in Java 8 interfaces. How do they solve interface evolution problems? Provide examples.</p>
+                </div>
+                
+                <div class="solution-box">
+                    <p><strong>Solution:</strong></p>
+                    
+                    <h4>Default Methods in Java 8 Interfaces:</h4>
+                    <p>Default methods are methods in interfaces that have a default implementation. They were introduced in Java 8 to allow interfaces to evolve without breaking existing implementations.</p>
+                    
+                    <h4>Interface Evolution Problem:</h4>
+                    <p>Before Java 8, adding a new method to an interface would break all existing classes that implement that interface, because they would need to implement the new method.</p>
+                    
+                    <h4>How Default Methods Solve the Problem:</h4>
+                    <ul>
+                        <li>Allow adding new methods to interfaces without breaking compatibility</li>
+                        <li>Provide default implementation that existing classes can inherit</li>
+                        <li>Implementing classes can choose to override the default implementation</li>
+                        <li>Enable interface evolution while maintaining backward compatibility</li>
+                    </ul>
+                    
+                    <h4>Example: Library Management Interface Evolution</h4>
+                    
+                    <pre><code>// Original interface (before enhancement)
+interface Library {
+    void addBook(String title, String author);
+    void removeBook(String isbn);
+    boolean findBook(String isbn);
+}
+
+// Original implementation
+class CityLibrary implements Library {
+    private Map<String, String> books = new HashMap<>();
+    
+    @Override
+    public void addBook(String title, String author) {
+        String isbn = generateISBN();
+        books.put(isbn, title + " by " + author);
+        System.out.println("Added: " + title + " by " + author);
+    }
+    
+    @Override
+    public void removeBook(String isbn) {
+        books.remove(isbn);
+        System.out.println("Removed book with ISBN: " + isbn);
+    }
+    
+    @Override
+    public boolean findBook(String isbn) {
+        return books.containsKey(isbn);
+    }
+    
+    private String generateISBN() {
+        return "ISBN-" + System.currentTimeMillis() % 10000;
+    }
+}
+
+// Enhanced interface with default methods (Java 8+)
+interface EnhancedLibrary {
+    // Original abstract methods
+    void addBook(String title, String author);
+    void removeBook(String isbn);
+    boolean findBook(String isbn);
+    
+    // New default methods - don't break existing implementations
+    default void displayLibraryInfo() {
+        System.out.println("=== Library Information ===");
+        System.out.println("Library System Version: 2.0");
+        System.out.println("Supports: Books, eBooks, Audiobooks");
+        System.out.println("============================");
+    }
+    
+    default void sendOverdueNotice(String memberEmail) {
+        System.out.println("Sending overdue notice to: " + memberEmail);
+        System.out.println("Please return your books on time.");
+        logActivity("Overdue notice sent to " + memberEmail);
+    }
+    
+    default void generateReport() {
+        System.out.println("Generating standard library report...");
+        System.out.println("Total books: " + getTotalBooks());
+        System.out.println("System status: Active");
+    }
+    
+    // Default method calling abstract method
+    default int getTotalBooks() {
+        // This would need to be overridden in implementation
+        return 0; // Default implementation
+    }
+    
+    // Default method with parameters and logic
+    default boolean isValidISBN(String isbn) {
+        return isbn != null && isbn.startsWith("ISBN-") && isbn.length() >= 9;
+    }
+    
+    // Private method (Java 9+) to support default methods
+    private void logActivity(String activity) {
+        System.out.println("[LOG] " + java.time.LocalDateTime.now() + ": " + activity);
+    }
+    
+    // Static method in interface
+    static String getLibraryStandard() {
+        return "ISO 2108 - International Standard Book Number";
+    }
+}
+
+// Updated implementation - no need to change existing methods
+class ModernLibrary implements EnhancedLibrary {
+    private Map<String, String> books = new HashMap<>();
+    private int totalBooks = 0;
+    
+    @Override
+    public void addBook(String title, String author) {
+        String isbn = generateISBN();
+        if (isValidISBN(isbn)) { // Using default method
+            books.put(isbn, title + " by " + author);
+            totalBooks++;
+            System.out.println("Added: " + title + " by " + author + " (ISBN: " + isbn + ")");
+        } else {
+            System.out.println("Invalid ISBN generated!");
+        }
+    }
+    
+    @Override
+    public void removeBook(String isbn) {
+        if (books.remove(isbn) != null) {
+            totalBooks--;
+            System.out.println("Removed book with ISBN: " + isbn);
+        } else {
+            System.out.println("Book not found: " + isbn);
+        }
+    }
+    
+    @Override
+    public boolean findBook(String isbn) {
+        return books.containsKey(isbn);
+    }
+    
+    // Override default method to provide specific implementation
+    @Override
+    public int getTotalBooks() {
+        return totalBooks;
+    }
+    
+    // Can choose to override other default methods
+    @Override
+    public void generateReport() {
+        System.out.println("=== Modern Library Report ===");
+        System.out.println("Library Name: Modern City Library");
+        System.out.println("Total Books: " + getTotalBooks());
+        System.out.println("Standard: " + EnhancedLibrary.getLibraryStandard());
+        System.out.println("Digital Catalog: Enabled");
+        System.out.println("Online Access: 24/7");
+        System.out.println("==============================");
+    }
+    
+    // Custom method to override default behavior
+    @Override
+    public void sendOverdueNotice(String memberEmail) {
+        System.out.println("Sending personalized overdue notice to: " + memberEmail);
+        System.out.println("Dear Member,");
+        System.out.println("You have overdue books. Please return them to avoid fines.");
+        System.out.println("You can also renew online at our website.");
+        System.out.println("Thank you - Modern City Library");
+        // Note: Can't call private logActivity directly, but default method handles it
+    }
+    
+    private String generateISBN() {
+        return "ISBN-" + (1000000000L + System.currentTimeMillis() % 9000000000L);
+    }
+}
+
+// Legacy implementation - still works without modification
+class LegacyLibrary implements EnhancedLibrary {
+    private List<String> bookList = new ArrayList<>();
+    
+    @Override
+    public void addBook(String title, String author) {
+        bookList.add(title + " by " + author);
+        System.out.println("Legacy: Added " + title);
+    }
+    
+    @Override
+    public void removeBook(String isbn) {
+        // Legacy implementation - remove by title search
+        bookList.removeIf(book -> book.contains(isbn));
+        System.out.println("Legacy: Attempted to remove book");
+    }
+    
+    @Override
+    public boolean findBook(String isbn) {
+        return bookList.stream().anyMatch(book -> book.contains(isbn));
+    }
+    
+    // Uses default implementation of other methods
+    // No need to implement displayLibraryInfo, sendOverdueNotice, etc.
+}</code></pre>
+                    
+                    <h4>Demonstration Program:</h4>
+                    <pre><code>public class DefaultMethodDemo {
+    public static void main(String[] args) {
+        System.out.println("=== Default Methods Evolution Demo ===\n");
+        
+        // Modern implementation
+        ModernLibrary modernLib = new ModernLibrary();
+        
+        // Legacy implementation - still works!
+        LegacyLibrary legacyLib = new LegacyLibrary();
+        
+        // Test both implementations
+        System.out.println("=== Modern Library ===");
+        modernLib.addBook("Java Programming", "John Doe");
+        modernLib.addBook("Data Structures", "Jane Smith");
+        
+        // Use default methods
+        modernLib.displayLibraryInfo();
+        modernLib.generateReport(); // Overridden implementation
+        modernLib.sendOverdueNotice("user@example.com"); // Overridden
+        
+        System.out.println("\n=== Legacy Library ===");
+        legacyLib.addBook("Old Programming Book", "Legacy Author");
+        
+        // Legacy library gets default implementations automatically!
+        legacyLib.displayLibraryInfo(); // Uses default implementation
+        legacyLib.generateReport();     // Uses default implementation
+        legacyLib.sendOverdueNotice("legacy@example.com"); // Uses default
+        
+        // Static method usage
+        System.out.println("\n=== Interface Static Method ===");
+        System.out.println("Library Standard: " + EnhancedLibrary.getLibraryStandard());
+        
+        // Demonstrate polymorphism with default methods
+        System.out.println("\n=== Polymorphic Default Method Usage ===");
+        
+        EnhancedLibrary[] libraries = {modernLib, legacyLib};
+        
+        for (EnhancedLibrary lib : libraries) {
+            System.out.println("\nTesting library:");
+            lib.displayLibraryInfo(); // Same interface, different or same implementation
+        }
+        
+        System.out.println("\n=== Benefits Demonstrated ===");
+        System.out.println("1. Backward Compatibility: Legacy code still works");
+        System.out.println("2. Interface Evolution: New methods added without breaking changes");
+        System.out.println("3. Optional Override: Modern implementations can customize behavior");
+        System.out.println("4. Default Behavior: Sensible defaults provided");
+        System.out.println("5. Code Reuse: Common logic in default methods");
+    }
+}</code></pre>
+                    
+                    <h4>Key Benefits of Default Methods:</h4>
+                    
+                    <ol>
+                        <li><strong>Backward Compatibility:</strong> Existing implementations don't break when interface evolves</li>
+                        <li><strong>Interface Evolution:</strong> Can add new functionality to existing interfaces</li>
+                        <li><strong>Optional Implementation:</strong> Implementing classes can choose to override or use default</li>
+                        <li><strong>Code Reuse:</strong> Common logic can be shared across implementations</li>
+                        <li><strong>Library Enhancement:</strong> Enables frameworks like Java Collections to add new methods</li>
+                    </ol>
+                    
+                    <h4>Rules for Default Methods:</h4>
+                    <ul>
+                        <li>Must be declared with <code>default</code> keyword</li>
+                        <li>Must have implementation body</li>
+                        <li>Cannot be abstract, final, static, or synchronized</li>
+                        <li>Can be overridden in implementing classes</li>
+                        <li>Can call other default methods and abstract methods</li>
+                        <li>If class implements multiple interfaces with same default method, must override to resolve conflict</li>
+                    </ul>
+                    
+                    <h4>Real-world Impact:</h4>
+                    <p>Default methods enabled Java 8 to add lambda expression support to existing Collection interfaces (like <code>forEach</code>, <code>stream</code>) without breaking millions of existing implementations.</p>
+                </div>
+            </section>
+
+            <!-- Summary -->
+            <section>
+                <h2>Lecture Summary</h2>
+                
+                <div class="two-column">
+                    <div class="column">
+                        <h3>Key Concepts Covered:</h3>
+                        <ul>
+                            <li>Interface fundamentals and syntax</li>
+                            <li>Multiple inheritance through interfaces</li>
+                            <li>Interface inheritance and extension</li>
+                            <li>Default and static methods (Java 8+)</li>
+                            <li>Functional interfaces and lambda expressions</li>
+                            <li>Interface vs abstract class comparison</li>
+                            <li>Real-world interface design patterns</li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <h3>Learning Outcomes Achieved:</h3>
+                        <ul>
+                            <li>✅ Master interface concepts and implementation</li>
+                            <li>✅ Apply multiple inheritance effectively</li>
+                            <li>✅ Use default methods for interface evolution</li>
+                            <li>✅ Design flexible and maintainable systems</li>
+                            <li>✅ Choose between interfaces and abstract classes</li>
+                            <li>✅ Implement plugin and strategy patterns</li>
+                            <li>✅ Create testable and loosely coupled code</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="highlight center">
+                    <p><strong>Next Lecture:</strong> Exception Handling Fundamentals</p>
+                    <p>Topics: Exception hierarchy, try-catch blocks, finally clause, custom exceptions</p>
+                </div>
+            </section>
+
+            <!-- Thank You -->
+            <section class="title-slide">
+                <h1>Thank You!</h1>
+                <h2>Questions & Discussion</h2>
+                <br>
+                <p>Next: Lecture 13 - Exception Handling Fundamentals</p>
+                <br>
+                <p><small>
+                    Course: 4343203 Java Programming<br>
+                    Unit 3: Exception Handling and Advanced Topics<br>
+                    GTU Semester 4
+                </small></p>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/highlight/highlight.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            transition: 'slide',
+            transitionSpeed: 'default',
+            backgroundTransition: 'fade',
+            plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Authorization and Access Control</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/white.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/monokai.css">
+    <style>
+        .reveal h1, .reveal h2, .reveal h3 {
+            color: #2c3e50;
+        }
+        .reveal .slides section {
+            text-align: left;
+        }
+        .reveal .title-slide {
+            text-align: center;
+        }
+        .reveal .highlight {
+            background-color: #3498db;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        .reveal .auth-model {
+            background-color: #e8f5e8;
+            border-left: 4px solid #27ae60;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .reveal .rbac-box {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .reveal .mac-box {
+            background-color: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .reveal .dac-box {
+            background-color: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .reveal .principle-box {
+            background-color: #e2e3e5;
+            border: 2px solid #6c757d;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .reveal img {
+            border: none !important;
+            box-shadow: none !important;
+        }
+        .reveal .comparison-table {
+            font-size: 0.75em;
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- Title Slide -->
+            <section class="title-slide">
+                <h1>Authorization and Access Control</h1>
+                <h3>Controlling What Users Can Access</h3>
+                <p>
+                    <small>Models, Methods, and Best Practices</small>
+                </p>
+            </section>
+
+            <!-- What is Authorization? -->
+            <section>
+                <h2>What is Authorization?</h2>
+                <div class="auth-model">
+                    <strong>Authorization</strong> is the process of granting or denying access rights and privileges to authenticated users based on their identity and defined permissions.
+                </div>
+                <h3>Key Questions:</h3>
+                <ul>
+                    <li>What can this user access?</li>
+                    <li>What actions can they perform?</li>
+                    <li>When can they access it?</li>
+                    <li>From where can they access it?</li>
+                </ul>
+            </section>
+
+            <!-- Authentication vs Authorization -->
+            <section>
+                <h2>Authentication vs Authorization</h2>
+                <table class="comparison-table">
+                    <tr>
+                        <th>Aspect</th>
+                        <th>Authentication</th>
+                        <th>Authorization</th>
+                    </tr>
+                    <tr>
+                        <td>Purpose</td>
+                        <td>Verify identity</td>
+                        <td>Grant permissions</td>
+                    </tr>
+                    <tr>
+                        <td>Question</td>
+                        <td>Who are you?</td>
+                        <td>What can you do?</td>
+                    </tr>
+                    <tr>
+                        <td>Process</td>
+                        <td>Login verification</td>
+                        <td>Access control</td>
+                    </tr>
+                    <tr>
+                        <td>When</td>
+                        <td>Before access</td>
+                        <td>After authentication</td>
+                    </tr>
+                    <tr>
+                        <td>Example</td>
+                        <td>Password check</td>
+                        <td>File permissions</td>
+                    </tr>
+                </table>
+            </section>
+
+            <!-- Authorization Overview -->
+            <section>
+                <img src="diagrams/authorization-methods.svg" alt="Authorization Methods" style="width: 100%; height: 90vh; object-fit: contain;">
+            </section>
+
+            <!-- Access Control Models -->
+            <section>
+                <h2>Access Control Models</h2>
+                <ul>
+                    <li><strong>Discretionary Access Control (DAC)</strong></li>
+                    <li><strong>Mandatory Access Control (MAC)</strong></li>
+                    <li><strong>Role-Based Access Control (RBAC)</strong></li>
+                    <li><strong>Attribute-Based Access Control (ABAC)</strong></li>
+                    <li><strong>Rule-Based Access Control</strong></li>
+                </ul>
+            </section>
+
+            <!-- Discretionary Access Control -->
+            <section>
+                <h2>Discretionary Access Control (DAC)</h2>
+                <div class="dac-box">
+                    <strong>Principle:</strong> Resource owners decide who can access their resources
+                </div>
+                <h3>Characteristics:</h3>
+                <ul>
+                    <li>Owner-controlled permissions</li>
+                    <li>Flexible access rules</li>
+                    <li>User discretion in sharing</li>
+                    <li>Common in file systems</li>
+                </ul>
+                <h3>Examples:</h3>
+                <ul>
+                    <li>File permissions (rwx)</li>
+                    <li>Shared folders</li>
+                    <li>Database table access</li>
+                </ul>
+            </section>
+
+            <!-- DAC Example -->
+            <section>
+                <h2>DAC Example: File Permissions</h2>
+                <div class="principle-box">
+                    <strong>Unix/Linux File Permissions:</strong><br><br>
+                    <code>rwxr-xr--</code><br><br>
+                    • Owner: read, write, execute<br>
+                    • Group: read, execute<br>
+                    • Others: read only<br><br>
+                    <strong>Commands:</strong><br>
+                    <code>chmod 754 filename</code><br>
+                    <code>chown user:group filename</code>
+                </div>
+            </section>
+
+            <!-- Mandatory Access Control -->
+            <section>
+                <h2>Mandatory Access Control (MAC)</h2>
+                <div class="mac-box">
+                    <strong>Principle:</strong> System enforces strict access policies based on security classifications
+                </div>
+                <h3>Characteristics:</h3>
+                <ul>
+                    <li>System-enforced rules</li>
+                    <li>Security labels/classifications</li>
+                    <li>No user discretion</li>
+                    <li>High-security environments</li>
+                </ul>
+                <h3>Classifications:</h3>
+                <ul>
+                    <li>Top Secret</li>
+                    <li>Secret</li>
+                    <li>Confidential</li>
+                    <li>Unclassified</li>
+                </ul>
+            </section>
+
+            <!-- MAC Rules -->
+            <section>
+                <h2>MAC Security Rules</h2>
+                <div class="principle-box">
+                    <h3>Bell-LaPadula Model:</h3>
+                    <ul>
+                        <li><strong>No Read Up:</strong> Can't read higher classification</li>
+                        <li><strong>No Write Down:</strong> Can't write to lower classification</li>
+                    </ul>
+                    <h3>Biba Model:</h3>
+                    <ul>
+                        <li><strong>No Read Down:</strong> Can't read lower integrity</li>
+                        <li><strong>No Write Up:</strong> Can't write to higher integrity</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Role-Based Access Control -->
+            <section>
+                <h2>Role-Based Access Control (RBAC)</h2>
+                <div class="rbac-box">
+                    <strong>Principle:</strong> Access permissions assigned to roles, users assigned to roles
+                </div>
+                <h3>Components:</h3>
+                <ul>
+                    <li><strong>Users:</strong> Individuals or systems</li>
+                    <li><strong>Roles:</strong> Job functions or responsibilities</li>
+                    <li><strong>Permissions:</strong> Access rights to resources</li>
+                    <li><strong>Sessions:</strong> Active user-role assignments</li>
+                </ul>
+            </section>
+
+            <!-- RBAC Example -->
+            <section>
+                <h2>RBAC Example: Hospital System</h2>
+                <div class="principle-box">
+                    <strong>Roles:</strong><br>
+                    • Doctor: View/edit patient records, prescribe medications<br>
+                    • Nurse: View patient records, update vitals<br>
+                    • Administrator: Manage user accounts, system settings<br>
+                    • Billing: Access billing information, insurance data<br><br>
+                    
+                    <strong>User Assignment:</strong><br>
+                    Dr. Smith → Doctor role<br>
+                    Nurse Johnson → Nurse role<br>
+                    Admin Brown → Administrator role
+                </div>
+            </section>
+
+            <!-- RBAC Hierarchy -->
+            <section>
+                <h2>RBAC Hierarchy</h2>
+                <div class="rbac-box">
+                    <strong>Role Inheritance:</strong> Senior roles inherit permissions from junior roles
+                </div>
+                <div class="principle-box">
+                    <strong>Example Hierarchy:</strong><br><br>
+                    CEO<br>
+                    ├── Department Manager<br>
+                    │   ├── Team Lead<br>
+                    │   │   └── Employee<br>
+                    │   └── Senior Employee<br>
+                    └── Project Manager<br><br>
+                    
+                    <em>CEO inherits all permissions from subordinate roles</em>
+                </div>
+            </section>
+
+            <!-- Attribute-Based Access Control -->
+            <section>
+                <h2>Attribute-Based Access Control (ABAC)</h2>
+                <div class="auth-model">
+                    <strong>Principle:</strong> Access decisions based on attributes of users, resources, and environment
+                </div>
+                <h3>Attribute Types:</h3>
+                <ul>
+                    <li><strong>Subject:</strong> User department, clearance level</li>
+                    <li><strong>Resource:</strong> File classification, sensitivity</li>
+                    <li><strong>Environment:</strong> Time, location, network</li>
+                    <li><strong>Action:</strong> Read, write, delete, execute</li>
+                </ul>
+            </section>
+
+            <!-- ABAC Example -->
+            <section>
+                <h2>ABAC Policy Example</h2>
+                <div class="principle-box">
+                    <strong>Policy:</strong> "Allow access to confidential financial reports if:"<br><br>
+                    • User is in Finance department<br>
+                    • User has 'Manager' role<br>
+                    • Access during business hours (9 AM - 5 PM)<br>
+                    • From corporate network<br>
+                    • Action is 'read' only<br><br>
+                    
+                    <strong>Dynamic Evaluation:</strong><br>
+                    All conditions checked in real-time for each access request
+                </div>
+            </section>
+
+            <!-- Rule-Based Access Control -->
+            <section>
+                <h2>Rule-Based Access Control</h2>
+                <div class="auth-model">
+                    <strong>Principle:</strong> Access granted or denied based on predefined rules
+                </div>
+                <h3>Examples:</h3>
+                <ul>
+                    <li>Firewall rules (IP addresses, ports)</li>
+                    <li>Time-based restrictions</li>
+                    <li>Location-based access</li>
+                    <li>Conditional logic rules</li>
+                </ul>
+                <div class="principle-box">
+                    <strong>Firewall Rule Example:</strong><br>
+                    "Allow HTTP traffic from 192.168.1.0/24 to web server on port 80 during business hours"
+                </div>
+            </section>
+
+            <!-- Access Control Principles -->
+            <section>
+                <h2>Core Access Control Principles</h2>
+                <ul>
+                    <li><span class="highlight">Least Privilege:</span> Minimum necessary access</li>
+                    <li><span class="highlight">Separation of Duties:</span> Divide critical tasks</li>
+                    <li><span class="highlight">Need to Know:</span> Access based on job requirements</li>
+                    <li><span class="highlight">Defense in Depth:</span> Multiple security layers</li>
+                    <li><span class="highlight">Zero Trust:</span> Never trust, always verify</li>
+                </ul>
+            </section>
+
+            <!-- Least Privilege Principle -->
+            <section>
+                <h2>Principle of Least Privilege</h2>
+                <div class="principle-box">
+                    <strong>Definition:</strong> Grant users only the minimum access rights necessary to perform their job functions
+                </div>
+                <h3>Implementation:</h3>
+                <ul>
+                    <li>Start with no access</li>
+                    <li>Add permissions as needed</li>
+                    <li>Regular access reviews</li>
+                    <li>Remove unused permissions</li>
+                    <li>Time-limited access for temporary needs</li>
+                </ul>
+                <h3>Benefits:</h3>
+                <ul>
+                    <li>Reduces attack surface</li>
+                    <li>Limits breach impact</li>
+                    <li>Improves compliance</li>
+                </ul>
+            </section>
+
+            <!-- Separation of Duties -->
+            <section>
+                <h2>Separation of Duties</h2>
+                <div class="principle-box">
+                    <strong>Definition:</strong> Divide critical operations among multiple people to prevent fraud and errors
+                </div>
+                <h3>Examples:</h3>
+                <ul>
+                    <li><strong>Financial:</strong> Different people for purchase approval and payment</li>
+                    <li><strong>IT:</strong> Separate development and production access</li>
+                    <li><strong>Security:</strong> Different administrators for user accounts and permissions</li>
+                </ul>
+                <h3>Implementation:</h3>
+                <ul>
+                    <li>Two-person control</li>
+                    <li>Dual authorization</li>
+                    <li>Workflow approvals</li>
+                </ul>
+            </section>
+
+            <!-- Access Control Matrix -->
+            <section>
+                <h2>Access Control Matrix</h2>
+                <table class="comparison-table">
+                    <tr>
+                        <th>Subject\Object</th>
+                        <th>File A</th>
+                        <th>File B</th>
+                        <th>Database</th>
+                        <th>Printer</th>
+                    </tr>
+                    <tr>
+                        <td>Alice</td>
+                        <td>Read, Write</td>
+                        <td>Read</td>
+                        <td>-</td>
+                        <td>Print</td>
+                    </tr>
+                    <tr>
+                        <td>Bob</td>
+                        <td>Read</td>
+                        <td>Read, Write</td>
+                        <td>Select</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>Carol</td>
+                        <td>-</td>
+                        <td>Read</td>
+                        <td>Select, Insert</td>
+                        <td>Print</td>
+                    </tr>
+                </table>
+            </section>
+
+            <!-- Model Comparison -->
+            <section>
+                <h2>Access Control Model Comparison</h2>
+                <table class="comparison-table">
+                    <tr>
+                        <th>Model</th>
+                        <th>Flexibility</th>
+                        <th>Security</th>
+                        <th>Complexity</th>
+                        <th>Best For</th>
+                    </tr>
+                    <tr>
+                        <td>DAC</td>
+                        <td>High</td>
+                        <td>Medium</td>
+                        <td>Low</td>
+                        <td>File systems</td>
+                    </tr>
+                    <tr>
+                        <td>MAC</td>
+                        <td>Low</td>
+                        <td>Very High</td>
+                        <td>Medium</td>
+                        <td>Military/Government</td>
+                    </tr>
+                    <tr>
+                        <td>RBAC</td>
+                        <td>Medium</td>
+                        <td>High</td>
+                        <td>Medium</td>
+                        <td>Enterprise</td>
+                    </tr>
+                    <tr>
+                        <td>ABAC</td>
+                        <td>Very High</td>
+                        <td>High</td>
+                        <td>High</td>
+                        <td>Complex environments</td>
+                    </tr>
+                </table>
+            </section>
+
+            <!-- Implementation Challenges -->
+            <section>
+                <h2>Implementation Challenges</h2>
+                <ul>
+                    <li><strong>Role Explosion:</strong> Too many specific roles in RBAC</li>
+                    <li><strong>Permission Creep:</strong> Accumulating unnecessary permissions</li>
+                    <li><strong>Complexity:</strong> Balancing security and usability</li>
+                    <li><strong>Maintenance:</strong> Keeping permissions current</li>
+                    <li><strong>Compliance:</strong> Meeting regulatory requirements</li>
+                    <li><strong>Integration:</strong> Consistent policies across systems</li>
+                </ul>
+            </section>
+
+            <!-- Modern Trends -->
+            <section>
+                <h2>Modern Access Control Trends</h2>
+                <ul>
+                    <li><strong>Zero Trust Architecture:</strong> Verify everything</li>
+                    <li><strong>Just-in-Time Access:</strong> Temporary elevated permissions</li>
+                    <li><strong>Privileged Access Management:</strong> Control admin accounts</li>
+                    <li><strong>Risk-Based Access:</strong> Dynamic decisions based on risk</li>
+                    <li><strong>Cloud-Native Controls:</strong> API-driven policies</li>
+                </ul>
+            </section>
+
+            <!-- Zero Trust Model -->
+            <section>
+                <h2>Zero Trust Architecture</h2>
+                <div class="principle-box">
+                    <strong>Core Principle:</strong> "Never trust, always verify"
+                </div>
+                <h3>Key Components:</h3>
+                <ul>
+                    <li>Identity verification for every access</li>
+                    <li>Device authentication and validation</li>
+                    <li>Micro-segmentation of networks</li>
+                    <li>Continuous monitoring and validation</li>
+                    <li>Least privilege access enforcement</li>
+                </ul>
+            </section>
+
+            <!-- Best Practices -->
+            <section>
+                <h2>Access Control Best Practices</h2>
+                <ol>
+                    <li>Implement principle of least privilege</li>
+                    <li>Regular access reviews and audits</li>
+                    <li>Automate provisioning and deprovisioning</li>
+                    <li>Use role-based access where appropriate</li>
+                    <li>Monitor and log access activities</li>
+                    <li>Separate administrative duties</li>
+                    <li>Plan for emergency access procedures</li>
+                    <li>Train users on security policies</li>
+                </ol>
+            </section>
+
+            <!-- Common Mistakes -->
+            <section>
+                <h2>Common Implementation Mistakes</h2>
+                <ul>
+                    <li><strong>Over-privileging:</strong> Granting too much access</li>
+                    <li><strong>Shared Accounts:</strong> Multiple people using same credentials</li>
+                    <li><strong>Stale Permissions:</strong> Not removing access when no longer needed</li>
+                    <li><strong>Weak Reviews:</strong> Infrequent or superficial audits</li>
+                    <li><strong>Emergency Backdoors:</strong> Bypasses without proper controls</li>
+                    <li><strong>Poor Documentation:</strong> Unclear policies and procedures</li>
+                </ul>
+            </section>
+
+            <!-- Key Takeaways -->
+            <section>
+                <h2>Key Takeaways</h2>
+                <ul>
+                    <li>Authorization controls what authenticated users can do</li>
+                    <li>Different models suit different security needs</li>
+                    <li>Least privilege is fundamental principle</li>
+                    <li>Regular reviews prevent permission creep</li>
+                    <li>Zero trust is becoming the standard</li>
+                    <li>Balance security with operational needs</li>
+                </ul>
+                <div class="auth-model">
+                    <strong>Remember:</strong> Effective access control requires ongoing management, not just initial setup
+                </div>
+            </section>
+
+            <!-- Thank You -->
+            <section class="title-slide">
+                <h1>Thank You</h1>
+                <h3>Questions & Discussion</h3>
+                <p>Next: CAPTCHA and Firewall Technologies</p>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/notes/notes.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/markdown/markdown.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/highlight.min.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            transition: 'slide',
+            plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+        });
+    </script>
+</body>
+</html>

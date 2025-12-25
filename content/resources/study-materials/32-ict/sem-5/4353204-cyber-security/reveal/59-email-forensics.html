@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Email Forensics</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/white.css">
+    <style>
+        .reveal .slides section { text-align: left; }
+        .reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6 { color: #2c3e50; text-align: center; }
+        .definition-box { background-color: #e8f4fd; border: 2px solid #3498db; padding: 15px; margin: 10px 0; border-radius: 8px; }
+        .example-box { background-color: #fff9e6; border: 2px solid #f39c12; padding: 15px; margin: 10px 0; border-radius: 8px; }
+        .prevention-box { background-color: #e8f8f5; border: 2px solid #27ae60; padding: 15px; margin: 10px 0; border-radius: 8px; }
+        .code-box { background-color: #f8f9fa; border: 2px solid #6c757d; padding: 15px; margin: 10px 0; border-radius: 8px; font-family: 'Courier New', monospace; }
+        .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .email-category { background-color: #e1f5fe; border: 2px solid #0277bd; padding: 15px; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <section>
+                <h1>Email Forensics</h1>
+                <p style="text-align: center; font-size: 1.2em; color: #7f8c8d;">Email Investigation and Digital Evidence Analysis</p>
+                <div style="text-align: center; margin-top: 30px;">
+                    <img src="diagrams/security-threat-model.svg" alt="Security Threat Model" style="width: 70%; height: auto; max-width: 700px;">
+                </div>
+            </section>
+
+            <section>
+                <h2>What is Email Forensics?</h2>
+                <div class="definition-box">
+                    <strong>Email Forensics:</strong> The process of examining email communications, headers, attachments, and related metadata to gather digital evidence for investigations and legal proceedings.
+                </div>
+                <ul>
+                    <li><strong>Header Analysis:</strong> Examining email routing and metadata</li>
+                    <li><strong>Content Investigation:</strong> Analyzing message content and attachments</li>
+                    <li><strong>Authentication Verification:</strong> Determining email authenticity</li>
+                    <li><strong>Timeline Reconstruction:</strong> Building communication chronology</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Email System Components</h2>
+                <div class="grid-container">
+                    <div class="email-category">
+                        <h4>Email Protocols</h4>
+                        <ul><li>SMTP (Simple Mail Transfer Protocol)</li><li>IMAP (Internet Message Access Protocol)</li><li>POP3 (Post Office Protocol)</li><li>Exchange Web Services (EWS)</li></ul>
+                    </div>
+                    <div class="email-category">
+                        <h4>Email Clients</h4>
+                        <ul><li>Microsoft Outlook</li><li>Mozilla Thunderbird</li><li>Apple Mail</li><li>Web-based clients</li></ul>
+                    </div>
+                    <div class="email-category">
+                        <h4>Email Servers</h4>
+                        <ul><li>Microsoft Exchange</li><li>Google Workspace</li><li>Postfix/Sendmail</li><li>Cloud email services</li></ul>
+                    </div>
+                    <div class="email-category">
+                        <h4>Email Formats</h4>
+                        <ul><li>PST/OST (Outlook)</li><li>MBOX (Unix mailbox)</li><li>EML (Email message)</li><li>MSG (Outlook message)</li></ul>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <h2>Email Header Analysis</h2>
+                <div class="definition-box">
+                    <strong>Email Headers:</strong> Metadata containing routing information, timestamps, and technical details about email transmission and handling.
+                </div>
+                <div class="code-box">
+                    <strong>Key Header Fields:</strong>
+                    From: sender@domain.com
+                    To: recipient@domain.com
+                    Subject: Email subject line
+                    Date: Timestamp when email was sent
+                    Message-ID: Unique identifier for the message
+                    Received: Server routing information (multiple entries)
+                    Return-Path: Bounce address for delivery failures
+                    Content-Type: Message format and encoding
+                </code>
+                <div class="example-box">
+                    <h4>Header Analysis Benefits:</h4>
+                    <ul>
+                        <li>Trace email routing path</li>
+                        <li>Verify sender authenticity</li>
+                        <li>Identify tampering attempts</li>
+                        <li>Determine transmission times</li>
+                        <li>Locate originating servers</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section>
+                <h2>Email Authentication Mechanisms</h2>
+                <div class="grid-container">
+                    <div class="email-category">
+                        <h4>SPF (Sender Policy Framework)</h4>
+                        <ul>
+                            <li>DNS-based authentication</li>
+                            <li>Authorizes sending servers</li>
+                            <li>Prevents domain spoofing</li>
+                            <li>Pass/Fail/SoftFail results</li>
+                        </ul>
+                    </div>
+                    <div class="email-category">
+                        <h4>DKIM (DomainKeys Identified Mail)</h4>
+                        <ul>
+                            <li>Cryptographic signatures</li>
+                            <li>Message integrity verification</li>
+                            <li>Domain ownership proof</li>
+                            <li>Header and body validation</li>
+                        </ul>
+                    </div>
+                    <div class="email-category">
+                        <h4>DMARC (Domain-based Message Authentication)</h4>
+                        <ul>
+                            <li>Policy framework</li>
+                            <li>SPF and DKIM alignment</li>
+                            <li>Reporting mechanisms</li>
+                            <li>Quarantine/Reject policies</li>
+                        </ul>
+                    </div>
+                    <div class="email-category">
+                        <h4>Digital Signatures</h4>
+                        <ul>
+                            <li>S/MIME certificates</li>
+                            <li>PGP/GPG signatures</li>
+                            <li>Non-repudiation proof</li>
+                            <li>Message authenticity</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <h2>Email Spoofing Detection</h2>
+                <div class="example-box">
+                    <h4>Spoofing Indicators:</h4>
+                    <ul>
+                        <li><strong>Header Inconsistencies:</strong> Mismatched From and Return-Path fields</li>
+                        <li><strong>Authentication Failures:</strong> Failed SPF, DKIM, or DMARC checks</li>
+                        <li><strong>Routing Anomalies:</strong> Unusual server paths or geographic inconsistencies</li>
+                        <li><strong>Display Name Tricks:</strong> Misleading sender display names</li>
+                        <li><strong>Domain Variations:</strong> Typosquatting and homograph attacks</li>
+                    </ul>
+                </div>
+                <div class="code-box">
+                    <strong>Authentication Results Header:</strong>
+                    Authentication-Results: mx.google.com;
+                           spf=pass smtp.mailfrom=sender.com;
+                           dkim=pass header.i=@sender.com;
+                           dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=sender.com
+                </code>
+            </section>
+
+            <section>
+                <h2>Email Client Forensics</h2>
+                <div class="prevention-box">
+                    <h4>Microsoft Outlook Forensics:</h4>
+                    <ul>
+                        <li><strong>PST Files:</strong> Personal Storage Table files containing emails</li>
+                        <li><strong>OST Files:</strong> Offline Storage Table cached data</li>
+                        <li><strong>Registry Entries:</strong> Account settings and configurations</li>
+                        <li><strong>Autocomplete Files:</strong> NK2/Stream_Autocomplete_* files</li>
+                        <li><strong>Deleted Items:</strong> Recoverable items folder analysis</li>
+                    </ul>
+                </div>
+                <div class="code-box">
+                    <strong>PST File Analysis:</strong>
+                    • Use tools like Kernel PST Viewer, SysTools PST Viewer
+                    • Extract emails, contacts, calendar items
+                    • Recover deleted items from unallocated space
+                    • Analyze folder structures and permissions
+                    • Export to standard formats (MSG, EML, MBOX)
+                </code>
+            </section>
+
+            <section>
+                <h2>Webmail Forensics</h2>
+                <div class="email-category">
+                    <h4>Webmail Investigation:</h4>
+                    <ul>
+                        <li><strong>Browser Cache:</strong> Cached email content and images</li>
+                        <li><strong>Browser History:</strong> Webmail access patterns</li>
+                        <li><strong>Session Cookies:</strong> Authentication tokens and preferences</li>
+                        <li><strong>Local Storage:</strong> HTML5 storage for webmail data</li>
+                        <li><strong>Network Logs:</strong> HTTPS traffic analysis</li>
+                    </ul>
+                </div>
+                <div class="example-box">
+                    <h4>Gmail Investigation:</h4>
+                    <ul>
+                        <li>Google Takeout data exports</li>
+                        <li>Gmail API for programmatic access</li>
+                        <li>Browser extension data</li>
+                        <li>Mobile app data analysis</li>
+                        <li>Account activity logs</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section>
+                <h2>Email Server Forensics</h2>
+                <div class="definition-box">
+                    <strong>Server-Side Analysis:</strong> Examining email servers, logs, and backend systems for comprehensive email forensics.
+                </div>
+                <div class="grid-container">
+                    <div class="email-category">
+                        <h4>Exchange Server</h4>
+                        <ul>
+                            <li>EDB database files</li>
+                            <li>Transaction logs</li>
+                            <li>Message tracking logs</li>
+                            <li>IIS logs</li>
+                        </ul>
+                    </div>
+                    <div class="email-category">
+                        <h4>Unix/Linux Mail</h4>
+                        <ul>
+                            <li>Postfix logs</li>
+                            <li>Sendmail logs</li>
+                            <li>Mail queue analysis</li>
+                            <li>System logs (syslog)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="prevention-box">
+                    <h4>Server Log Analysis:</h4>
+                    <ul>
+                        <li>SMTP connection logs</li>
+                        <li>Authentication attempt records</li>
+                        <li>Message delivery status</li>
+                        <li>Bounce and error messages</li>
+                        <li>Relay and routing information</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section>
+                <h2>Email Attachment Analysis</h2>
+                <div class="example-box">
+                    <h4>Attachment Investigation:</h4>
+                    <ul>
+                        <li><strong>File Type Analysis:</strong> Verify file signatures and extensions</li>
+                        <li><strong>Malware Scanning:</strong> Check for malicious content</li>
+                        <li><strong>Metadata Extraction:</strong> EXIF data, document properties</li>
+                        <li><strong>Content Analysis:</strong> Embedded objects and macros</li>
+                        <li><strong>Hash Verification:</strong> File integrity and comparison</li>
+                    </ul>
+                </div>
+                <div class="code-box">
+                    <strong>Common Attachment Types:</strong>
+                    • Documents: PDF, DOC, XLS, PPT
+                    • Images: JPEG, PNG, GIF, TIFF
+                    • Archives: ZIP, RAR, 7Z
+                    • Executables: EXE, DLL, SCR
+                    • Scripts: JS, VBS, PS1, BAT
+                    • Email: EML, MSG (forwarded emails)
+                </code>
+            </section>
+
+            <section>
+                <h2>Email Timeline Analysis</h2>
+                <div class="prevention-box">
+                    <h4>Timeline Reconstruction:</h4>
+                    <ul>
+                        <li><strong>Sent Times:</strong> When emails were composed and sent</li>
+                        <li><strong>Received Times:</strong> Server timestamps for message receipt</li>
+                        <li><strong>Read Receipts:</strong> When recipients opened messages</li>
+                        <li><strong>Delivery Reports:</strong> Message delivery confirmations</li>
+                        <li><strong>Access Logs:</strong> When mailboxes were accessed</li>
+                    </ul>
+                </div>
+                <div class="example-box">
+                    <h4>Timeline Correlation:</h4>
+                    <ul>
+                        <li>Cross-reference with system events</li>
+                        <li>Match with network access logs</li>
+                        <li>Correlate with user activity patterns</li>
+                        <li>Identify time zone differences</li>
+                        <li>Detect scheduling patterns</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section>
+                <h2>Deleted Email Recovery</h2>
+                <div class="email-category">
+                    <h4>Recovery Methods:</h4>
+                    <ul>
+                        <li><strong>Deleted Items Folder:</strong> Standard deletion recovery</li>
+                        <li><strong>Recoverable Items:</strong> Exchange retention policies</li>
+                        <li><strong>Database Recovery:</strong> Exchange EDB file analysis</li>
+                        <li><strong>Backup Restoration:</strong> Historical backup analysis</li>
+                        <li><strong>Unallocated Space:</strong> File system remnant recovery</li>
+                    </ul>
+                </div>
+                <div class="code-box">
+                    <strong>Exchange Recovery Commands:</strong>
+                    Get-MailboxFolderStatistics -Identity user@domain.com -FolderScope RecoverableItems
+                    Search-Mailbox -Identity "User Name" -SearchDumpster -TargetMailbox "Discovery Mailbox"
+                    Get-MailboxSearch -Identity "Search Name" | FL
+                </code>
+            </section>
+
+            <section>
+                <h2>Email Forensic Tools</h2>
+                <div class="grid-container">
+                    <div class="email-category">
+                        <h4>Commercial Tools</h4>
+                        <ul>
+                            <li>Guidance Software EnCase</li>
+                            <li>AccessData FTK</li>
+                            <li>Magnet AXIOM</li>
+                            <li>X1 Social Discovery</li>
+                        </ul>
+                    </div>
+                    <div class="email-category">
+                        <h4>Specialized Email Tools</h4>
+                        <ul>
+                            <li>MailXaminer</li>
+                            <li>Aid4Mail</li>
+                            <li>Kernel Email Forensics</li>
+                            <li>EmailTracker Pro</li>
+                        </ul>
+                    </div>
+                    <div class="email-category">
+                        <h4>Open Source Tools</h4>
+                        <ul>
+                            <li>Mozilla Thunderbird</li>
+                            <li>Autopsy email modules</li>
+                            <li>PLASO (log2timeline)</li>
+                            <li>Volatility email plugins</li>
+                        </ul>
+                    </div>
+                    <div class="email-category">
+                        <h4>Online Analysis</h4>
+                        <ul>
+                            <li>MX Toolbox header analyzer</li>
+                            <li>Google Admin Toolbox</li>
+                            <li>Mail Header Analyzer</li>
+                            <li>SPF/DKIM validators</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <h2>Email Encryption Analysis</h2>
+                <div class="definition-box">
+                    <strong>Encrypted Email:</strong> Messages protected using cryptographic methods to ensure confidentiality and integrity.
+                </div>
+                <div class="example-box">
+                    <h4>Encryption Types:</h4>
+                    <ul>
+                        <li><strong>S/MIME:</strong> Secure/Multipurpose Internet Mail Extensions</li>
+                        <li><strong>PGP/GPG:</strong> Pretty Good Privacy encryption</li>
+                        <li><strong>TLS:</strong> Transport Layer Security for transmission</li>
+                        <li><strong>O365 Encryption:</strong> Microsoft's email protection</li>
+                        <li><strong>ProtonMail:</strong> End-to-end encrypted email service</li>
+                    </ul>
+                </div>
+                <div class="prevention-box">
+                    <h4>Investigation Approaches:</h4>
+                    <ul>
+                        <li>Private key recovery from endpoints</li>
+                        <li>Certificate and key store analysis</li>
+                        <li>Metadata analysis of encrypted messages</li>
+                        <li>Sender/recipient correlation analysis</li>
+                        <li>Legal process for service providers</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section>
+                <h2>Email Threat Investigation</h2>
+                <div class="email-category">
+                    <h4>Common Email Threats:</h4>
+                    <ul>
+                        <li><strong>Phishing:</strong> Credential theft and social engineering</li>
+                        <li><strong>Spear Phishing:</strong> Targeted phishing attacks</li>
+                        <li><strong>Business Email Compromise:</strong> Financial fraud schemes</li>
+                        <li><strong>Malware Distribution:</strong> Malicious attachments and links</li>
+                        <li><strong>Data Exfiltration:</strong> Information theft via email</li>
+                    </ul>
+                </div>
+                <div class="code-box">
+                    <strong>Threat Indicators:</strong>
+                    • Suspicious sender domains
+                    • Unusual attachment types
+                    • Urgent or threatening language
+                    • Requests for sensitive information
+                    • Links to suspicious websites
+                    • Grammar and spelling errors
+                    • Mismatched URLs and display text
+                </code>
+            </section>
+
+            <section>
+                <h2>Legal Discovery and eDiscovery</h2>
+                <div class="prevention-box">
+                    <h4>eDiscovery Process:</h4>
+                    <ol>
+                        <li><strong>Identification:</strong> Locate relevant email sources</li>
+                        <li><strong>Preservation:</strong> Legal hold implementation</li>
+                        <li><strong>Collection:</strong> Gather emails from various sources</li>
+                        <li><strong>Processing:</strong> De-duplicate and organize messages</li>
+                        <li><strong>Review:</strong> Analyze for relevance and privilege</li>
+                        <li><strong>Production:</strong> Deliver in requested format</li>
+                    </ol>
+                </div>
+                <div class="example-box">
+                    <h4>Discovery Challenges:</h4>
+                    <ul>
+                        <li>Volume and scalability issues</li>
+                        <li>Privileged communication identification</li>
+                        <li>Multi-platform email systems</li>
+                        <li>International data location</li>
+                        <li>Mobile device email access</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section>
+                <h2>Email Privacy and Legal Issues</h2>
+                <div class="example-box">
+                    <h4>Privacy Considerations:</h4>
+                    <ul>
+                        <li><strong>Expectation of Privacy:</strong> Personal vs. corporate email</li>
+                        <li><strong>Attorney-Client Privilege:</strong> Protected communications</li>
+                        <li><strong>Employee Monitoring:</strong> Workplace email surveillance</li>
+                        <li><strong>International Laws:</strong> GDPR and data protection</li>
+                        <li><strong>Consent Requirements:</strong> Lawful interception needs</li>
+                    </ul>
+                </div>
+                <div class="prevention-box">
+                    <h4>Legal Best Practices:</h4>
+                    <ul>
+                        <li>Obtain proper legal authorization</li>
+                        <li>Maintain detailed chain of custody</li>
+                        <li>Document all analysis procedures</li>
+                        <li>Protect privileged communications</li>
+                        <li>Follow data retention policies</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section>
+                <h2>Advanced Email Analysis</h2>
+                <div class="email-category">
+                    <h4>Advanced Techniques:</h4>
+                    <ul>
+                        <li><strong>Natural Language Processing:</strong> Content sentiment analysis</li>
+                        <li><strong>Network Analysis:</strong> Communication pattern mapping</li>
+                        <li><strong>Machine Learning:</strong> Classification and clustering</li>
+                        <li><strong>Link Analysis:</strong> Relationship identification</li>
+                        <li><strong>Behavioral Analytics:</strong> User pattern recognition</li>
+                    </ul>
+                </div>
+                <div class="code-box">
+                    <strong>Metadata Analysis:</strong>
+                    • X-Originating-IP headers
+                    • User-Agent strings
+                    • Time zone analysis
+                    • Language and encoding patterns
+                    • Routing path analysis
+                    • Server infrastructure mapping
+                </code>
+            </section>
+
+            <section>
+                <h2>Email Forensic Reporting</h2>
+                <div class="prevention-box">
+                    <h4>Report Components:</h4>
+                    <ul>
+                        <li><strong>Executive Summary:</strong> High-level findings and conclusions</li>
+                        <li><strong>Technical Analysis:</strong> Detailed examination results</li>
+                        <li><strong>Timeline:</strong> Chronological sequence of events</li>
+                        <li><strong>Evidence Inventory:</strong> List of examined emails and sources</li>
+                        <li><strong>Methodology:</strong> Tools and techniques used</li>
+                        <li><strong>Appendices:</strong> Screenshots, headers, and supporting data</li>
+                    </ul>
+                </div>
+                <div class="example-box">
+                    <h4>Reporting Standards:</h4>
+                    <ul>
+                        <li>Clear and objective language</li>
+                        <li>Proper technical documentation</li>
+                        <li>Visual aids and diagrams</li>
+                        <li>Reproducible methodology</li>
+                        <li>Expert qualification statements</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section>
+                <h2>Future of Email Forensics</h2>
+                <div class="example-box">
+                    <h4>Emerging Challenges:</h4>
+                    <ul>
+                        <li><strong>AI-Generated Content:</strong> Deepfake emails and content</li>
+                        <li><strong>Quantum Cryptography:</strong> Quantum-resistant encryption</li>
+                        <li><strong>Ephemeral Messaging:</strong> Self-destructing messages</li>
+                        <li><strong>Federated Identity:</strong> Cross-platform authentication</li>
+                        <li><strong>Cloud-Only Services:</strong> Limited local storage</li>
+                    </ul>
+                </div>
+                <div class="prevention-box">
+                    <h4>Technology Evolution:</h4>
+                    <ul>
+                        <li>AI-powered email analysis</li>
+                        <li>Blockchain-based email verification</li>
+                        <li>Real-time threat detection</li>
+                        <li>Advanced authentication methods</li>
+                        <li>Cross-platform investigation tools</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section>
+                <h2>Key Takeaways</h2>
+                <div class="definition-box">
+                    <h4>Critical Points:</h4>
+                    <ul>
+                        <li><strong>Comprehensive Analysis:</strong> Header, content, and metadata examination</li>
+                        <li><strong>Authentication Verification:</strong> SPF, DKIM, DMARC validation</li>
+                        <li><strong>Multi-Source Investigation:</strong> Client, server, and network analysis</li>
+                        <li><strong>Legal Compliance:</strong> Privacy and discovery requirements</li>
+                        <li><strong>Timeline Accuracy:</strong> Proper time zone and chronology analysis</li>
+                    </ul>
+                </div>
+                <div class="prevention-box">
+                    <strong>Email Forensics Excellence:</strong> Combine technical expertise in email systems, proper legal authorization, and systematic analysis methods to effectively investigate email communications and provide reliable digital evidence.
+                </div>
+            </section>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.js"></script>
+    <script>Reveal.initialize({hash: true, controls: true, progress: true, center: true, transition: 'slide'});</script>
+</body>
+</html>

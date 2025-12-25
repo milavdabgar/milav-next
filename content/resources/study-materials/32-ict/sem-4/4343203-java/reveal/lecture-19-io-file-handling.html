@@ -1,0 +1,1588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Lecture 19: Input/Output and File Handling | Java Programming (4343203)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <style>
+        .reveal {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 90vh;
+        }
+        .reveal .slides section {
+            text-align: left;
+            font-size: 0.85em;
+        }
+        .reveal h1, .reveal h2, .reveal h3 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .reveal h1 { font-size: 2.2em; }
+        .reveal h2 { font-size: 1.8em; margin-bottom: 30px; }
+        .reveal h3 { font-size: 1.4em; margin-bottom: 20px; }
+        .reveal pre {
+            width: 100%;
+            font-size: 0.75em;
+            line-height: 1.2;
+        }
+        .reveal code {
+            background-color: #f8f9fa;
+            padding: 2px 4px;
+            border-radius: 3px;
+            color: #e83e8c;
+        }
+        .reveal .hljs {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            padding: 15px;
+        }
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+        .highlight-box {
+            background-color: #e8f4fd;
+            border-left: 5px solid #3498db;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        .warning-box {
+            background-color: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        .success-box {
+            background-color: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        .reveal ul, .reveal ol {
+            margin-left: 1em;
+        }
+        .reveal li {
+            margin-bottom: 8px;
+        }
+        .gtu-question {
+            background-color: #f0f8ff;
+            border: 2px solid #4682b4;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        .gtu-question h4 {
+            color: #4682b4;
+            margin: 0 0 15px 0;
+            font-size: 1.1em;
+        }
+        .reveal table {
+            font-size: 0.7em;
+            border-collapse: collapse;
+            width: 100%;
+            margin: 15px 0;
+        }
+        .reveal td, .reveal th {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .reveal th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        .io-hierarchy {
+            background-color: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 0.8em;
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- Title Slide -->
+            <section>
+                <h1>Input/Output and File Handling</h1>
+                <h3>Java Programming (4343203)</h3>
+                <h3>Lecture 19</h3>
+                <p style="text-align: center; margin-top: 50px;">
+                    <strong>Unit 5: Advanced Java - I/O Operations</strong><br>
+                    GTU Computer Engineering Semester 4
+                </p>
+            </section>
+
+            <!-- Learning Objectives -->
+            <section>
+                <h2>Learning Objectives</h2>
+                <ul>
+                    <li>Understand Java I/O stream hierarchy and classification</li>
+                    <li>Master byte streams and character streams</li>
+                    <li>Implement file operations (create, read, write, delete)</li>
+                    <li>Work with directories and file metadata</li>
+                    <li>Apply buffered I/O for performance optimization</li>
+                    <li>Implement object serialization and deserialization</li>
+                </ul>
+                <div class="highlight-box">
+                    <strong>Focus:</strong> Efficient data input/output operations and persistent storage using Java's comprehensive I/O framework.
+                </div>
+            </section>
+
+            <!-- Java I/O Overview -->
+            <section>
+                <h2>Java I/O Stream Hierarchy</h2>
+                <div class="two-column">
+                    <div>
+                        <h3>Stream Classification</h3>
+                        <ul>
+                            <li><strong>Byte Streams:</strong> Handle raw binary data (8-bit)</li>
+                            <li><strong>Character Streams:</strong> Handle text data (16-bit Unicode)</li>
+                            <li><strong>Input Streams:</strong> Read data from source</li>
+                            <li><strong>Output Streams:</strong> Write data to destination</li>
+                        </ul>
+                        
+                        <h3>Key Differences</h3>
+                        <table>
+                            <tr>
+                                <th>Aspect</th>
+                                <th>Byte Streams</th>
+                                <th>Character Streams</th>
+                            </tr>
+                            <tr>
+                                <td>Data Unit</td>
+                                <td>8-bit bytes</td>
+                                <td>16-bit characters</td>
+                            </tr>
+                            <tr>
+                                <td>Base Classes</td>
+                                <td>InputStream/OutputStream</td>
+                                <td>Reader/Writer</td>
+                            </tr>
+                            <tr>
+                                <td>Use Case</td>
+                                <td>Binary data, images, audio</td>
+                                <td>Text files, Unicode</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div>
+                        <div class="io-hierarchy">
+                            <strong>I/O Stream Hierarchy:</strong><br><br>
+                            <strong>Byte Streams:</strong><br>
+                            InputStream<br>
+                            ├── FileInputStream<br>
+                            ├── BufferedInputStream<br>
+                            ├── DataInputStream<br>
+                            └── ObjectInputStream<br><br>
+                            
+                            OutputStream<br>
+                            ├── FileOutputStream<br>
+                            ├── BufferedOutputStream<br>
+                            ├── DataOutputStream<br>
+                            └── ObjectOutputStream<br><br>
+                            
+                            <strong>Character Streams:</strong><br>
+                            Reader<br>
+                            ├── FileReader<br>
+                            ├── BufferedReader<br>
+                            └── StringReader<br><br>
+                            
+                            Writer<br>
+                            ├── FileWriter<br>
+                            ├── BufferedWriter<br>
+                            ├── PrintWriter<br>
+                            └── StringWriter
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- File Class -->
+            <section>
+                <h2>File Class for File and Directory Operations</h2>
+                <pre><code class="java">
+import java.io.File;
+import java.io.IOException;
+import java.util.Date;
+
+public class FileClassDemo {
+    public static void main(String[] args) {
+        System.out.println("=== File Class Demonstration ===\n");
+        
+        // Create File objects
+        File file = new File("example.txt");
+        File directory = new File("testdir");
+        File nestedFile = new File(directory, "nested.txt");
+        
+        demonstrateFileProperties(file);
+        demonstrateDirectoryOperations(directory);
+        demonstrateFileOperations(file, nestedFile);
+    }
+    
+    private static void demonstrateFileProperties(File file) {
+        System.out.println("--- File Properties ---");
+        
+        System.out.println("File name: " + file.getName());
+        System.out.println("Absolute path: " + file.getAbsolutePath());
+        System.out.println("Parent directory: " + file.getParent());
+        System.out.println("File exists: " + file.exists());
+        System.out.println("Is file: " + file.isFile());
+        System.out.println("Is directory: " + file.isDirectory());
+        System.out.println("Can read: " + file.canRead());
+        System.out.println("Can write: " + file.canWrite());
+        System.out.println("Can execute: " + file.canExecute());
+        System.out.println("Is hidden: " + file.isHidden());
+        
+        if (file.exists()) {
+            System.out.println("File size: " + file.length() + " bytes");
+            System.out.println("Last modified: " + new Date(file.lastModified()));
+        }
+        
+        System.out.println();
+    }
+    
+    private static void demonstrateDirectoryOperations(File directory) {
+        System.out.println("--- Directory Operations ---");
+        
+        // Create directory
+        if (!directory.exists()) {
+            boolean created = directory.mkdir(); // Creates single directory
+            // boolean created = directory.mkdirs(); // Creates parent directories too
+            System.out.println("Directory created: " + created);
+        } else {
+            System.out.println("Directory already exists");
+        }
+        
+        // List directory contents
+        if (directory.exists() && directory.isDirectory()) {
+            System.out.println("Directory contents:");
+            String[] contents = directory.list();
+            if (contents != null) {
+                for (String item : contents) {
+                    File itemFile = new File(directory, item);
+                    System.out.printf("  %s %s%n", 
+                                    itemFile.isDirectory() ? "[DIR]" : "[FILE]", 
+                                    item);
+                }
+            } else {
+                System.out.println("  Directory is empty or cannot be read");
+            }
+            
+            // Alternative: Get File objects
+            File[] files = directory.listFiles();
+            if (files != null) {
+                System.out.println("Total items: " + files.length);
+            }
+        }
+        
+        System.out.println();
+    }
+    
+    private static void demonstrateFileOperations(File file, File nestedFile) {
+        System.out.println("--- File Operations ---");
+        
+        try {
+            // Create new file
+            if (!file.exists()) {
+                boolean created = file.createNewFile();
+                System.out.println("File created: " + created);
+            } else {
+                System.out.println("File already exists");
+            }
+            
+            // Create nested file
+            if (!nestedFile.getParentFile().exists()) {
+                nestedFile.getParentFile().mkdirs();
+            }
+            if (!nestedFile.exists()) {
+                boolean nestedCreated = nestedFile.createNewFile();
+                System.out.println("Nested file created: " + nestedCreated);
+            }
+            
+            // File permissions
+            file.setReadOnly();
+            System.out.println("File set to read-only");
+            
+            file.setWritable(true);
+            System.out.println("File write permission restored");
+            
+            // Copy file (using renameTo)
+            File copyFile = new File("example_copy.txt");
+            // Note: renameTo is platform dependent and may not work across filesystems
+            
+            // File comparison
+            System.out.println("Files are same: " + file.equals(nestedFile));
+            
+        } catch (IOException e) {
+            System.err.println("I/O error: " + e.getMessage());
+        }
+        
+        System.out.println();
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- Byte Streams -->
+            <section>
+                <h2>Byte Streams - FileInputStream and FileOutputStream</h2>
+                <pre><code class="java">
+import java.io.*;
+
+public class ByteStreamsDemo {
+    public static void main(String[] args) {
+        System.out.println("=== Byte Streams Demonstration ===\n");
+        
+        String fileName = "binary_data.txt";
+        
+        // Write data using FileOutputStream
+        writeDataUsingByteStream(fileName);
+        
+        // Read data using FileInputStream
+        readDataUsingByteStream(fileName);
+        
+        // Copy file using byte streams
+        copyFileUsingByteStreams(fileName, "binary_data_copy.txt");
+        
+        // Demonstrate buffered streams
+        demonstrateBufferedByteStreams();
+    }
+    
+    private static void writeDataUsingByteStream(String fileName) {
+        System.out.println("--- Writing Data Using FileOutputStream ---");
+        
+        try (FileOutputStream fos = new FileOutputStream(fileName)) {
+            // Write single byte
+            fos.write(65); // ASCII value of 'A'
+            
+            // Write byte array
+            String text = "Hello, Byte Streams!\n";
+            byte[] data = text.getBytes();
+            fos.write(data);
+            
+            // Write part of byte array
+            String moreText = "Java I/O Programming";
+            byte[] moreData = moreText.getBytes();
+            fos.write(moreData, 0, 4); // Write "Java"
+            
+            System.out.println("Data written to " + fileName);
+            
+        } catch (IOException e) {
+            System.err.println("Error writing to file: " + e.getMessage());
+        }
+    }
+    
+    private static void readDataUsingByteStream(String fileName) {
+        System.out.println("--- Reading Data Using FileInputStream ---");
+        
+        try (FileInputStream fis = new FileInputStream(fileName)) {
+            System.out.println("File size: " + fis.available() + " bytes");
+            
+            // Method 1: Read single byte
+            System.out.print("Reading byte by byte: ");
+            int byteData;
+            int count = 0;
+            while ((byteData = fis.read()) != -1 && count < 5) {
+                System.out.print((char) byteData);
+                count++;
+            }
+            System.out.println();
+            
+            // Reset for next read method
+        } catch (IOException e) {
+            System.err.println("Error reading file: " + e.getMessage());
+        }
+        
+        // Method 2: Read entire file into byte array
+        try (FileInputStream fis = new FileInputStream(fileName)) {
+            byte[] buffer = new byte[fis.available()];
+            int bytesRead = fis.read(buffer);
+            
+            System.out.println("Bytes read: " + bytesRead);
+            System.out.println("Content as string: " + new String(buffer));
+            
+        } catch (IOException e) {
+            System.err.println("Error reading file: " + e.getMessage());
+        }
+        
+        // Method 3: Read with buffer
+        try (FileInputStream fis = new FileInputStream(fileName)) {
+            byte[] buffer = new byte[10]; // Small buffer for demonstration
+            int bytesRead;
+            
+            System.out.print("Reading with buffer: ");
+            while ((bytesRead = fis.read(buffer)) != -1) {
+                System.out.print(new String(buffer, 0, bytesRead));
+            }
+            System.out.println();
+            
+        } catch (IOException e) {
+            System.err.println("Error reading file: " + e.getMessage());
+        }
+        
+        System.out.println();
+    }
+    
+    private static void copyFileUsingByteStreams(String sourceFile, String destFile) {
+        System.out.println("--- Copying File Using Byte Streams ---");
+        
+        try (FileInputStream fis = new FileInputStream(sourceFile);
+             FileOutputStream fos = new FileOutputStream(destFile)) {
+            
+            byte[] buffer = new byte[1024]; // 1KB buffer
+            int bytesRead;
+            int totalBytes = 0;
+            
+            while ((bytesRead = fis.read(buffer)) != -1) {
+                fos.write(buffer, 0, bytesRead);
+                totalBytes += bytesRead;
+            }
+            
+            System.out.println("File copied successfully");
+            System.out.println("Total bytes copied: " + totalBytes);
+            
+        } catch (IOException e) {
+            System.err.println("Error copying file: " + e.getMessage());
+        }
+        
+        System.out.println();
+    }
+    
+    private static void demonstrateBufferedByteStreams() {
+        System.out.println("--- Buffered Byte Streams ---");
+        
+        String fileName = "buffered_test.txt";
+        
+        // Write using BufferedOutputStream
+        try (BufferedOutputStream bos = new BufferedOutputStream(
+                new FileOutputStream(fileName))) {
+            
+            String data = "Buffered streams improve performance by reducing system calls.\n";
+            for (int i = 0; i < 5; i++) {
+                bos.write(data.getBytes());
+            }
+            
+            // Flush is automatic when closing, but can be done manually
+            bos.flush();
+            System.out.println("Data written using BufferedOutputStream");
+            
+        } catch (IOException e) {
+            System.err.println("Error with buffered output: " + e.getMessage());
+        }
+        
+        // Read using BufferedInputStream
+        try (BufferedInputStream bis = new BufferedInputStream(
+                new FileInputStream(fileName))) {
+            
+            byte[] buffer = new byte[50];
+            int bytesRead;
+            
+            System.out.println("Reading using BufferedInputStream:");
+            while ((bytesRead = bis.read(buffer)) != -1) {
+                System.out.print(new String(buffer, 0, bytesRead));
+            }
+            
+        } catch (IOException e) {
+            System.err.println("Error with buffered input: " + e.getMessage());
+        }
+        
+        System.out.println();
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- Character Streams -->
+            <section>
+                <h2>Character Streams - FileReader and FileWriter</h2>
+                <pre><code class="java">
+import java.io.*;
+
+public class CharacterStreamsDemo {
+    public static void main(String[] args) {
+        System.out.println("=== Character Streams Demonstration ===\n");
+        
+        String fileName = "text_data.txt";
+        
+        // Write data using FileWriter
+        writeDataUsingCharacterStream(fileName);
+        
+        // Read data using FileReader
+        readDataUsingCharacterStream(fileName);
+        
+        // Demonstrate BufferedReader and BufferedWriter
+        demonstrateBufferedCharacterStreams();
+        
+        // Demonstrate PrintWriter
+        demonstratePrintWriter();
+    }
+    
+    private static void writeDataUsingCharacterStream(String fileName) {
+        System.out.println("--- Writing Data Using FileWriter ---");
+        
+        try (FileWriter fw = new FileWriter(fileName)) {
+            // Write single character
+            fw.write('H');
+            
+            // Write string
+            fw.write("ello, Character Streams!\n");
+            
+            // Write character array
+            char[] chars = {'J', 'a', 'v', 'a', ' '};
+            fw.write(chars);
+            
+            // Write part of string
+            String text = "I/O Programming is powerful!";
+            fw.write(text, 0, 3); // Write "I/O"
+            
+            fw.write("\n");
+            
+            // Write multiple lines
+            String[] lines = {
+                "Line 1: Introduction to I/O",
+                "Line 2: Character streams handle Unicode",
+                "Line 3: Perfect for text processing"
+            };
+            
+            for (String line : lines) {
+                fw.write(line + "\n");
+            }
+            
+            System.out.println("Text data written to " + fileName);
+            
+        } catch (IOException e) {
+            System.err.println("Error writing to file: " + e.getMessage());
+        }
+    }
+    
+    private static void readDataUsingCharacterStream(String fileName) {
+        System.out.println("--- Reading Data Using FileReader ---");
+        
+        // Method 1: Read character by character
+        try (FileReader fr = new FileReader(fileName)) {
+            System.out.print("First 20 characters: ");
+            int charData;
+            int count = 0;
+            while ((charData = fr.read()) != -1 && count < 20) {
+                System.out.print((char) charData);
+                count++;
+            }
+            System.out.println();
+            
+        } catch (IOException e) {
+            System.err.println("Error reading file: " + e.getMessage());
+        }
+        
+        // Method 2: Read into character array
+        try (FileReader fr = new FileReader(fileName)) {
+            char[] buffer = new char[50];
+            int charsRead = fr.read(buffer);
+            
+            System.out.println("Characters read: " + charsRead);
+            System.out.println("Content: " + new String(buffer, 0, charsRead));
+            
+        } catch (IOException e) {
+            System.err.println("Error reading file: " + e.getMessage());
+        }
+        
+        System.out.println();
+    }
+    
+    private static void demonstrateBufferedCharacterStreams() {
+        System.out.println("--- Buffered Character Streams ---");
+        
+        String fileName = "buffered_text.txt";
+        
+        // Write using BufferedWriter
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName))) {
+            bw.write("BufferedWriter improves performance");
+            bw.newLine(); // Platform-independent line separator
+            bw.write("It reduces the number of system calls");
+            bw.newLine();
+            bw.write("Especially useful for writing multiple lines");
+            
+            System.out.println("Data written using BufferedWriter");
+            
+        } catch (IOException e) {
+            System.err.println("Error with buffered writer: " + e.getMessage());
+        }
+        
+        // Read using BufferedReader
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+            System.out.println("Reading using BufferedReader:");
+            
+            String line;
+            int lineNumber = 1;
+            while ((line = br.readLine()) != null) {
+                System.out.println("Line " + lineNumber + ": " + line);
+                lineNumber++;
+            }
+            
+        } catch (IOException e) {
+            System.err.println("Error with buffered reader: " + e.getMessage());
+        }
+        
+        System.out.println();
+    }
+    
+    private static void demonstratePrintWriter() {
+        System.out.println("--- PrintWriter Demonstration ---");
+        
+        String fileName = "print_writer_demo.txt";
+        
+        try (PrintWriter pw = new PrintWriter(new FileWriter(fileName))) {
+            // PrintWriter provides convenient methods
+            pw.println("PrintWriter is very convenient for formatted output");
+            pw.printf("Formatted number: %.2f%n", 3.14159);
+            pw.printf("Formatted string: %s has %d characters%n", "Java", 4);
+            
+            // Write different data types
+            pw.println(42);
+            pw.println(true);
+            pw.println('X');
+            
+            // Check for errors (PrintWriter doesn't throw exceptions)
+            if (pw.checkError()) {
+                System.err.println("An error occurred while writing");
+            } else {
+                System.out.println("Data written using PrintWriter");
+            }
+            
+        } catch (IOException e) {
+            System.err.println("Error with PrintWriter: " + e.getMessage());
+        }
+        
+        // Read and display the content
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+            System.out.println("Content written by PrintWriter:");
+            String line;
+            while ((line = br.readLine()) != null) {
+                System.out.println("  " + line);
+            }
+            
+        } catch (IOException e) {
+            System.err.println("Error reading PrintWriter output: " + e.getMessage());
+        }
+        
+        System.out.println();
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- Data Streams -->
+            <section>
+                <h2>Data Streams for Primitive Types</h2>
+                <pre><code class="java">
+import java.io.*;
+
+public class DataStreamsDemo {
+    public static void main(String[] args) {
+        System.out.println("=== Data Streams Demonstration ===\n");
+        
+        String fileName = "primitive_data.dat";
+        
+        // Write primitive data
+        writePrimitiveData(fileName);
+        
+        // Read primitive data
+        readPrimitiveData(fileName);
+    }
+    
+    private static void writePrimitiveData(String fileName) {
+        System.out.println("--- Writing Primitive Data ---");
+        
+        try (DataOutputStream dos = new DataOutputStream(
+                new BufferedOutputStream(new FileOutputStream(fileName)))) {
+            
+            // Write different primitive types
+            dos.writeBoolean(true);
+            dos.writeByte(127);
+            dos.writeShort(32767);
+            dos.writeInt(2147483647);
+            dos.writeLong(9223372036854775807L);
+            dos.writeFloat(3.14159f);
+            dos.writeDouble(2.718281828459);
+            dos.writeChar('J');
+            dos.writeUTF("Hello, DataOutputStream!"); // Modified UTF-8
+            
+            // Write arrays
+            int[] numbers = {1, 2, 3, 4, 5};
+            dos.writeInt(numbers.length); // Write array length first
+            for (int num : numbers) {
+                dos.writeInt(num);
+            }
+            
+            // Write a string array
+            String[] words = {"Java", "I/O", "Streams", "Data"};
+            dos.writeInt(words.length);
+            for (String word : words) {
+                dos.writeUTF(word);
+            }
+            
+            System.out.println("Primitive data written to " + fileName);
+            
+        } catch (IOException e) {
+            System.err.println("Error writing primitive data: " + e.getMessage());
+        }
+    }
+    
+    private static void readPrimitiveData(String fileName) {
+        System.out.println("--- Reading Primitive Data ---");
+        
+        try (DataInputStream dis = new DataInputStream(
+                new BufferedInputStream(new FileInputStream(fileName)))) {
+            
+            // Read in the same order as written
+            boolean boolValue = dis.readBoolean();
+            byte byteValue = dis.readByte();
+            short shortValue = dis.readShort();
+            int intValue = dis.readInt();
+            long longValue = dis.readLong();
+            float floatValue = dis.readFloat();
+            double doubleValue = dis.readDouble();
+            char charValue = dis.readChar();
+            String stringValue = dis.readUTF();
+            
+            // Display the values
+            System.out.println("Boolean: " + boolValue);
+            System.out.println("Byte: " + byteValue);
+            System.out.println("Short: " + shortValue);
+            System.out.println("Int: " + intValue);
+            System.out.println("Long: " + longValue);
+            System.out.println("Float: " + floatValue);
+            System.out.println("Double: " + doubleValue);
+            System.out.println("Char: " + charValue);
+            System.out.println("String: " + stringValue);
+            
+            // Read array
+            int arrayLength = dis.readInt();
+            int[] numbers = new int[arrayLength];
+            for (int i = 0; i < arrayLength; i++) {
+                numbers[i] = dis.readInt();
+            }
+            System.out.print("Integer array: ");
+            for (int num : numbers) {
+                System.out.print(num + " ");
+            }
+            System.out.println();
+            
+            // Read string array
+            int stringArrayLength = dis.readInt();
+            String[] words = new String[stringArrayLength];
+            for (int i = 0; i < stringArrayLength; i++) {
+                words[i] = dis.readUTF();
+            }
+            System.out.print("String array: ");
+            for (String word : words) {
+                System.out.print(word + " ");
+            }
+            System.out.println();
+            
+        } catch (IOException e) {
+            System.err.println("Error reading primitive data: " + e.getMessage());
+        }
+        
+        System.out.println();
+    }
+}
+
+// Student class for object demonstration
+class Student implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
+    private String name;
+    private int age;
+    private double gpa;
+    
+    public Student(String name, int age, double gpa) {
+        this.name = name;
+        this.age = age;
+        this.gpa = gpa;
+    }
+    
+    @Override
+    public String toString() {
+        return String.format("Student{name='%s', age=%d, gpa=%.2f}", name, age, gpa);
+    }
+    
+    // Getters
+    public String getName() { return name; }
+    public int getAge() { return age; }
+    public double getGpa() { return gpa; }
+}
+                </code></pre>
+            </section>
+
+            <!-- Object Serialization -->
+            <section>
+                <h2>Object Serialization and Deserialization</h2>
+                <pre><code class="java">
+import java.io.*;
+import java.util.*;
+
+public class SerializationDemo {
+    public static void main(String[] args) {
+        System.out.println("=== Object Serialization Demonstration ===\n");
+        
+        String fileName = "students.ser";
+        
+        // Create sample data
+        List<Student> students = createSampleStudents();
+        
+        // Serialize objects
+        serializeObjects(students, fileName);
+        
+        // Deserialize objects
+        deserializeObjects(fileName);
+        
+        // Demonstrate custom serialization
+        demonstrateCustomSerialization();
+    }
+    
+    private static List<Student> createSampleStudents() {
+        List<Student> students = new ArrayList<>();
+        students.add(new Student("Alice Johnson", 20, 3.8));
+        students.add(new Student("Bob Smith", 19, 3.6));
+        students.add(new Student("Charlie Brown", 21, 3.9));
+        students.add(new Student("Diana Prince", 20, 3.7));
+        return students;
+    }
+    
+    private static void serializeObjects(List<Student> students, String fileName) {
+        System.out.println("--- Serializing Objects ---");
+        
+        try (ObjectOutputStream oos = new ObjectOutputStream(
+                new BufferedOutputStream(new FileOutputStream(fileName)))) {
+            
+            // Serialize the entire list
+            oos.writeObject(students);
+            
+            // Serialize individual objects
+            oos.writeInt(students.size());
+            for (Student student : students) {
+                oos.writeObject(student);
+            }
+            
+            // Serialize other data types
+            oos.writeObject(new Date());
+            oos.writeObject("Serialization timestamp");
+            
+            System.out.println("Objects serialized to " + fileName);
+            System.out.println("Serialized " + students.size() + " students");
+            
+        } catch (IOException e) {
+            System.err.println("Error serializing objects: " + e.getMessage());
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    private static void deserializeObjects(String fileName) {
+        System.out.println("--- Deserializing Objects ---");
+        
+        try (ObjectInputStream ois = new ObjectInputStream(
+                new BufferedInputStream(new FileInputStream(fileName)))) {
+            
+            // Deserialize the list
+            List<Student> studentList = (List<Student>) ois.readObject();
+            System.out.println("Deserialized student list:");
+            for (Student student : studentList) {
+                System.out.println("  " + student);
+            }
+            
+            // Deserialize individual objects
+            int count = ois.readInt();
+            System.out.println("\nDeserializing " + count + " individual students:");
+            for (int i = 0; i < count; i++) {
+                Student student = (Student) ois.readObject();
+                System.out.println("  " + (i + 1) + ". " + student);
+            }
+            
+            // Deserialize other objects
+            Date timestamp = (Date) ois.readObject();
+            String message = (String) ois.readObject();
+            
+            System.out.println("\nTimestamp: " + timestamp);
+            System.out.println("Message: " + message);
+            
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Error deserializing objects: " + e.getMessage());
+        }
+        
+        System.out.println();
+    }
+    
+    private static void demonstrateCustomSerialization() {
+        System.out.println("--- Custom Serialization ---");
+        
+        String fileName = "custom_serialization.ser";
+        
+        try {
+            // Create a custom serializable object
+            BankAccount account = new BankAccount("12345", "John Doe", 5000.0, "secret123");
+            
+            System.out.println("Original account: " + account);
+            
+            // Serialize
+            try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName))) {
+                oos.writeObject(account);
+                System.out.println("Account serialized");
+            }
+            
+            // Deserialize
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
+                BankAccount deserializedAccount = (BankAccount) ois.readObject();
+                System.out.println("Deserialized account: " + deserializedAccount);
+            }
+            
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Error with custom serialization: " + e.getMessage());
+        }
+    }
+}
+
+// Custom serializable class with sensitive data
+class BankAccount implements Serializable {
+    private static final long serialVersionUID = 2L;
+    
+    private String accountNumber;
+    private String holderName;
+    private double balance;
+    private transient String pin; // transient = won't be serialized
+    
+    public BankAccount(String accountNumber, String holderName, double balance, String pin) {
+        this.accountNumber = accountNumber;
+        this.holderName = holderName;
+        this.balance = balance;
+        this.pin = pin;
+    }
+    
+    // Custom serialization method
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject(); // Serialize non-transient fields
+        // Custom logic: encrypt PIN before serialization (simplified)
+        String encryptedPin = "encrypted_" + pin;
+        out.writeObject(encryptedPin);
+        System.out.println("Custom writeObject called - PIN encrypted");
+    }
+    
+    // Custom deserialization method
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject(); // Deserialize non-transient fields
+        // Custom logic: decrypt PIN after deserialization (simplified)
+        String encryptedPin = (String) in.readObject();
+        this.pin = encryptedPin.replace("encrypted_", "");
+        System.out.println("Custom readObject called - PIN decrypted");
+    }
+    
+    @Override
+    public String toString() {
+        return String.format("BankAccount{accountNumber='%s', holderName='%s', balance=%.2f, pin='%s'}", 
+                           accountNumber, holderName, balance, pin != null ? "****" : "null");
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- GTU Previous Year Question 1 -->
+            <section>
+                <div class="gtu-question">
+                    <h4>GTU Previous Year Question (Summer 2022)</h4>
+                    <p><strong>Q: Write a Java program to demonstrate file operations. The program should create a text file, write student information (name, roll number, marks) to the file, read the file content, and display it. Also implement functionality to append new student data to the existing file.</strong></p>
+                </div>
+                
+                <h3>Solution:</h3>
+                <pre><code class="java">
+import java.io.*;
+import java.util.*;
+
+// Student class to represent student data
+class StudentInfo {
+    private String name;
+    private String rollNumber;
+    private double marks;
+    
+    public StudentInfo(String name, String rollNumber, double marks) {
+        this.name = name;
+        this.rollNumber = rollNumber;
+        this.marks = marks;
+    }
+    
+    // Convert to file format string
+    public String toFileString() {
+        return String.format("%s|%s|%.2f", name, rollNumber, marks);
+    }
+    
+    // Create from file format string
+    public static StudentInfo fromFileString(String fileString) {
+        String[] parts = fileString.split("\\|");
+        if (parts.length == 3) {
+            return new StudentInfo(parts[0], parts[1], Double.parseDouble(parts[2]));
+        }
+        return null;
+    }
+    
+    @Override
+    public String toString() {
+        return String.format("Name: %-20s | Roll: %-10s | Marks: %6.2f", name, rollNumber, marks);
+    }
+    
+    // Getters
+    public String getName() { return name; }
+    public String getRollNumber() { return rollNumber; }
+    public double getMarks() { return marks; }
+}
+
+public class FileOperationsDemo {
+    private static final String FILENAME = "students.txt";
+    private static Scanner scanner = new Scanner(System.in);
+    
+    public static void main(String[] args) {
+        System.out.println("=== Student File Operations System ===\n");
+        
+        boolean running = true;
+        while (running) {
+            displayMenu();
+            int choice = getChoice();
+            
+            switch (choice) {
+                case 1:
+                    createAndWriteFile();
+                    break;
+                case 2:
+                    readAndDisplayFile();
+                    break;
+                case 3:
+                    appendStudentData();
+                    break;
+                case 4:
+                    searchStudent();
+                    break;
+                case 5:
+                    displayStatistics();
+                    break;
+                case 6:
+                    backupFile();
+                    break;
+                case 7:
+                    running = false;
+                    System.out.println("Program terminated.");
+                    break;
+                default:
+                    System.out.println("Invalid choice! Please try again.");
+            }
+            
+            if (running) {
+                System.out.println("\nPress Enter to continue...");
+                scanner.nextLine();
+            }
+        }
+        
+        scanner.close();
+    }
+    
+    private static void displayMenu() {
+        System.out.println("\n" + "=".repeat(50));
+        System.out.println("STUDENT MANAGEMENT SYSTEM");
+        System.out.println("=".repeat(50));
+        System.out.println("1. Create new file and add students");
+        System.out.println("2. Read and display all students");
+        System.out.println("3. Append new student data");
+        System.out.println("4. Search for a student");
+        System.out.println("5. Display statistics");
+        System.out.println("6. Backup file");
+        System.out.println("7. Exit");
+        System.out.println("=".repeat(50));
+        System.out.print("Enter your choice (1-7): ");
+    }
+    
+    private static int getChoice() {
+        try {
+            int choice = Integer.parseInt(scanner.nextLine().trim());
+            return choice;
+        } catch (NumberFormatException e) {
+            return -1; // Invalid choice
+        }
+    }
+    
+    private static void createAndWriteFile() {
+        System.out.println("\n--- Create New File and Add Students ---");
+        
+        List<StudentInfo> students = new ArrayList<>();
+        
+        System.out.print("How many students do you want to add? ");
+        int count;
+        try {
+            count = Integer.parseInt(scanner.nextLine().trim());
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid number! Using default of 3.");
+            count = 3;
+        }
+        
+        // Collect student information
+        for (int i = 1; i <= count; i++) {
+            System.out.println("\nEnter details for Student " + i + ":");
+            
+            System.out.print("Name: ");
+            String name = scanner.nextLine().trim();
+            
+            System.out.print("Roll Number: ");
+            String rollNumber = scanner.nextLine().trim();
+            
+            System.out.print("Marks: ");
+            double marks;
+            try {
+                marks = Double.parseDouble(scanner.nextLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid marks! Using 0.0");
+                marks = 0.0;
+            }
+            
+            students.add(new StudentInfo(name, rollNumber, marks));
+        }
+        
+        // Write to file using FileWriter (character stream)
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILENAME))) {
+            // Write header
+            writer.write("# Student Information File");
+            writer.newLine();
+            writer.write("# Format: Name|RollNumber|Marks");
+            writer.newLine();
+            writer.write("# Created on: " + new Date());
+            writer.newLine();
+            writer.newLine();
+            
+            // Write student data
+            for (StudentInfo student : students) {
+                writer.write(student.toFileString());
+                writer.newLine();
+            }
+            
+            System.out.println("\n✓ File created successfully!");
+            System.out.println("✓ " + students.size() + " students written to " + FILENAME);
+            
+        } catch (IOException e) {
+            System.err.println("✗ Error creating file: " + e.getMessage());
+        }
+    }
+    
+    private static void readAndDisplayFile() {
+        System.out.println("\n--- Reading and Displaying All Students ---");
+        
+        File file = new File(FILENAME);
+        if (!file.exists()) {
+            System.out.println("✗ File " + FILENAME + " does not exist!");
+            System.out.println("  Please create the file first using option 1.");
+            return;
+        }
+        
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILENAME))) {
+            String line;
+            List<StudentInfo> students = new ArrayList<>();
+            int lineNumber = 0;
+            
+            System.out.println("File Contents:");
+            System.out.println("-".repeat(80));
+            
+            while ((line = reader.readLine()) != null) {
+                lineNumber++;
+                
+                // Skip comments and empty lines
+                if (line.startsWith("#") || line.trim().isEmpty()) {
+                    System.out.println("Line " + lineNumber + ": " + line);
+                    continue;
+                }
+                
+                // Parse student data
+                StudentInfo student = StudentInfo.fromFileString(line);
+                if (student != null) {
+                    students.add(student);
+                    System.out.println("Line " + lineNumber + ": " + line);
+                } else {
+                    System.out.println("Line " + lineNumber + ": [Invalid format] " + line);
+                }
+            }
+            
+            System.out.println("-".repeat(80));
+            
+            // Display formatted student information
+            if (!students.isEmpty()) {
+                System.out.println("\nFormatted Student Information:");
+                System.out.println("=".repeat(80));
+                System.out.printf("%-4s | %-20s | %-10s | %-8s%n", "No.", "Name", "Roll No.", "Marks");
+                System.out.println("-".repeat(80));
+                
+                for (int i = 0; i < students.size(); i++) {
+                    StudentInfo student = students.get(i);
+                    System.out.printf("%-4d | %-20s | %-10s | %8.2f%n", 
+                                    i + 1, student.getName(), student.getRollNumber(), student.getMarks());
+                }
+                
+                System.out.println("=".repeat(80));
+                System.out.println("Total students: " + students.size());
+            } else {
+                System.out.println("\nNo valid student records found in the file.");
+            }
+            
+        } catch (IOException e) {
+            System.err.println("✗ Error reading file: " + e.getMessage());
+        }
+    }
+}
+                </code></pre>
+            </section>
+
+            <!-- Append and Search Methods -->
+            <section>
+                <h3>Append and Search Implementation:</h3>
+                <pre><code class="java">
+    private static void appendStudentData() {
+        System.out.println("\n--- Append New Student Data ---");
+        
+        File file = new File(FILENAME);
+        if (!file.exists()) {
+            System.out.println("✗ File " + FILENAME + " does not exist!");
+            System.out.println("  Please create the file first using option 1.");
+            return;
+        }
+        
+        System.out.print("How many students do you want to add? ");
+        int count;
+        try {
+            count = Integer.parseInt(scanner.nextLine().trim());
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid number! Using default of 1.");
+            count = 1;
+        }
+        
+        // Collect new student information
+        List<StudentInfo> newStudents = new ArrayList<>();
+        for (int i = 1; i <= count; i++) {
+            System.out.println("\nEnter details for new Student " + i + ":");
+            
+            System.out.print("Name: ");
+            String name = scanner.nextLine().trim();
+            
+            System.out.print("Roll Number: ");
+            String rollNumber = scanner.nextLine().trim();
+            
+            System.out.print("Marks: ");
+            double marks;
+            try {
+                marks = Double.parseDouble(scanner.nextLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid marks! Using 0.0");
+                marks = 0.0;
+            }
+            
+            newStudents.add(new StudentInfo(name, rollNumber, marks));
+        }
+        
+        // Append to file using FileWriter with append mode
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILENAME, true))) {
+            for (StudentInfo student : newStudents) {
+                writer.write(student.toFileString());
+                writer.newLine();
+            }
+            
+            System.out.println("\n✓ " + newStudents.size() + " students appended successfully!");
+            
+        } catch (IOException e) {
+            System.err.println("✗ Error appending to file: " + e.getMessage());
+        }
+    }
+    
+    private static void searchStudent() {
+        System.out.println("\n--- Search for Student ---");
+        
+        File file = new File(FILENAME);
+        if (!file.exists()) {
+            System.out.println("✗ File " + FILENAME + " does not exist!");
+            return;
+        }
+        
+        System.out.println("Search by:");
+        System.out.println("1. Name");
+        System.out.println("2. Roll Number");
+        System.out.print("Enter choice (1 or 2): ");
+        
+        int searchType;
+        try {
+            searchType = Integer.parseInt(scanner.nextLine().trim());
+        } catch (NumberFormatException e) {
+            searchType = 1;
+        }
+        
+        System.out.print("Enter search term: ");
+        String searchTerm = scanner.nextLine().trim().toLowerCase();
+        
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILENAME))) {
+            String line;
+            List<StudentInfo> foundStudents = new ArrayList<>();
+            
+            while ((line = reader.readLine()) != null) {
+                // Skip comments and empty lines
+                if (line.startsWith("#") || line.trim().isEmpty()) {
+                    continue;
+                }
+                
+                StudentInfo student = StudentInfo.fromFileString(line);
+                if (student != null) {
+                    boolean matches = false;
+                    if (searchType == 1) {
+                        matches = student.getName().toLowerCase().contains(searchTerm);
+                    } else {
+                        matches = student.getRollNumber().toLowerCase().contains(searchTerm);
+                    }
+                    
+                    if (matches) {
+                        foundStudents.add(student);
+                    }
+                }
+            }
+            
+            // Display search results
+            if (foundStudents.isEmpty()) {
+                System.out.println("\n✗ No students found matching: " + searchTerm);
+            } else {
+                System.out.println("\n✓ Found " + foundStudents.size() + " student(s):");
+                System.out.println("=".repeat(80));
+                for (int i = 0; i < foundStudents.size(); i++) {
+                    System.out.println((i + 1) + ". " + foundStudents.get(i));
+                }
+                System.out.println("=".repeat(80));
+            }
+            
+        } catch (IOException e) {
+            System.err.println("✗ Error searching file: " + e.getMessage());
+        }
+    }
+    
+    private static void displayStatistics() {
+        System.out.println("\n--- File Statistics ---");
+        
+        File file = new File(FILENAME);
+        if (!file.exists()) {
+            System.out.println("✗ File " + FILENAME + " does not exist!");
+            return;
+        }
+        
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILENAME))) {
+            String line;
+            List<StudentInfo> students = new ArrayList<>();
+            
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith("#") || line.trim().isEmpty()) {
+                    continue;
+                }
+                
+                StudentInfo student = StudentInfo.fromFileString(line);
+                if (student != null) {
+                    students.add(student);
+                }
+            }
+            
+            if (students.isEmpty()) {
+                System.out.println("✗ No valid student records found.");
+                return;
+            }
+            
+            // Calculate statistics
+            double totalMarks = 0;
+            double maxMarks = Double.MIN_VALUE;
+            double minMarks = Double.MAX_VALUE;
+            StudentInfo topStudent = null;
+            StudentInfo lowStudent = null;
+            
+            for (StudentInfo student : students) {
+                double marks = student.getMarks();
+                totalMarks += marks;
+                
+                if (marks > maxMarks) {
+                    maxMarks = marks;
+                    topStudent = student;
+                }
+                
+                if (marks < minMarks) {
+                    minMarks = marks;
+                    lowStudent = student;
+                }
+            }
+            
+            double averageMarks = totalMarks / students.size();
+            
+            // Display statistics
+            System.out.println("=".repeat(80));
+            System.out.printf("Total Students      : %d%n", students.size());
+            System.out.printf("Average Marks       : %.2f%n", averageMarks);
+            System.out.printf("Highest Marks       : %.2f%n", maxMarks);
+            System.out.printf("Lowest Marks        : %.2f%n", minMarks);
+            System.out.printf("Top Performer       : %s (%.2f)%n", topStudent.getName(), topStudent.getMarks());
+            System.out.printf("Needs Improvement   : %s (%.2f)%n", lowStudent.getName(), lowStudent.getMarks());
+            
+            // Grade distribution
+            int gradeA = 0, gradeB = 0, gradeC = 0, gradeD = 0, gradeF = 0;
+            for (StudentInfo student : students) {
+                double marks = student.getMarks();
+                if (marks >= 90) gradeA++;
+                else if (marks >= 80) gradeB++;
+                else if (marks >= 70) gradeC++;
+                else if (marks >= 60) gradeD++;
+                else gradeF++;
+            }
+            
+            System.out.println("-".repeat(40));
+            System.out.println("Grade Distribution:");
+            System.out.printf("A (90-100)  : %d students%n", gradeA);
+            System.out.printf("B (80-89)   : %d students%n", gradeB);
+            System.out.printf("C (70-79)   : %d students%n", gradeC);
+            System.out.printf("D (60-69)   : %d students%n", gradeD);
+            System.out.printf("F (0-59)    : %d students%n", gradeF);
+            System.out.println("=".repeat(80));
+            
+        } catch (IOException e) {
+            System.err.println("✗ Error reading file for statistics: " + e.getMessage());
+        }
+    }
+    
+    private static void backupFile() {
+        System.out.println("\n--- Backup File ---");
+        
+        File sourceFile = new File(FILENAME);
+        if (!sourceFile.exists()) {
+            System.out.println("✗ File " + FILENAME + " does not exist!");
+            return;
+        }
+        
+        String backupFileName = "backup_" + System.currentTimeMillis() + "_" + FILENAME;
+        File backupFile = new File(backupFileName);
+        
+        try (BufferedReader reader = new BufferedReader(new FileReader(sourceFile));
+             BufferedWriter writer = new BufferedWriter(new FileWriter(backupFile))) {
+            
+            String line;
+            int linesCopied = 0;
+            
+            while ((line = reader.readLine()) != null) {
+                writer.write(line);
+                writer.newLine();
+                linesCopied++;
+            }
+            
+            System.out.println("✓ File backed up successfully!");
+            System.out.println("✓ Backup file: " + backupFileName);
+            System.out.println("✓ Lines copied: " + linesCopied);
+            System.out.println("✓ Backup size: " + backupFile.length() + " bytes");
+            
+        } catch (IOException e) {
+            System.err.println("✗ Error creating backup: " + e.getMessage());
+        }
+    }
+}
+                </code></pre>
+                
+                <div class="success-box">
+                    <strong>Solution Features:</strong>
+                    <ul>
+                        <li>Complete file operations: create, read, write, append</li>
+                        <li>Menu-driven interface for easy interaction</li>
+                        <li>Student data management with search functionality</li>
+                        <li>File statistics and grade distribution analysis</li>
+                        <li>Backup functionality for data safety</li>
+                        <li>Error handling and input validation</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Hands-on Lab Exercise -->
+            <section>
+                <h2>🧪 Hands-on Lab Exercise</h2>
+                <div class="highlight-box">
+                    <h3>Lab 19: Employee Record Management System</h3>
+                    <p><strong>Task:</strong> Create a comprehensive employee record management system using various I/O streams for different data operations.</p>
+                </div>
+                
+                <h3>Requirements:</h3>
+                <ul>
+                    <li>Use character streams for employee text data (name, department, email)</li>
+                    <li>Use data streams for numeric data (salary, employee ID, hire date)</li>
+                    <li>Implement object serialization for complete employee objects</li>
+                    <li>Create file backup and restore functionality</li>
+                    <li>Implement CSV import/export capabilities</li>
+                    <li>Add logging functionality using file I/O</li>
+                </ul>
+                
+                <div class="warning-box">
+                    <strong>Challenge:</strong> Implement a transaction log system that records all file operations with rollback capability in case of failures.
+                </div>
+            </section>
+
+            <!-- Summary -->
+            <section>
+                <h2>📚 Lecture Summary</h2>
+                <div class="two-column">
+                    <div>
+                        <h3>Key I/O Concepts Covered</h3>
+                        <ul>
+                            <li>Java I/O stream hierarchy and classification</li>
+                            <li>Byte streams (InputStream/OutputStream)</li>
+                            <li>Character streams (Reader/Writer)</li>
+                            <li>File class for file system operations</li>
+                            <li>Buffered streams for performance</li>
+                            <li>Object serialization/deserialization</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Best Practices</h3>
+                        <ul>
+                            <li>Use try-with-resources for automatic stream closure</li>
+                            <li>Choose appropriate stream type for data</li>
+                            <li>Use buffered streams for better performance</li>
+                            <li>Handle IOException properly</li>
+                            <li>Use character streams for text data</li>
+                            <li>Implement Serializable for object persistence</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="highlight-box" style="margin-top: 30px;">
+                    <h3>🎯 Next Lecture Preview</h3>
+                    <p><strong>Lecture 20: Lambda Expressions and Functional Interfaces</strong></p>
+                    <ul>
+                        <li>Functional programming concepts in Java</li>
+                        <li>Lambda expression syntax and usage</li>
+                        <li>Built-in functional interfaces</li>
+                        <li>Stream API and functional operations</li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/notes/notes.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/highlight.min.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            transition: 'slide',
+            transitionSpeed: 'fast',
+            center: true,
+            plugins: [RevealNotes, RevealHighlight]
+        });
+    </script>
+</body>
+</html>

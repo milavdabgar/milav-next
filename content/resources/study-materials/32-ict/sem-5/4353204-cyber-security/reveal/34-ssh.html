@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SSH (Secure Shell)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/white.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/monokai.css">
+    <style>
+        .reveal h1, .reveal h2, .reveal h3 {
+            color: #2c3e50;
+        }
+        .reveal .slides section {
+            text-align: left;
+        }
+        .reveal .title-slide {
+            text-align: center;
+        }
+        .reveal .highlight {
+            background-color: #3498db;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        .reveal .ssh-box {
+            background-color: #e8f5e8;
+            border-left: 4px solid #27ae60;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .reveal .security-box {
+            background-color: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .reveal .protocol-box {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .reveal .command-box {
+            background-color: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .reveal .example-box {
+            background-color: #f8f9fa;
+            border: 2px solid #6c757d;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 0.85em;
+        }
+        .reveal img {
+            border: none !important;
+            box-shadow: none !important;
+        }
+        .reveal .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            font-size: 0.9em;
+        }
+        .reveal .feature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            font-size: 0.85em;
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- Title Slide -->
+            <section class="title-slide">
+                <h1>SSH</h1>
+                <h3>Secure Shell - Secure Remote Access Protocol</h3>
+                <p>
+                    <small>The Standard for Secure Remote Administration</small>
+                </p>
+                <div style="text-align: center; margin-top: 30px;">
+                    <img src="diagrams/ssh-protocol-stack.svg" alt="SSH Protocol Stack" style="width: 70%; height: auto; max-width: 700px;">
+                </div>
+            </section>
+
+            <!-- What is SSH? -->
+            <section>
+                <h2>SSH Definition</h2>
+                <div class="ssh-box">
+                    <strong>SSH (Secure Shell)</strong> is a cryptographic network protocol that provides secure remote access, command execution, and data communication over an unsecured network, replacing insecure protocols like Telnet and rlogin.
+                </div>
+                <h3>Core Functions:</h3>
+                <ul>
+                    <li><strong>Remote Login:</strong> Secure terminal access to remote systems</li>
+                    <li><strong>Command Execution:</strong> Run commands on remote machines</li>
+                    <li><strong>File Transfer:</strong> Secure file copying (SCP, SFTP)</li>
+                    <li><strong>Port Forwarding:</strong> Tunnel other protocols securely</li>
+                    <li><strong>X11 Forwarding:</strong> Remote GUI application display</li>
+                    <li><strong>Agent Forwarding:</strong> Forward authentication credentials</li>
+                </ul>
+                <div class="protocol-box">
+                    <strong>Default Port:</strong> TCP 22 (configurable for security)
+                </div>
+            </section>
+
+            <!-- SSH vs Telnet Comparison -->
+            <section>
+                <h2>SSH vs Telnet Comparison</h2>
+                <div class="comparison-grid">
+                    <div class="command-box">
+                        <h4>Telnet (Insecure):</h4>
+                        <ul>
+                            <li><strong>Encryption:</strong> None - plain text</li>
+                            <li><strong>Authentication:</strong> Password sent in clear</li>
+                            <li><strong>Port:</strong> TCP 23</li>
+                            <li><strong>Security:</strong> Vulnerable to eavesdropping</li>
+                            <li><strong>Integrity:</strong> No protection against tampering</li>
+                            <li><strong>Use Case:</strong> Legacy systems only</li>
+                            <li><strong>Status:</strong> Deprecated for security</li>
+                        </ul>
+                    </div>
+                    <div class="ssh-box">
+                        <h4>SSH (Secure):</h4>
+                        <ul>
+                            <li><strong>Encryption:</strong> Strong cryptographic protection</li>
+                            <li><strong>Authentication:</strong> Multiple secure methods</li>
+                            <li><strong>Port:</strong> TCP 22</li>
+                            <li><strong>Security:</strong> Resistant to network attacks</li>
+                            <li><strong>Integrity:</strong> Message authentication codes</li>
+                            <li><strong>Use Case:</strong> Modern systems standard</li>
+                            <li><strong>Status:</strong> Industry standard</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="security-box">
+                    <strong>Migration:</strong> All Telnet usage should be replaced with SSH for security reasons
+                </div>
+            </section>
+
+            <!-- SSH Protocol Architecture -->
+            <section>
+                <h2>SSH Protocol Architecture</h2>
+                <div class="protocol-box">
+                    <strong>SSH Protocol Stack:</strong> Three-layer architecture providing transport, authentication, and connection services.
+                </div>
+                <div class="example-box">
+                    <strong>SSH Protocol Layers:</strong><br><br>
+                    
+                    <strong>SSH Connection Protocol (Layer 3):</strong><br>
+                    • Multiplexes multiple channels over single connection<br>
+                    • Handles interactive sessions, file transfers, port forwarding<br>
+                    • Flow control and channel management<br><br>
+                    
+                    <strong>SSH User Authentication Protocol (Layer 2):</strong><br>
+                    • Authenticates client to server<br>
+                    • Supports multiple authentication methods<br>
+                    • Password, public key, host-based, keyboard-interactive<br><br>
+                    
+                    <strong>SSH Transport Layer Protocol (Layer 1):</strong><br>
+                    • Server authentication and key exchange<br>
+                    • Encryption, integrity, and compression<br>
+                    • Algorithm negotiation and session management<br><br>
+                    
+                    <strong>Underlying Transport:</strong> TCP (reliable, connection-oriented)
+                </div>
+            </section>
+
+            <!-- SSH Handshake Process -->
+            <section>
+                <h2>SSH Connection Establishment</h2>
+                <div class="example-box">
+                    <strong>SSH Handshake Process:</strong><br><br>
+                    
+                    <strong>1. Protocol Version Exchange:</strong><br>
+                    Client: "SSH-2.0-OpenSSH_8.0"<br>
+                    Server: "SSH-2.0-OpenSSH_7.9"<br><br>
+                    
+                    <strong>2. Algorithm Negotiation:</strong><br>
+                    • Key exchange algorithms<br>
+                    • Encryption algorithms<br>
+                    • MAC algorithms<br>
+                    • Compression algorithms<br><br>
+                    
+                    <strong>3. Key Exchange (Diffie-Hellman):</strong><br>
+                    • Server sends host key<br>
+                    • Both parties exchange DH values<br>
+                    • Shared secret computed<br>
+                    • Session keys derived<br><br>
+                    
+                    <strong>4. Server Authentication:</strong><br>
+                    • Client verifies server's host key<br>
+                    • Host key checked against known_hosts<br><br>
+                    
+                    <strong>5. User Authentication:</strong><br>
+                    • Client authenticates to server<br>
+                    • Multiple authentication methods available<br><br>
+                    
+                    <strong>6. Channel Setup:</strong><br>
+                    • Request channel for shell/command/subsystem<br>
+                    • Begin encrypted communication
+                </div>
+            </section>
+
+            <!-- SSH Authentication Methods -->
+            <section>
+                <h2>SSH Authentication Methods</h2>
+                <div class="feature-grid">
+                    <div class="security-box">
+                        <h4>Password Authentication:</h4>
+                        <ul>
+                            <li><strong>Method:</strong> Username + password</li>
+                            <li><strong>Security:</strong> Vulnerable to brute force</li>
+                            <li><strong>Usability:</strong> Simple for users</li>
+                            <li><strong>Best Practice:</strong> Disable for servers</li>
+                            <li><strong>Use Case:</strong> Interactive user sessions</li>
+                        </ul>
+                    </div>
+                    <div class="ssh-box">
+                        <h4>Public Key Authentication:</h4>
+                        <ul>
+                            <li><strong>Method:</strong> Private/public key pairs</li>
+                            <li><strong>Security:</strong> Very strong</li>
+                            <li><strong>Usability:</strong> Automated access</li>
+                            <li><strong>Best Practice:</strong> Recommended method</li>
+                            <li><strong>Use Case:</strong> Automated systems, admin</li>
+                        </ul>
+                    </div>
+                    <div class="protocol-box">
+                        <h4>Certificate Authentication:</h4>
+                        <ul>
+                            <li><strong>Method:</strong> SSH certificates</li>
+                            <li><strong>Security:</strong> Excellent scalability</li>
+                            <li><strong>Usability:</strong> Centralized management</li>
+                            <li><strong>Best Practice:</strong> Enterprise environments</li>
+                            <li><strong>Use Case:</strong> Large deployments</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="command-box">
+                    <h4>Additional Methods:</h4>
+                    <ul>
+                        <li><strong>Host-based Authentication:</strong> Trust relationships between hosts</li>
+                        <li><strong>Keyboard-interactive:</strong> Challenge-response (2FA, OTP)</li>
+                        <li><strong>GSSAPI/Kerberos:</strong> Single sign-on integration</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- SSH Key Types -->
+            <section>
+                <h2>SSH Key Types and Algorithms</h2>
+                <table style="font-size: 0.7em;">
+                    <tr>
+                        <th>Key Type</th>
+                        <th>Algorithm</th>
+                        <th>Key Size</th>
+                        <th>Security</th>
+                        <th>Performance</th>
+                        <th>Recommendation</th>
+                    </tr>
+                    <tr>
+                        <td>RSA</td>
+                        <td>RSA</td>
+                        <td>2048-4096 bits</td>
+                        <td>Good</td>
+                        <td>Slower</td>
+                        <td>Use 3072+ bits</td>
+                    </tr>
+                    <tr>
+                        <td>DSA</td>
+                        <td>DSA</td>
+                        <td>1024 bits</td>
+                        <td>❌ Weak</td>
+                        <td>Fast</td>
+                        <td>Deprecated</td>
+                    </tr>
+                    <tr>
+                        <td>ECDSA</td>
+                        <td>Elliptic Curve</td>
+                        <td>256-521 bits</td>
+                        <td>Excellent</td>
+                        <td>Fast</td>
+                        <td>Good choice</td>
+                    </tr>
+                    <tr>
+                        <td>Ed25519</td>
+                        <td>Edwards Curve</td>
+                        <td>256 bits</td>
+                        <td>Excellent</td>
+                        <td>Very fast</td>
+                        <td>✅ Best choice</td>
+                    </tr>
+                    <tr>
+                        <td>Ed448</td>
+                        <td>Edwards Curve</td>
+                        <td>448 bits</td>
+                        <td>Excellent</td>
+                        <td>Fast</td>
+                        <td>High security</td>
+                    </tr>
+                </table>
+                <div class="ssh-box">
+                    <strong>Modern Recommendation:</strong> Use Ed25519 for new key generation - it's fast, secure, and has small key sizes
+                </div>
+            </section>
+
+            <!-- SSH Key Management -->
+            <section>
+                <h2>SSH Key Management</h2>
+                <div class="comparison-grid">
+                    <div class="ssh-box">
+                        <h4>Key Generation:</h4>
+                        <ul>
+                            <li><strong>ssh-keygen:</strong> Standard key generation tool</li>
+                            <li><strong>Strong entropy:</strong> Use hardware RNG when possible</li>
+                            <li><strong>Key length:</strong> Use appropriate key sizes</li>
+                            <li><strong>Passphrases:</strong> Protect private keys</li>
+                            <li><strong>Key comments:</strong> Identify key purpose/owner</li>
+                        </ul>
+                    </div>
+                    <div class="security-box">
+                        <h4>Key Distribution:</h4>
+                        <ul>
+                            <li><strong>authorized_keys:</strong> Server-side public key storage</li>
+                            <li><strong>ssh-copy-id:</strong> Automated public key installation</li>
+                            <li><strong>Configuration management:</strong> Ansible, Chef, Puppet</li>
+                            <li><strong>Certificate authorities:</strong> Centralized key management</li>
+                            <li><strong>Secure transfer:</strong> Never share private keys</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="example-box">
+                    <strong>Key Generation Examples:</strong><br><br>
+                    
+                    # Generate Ed25519 key (recommended)<br>
+                    ssh-keygen -t ed25519 -C "user@host"<br><br>
+                    
+                    # Generate RSA key with strong size<br>
+                    ssh-keygen -t rsa -b 3072 -C "user@host"<br><br>
+                    
+                    # Copy public key to server<br>
+                    ssh-copy-id user@server.example.com<br><br>
+                    
+                    # Manual public key installation<br>
+                    cat ~/.ssh/id_ed25519.pub >> ~/.ssh/authorized_keys
+                </div>
+            </section>
+
+            <!-- SSH Configuration -->
+            <section>
+                <h2>SSH Configuration Files</h2>
+                <div class="comparison-grid">
+                    <div class="protocol-box">
+                        <h4>Client Configuration (~/.ssh/config):</h4>
+                        <ul>
+                            <li><strong>Host aliases:</strong> Shortcut names for servers</li>
+                            <li><strong>User settings:</strong> Default usernames</li>
+                            <li><strong>Key specifications:</strong> Which keys to use</li>
+                            <li><strong>Port configurations:</strong> Non-standard ports</li>
+                            <li><strong>Proxy settings:</strong> Jump hosts, tunnels</li>
+                        </ul>
+                    </div>
+                    <div class="command-box">
+                        <h4>Server Configuration (/etc/ssh/sshd_config):</h4>
+                        <ul>
+                            <li><strong>Port settings:</strong> Change default port</li>
+                            <li><strong>Authentication:</strong> Enable/disable methods</li>
+                            <li><strong>Access control:</strong> User/group restrictions</li>
+                            <li><strong>Security settings:</strong> Protocol versions</li>
+                            <li><strong>Logging:</strong> Audit and monitoring</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="example-box">
+                    <strong>Client Config Example:</strong><br>
+                    Host webserver<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;HostName web.example.com<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;User admin<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;Port 2222<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;IdentityFile ~/.ssh/webserver_key<br><br>
+                    
+                    <strong>Server Config Example:</strong><br>
+                    Port 2222<br>
+                    PasswordAuthentication no<br>
+                    PubkeyAuthentication yes<br>
+                    PermitRootLogin no<br>
+                    AllowUsers admin developer
+                </div>
+            </section>
+
+            <!-- SSH Port Forwarding -->
+            <section>
+                <h2>SSH Port Forwarding (Tunneling)</h2>
+                <div class="security-box">
+                    <strong>Port Forwarding:</strong> SSH can create secure tunnels to forward network traffic through encrypted connections.
+                </div>
+                <div class="feature-grid">
+                    <div class="ssh-box">
+                        <h4>Local Port Forwarding:</h4>
+                        <ul>
+                            <li><strong>Direction:</strong> Client → SSH Server → Target</li>
+                            <li><strong>Use Case:</strong> Access remote services</li>
+                            <li><strong>Example:</strong> Access internal web server</li>
+                            <li><strong>Command:</strong> ssh -L 8080:internal:80 server</li>
+                        </ul>
+                    </div>
+                    <div class="protocol-box">
+                        <h4>Remote Port Forwarding:</h4>
+                        <ul>
+                            <li><strong>Direction:</strong> SSH Server → Client → Target</li>
+                            <li><strong>Use Case:</strong> Expose local services</li>
+                            <li><strong>Example:</strong> Share local development</li>
+                            <li><strong>Command:</strong> ssh -R 8080:localhost:80 server</li>
+                        </ul>
+                    </div>
+                    <div class="command-box">
+                        <h4>Dynamic Port Forwarding:</h4>
+                        <ul>
+                            <li><strong>Direction:</strong> SOCKS proxy through SSH</li>
+                            <li><strong>Use Case:</strong> Browse through SSH server</li>
+                            <li><strong>Example:</strong> Secure browsing</li>
+                            <li><strong>Command:</strong> ssh -D 1080 server</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="example-box">
+                    <strong>Port Forwarding Examples:</strong><br><br>
+                    
+                    # Local forwarding - access remote database<br>
+                    ssh -L 3306:db.internal:3306 jumphost.com<br>
+                    mysql -h localhost -P 3306 -u user database<br><br>
+                    
+                    # Remote forwarding - share local web server<br>
+                    ssh -R 8080:localhost:80 public-server.com<br><br>
+                    
+                    # Dynamic forwarding - SOCKS proxy<br>
+                    ssh -D 1080 proxy-server.com<br>
+                    # Configure browser to use localhost:1080 as SOCKS proxy
+                </div>
+            </section>
+
+            <!-- SSH File Transfer -->
+            <section>
+                <h2>SSH File Transfer Methods</h2>
+                <div class="comparison-grid">
+                    <div class="ssh-box">
+                        <h4>SCP (Secure Copy):</h4>
+                        <ul>
+                            <li><strong>Protocol:</strong> Simple file transfer over SSH</li>
+                            <li><strong>Features:</strong> Recursive directory copying</li>
+                            <li><strong>Security:</strong> Uses SSH authentication/encryption</li>
+                            <li><strong>Performance:</strong> Good for simple transfers</li>
+                            <li><strong>Limitations:</strong> No resume, limited features</li>
+                        </ul>
+                    </div>
+                    <div class="protocol-box">
+                        <h4>SFTP (SSH File Transfer Protocol):</h4>
+                        <ul>
+                            <li><strong>Protocol:</strong> Full-featured file transfer over SSH</li>
+                            <li><strong>Features:</strong> Directory browsing, file management</li>
+                            <li><strong>Security:</strong> Same as SSH</li>
+                            <li><strong>Performance:</strong> Optimized for interactive use</li>
+                            <li><strong>Advantages:</strong> Resume, permissions, timestamps</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="example-box">
+                    <strong>File Transfer Examples:</strong><br><br>
+                    
+                    <strong>SCP Examples:</strong><br>
+                    # Copy file to remote server<br>
+                    scp file.txt user@server.com:/path/to/destination/<br><br>
+                    
+                    # Copy directory recursively<br>
+                    scp -r directory/ user@server.com:/path/to/destination/<br><br>
+                    
+                    # Copy from remote to local<br>
+                    scp user@server.com:/remote/file.txt ./local/path/<br><br>
+                    
+                    <strong>SFTP Examples:</strong><br>
+                    # Interactive SFTP session<br>
+                    sftp user@server.com<br>
+                    sftp> put file.txt<br>
+                    sftp> get remote_file.txt<br>
+                    sftp> ls -la<br>
+                    sftp> quit
+                </div>
+            </section>
+
+            <!-- SSH Security Hardening -->
+            <section>
+                <h2>SSH Security Hardening</h2>
+                <ol>
+                    <li><strong>Change Default Port:</strong> Use non-standard port (not 22)</li>
+                    <li><strong>Disable Password Authentication:</strong> Use keys only</li>
+                    <li><strong>Disable Root Login:</strong> Use sudo for privilege escalation</li>
+                    <li><strong>Limit User Access:</strong> AllowUsers, AllowGroups directives</li>
+                    <li><strong>Use Strong Ciphers:</strong> Disable weak encryption algorithms</li>
+                    <li><strong>Enable Key-based Authentication:</strong> Disable password auth</li>
+                    <li><strong>Set Idle Timeout:</strong> Automatically disconnect idle sessions</li>
+                    <li><strong>Limit Connection Attempts:</strong> Prevent brute force attacks</li>
+                </ol>
+                <div class="security-box">
+                    <h3>Hardened sshd_config Example:</h3>
+                    <div class="example-box">
+                        Port 2222<br>
+                        Protocol 2<br>
+                        PermitRootLogin no<br>
+                        PasswordAuthentication no<br>
+                        PubkeyAuthentication yes<br>
+                        AuthorizedKeysFile .ssh/authorized_keys<br>
+                        AllowUsers admin developer<br>
+                        MaxAuthTries 3<br>
+                        ClientAliveInterval 300<br>
+                        ClientAliveCountMax 2<br>
+                        X11Forwarding no<br>
+                        Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com
+                    </div>
+                </div>
+            </section>
+
+            <!-- SSH Agents and Key Management -->
+            <section>
+                <h2>SSH Agent and Key Management</h2>
+                <div class="ssh-box">
+                    <strong>SSH Agent:</strong> Program that holds private keys in memory, allowing passwordless authentication without exposing private keys.
+                </div>
+                <div class="comparison-grid">
+                    <div class="protocol-box">
+                        <h4>SSH Agent Benefits:</h4>
+                        <ul>
+                            <li><strong>Convenience:</strong> Single password for multiple keys</li>
+                            <li><strong>Security:</strong> Private keys not stored on disk</li>
+                            <li><strong>Agent Forwarding:</strong> Use keys through jump hosts</li>
+                            <li><strong>Timeout:</strong> Automatic key expiration</li>
+                            <li><strong>Selective Loading:</strong> Load only needed keys</li>
+                        </ul>
+                    </div>
+                    <div class="command-box">
+                        <h4>Agent Management:</h4>
+                        <ul>
+                            <li><strong>ssh-agent:</strong> Start agent process</li>
+                            <li><strong>ssh-add:</strong> Add keys to agent</li>
+                            <li><strong>ssh-add -l:</strong> List loaded keys</li>
+                            <li><strong>ssh-add -D:</strong> Remove all keys</li>
+                            <li><strong>ssh-add -t:</strong> Set key lifetime</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="example-box">
+                    <strong>SSH Agent Usage:</strong><br><br>
+                    
+                    # Start SSH agent<br>
+                    eval "$(ssh-agent -s)"<br><br>
+                    
+                    # Add key to agent (enter passphrase once)<br>
+                    ssh-add ~/.ssh/id_ed25519<br><br>
+                    
+                    # Add key with timeout (1 hour)<br>
+                    ssh-add -t 3600 ~/.ssh/id_rsa<br><br>
+                    
+                    # List loaded keys<br>
+                    ssh-add -l<br><br>
+                    
+                    # Remove all keys from agent<br>
+                    ssh-add -D
+                </div>
+            </section>
+
+            <!-- SSH Certificates -->
+            <section>
+                <h2>SSH Certificates</h2>
+                <div class="security-box">
+                    <strong>SSH Certificates:</strong> Cryptographically signed public keys that provide scalable authentication without managing individual authorized_keys files.
+                </div>
+                <div class="comparison-grid">
+                    <div class="ssh-box">
+                        <h4>Certificate Benefits:</h4>
+                        <ul>
+                            <li><strong>Scalability:</strong> No authorized_keys management</li>
+                            <li><strong>Centralized Control:</strong> Single CA manages access</li>
+                            <li><strong>Temporary Access:</strong> Time-limited certificates</li>
+                            <li><strong>Principle Access:</strong> Username embedded in cert</li>
+                            <li><strong>Forced Commands:</strong> Restrict allowed operations</li>
+                            <li><strong>Audit Trail:</strong> Better logging and tracking</li>
+                        </ul>
+                    </div>
+                    <div class="protocol-box">
+                        <h4>Certificate Types:</h4>
+                        <ul>
+                            <li><strong>User Certificates:</strong> Authenticate users to hosts</li>
+                            <li><strong>Host Certificates:</strong> Authenticate hosts to users</li>
+                            <li><strong>Certificate Extensions:</strong> Restrictions and permissions</li>
+                            <li><strong>Critical Options:</strong> Enforced security constraints</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="example-box">
+                    <strong>Certificate Creation Example:</strong><br><br>
+                    
+                    # Create CA key pair<br>
+                    ssh-keygen -t ed25519 -f ssh_ca<br><br>
+                    
+                    # Sign user's public key<br>
+                    ssh-keygen -s ssh_ca -I user1 -V +1w ~/.ssh/id_ed25519.pub<br><br>
+                    
+                    # Configure server to trust CA<br>
+                    echo "TrustedUserCAKeys /etc/ssh/ssh_ca.pub" >> /etc/ssh/sshd_config
+                </div>
+            </section>
+
+            <!-- SSH Attacks and Defenses -->
+            <section>
+                <h2>Common SSH Attacks and Defenses</h2>
+                <div class="comparison-grid">
+                    <div class="command-box">
+                        <h4>Common Attacks:</h4>
+                        <ul>
+                            <li><strong>Brute Force:</strong> Password guessing attacks</li>
+                            <li><strong>Dictionary Attacks:</strong> Common password lists</li>
+                            <li><strong>Man-in-the-Middle:</strong> Fake SSH servers</li>
+                            <li><strong>Key Theft:</strong> Stolen private keys</li>
+                            <li><strong>Session Hijacking:</strong> TCP session takeover</li>
+                            <li><strong>Port Scanning:</strong> Discovery of SSH services</li>
+                        </ul>
+                    </div>
+                    <div class="security-box">
+                        <h4>Defense Strategies:</h4>
+                        <ul>
+                            <li><strong>Disable Passwords:</strong> Key-only authentication</li>
+                            <li><strong>Fail2ban/SSHGuard:</strong> Block brute force attempts</li>
+                            <li><strong>Host Key Verification:</strong> Check known_hosts</li>
+                            <li><strong>Key Rotation:</strong> Regular key replacement</li>
+                            <li><strong>Network Controls:</strong> Firewalls, VPNs</li>
+                            <li><strong>Monitoring:</strong> Log analysis and alerting</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="ssh-box">
+                    <h3>SSH Honeypots:</h3>
+                    <p>Deploy fake SSH services to detect and analyze attack attempts, gathering threat intelligence while protecting real systems.</p>
+                </div>
+            </section>
+
+            <!-- SSH Monitoring and Logging -->
+            <section>
+                <h2>SSH Monitoring and Logging</h2>
+                <div class="feature-grid">
+                    <div class="protocol-box">
+                        <h4>Server-Side Logging:</h4>
+                        <ul>
+                            <li><strong>Auth logs:</strong> /var/log/auth.log</li>
+                            <li><strong>SSH daemon:</strong> /var/log/sshd.log</li>
+                            <li><strong>Syslog levels:</strong> INFO, DEBUG, VERBOSE</li>
+                            <li><strong>Failed attempts:</strong> Authentication failures</li>
+                            <li><strong>Connection details:</strong> Source IPs, users</li>
+                        </ul>
+                    </div>
+                    <div class="security-box">
+                        <h4>Monitoring Metrics:</h4>
+                        <ul>
+                            <li><strong>Connection attempts:</strong> Successful/failed logins</li>
+                            <li><strong>Geographic analysis:</strong> Connection sources</li>
+                            <li><strong>Time patterns:</strong> Unusual access times</li>
+                            <li><strong>User behavior:</strong> Command patterns</li>
+                            <li><strong>Session duration:</strong> Connection times</li>
+                        </ul>
+                    </div>
+                    <div class="ssh-box">
+                        <h4>Security Tools:</h4>
+                        <ul>
+                            <li><strong>Fail2ban:</strong> Automated IP blocking</li>
+                            <li><strong>OSSEC:</strong> Host-based intrusion detection</li>
+                            <li><strong>Logwatch:</strong> Log analysis and reporting</li>
+                            <li><strong>Splunk:</strong> Enterprise log management</li>
+                            <li><strong>ELK Stack:</strong> Elasticsearch, Logstash, Kibana</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SSH Best Practices -->
+            <section>
+                <h2>SSH Best Practices Summary</h2>
+                <div class="comparison-grid">
+                    <div class="ssh-box">
+                        <h4>Authentication:</h4>
+                        <ul>
+                            <li>Use Ed25519 or RSA 3072+ bit keys</li>
+                            <li>Disable password authentication</li>
+                            <li>Implement multi-factor authentication</li>
+                            <li>Use SSH certificates for large deployments</li>
+                            <li>Protect private keys with passphrases</li>
+                        </ul>
+                    </div>
+                    <div class="security-box">
+                        <h4>Configuration:</h4>
+                        <ul>
+                            <li>Change default port from 22</li>
+                            <li>Disable root login</li>
+                            <li>Use AllowUsers/DenyUsers directives</li>
+                            <li>Enable strong ciphers and MACs</li>
+                            <li>Set appropriate timeouts</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="protocol-box">
+                    <h4>Operational Security:</h4>
+                    <ul>
+                        <li>Regular key rotation and management</li>
+                        <li>Comprehensive logging and monitoring</li>
+                        <li>Network-level access controls</li>
+                        <li>Regular security updates</li>
+                        <li>Incident response procedures</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- SSH Tools and Implementations -->
+            <section>
+                <h2>SSH Implementations and Tools</h2>
+                <table style="font-size: 0.75em;">
+                    <tr>
+                        <th>Implementation</th>
+                        <th>Platform</th>
+                        <th>Type</th>
+                        <th>Key Features</th>
+                    </tr>
+                    <tr>
+                        <td>OpenSSH</td>
+                        <td>Unix/Linux/macOS</td>
+                        <td>Open Source</td>
+                        <td>Most widely used, full feature set</td>
+                    </tr>
+                    <tr>
+                        <td>PuTTY</td>
+                        <td>Windows</td>
+                        <td>Free</td>
+                        <td>Popular Windows SSH client</td>
+                    </tr>
+                    <tr>
+                        <td>Windows OpenSSH</td>
+                        <td>Windows 10+</td>
+                        <td>Built-in</td>
+                        <td>Native Windows SSH support</td>
+                    </tr>
+                    <tr>
+                        <td>Dropbear</td>
+                        <td>Embedded systems</td>
+                        <td>Lightweight</td>
+                        <td>Small footprint SSH implementation</td>
+                    </tr>
+                    <tr>
+                        <td>libssh</td>
+                        <td>Cross-platform</td>
+                        <td>Library</td>
+                        <td>SSH library for applications</td>
+                    </tr>
+                    <tr>
+                        <td>Commercial SSH</td>
+                        <td>Various</td>
+                        <td>Enterprise</td>
+                        <td>Advanced management features</td>
+                    </tr>
+                </table>
+            </section>
+
+            <!-- Key Takeaways -->
+            <section>
+                <h2>Key Takeaways</h2>
+                <ul>
+                    <li>SSH provides secure remote access replacing insecure protocols</li>
+                    <li>Public key authentication is more secure than passwords</li>
+                    <li>SSH supports multiple services: shell access, file transfer, tunneling</li>
+                    <li>Proper configuration hardening is essential for security</li>
+                    <li>SSH agents improve usability without compromising security</li>
+                    <li>SSH certificates provide scalable authentication for enterprises</li>
+                    <li>Regular monitoring and key management are crucial</li>
+                    <li>Ed25519 keys are recommended for new deployments</li>
+                </ul>
+                <div class="ssh-box">
+                    <strong>Remember:</strong> SSH security depends on proper key management, configuration hardening, and ongoing monitoring - not just using the protocol
+                </div>
+            </section>
+
+            <!-- Thank You -->
+            <section class="title-slide">
+                <h1>Thank You</h1>
+                <h3>Questions & Discussion</h3>
+                <p>Next: Wireless Access Points</p>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/notes/notes.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/markdown/markdown.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/highlight.min.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            transition: 'slide',
+            plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+        });
+    </script>
+</body>
+</html>

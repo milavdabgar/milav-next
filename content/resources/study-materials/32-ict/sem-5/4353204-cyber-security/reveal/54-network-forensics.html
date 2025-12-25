@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Network Forensics</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/white.css">
+    <style>
+        .reveal .slides section {
+            text-align: left;
+        }
+        .reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .definition-box {
+            background-color: #e8f4fd;
+            border: 2px solid #3498db;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+        .example-box {
+            background-color: #fff9e6;
+            border: 2px solid #f39c12;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+        .prevention-box {
+            background-color: #e8f8f5;
+            border: 2px solid #27ae60;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+        .code-box {
+            background-color: #f8f9fa;
+            border: 2px solid #6c757d;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .forensics-category {
+            background-color: #f3e5f5;
+            border: 2px solid #9c27b0;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .network-layer {
+            background-color: #e8f5e8;
+            border: 2px solid #4caf50;
+            padding: 15px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- Title Slide -->
+            <section>
+                <h1>Network Forensics</h1>
+                <p style="text-align: center; font-size: 1.2em; color: #7f8c8d;">Network Traffic Analysis and Investigation</p>
+                <div style="text-align: center; margin-top: 30px;">
+                    <img src="diagrams/network-forensics-process.svg" alt="Network Forensics Process" style="width: 70%; height: auto; max-width: 700px;">
+                </div>
+            </section>
+
+            <!-- Definition and Overview -->
+            <section>
+                <h2>What is Network Forensics?</h2>
+                <div class="definition-box">
+                    <strong>Network Forensics:</strong> The capture, recording, and analysis of network events and traffic to discover the source of security attacks or network intrusion incidents.
+                </div>
+                <ul>
+                    <li><strong>Traffic Analysis:</strong> Examining network communications</li>
+                    <li><strong>Incident Investigation:</strong> Identifying attack vectors and sources</li>
+                    <li><strong>Evidence Collection:</strong> Preserving network-based evidence</li>
+                    <li><strong>Real-time Monitoring:</strong> Live network surveillance</li>
+                </ul>
+            </section>
+
+            <!-- Network Forensics Objectives -->
+            <section>
+                <h2>Network Forensics Objectives</h2>
+                <div class="prevention-box">
+                    <h4>Primary Goals:</h4>
+                    <ol>
+                        <li><strong>Incident Detection:</strong> Identify security breaches and anomalies</li>
+                        <li><strong>Evidence Collection:</strong> Gather admissible network evidence</li>
+                        <li><strong>Attack Attribution:</strong> Determine attack sources and methods</li>
+                        <li><strong>Timeline Reconstruction:</strong> Establish sequence of network events</li>
+                        <li><strong>Damage Assessment:</strong> Evaluate impact and scope of incidents</li>
+                        <li><strong>Prevention:</strong> Improve security based on findings</li>
+                    </ol>
+                </div>
+            </section>
+
+            <!-- Network Layers and Protocols -->
+            <section>
+                <h2>Network Protocol Analysis</h2>
+                <div class="grid-container">
+                    <div class="network-layer">
+                        <h4>Layer 2 - Data Link</h4>
+                        <ul>
+                            <li>MAC addresses</li>
+                            <li>ARP traffic</li>
+                            <li>Switch logs</li>
+                            <li>VLAN information</li>
+                        </ul>
+                    </div>
+                    <div class="network-layer">
+                        <h4>Layer 3 - Network</h4>
+                        <ul>
+                            <li>IP addresses and routing</li>
+                            <li>ICMP messages</li>
+                            <li>Network topology</li>
+                            <li>Routing protocols</li>
+                        </ul>
+                    </div>
+                    <div class="network-layer">
+                        <h4>Layer 4 - Transport</h4>
+                        <ul>
+                            <li>TCP/UDP connections</li>
+                            <li>Port information</li>
+                            <li>Session analysis</li>
+                            <li>Connection states</li>
+                        </ul>
+                    </div>
+                    <div class="network-layer">
+                        <h4>Layer 7 - Application</h4>
+                        <ul>
+                            <li>HTTP/HTTPS traffic</li>
+                            <li>Email protocols</li>
+                            <li>File transfers</li>
+                            <li>Application data</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Data Collection Methods -->
+            <section>
+                <h2>Network Data Collection</h2>
+                <div class="example-box">
+                    <h4>Collection Approaches:</h4>
+                    <ul>
+                        <li><strong>Catch-it-as-you-can:</strong> Collect all packets passing through collection point</li>
+                        <li><strong>Stop-look-and-listen:</strong> Real-time analysis with selective storage</li>
+                        <li><strong>Hybrid Approach:</strong> Combination of full packet capture and real-time analysis</li>
+                    </ul>
+                </div>
+                <div class="grid-container">
+                    <div class="forensics-category">
+                        <h4>Packet Capture Methods</h4>
+                        <ul>
+                            <li>Network taps</li>
+                            <li>Port mirroring/SPAN</li>
+                            <li>Inline sensors</li>
+                            <li>Software-based capture</li>
+                        </ul>
+                    </div>
+                    <div class="forensics-category">
+                        <h4>Data Sources</h4>
+                        <ul>
+                            <li>Full packet captures</li>
+                            <li>Flow records (NetFlow/sFlow)</li>
+                            <li>Log files</li>
+                            <li>IDS/IPS alerts</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Traffic Analysis Techniques -->
+            <section>
+                <h2>Traffic Analysis Techniques</h2>
+                <div class="code-box">
+                    <strong>Packet Analysis Process:</strong>
+                    1. Packet Capture → 2. Protocol Decoding → 3. Session Reconstruction
+                    4. Content Extraction → 5. Pattern Analysis → 6. Anomaly Detection
+                </code>
+                <div class="example-box">
+                    <h4>Analysis Methods:</h4>
+                    <ul>
+                        <li><strong>Protocol Analysis:</strong> Examine protocol compliance and anomalies</li>
+                        <li><strong>Session Reconstruction:</strong> Rebuild communication sessions</li>
+                        <li><strong>Flow Analysis:</strong> Study traffic patterns and volumes</li>
+                        <li><strong>Content Analysis:</strong> Examine payload data</li>
+                        <li><strong>Behavioral Analysis:</strong> Identify unusual communication patterns</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Network Forensic Tools -->
+            <section>
+                <h2>Network Forensic Tools</h2>
+                <div class="grid-container">
+                    <div class="forensics-category">
+                        <h4>Packet Capture Tools</h4>
+                        <ul>
+                            <li><strong>Wireshark:</strong> GUI packet analyzer</li>
+                            <li><strong>tcpdump:</strong> Command-line packet capture</li>
+                            <li><strong>tshark:</strong> Command-line Wireshark</li>
+                            <li><strong>NetworkMiner:</strong> Forensic packet analyzer</li>
+                        </ul>
+                    </div>
+                    <div class="forensics-category">
+                        <h4>Flow Analysis Tools</h4>
+                        <ul>
+                            <li><strong>SiLK:</strong> Traffic analysis toolkit</li>
+                            <li><strong>Argus:</strong> Network activity auditing</li>
+                            <li><strong>nfcapd/nfdump:</strong> NetFlow capture and analysis</li>
+                            <li><strong>ELK Stack:</strong> Log analysis platform</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="code-box">
+                    <strong>Wireshark Display Filters Examples:</strong>
+                    ip.addr == 192.168.1.1        # Specific IP address
+                    tcp.port == 80                 # HTTP traffic
+                    http.request.method == "POST"  # HTTP POST requests
+                    dns.flags.response == 0        # DNS queries only
+                    tcp.flags.syn == 1             # TCP SYN packets
+                </code>
+            </section>
+
+            <!-- Network Attack Investigation -->
+            <section>
+                <h2>Common Network Attack Investigation</h2>
+                <div class="grid-container">
+                    <div class="example-box">
+                        <h4>DDoS Attacks</h4>
+                        <ul>
+                            <li>Traffic volume analysis</li>
+                            <li>Source IP distribution</li>
+                            <li>Attack vector identification</li>
+                            <li>Amplification factor calculation</li>
+                        </ul>
+                    </div>
+                    <div class="example-box">
+                        <h4>Malware Communication</h4>
+                        <ul>
+                            <li>Command and control traffic</li>
+                            <li>Data exfiltration patterns</li>
+                            <li>DNS tunneling detection</li>
+                            <li>Beaconing behavior analysis</li>
+                        </ul>
+                    </div>
+                    <div class="example-box">
+                        <h4>Network Intrusion</h4>
+                        <ul>
+                            <li>Lateral movement tracking</li>
+                            <li>Privilege escalation evidence</li>
+                            <li>Data access patterns</li>
+                            <li>Persistence mechanism traffic</li>
+                        </ul>
+                    </div>
+                    <div class="example-box">
+                        <h4>Man-in-the-Middle</h4>
+                        <ul>
+                            <li>Certificate anomalies</li>
+                            <li>ARP spoofing indicators</li>
+                            <li>DNS hijacking evidence</li>
+                            <li>Traffic redirection patterns</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Session Reconstruction -->
+            <section>
+                <h2>Session Reconstruction</h2>
+                <div class="definition-box">
+                    <strong>Session Reconstruction:</strong> The process of reassembling network communications to understand complete interactions between network endpoints.
+                </div>
+                <div class="example-box">
+                    <h4>Reconstruction Process:</h4>
+                    <ol>
+                        <li><strong>Packet Collection:</strong> Gather related packets</li>
+                        <li><strong>Stream Assembly:</strong> Reassemble TCP streams</li>
+                        <li><strong>Protocol Decoding:</strong> Parse application protocols</li>
+                        <li><strong>Content Extraction:</strong> Extract files and data</li>
+                        <li><strong>Timeline Creation:</strong> Order events chronologically</li>
+                    </ol>
+                </div>
+                <div class="code-box">
+                    <strong>TCP Stream Following:</strong>
+                    • Wireshark: Follow → TCP Stream
+                    • Identifies complete conversations
+                    • Reconstructs bidirectional communication
+                    • Extracts application-layer data
+                    • Reveals transferred files and content
+                </code>
+            </section>
+
+            <!-- Log File Analysis -->
+            <section>
+                <h2>Network Log Analysis</h2>
+                <div class="prevention-box">
+                    <h4>Types of Network Logs:</h4>
+                    <ul>
+                        <li><strong>Firewall Logs:</strong> Connection attempts and blocks</li>
+                        <li><strong>Router Logs:</strong> Routing decisions and interface status</li>
+                        <li><strong>Switch Logs:</strong> Port activities and MAC address changes</li>
+                        <li><strong>DNS Logs:</strong> Domain name resolution queries</li>
+                        <li><strong>DHCP Logs:</strong> IP address assignments</li>
+                        <li><strong>Proxy Logs:</strong> Web access and URL filtering</li>
+                    </ul>
+                </div>
+                <div class="code-box">
+                    <strong>Common Log Formats:</strong>
+                    • Apache Common Log Format (CLF)
+                    • W3C Extended Log Format
+                    • Cisco IOS logging format
+                    • Windows Event Log format
+                    • Syslog (RFC 3164/RFC 5424)
+                </code>
+            </section>
+
+            <!-- Flow-Based Analysis -->
+            <section>
+                <h2>Network Flow Analysis</h2>
+                <div class="definition-box">
+                    <strong>Network Flows:</strong> Unidirectional sequence of packets sharing common characteristics (source/destination IP, ports, protocol, ToS) within a time window.
+                </div>
+                <div class="grid-container">
+                    <div class="forensics-category">
+                        <h4>Flow Technologies</h4>
+                        <ul>
+                            <li><strong>NetFlow:</strong> Cisco's flow monitoring</li>
+                            <li><strong>sFlow:</strong> Sampled flow monitoring</li>
+                            <li><strong>IPFIX:</strong> IP Flow Information Export</li>
+                            <li><strong>J-Flow:</strong> Juniper's implementation</li>
+                        </ul>
+                    </div>
+                    <div class="forensics-category">
+                        <h4>Flow Analysis Benefits</h4>
+                        <ul>
+                            <li>Scalable monitoring</li>
+                            <li>Long-term storage</li>
+                            <li>Trend analysis</li>
+                            <li>Bandwidth utilization</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="example-box">
+                    <h4>Flow Record Information:</h4>
+                    <ul>
+                        <li>Source and destination IP addresses</li>
+                        <li>Source and destination port numbers</li>
+                        <li>Protocol type</li>
+                        <li>Type of Service (ToS)</li>
+                        <li>Start and end timestamps</li>
+                        <li>Packet and byte counts</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Wireless Network Forensics -->
+            <section>
+                <h2>Wireless Network Forensics</h2>
+                <div class="example-box">
+                    <h4>Wireless-Specific Challenges:</h4>
+                    <ul>
+                        <li><strong>Signal Interception:</strong> Requires proximity to access point</li>
+                        <li><strong>Encryption:</strong> WPA/WPA2/WPA3 protection</li>
+                        <li><strong>Channel Hopping:</strong> Multiple frequency monitoring</li>
+                        <li><strong>Device Mobility:</strong> Changing association patterns</li>
+                        <li><strong>Physical Layer:</strong> RF signal analysis</li>
+                    </ul>
+                </div>
+                <div class="forensics-category">
+                    <h4>Wireless Analysis Tools:</h4>
+                    <ul>
+                        <li><strong>Kismet:</strong> Wireless network detector</li>
+                        <li><strong>Aircrack-ng:</strong> Wireless security auditing</li>
+                        <li><strong>InSSIDer:</strong> WiFi network scanner</li>
+                        <li><strong>CommView for WiFi:</strong> Wireless packet capture</li>
+                        <li><strong>Wireshark:</strong> With wireless adapters</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Encrypted Traffic Analysis -->
+            <section>
+                <h2>Encrypted Traffic Analysis</h2>
+                <div class="definition-box">
+                    <strong>Challenge:</strong> Analyzing encrypted communications without breaking encryption by examining metadata and traffic patterns.
+                </div>
+                <div class="prevention-box">
+                    <h4>Analysis Techniques:</h4>
+                    <ul>
+                        <li><strong>Traffic Flow Analysis:</strong> Connection patterns and timing</li>
+                        <li><strong>Packet Size Analysis:</strong> Size patterns reveal application types</li>
+                        <li><strong>Certificate Analysis:</strong> TLS certificate information</li>
+                        <li><strong>DNS Analysis:</strong> Domain name resolutions</li>
+                        <li><strong>JA3 Fingerprinting:</strong> TLS client identification</li>
+                    </ul>
+                </div>
+                <div class="code-box">
+                    <strong>Encrypted Traffic Indicators:</strong>
+                    • Regular beaconing patterns (malware C2)
+                    • Unusual data volumes during off-hours
+                    • Connections to suspicious IP addresses
+                    • Certificate anomalies or changes
+                    • Domain generation algorithm patterns
+                </code>
+            </section>
+
+            <!-- Timeline and Correlation -->
+            <section>
+                <h2>Network Timeline Analysis</h2>
+                <div class="example-box">
+                    <h4>Timeline Creation Process:</h4>
+                    <ol>
+                        <li><strong>Data Collection:</strong> Gather timestamped network events</li>
+                        <li><strong>Time Synchronization:</strong> Normalize timestamps across sources</li>
+                        <li><strong>Event Correlation:</strong> Link related network activities</li>
+                        <li><strong>Pattern Recognition:</strong> Identify attack sequences</li>
+                        <li><strong>Visualization:</strong> Create comprehensive timeline views</li>
+                    </ol>
+                </div>
+                <div class="prevention-box">
+                    <h4>Correlation Techniques:</h4>
+                    <ul>
+                        <li>IP address correlation across time</li>
+                        <li>Session ID tracking</li>
+                        <li>User agent string analysis</li>
+                        <li>Geolocation correlation</li>
+                        <li>Attack signature matching</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Evidence Preservation -->
+            <section>
+                <h2>Network Evidence Preservation</h2>
+                <div class="definition-box">
+                    <strong>Chain of Custody:</strong> Maintaining integrity and authenticity of network evidence from collection through analysis and presentation.
+                </div>
+                <div class="grid-container">
+                    <div class="prevention-box">
+                        <h4>Preservation Requirements</h4>
+                        <ul>
+                            <li>Accurate time synchronization</li>
+                            <li>Hash verification of packet captures</li>
+                            <li>Proper storage and handling</li>
+                            <li>Access logging and control</li>
+                            <li>Documentation of procedures</li>
+                        </ul>
+                    </div>
+                    <div class="prevention-box">
+                        <h4>Storage Considerations</h4>
+                        <ul>
+                            <li>High-speed storage for captures</li>
+                            <li>Redundant storage systems</li>
+                            <li>Compression for long-term retention</li>
+                            <li>Secure access controls</li>
+                            <li>Regular integrity checks</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Challenges and Limitations -->
+            <section>
+                <h2>Network Forensics Challenges</h2>
+                <div class="example-box">
+                    <h4>Technical Challenges:</h4>
+                    <ul>
+                        <li><strong>Volume:</strong> High-speed networks generate massive data</li>
+                        <li><strong>Encryption:</strong> Widespread use limits content analysis</li>
+                        <li><strong>Switched Networks:</strong> Traffic segmentation challenges</li>
+                        <li><strong>Cloud Computing:</strong> Limited visibility in virtual environments</li>
+                        <li><strong>Mobile Devices:</strong> Wireless and cellular network complexity</li>
+                    </ul>
+                </div>
+                <div class="forensics-category">
+                    <h4>Legal and Privacy Challenges:</h4>
+                    <ul>
+                        <li>Privacy regulations and compliance</li>
+                        <li>Cross-border data collection</li>
+                        <li>Warrant requirements</li>
+                        <li>Data retention policies</li>
+                        <li>Employee monitoring ethics</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Incident Response Integration -->
+            <section>
+                <h2>Network Forensics in Incident Response</h2>
+                <div class="prevention-box">
+                    <h4>IR Integration Points:</h4>
+                    <ol>
+                        <li><strong>Detection:</strong> Network monitoring alerts to incidents</li>
+                        <li><strong>Analysis:</strong> Forensic examination of network evidence</li>
+                        <li><strong>Containment:</strong> Network-based isolation and blocking</li>
+                        <li><strong>Eradication:</strong> Remove network-based threats</li>
+                        <li><strong>Recovery:</strong> Restore normal network operations</li>
+                        <li><strong>Lessons Learned:</strong> Improve monitoring and detection</li>
+                    </ol>
+                </div>
+                <div class="code-box">
+                    <strong>Real-time Response Actions:</strong>
+                    • Block malicious IP addresses
+                    • Quarantine infected systems
+                    • Capture additional evidence
+                    • Preserve volatile network state
+                    • Document ongoing activities
+                </code>
+            </section>
+
+            <!-- Best Practices -->
+            <section>
+                <h2>Network Forensics Best Practices</h2>
+                <div class="grid-container">
+                    <div class="prevention-box">
+                        <h4>Collection Best Practices</h4>
+                        <ul>
+                            <li>Continuous monitoring deployment</li>
+                            <li>Strategic sensor placement</li>
+                            <li>Comprehensive logging configuration</li>
+                            <li>Time synchronization across systems</li>
+                            <li>Regular storage capacity monitoring</li>
+                        </ul>
+                    </div>
+                    <div class="prevention-box">
+                        <h4>Analysis Best Practices</h4>
+                        <ul>
+                            <li>Systematic investigation methodology</li>
+                            <li>Multiple analysis perspectives</li>
+                            <li>Automated analysis tool usage</li>
+                            <li>Cross-correlation with other evidence</li>
+                            <li>Detailed documentation practices</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Future of Network Forensics -->
+            <section>
+                <h2>Future Trends</h2>
+                <div class="example-box">
+                    <h4>Emerging Technologies:</h4>
+                    <ul>
+                        <li><strong>AI/ML Integration:</strong> Automated threat detection and analysis</li>
+                        <li><strong>5G Networks:</strong> New protocols and security challenges</li>
+                        <li><strong>IoT Forensics:</strong> Massive device ecosystem analysis</li>
+                        <li><strong>SD-WAN Analysis:</strong> Software-defined networking challenges</li>
+                        <li><strong>Edge Computing:</strong> Distributed processing forensics</li>
+                    </ul>
+                </div>
+                <div class="forensics-category">
+                    <h4>Tool Evolution:</h4>
+                    <ul>
+                        <li>Cloud-native forensic platforms</li>
+                        <li>Real-time analysis capabilities</li>
+                        <li>Enhanced encrypted traffic analysis</li>
+                        <li>Cross-platform correlation tools</li>
+                        <li>Automated report generation</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Conclusion -->
+            <section>
+                <h2>Key Takeaways</h2>
+                <div class="definition-box">
+                    <h4>Critical Points:</h4>
+                    <ul>
+                        <li><strong>Comprehensive Monitoring:</strong> Strategic placement and continuous capture</li>
+                        <li><strong>Multi-layered Analysis:</strong> Examine all network protocol layers</li>
+                        <li><strong>Tool Proficiency:</strong> Master various analysis tools and techniques</li>
+                        <li><strong>Evidence Integrity:</strong> Maintain chain of custody and documentation</li>
+                        <li><strong>Continuous Learning:</strong> Adapt to evolving network technologies</li>
+                    </ul>
+                </div>
+                <div class="prevention-box">
+                    <strong>Network Forensics Success:</strong> Combine comprehensive monitoring, systematic analysis, and proper evidence handling to effectively investigate network-based security incidents and cyber crimes.
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            controls: true,
+            progress: true,
+            center: true,
+            transition: 'slide'
+        });
+    </script>
+</body>
+</html>

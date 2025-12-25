@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
+  <title>Embedded Software Architectures: Polling, Interrupt-driven, Cooperative, Preemptive (RTOS)</title>
+  <desc>
+    Comparative block diagrams of common embedded software architectures.
+    Course: 4343204 Embedded Systems — Unit 3: Embedded software architectures
+  </desc>
+  <defs>
+    <style type="text/css"><![CDATA[
+      .h1 { font: 700 30px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial; fill: #111; }
+      .h2 { font: 600 20px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial; fill: #111; }
+      .lab { font: 600 13px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial; fill: #111; }
+      .txt { font: 400 13px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Arial; fill: #111; }
+      .small { font: 400 12px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial; fill: #333; }
+      .mono { font: 600 12px/1.2 ui-monospace, Menlo, Consolas, monospace; fill: #111; }
+      .panel { fill: #fafafa; stroke: #ddd; stroke-width: 1.2; rx: 10; }
+      .box { fill: #fff; stroke: #333; stroke-width: 1.5; rx: 8; }
+      .queue { fill: #f5f9ff; stroke: #0b74de; stroke-width: 1.2; rx: 8; }
+      .irq { fill: #fff7e6; stroke: #d9480f; stroke-width: 1.2; rx: 8; }
+      .task { fill: #e9f7ef; stroke: #1a7f37; stroke-width: 1.2; rx: 8; }
+      .sched { fill: #f3e8ff; stroke: #7e22ce; stroke-width: 1.2; rx: 8; }
+      .arrow { marker-end: url(#arrowhead); stroke: #333; stroke-width: 1.6; fill: none; }
+      .arrow-blue { marker-end: url(#arrowhead); stroke: #0b74de; stroke-width: 1.6; fill: none; }
+      .arrow-green { marker-end: url(#arrowhead); stroke: #1a7f37; stroke-width: 1.6; fill: none; }
+      .arrow-orange { marker-end: url(#arrowhead); stroke: #d9480f; stroke-width: 1.6; fill: none; }
+      .arrow-purple { marker-end: url(#arrowhead); stroke: #7e22ce; stroke-width: 1.6; fill: none; }
+    ]]></style>
+    <marker id="arrowhead" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#333" />
+    </marker>
+  </defs>
+
+  <text class="h1" x="40" y="50">Embedded Software Architectures</text>
+  <text class="txt" x="40" y="78">Polling loop, Interrupt-driven, Cooperative scheduler, Preemptive RTOS — when to use and how they flow.</text>
+
+  <!-- Layout panels -->
+  <rect class="panel" x="40" y="110" width="520" height="300" />
+  <rect class="panel" x="640" y="110" width="520" height="300" />
+  <rect class="panel" x="40" y="450" width="520" height="380" />
+  <rect class="panel" x="640" y="450" width="520" height="380" />
+
+  <!-- Polling Loop -->
+  <text class="h2" x="60" y="140">A) Polling Loop</text>
+  <rect class="box" x="60" y="160" width="480" height="230" />
+  <text class="lab" x="80" y="188">main()</text>
+  <text class="mono" x="80" y="208">init();</text>
+  <text class="mono" x="80" y="228">while (1) {</text>
+  <text class="mono" x="100" y="248">read_inputs();</text>
+  <text class="mono" x="100" y="268">process_state();</text>
+  <text class="mono" x="100" y="288">update_outputs();</text>
+  <text class="mono" x="100" y="308">delay_until_tick();</text>
+  <text class="mono" x="80" y="328">}</text>
+  <text class="small" x="80" y="350">Pros: Simple, deterministic if loop is bounded. Cons: Latency equals loop period; wastes CPU if polling idle.</text>
+
+  <!-- Interrupt-driven -->
+  <text class="h2" x="660" y="140">B) Interrupt-driven</text>
+  <rect class="box" x="660" y="160" width="480" height="230" />
+  <rect class="irq" x="680" y="190" width="200" height="40" />
+  <text class="lab" x="690" y="214">ISR: GPIO/EXTI</text>
+  <rect class="irq" x="680" y="240" width="200" height="40" />
+  <text class="lab" x="690" y="264">ISR: TIMER</text>
+  <rect class="irq" x="900" y="190" width="220" height="40" />
+  <text class="lab" x="910" y="214">ISR: UART RX/TX</text>
+  <rect class="queue" x="780" y="300" width="240" height="60" />
+  <text class="lab" x="790" y="324">Ring buffers / Event queues</text>
+  <path class="arrow-orange" d="M 780 300 L 760 260" />
+  <path class="arrow-orange" d="M 900 300 L 960 230" />
+  <path class="arrow-orange" d="M 1020 300 L 1020 230" />
+  <text class="small" x="660" y="372">ISRs capture events quickly, defer heavy work to main loop via queues.</text>
+
+  <!-- Cooperative scheduler -->
+  <text class="h2" x="60" y="480">C) Cooperative Multitasking (Superloop with Scheduler)</text>
+  <rect class="box" x="60" y="500" width="480" height="310" />
+  <rect class="sched" x="80" y="520" width="160" height="40" />
+  <text class="lab" x="90" y="544">Coop Scheduler</text>
+  <path class="arrow-purple" d="M 160 560 L 160 600" />
+  <rect class="task" x="80" y="600" width="180" height="40" />
+  <text class="lab" x="90" y="624">Task A (sensor read)</text>
+  <rect class="task" x="280" y="600" width="180" height="40" />
+  <text class="lab" x="290" y="624">Task B (control)</text>
+  <rect class="task" x="180" y="660" width="180" height="40" />
+  <text class="lab" x="190" y="684">Task C (comm TX/RX)</text>
+  <text class="small" x="80" y="720">Each task must yield quickly; long tasks stall others. No preemption.</text>
+  <rect class="queue" x="80" y="740" width="380" height="50" />
+  <text class="lab" x="90" y="764">Timers &amp; run-to-completion tasks scheduled by deadlines/ticks</text>
+
+  <!-- Preemptive RTOS -->
+  <text class="h2" x="660" y="480">D) Preemptive RTOS</text>
+  <rect class="box" x="660" y="500" width="480" height="310" />
+  <rect class="sched" x="680" y="520" width="200" height="40" />
+  <text class="lab" x="690" y="544">RTOS Kernel (Scheduler)</text>
+  <rect class="task" x="900" y="520" width="220" height="40" />
+  <text class="lab" x="910" y="544">System Services (ISR thunks)</text>
+  <rect class="task" x="680" y="580" width="160" height="40" />
+  <text class="lab" x="690" y="604">Task T1 (prio 3)</text>
+  <rect class="task" x="850" y="580" width="160" height="40" />
+  <text class="lab" x="860" y="604">Task T2 (prio 2)</text>
+  <rect class="task" x="1020" y="580" width="100" height="40" />
+  <text class="lab" x="1030" y="604">Task T3</text>
+  <rect class="queue" x="680" y="640" width="200" height="36" />
+  <text class="lab" x="690" y="662">Queues/Msg</text>
+  <rect class="queue" x="890" y="640" width="140" height="36" />
+  <text class="lab" x="900" y="662">Semaphores</text>
+  <rect class="queue" x="1040" y="640" width="80" height="36" />
+  <text class="lab" x="1050" y="662">Mutex</text>
+  <path class="arrow-green" d="M 760 640 L 760 620" />
+  <path class="arrow-green" d="M 960 640 L 960 620" />
+  <path class="arrow-green" d="M 1080 640 L 1080 620" />
+  <text class="small" x="660" y="700">Preemption ensures latency bounds via priorities; protects shared resources with mutexes; inter-task comm via queues.</text>
+  <text class="small" x="660" y="720">Cons: Complexity, stack per task, careful design to avoid priority inversion (use priority inheritance).</text>
+
+  <!-- When to use -->
+  <text class="lab" x="40" y="860">Guidance: Polling → simple, low-power periodic tasks. Interrupts → quick reaction, event-driven. Cooperative → moderate concurrency with control. RTOS → many tasks, tight deadlines, complex I/O.</text>
+</svg>
+

@@ -1,0 +1,1490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java Programming Examples - Complete Applications</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/white.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/monokai.css">
+    <style>
+        .reveal .slides {
+            text-align: left;
+            font-size: 0.75em;
+            height: 90vh;
+            overflow: hidden;
+        }
+        .reveal h1, .reveal h2, .reveal h3 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .reveal h1 { font-size: 2em; }
+        .reveal h2 { font-size: 1.5em; }
+        .reveal h3 { font-size: 1.2em; }
+        .reveal pre {
+            font-size: 0.7em;
+            line-height: 1.2;
+            margin: 10px 0;
+        }
+        .reveal code {
+            font-size: 0.85em;
+        }
+        .reveal .two-column {
+            display: flex;
+            gap: 20px;
+        }
+        .reveal .column {
+            flex: 1;
+        }
+        .reveal ul, .reveal ol {
+            font-size: 0.8em;
+            line-height: 1.3;
+            margin: 10px 0;
+        }
+        .example-box {
+            border: 2px solid #007acc;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+        }
+        .output-box {
+            background-color: #000;
+            color: #00ff00;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 0.7em;
+        }
+        .concept-box {
+            background-color: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 10px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- Title Slide -->
+            <section>
+                <h1>Java Programming Examples</h1>
+                <h3>Complete Applications & Practical Implementation</h3>
+                <p style="text-align: center; margin-top: 50px;">
+                    <strong>Chapter 13: Real-World Java Programming</strong><br>
+                    Comprehensive examples integrating all Java concepts
+                </p>
+            </section>
+
+            <!-- Student Management System -->
+            <section>
+                <h2>Student Management System</h2>
+                <div class="two-column">
+                    <div class="column">
+                        <h3>Core Classes Design</h3>
+                        <pre><code class="java">
+// Student.java
+public class Student {
+    private String id;
+    private String name;
+    private String email;
+    private List&lt;Course&gt; courses;
+    private Map&lt;String, Grade&gt; grades;
+    
+    public Student(String id, String name, String email) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.courses = new ArrayList&lt;&gt;();
+        this.grades = new HashMap&lt;&gt;();
+    }
+    
+    public void enrollInCourse(Course course) {
+        if (!courses.contains(course)) {
+            courses.add(course);
+            course.addStudent(this);
+        }
+    }
+    
+    public void addGrade(String courseId, Grade grade) {
+        grades.put(courseId, grade);
+    }
+    
+    public double calculateGPA() {
+        if (grades.isEmpty()) return 0.0;
+        
+        double totalPoints = 0;
+        int totalCredits = 0;
+        
+        for (Map.Entry&lt;String, Grade&gt; entry : grades.entrySet()) {
+            Grade grade = entry.getValue();
+            totalPoints += grade.getPoints() * grade.getCredits();
+            totalCredits += grade.getCredits();
+        }
+        
+        return totalCredits > 0 ? totalPoints / totalCredits : 0.0;
+    }
+    
+    // Getters and setters...
+}
+                        </code></pre>
+                    </div>
+                    <div class="column">
+                        <h3>Course & Grade Classes</h3>
+                        <pre><code class="java">
+// Course.java
+public class Course {
+    private String courseId;
+    private String title;
+    private int credits;
+    private String instructor;
+    private List&lt;Student&gt; enrolledStudents;
+    private int maxCapacity;
+    
+    public Course(String courseId, String title, 
+                  int credits, String instructor, int maxCapacity) {
+        this.courseId = courseId;
+        this.title = title;
+        this.credits = credits;
+        this.instructor = instructor;
+        this.maxCapacity = maxCapacity;
+        this.enrolledStudents = new ArrayList&lt;&gt;();
+    }
+    
+    public boolean addStudent(Student student) {
+        if (enrolledStudents.size() < maxCapacity && 
+            !enrolledStudents.contains(student)) {
+            enrolledStudents.add(student);
+            return true;
+        }
+        return false;
+    }
+    
+    public List&lt;Student&gt; getEnrolledStudents() {
+        return new ArrayList&lt;&gt;(enrolledStudents);
+    }
+}
+
+// Grade.java
+public class Grade {
+    private double points; // 4.0 scale
+    private int credits;
+    private String letterGrade;
+    
+    public Grade(double points, int credits) {
+        this.points = points;
+        this.credits = credits;
+        this.letterGrade = calculateLetterGrade(points);
+    }
+    
+    private String calculateLetterGrade(double points) {
+        if (points >= 3.7) return "A";
+        else if (points >= 3.3) return "A-";
+        else if (points >= 3.0) return "B+";
+        else if (points >= 2.7) return "B";
+        else if (points >= 2.3) return "B-";
+        else if (points >= 2.0) return "C+";
+        else if (points >= 1.7) return "C";
+        else if (points >= 1.3) return "C-";
+        else if (points >= 1.0) return "D";
+        else return "F";
+    }
+}
+                        </code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Management System Implementation -->
+            <section>
+                <h2>StudentManager Implementation</h2>
+                <pre><code class="java">
+// StudentManager.java
+import java.util.*;
+import java.util.stream.Collectors;
+
+public class StudentManager {
+    private Map&lt;String, Student&gt; students;
+    private Map&lt;String, Course&gt; courses;
+    private static final String DATA_FILE = "students.dat";
+    
+    public StudentManager() {
+        students = new HashMap&lt;&gt;();
+        courses = new HashMap&lt;&gt;();
+        loadData();
+    }
+    
+    public void addStudent(Student student) {
+        students.put(student.getId(), student);
+        saveData();
+    }
+    
+    public void addCourse(Course course) {
+        courses.put(course.getCourseId(), course);
+        saveData();
+    }
+    
+    public boolean enrollStudent(String studentId, String courseId) {
+        Student student = students.get(studentId);
+        Course course = courses.get(courseId);
+        
+        if (student != null && course != null) {
+            student.enrollInCourse(course);
+            saveData();
+            return true;
+        }
+        return false;
+    }
+    
+    public void recordGrade(String studentId, String courseId, double points, int credits) {
+        Student student = students.get(studentId);
+        if (student != null) {
+            Grade grade = new Grade(points, credits);
+            student.addGrade(courseId, grade);
+            saveData();
+        }
+    }
+    
+    public List&lt;Student&gt; getTopStudents(int count) {
+        return students.values().stream()
+                .sorted((s1, s2) -> Double.compare(s2.calculateGPA(), s1.calculateGPA()))
+                .limit(count)
+                .collect(Collectors.toList());
+    }
+    
+    public List&lt;Student&gt; searchStudents(String searchTerm) {
+        return students.values().stream()
+                .filter(s -> s.getName().toLowerCase().contains(searchTerm.toLowerCase()) ||
+                           s.getEmail().toLowerCase().contains(searchTerm.toLowerCase()))
+                .collect(Collectors.toList());
+    }
+    
+    public Map&lt;String, Long&gt; getCourseEnrollmentStats() {
+        return courses.values().stream()
+                .collect(Collectors.toMap(
+                    Course::getTitle,
+                    course -> (long) course.getEnrolledStudents().size()
+                ));
+    }
+    
+    // File I/O methods
+    private void saveData() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(
+                new FileOutputStream(DATA_FILE))) {
+            oos.writeObject(students);
+            oos.writeObject(courses);
+        } catch (IOException e) {
+            System.err.println("Error saving data: " + e.getMessage());
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    private void loadData() {
+        try (ObjectInputStream ois = new ObjectInputStream(
+                new FileInputStream(DATA_FILE))) {
+            students = (Map&lt;String, Student&gt;) ois.readObject();
+            courses = (Map&lt;String, Course&gt;) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            // File doesn't exist or is corrupted, start fresh
+            students = new HashMap&lt;&gt;();
+            courses = new HashMap&lt;&gt;();
+        }
+    }
+}
+</code></pre>
+            </section>
+
+            <!-- Banking System Example -->
+            <section>
+                <h2>Banking System with Transactions</h2>
+                <div class="two-column">
+                    <div class="column">
+                        <h3>Account Hierarchy</h3>
+                        <pre><code class="java">
+// Account.java (Abstract Base Class)
+public abstract class Account {
+    protected String accountNumber;
+    protected String holderName;
+    protected double balance;
+    protected List&lt;Transaction&gt; transactions;
+    protected final Object lock = new Object();
+    
+    public Account(String accountNumber, String holderName, 
+                   double initialBalance) {
+        this.accountNumber = accountNumber;
+        this.holderName = holderName;
+        this.balance = initialBalance;
+        this.transactions = new ArrayList&lt;&gt;();
+    }
+    
+    public synchronized boolean deposit(double amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Deposit amount must be positive");
+        }
+        
+        balance += amount;
+        Transaction transaction = new Transaction(
+            TransactionType.DEPOSIT, amount, balance
+        );
+        transactions.add(transaction);
+        return true;
+    }
+    
+    public synchronized boolean withdraw(double amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Withdrawal amount must be positive");
+        }
+        
+        if (canWithdraw(amount)) {
+            balance -= amount;
+            Transaction transaction = new Transaction(
+                TransactionType.WITHDRAWAL, amount, balance
+            );
+            transactions.add(transaction);
+            return true;
+        }
+        return false;
+    }
+    
+    protected abstract boolean canWithdraw(double amount);
+    
+    public synchronized double getBalance() {
+        return balance;
+    }
+    
+    public List&lt;Transaction&gt; getTransactionHistory() {
+        synchronized(lock) {
+            return new ArrayList&lt;&gt;(transactions);
+        }
+    }
+}
+                        </code></pre>
+                    </div>
+                    <div class="column">
+                        <h3>Specific Account Types</h3>
+                        <pre><code class="java">
+// SavingsAccount.java
+public class SavingsAccount extends Account {
+    private double interestRate;
+    private int withdrawalCount;
+    private static final int MAX_WITHDRAWALS = 6;
+    
+    public SavingsAccount(String accountNumber, String holderName, 
+                         double initialBalance, double interestRate) {
+        super(accountNumber, holderName, initialBalance);
+        this.interestRate = interestRate;
+        this.withdrawalCount = 0;
+    }
+    
+    @Override
+    protected boolean canWithdraw(double amount) {
+        return balance >= amount && withdrawalCount < MAX_WITHDRAWALS;
+    }
+    
+    @Override
+    public synchronized boolean withdraw(double amount) {
+        if (super.withdraw(amount)) {
+            withdrawalCount++;
+            return true;
+        }
+        return false;
+    }
+    
+    public void applyMonthlyInterest() {
+        synchronized(lock) {
+            double interest = balance * (interestRate / 12);
+            balance += interest;
+            withdrawalCount = 0; // Reset monthly withdrawal count
+        }
+    }
+}
+
+// CheckingAccount.java
+public class CheckingAccount extends Account {
+    private double overdraftLimit;
+    
+    public CheckingAccount(String accountNumber, String holderName, 
+                          double initialBalance, double overdraftLimit) {
+        super(accountNumber, holderName, initialBalance);
+        this.overdraftLimit = overdraftLimit;
+    }
+    
+    @Override
+    protected boolean canWithdraw(double amount) {
+        return (balance + overdraftLimit) >= amount;
+    }
+}
+
+// Transaction.java
+public class Transaction {
+    private final String transactionId;
+    private final TransactionType type;
+    private final double amount;
+    private final double balanceAfter;
+    private final LocalDateTime timestamp;
+    
+    public Transaction(TransactionType type, double amount, double balanceAfter) {
+        this.transactionId = UUID.randomUUID().toString();
+        this.type = type;
+        this.amount = amount;
+        this.balanceAfter = balanceAfter;
+        this.timestamp = LocalDateTime.now();
+    }
+    
+    // Getters...
+}
+
+enum TransactionType {
+    DEPOSIT, WITHDRAWAL, TRANSFER_IN, TRANSFER_OUT, INTEREST
+}
+                        </code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Banking System Manager -->
+            <section>
+                <h2>Bank Management System</h2>
+                <pre><code class="java">
+// Bank.java
+public class Bank {
+    private Map&lt;String, Account&gt; accounts;
+    private ExecutorService transactionExecutor;
+    private final ReentrantLock bankLock = new ReentrantLock();
+    
+    public Bank() {
+        accounts = new ConcurrentHashMap&lt;&gt;();
+        transactionExecutor = Executors.newFixedThreadPool(10);
+    }
+    
+    public void createSavingsAccount(String accountNumber, String holderName, 
+                                   double initialBalance, double interestRate) {
+        Account account = new SavingsAccount(accountNumber, holderName, 
+                                           initialBalance, interestRate);
+        accounts.put(accountNumber, account);
+    }
+    
+    public void createCheckingAccount(String accountNumber, String holderName, 
+                                    double initialBalance, double overdraftLimit) {
+        Account account = new CheckingAccount(accountNumber, holderName, 
+                                            initialBalance, overdraftLimit);
+        accounts.put(accountNumber, account);
+    }
+    
+    public CompletableFuture&lt;Boolean&gt; transfer(String fromAccount, String toAccount, double amount) {
+        return CompletableFuture.supplyAsync(() -> {
+            Account from = accounts.get(fromAccount);
+            Account to = accounts.get(toAccount);
+            
+            if (from == null || to == null) {
+                throw new IllegalArgumentException("Invalid account number");
+            }
+            
+            // Ensure consistent ordering to prevent deadlocks
+            Account firstLock = fromAccount.compareTo(toAccount) < 0 ? from : to;
+            Account secondLock = fromAccount.compareTo(toAccount) < 0 ? to : from;
+            
+            synchronized(firstLock) {
+                synchronized(secondLock) {
+                    if (from.getBalance() >= amount) {
+                        from.withdraw(amount);
+                        to.deposit(amount);
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }, transactionExecutor);
+    }
+    
+    public Account getAccount(String accountNumber) {
+        return accounts.get(accountNumber);
+    }
+    
+    public List&lt;Account&gt; getAllAccounts() {
+        return new ArrayList&lt;&gt;(accounts.values());
+    }
+    
+    public Map&lt;String, Double&gt; generateBalanceReport() {
+        return accounts.entrySet().stream()
+                .collect(Collectors.toMap(
+                    Map.Entry::getKey,
+                    entry -> entry.getValue().getBalance()
+                ));
+    }
+    
+    public void applyMonthlyInterest() {
+        accounts.values().parallelStream()
+                .filter(account -> account instanceof SavingsAccount)
+                .map(account -> (SavingsAccount) account)
+                .forEach(SavingsAccount::applyMonthlyInterest);
+    }
+    
+    public void shutdown() {
+        transactionExecutor.shutdown();
+        try {
+            if (!transactionExecutor.awaitTermination(60, TimeUnit.SECONDS)) {
+                transactionExecutor.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            transactionExecutor.shutdownNow();
+        }
+    }
+}
+</code></pre>
+            </section>
+
+            <!-- E-commerce Order System -->
+            <section>
+                <h2>E-commerce Order Processing System</h2>
+                <div class="two-column">
+                    <div class="column">
+                        <h3>Product & Inventory</h3>
+                        <pre><code class="java">
+// Product.java
+public class Product implements Serializable {
+    private String productId;
+    private String name;
+    private String description;
+    private double price;
+    private String category;
+    private int stockQuantity;
+    private Set&lt;String&gt; tags;
+    
+    public Product(String productId, String name, String description, 
+                   double price, String category, int stockQuantity) {
+        this.productId = productId;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.category = category;
+        this.stockQuantity = stockQuantity;
+        this.tags = new HashSet&lt;&gt;();
+    }
+    
+    public synchronized boolean reserveStock(int quantity) {
+        if (stockQuantity >= quantity) {
+            stockQuantity -= quantity;
+            return true;
+        }
+        return false;
+    }
+    
+    public synchronized void restoreStock(int quantity) {
+        stockQuantity += quantity;
+    }
+    
+    public boolean isInStock() {
+        return stockQuantity > 0;
+    }
+    
+    // Getters and setters...
+}
+
+// ShoppingCart.java
+public class ShoppingCart {
+    private Map&lt;String, CartItem&gt; items;
+    private String customerId;
+    
+    public ShoppingCart(String customerId) {
+        this.customerId = customerId;
+        this.items = new HashMap&lt;&gt;();
+    }
+    
+    public void addItem(Product product, int quantity) {
+        String productId = product.getProductId();
+        
+        if (items.containsKey(productId)) {
+            CartItem existingItem = items.get(productId);
+            existingItem.setQuantity(existingItem.getQuantity() + quantity);
+        } else {
+            items.put(productId, new CartItem(product, quantity));
+        }
+    }
+    
+    public void removeItem(String productId) {
+        items.remove(productId);
+    }
+    
+    public double calculateTotal() {
+        return items.values().stream()
+                .mapToDouble(item -> item.getProduct().getPrice() * item.getQuantity())
+                .sum();
+    }
+    
+    public Map&lt;String, CartItem&gt; getItems() {
+        return new HashMap&lt;&gt;(items);
+    }
+    
+    public void clear() {
+        items.clear();
+    }
+}
+                        </code></pre>
+                    </div>
+                    <div class="column">
+                        <h3>Order Processing</h3>
+                        <pre><code class="java">
+// Order.java
+public class Order implements Serializable {
+    private String orderId;
+    private String customerId;
+    private List&lt;OrderItem&gt; items;
+    private OrderStatus status;
+    private LocalDateTime orderDate;
+    private double totalAmount;
+    private String shippingAddress;
+    
+    public Order(String customerId, String shippingAddress) {
+        this.orderId = generateOrderId();
+        this.customerId = customerId;
+        this.shippingAddress = shippingAddress;
+        this.items = new ArrayList&lt;&gt;();
+        this.status = OrderStatus.PENDING;
+        this.orderDate = LocalDateTime.now();
+        this.totalAmount = 0.0;
+    }
+    
+    public void addItem(Product product, int quantity) {
+        OrderItem item = new OrderItem(product, quantity, product.getPrice());
+        items.add(item);
+        calculateTotal();
+    }
+    
+    private void calculateTotal() {
+        totalAmount = items.stream()
+                .mapToDouble(item -> item.getPrice() * item.getQuantity())
+                .sum();
+    }
+    
+    public void updateStatus(OrderStatus newStatus) {
+        this.status = newStatus;
+    }
+    
+    private String generateOrderId() {
+        return "ORD-" + System.currentTimeMillis() + "-" + 
+               String.format("%04d", new Random().nextInt(10000));
+    }
+    
+    // Getters...
+}
+
+enum OrderStatus {
+    PENDING, CONFIRMED, PROCESSING, SHIPPED, DELIVERED, CANCELLED
+}
+
+// OrderItem.java
+public class OrderItem implements Serializable {
+    private Product product;
+    private int quantity;
+    private double price; // Price at time of order
+    
+    public OrderItem(Product product, int quantity, double price) {
+        this.product = product;
+        this.quantity = quantity;
+        this.price = price;
+    }
+    
+    public double getSubtotal() {
+        return price * quantity;
+    }
+    
+    // Getters and setters...
+}
+                        </code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Order Processing Service -->
+            <section>
+                <h2>Order Processing Service</h2>
+                <pre><code class="java">
+// OrderProcessor.java
+public class OrderProcessor {
+    private Map&lt;String, Product&gt; inventory;
+    private Map&lt;String, Order&gt; orders;
+    private Map&lt;String, ShoppingCart&gt; carts;
+    private Queue&lt;String&gt; processingQueue;
+    private ExecutorService orderProcessingPool;
+    private final Object inventoryLock = new Object();
+    
+    public OrderProcessor() {
+        inventory = new ConcurrentHashMap&lt;&gt;();
+        orders = new ConcurrentHashMap&lt;&gt;();
+        carts = new ConcurrentHashMap&lt;&gt;();
+        processingQueue = new ConcurrentLinkedQueue&lt;&gt;();
+        orderProcessingPool = Executors.newFixedThreadPool(5);
+        
+        // Start background order processing
+        startOrderProcessing();
+    }
+    
+    public void addProduct(Product product) {
+        inventory.put(product.getProductId(), product);
+    }
+    
+    public ShoppingCart getCart(String customerId) {
+        return carts.computeIfAbsent(customerId, k -> new ShoppingCart(customerId));
+    }
+    
+    public boolean addToCart(String customerId, String productId, int quantity) {
+        Product product = inventory.get(productId);
+        if (product == null || !product.isInStock()) {
+            return false;
+        }
+        
+        ShoppingCart cart = getCart(customerId);
+        cart.addItem(product, quantity);
+        return true;
+    }
+    
+    public Order createOrder(String customerId, String shippingAddress) {
+        ShoppingCart cart = carts.get(customerId);
+        if (cart == null || cart.getItems().isEmpty()) {
+            throw new IllegalStateException("Cart is empty");
+        }
+        
+        Order order = new Order(customerId, shippingAddress);
+        
+        // Reserve inventory and create order items
+        synchronized(inventoryLock) {
+            for (CartItem cartItem : cart.getItems().values()) {
+                Product product = cartItem.getProduct();
+                int quantity = cartItem.getQuantity();
+                
+                if (!product.reserveStock(quantity)) {
+                    // Restore any previously reserved stock
+                    rollbackOrderReservations(order);
+                    throw new InsufficientStockException(
+                        "Insufficient stock for product: " + product.getName());
+                }
+                
+                order.addItem(product, quantity);
+            }
+        }
+        
+        orders.put(order.getOrderId(), order);
+        cart.clear();
+        
+        // Queue for processing
+        processingQueue.offer(order.getOrderId());
+        
+        return order;
+    }
+    
+    private void rollbackOrderReservations(Order order) {
+        for (OrderItem item : order.getItems()) {
+            item.getProduct().restoreStock(item.getQuantity());
+        }
+    }
+    
+    private void startOrderProcessing() {
+        orderProcessingPool.submit(() -> {
+            while (!Thread.currentThread().isInterrupted()) {
+                try {
+                    String orderId = processingQueue.poll();
+                    if (orderId != null) {
+                        processOrder(orderId);
+                    }
+                    Thread.sleep(1000); // Check every second
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            }
+        });
+    }
+    
+    private void processOrder(String orderId) {
+        Order order = orders.get(orderId);
+        if (order != null && order.getStatus() == OrderStatus.PENDING) {
+            try {
+                // Simulate payment processing
+                Thread.sleep(2000);
+                order.updateStatus(OrderStatus.CONFIRMED);
+                
+                // Simulate order fulfillment
+                Thread.sleep(3000);
+                order.updateStatus(OrderStatus.PROCESSING);
+                
+                // Simulate shipping
+                Thread.sleep(1000);
+                order.updateStatus(OrderStatus.SHIPPED);
+                
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+    
+    public List&lt;Product&gt; searchProducts(String searchTerm) {
+        return inventory.values().stream()
+                .filter(product -> 
+                    product.getName().toLowerCase().contains(searchTerm.toLowerCase()) ||
+                    product.getDescription().toLowerCase().contains(searchTerm.toLowerCase()) ||
+                    product.getTags().stream().anyMatch(tag -> 
+                        tag.toLowerCase().contains(searchTerm.toLowerCase())))
+                .collect(Collectors.toList());
+    }
+    
+    public List&lt;Product&gt; getProductsByCategory(String category) {
+        return inventory.values().stream()
+                .filter(product -> product.getCategory().equalsIgnoreCase(category))
+                .collect(Collectors.toList());
+    }
+    
+    public Map&lt;String, Long&gt; getOrderStatistics() {
+        return orders.values().stream()
+                .collect(Collectors.groupingBy(
+                    order -> order.getStatus().toString(),
+                    Collectors.counting()
+                ));
+    }
+    
+    public void shutdown() {
+        orderProcessingPool.shutdown();
+    }
+}
+
+class InsufficientStockException extends RuntimeException {
+    public InsufficientStockException(String message) {
+        super(message);
+    }
+}
+</code></pre>
+            </section>
+
+            <!-- Main Application Examples -->
+            <section>
+                <h2>Main Application Demonstrations</h2>
+                <div class="two-column">
+                    <div class="column">
+                        <h3>Student Management Demo</h3>
+                        <pre><code class="java">
+public class StudentManagementDemo {
+    public static void main(String[] args) {
+        StudentManager manager = new StudentManager();
+        
+        // Create courses
+        Course javaCourse = new Course("CS101", "Java Programming", 
+                                     3, "Dr. Smith", 30);
+        Course dataStructures = new Course("CS201", "Data Structures", 
+                                         4, "Dr. Johnson", 25);
+        
+        manager.addCourse(javaCourse);
+        manager.addCourse(dataStructures);
+        
+        // Create students
+        Student student1 = new Student("S001", "Alice Johnson", 
+                                     "alice@email.com");
+        Student student2 = new Student("S002", "Bob Smith", 
+                                     "bob@email.com");
+        Student student3 = new Student("S003", "Carol Davis", 
+                                     "carol@email.com");
+        
+        manager.addStudent(student1);
+        manager.addStudent(student2);
+        manager.addStudent(student3);
+        
+        // Enroll students
+        manager.enrollStudent("S001", "CS101");
+        manager.enrollStudent("S001", "CS201");
+        manager.enrollStudent("S002", "CS101");
+        manager.enrollStudent("S003", "CS201");
+        
+        // Record grades
+        manager.recordGrade("S001", "CS101", 3.7, 3); // A
+        manager.recordGrade("S001", "CS201", 3.3, 4); // A-
+        manager.recordGrade("S002", "CS101", 3.0, 3); // B+
+        manager.recordGrade("S003", "CS201", 4.0, 4); // A
+        
+        // Display results
+        System.out.println("Top Students:");
+        List&lt;Student&gt; topStudents = manager.getTopStudents(3);
+        for (Student student : topStudents) {
+            System.out.printf("%s - GPA: %.2f%n", 
+                student.getName(), student.calculateGPA());
+        }
+        
+        // Course enrollment statistics
+        Map&lt;String, Long&gt; stats = manager.getCourseEnrollmentStats();
+        System.out.println("\nCourse Enrollment:");
+        stats.forEach((course, count) -> 
+            System.out.printf("%s: %d students%n", course, count));
+    }
+}
+                        </code></pre>
+                    </div>
+                    <div class="column">
+                        <h3>Banking System Demo</h3>
+                        <pre><code class="java">
+public class BankingDemo {
+    public static void main(String[] args) throws Exception {
+        Bank bank = new Bank();
+        
+        // Create accounts
+        bank.createSavingsAccount("SAV001", "Alice Smith", 
+                                 1000.0, 0.02);
+        bank.createCheckingAccount("CHK001", "Bob Johnson", 
+                                  500.0, 200.0);
+        bank.createSavingsAccount("SAV002", "Carol Davis", 
+                                 2000.0, 0.02);
+        
+        // Perform transactions
+        Account aliceAccount = bank.getAccount("SAV001");
+        Account bobAccount = bank.getAccount("CHK001");
+        
+        // Deposits and withdrawals
+        aliceAccount.deposit(500.0);
+        bobAccount.withdraw(100.0);
+        
+        System.out.println("Initial Balances:");
+        System.out.printf("Alice: $%.2f%n", aliceAccount.getBalance());
+        System.out.printf("Bob: $%.2f%n", bobAccount.getBalance());
+        
+        // Transfer money between accounts
+        CompletableFuture&lt;Boolean&gt; transferResult = 
+            bank.transfer("SAV001", "CHK001", 300.0);
+        
+        boolean success = transferResult.get();
+        System.out.println("\nTransfer successful: " + success);
+        
+        System.out.println("After Transfer:");
+        System.out.printf("Alice: $%.2f%n", aliceAccount.getBalance());
+        System.out.printf("Bob: $%.2f%n", bobAccount.getBalance());
+        
+        // Generate balance report
+        Map&lt;String, Double&gt; balanceReport = bank.generateBalanceReport();
+        System.out.println("\nBank Balance Report:");
+        balanceReport.forEach((account, balance) -> 
+            System.out.printf("%s: $%.2f%n", account, balance));
+        
+        // Transaction history
+        System.out.println("\nAlice's Transaction History:");
+        aliceAccount.getTransactionHistory().forEach(transaction -> 
+            System.out.printf("%s: $%.2f (Balance: $%.2f) at %s%n",
+                transaction.getType(), transaction.getAmount(),
+                transaction.getBalanceAfter(), transaction.getTimestamp()));
+        
+        bank.shutdown();
+    }
+}
+                        </code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- E-commerce Demo -->
+            <section>
+                <h2>E-commerce System Demo</h2>
+                <pre><code class="java">
+public class EcommerceDemo {
+    public static void main(String[] args) throws Exception {
+        OrderProcessor processor = new OrderProcessor();
+        
+        // Add products to inventory
+        Product laptop = new Product("P001", "Gaming Laptop", 
+                                   "High-performance gaming laptop", 1299.99, "Electronics", 10);
+        Product mouse = new Product("P002", "Wireless Mouse", 
+                                  "Ergonomic wireless mouse", 29.99, "Electronics", 50);
+        Product keyboard = new Product("P003", "Mechanical Keyboard", 
+                                     "RGB mechanical keyboard", 149.99, "Electronics", 25);
+        Product book = new Product("P004", "Java Programming Book", 
+                                 "Comprehensive Java guide", 49.99, "Books", 30);
+        
+        laptop.getTags().addAll(Arrays.asList("gaming", "laptop", "computer"));
+        mouse.getTags().addAll(Arrays.asList("mouse", "wireless", "peripheral"));
+        keyboard.getTags().addAll(Arrays.asList("keyboard", "mechanical", "rgb"));
+        book.getTags().addAll(Arrays.asList("java", "programming", "education"));
+        
+        processor.addProduct(laptop);
+        processor.addProduct(mouse);
+        processor.addProduct(keyboard);
+        processor.addProduct(book);
+        
+        // Customer shopping
+        String customerId = "CUST001";
+        
+        // Add items to cart
+        processor.addToCart(customerId, "P001", 1); // Laptop
+        processor.addToCart(customerId, "P002", 2); // Mice
+        processor.addToCart(customerId, "P003", 1); // Keyboard
+        
+        // Display cart
+        ShoppingCart cart = processor.getCart(customerId);
+        System.out.println("Shopping Cart:");
+        cart.getItems().forEach((productId, item) -> {
+            Product product = item.getProduct();
+            System.out.printf("%s x%d - $%.2f each = $%.2f%n",
+                product.getName(), item.getQuantity(), 
+                product.getPrice(), product.getPrice() * item.getQuantity());
+        });
+        System.out.printf("Total: $%.2f%n", cart.calculateTotal());
+        
+        // Create order
+        try {
+            Order order = processor.createOrder(customerId, "123 Main St, City, State");
+            System.out.println("\nOrder created: " + order.getOrderId());
+            System.out.println("Order status: " + order.getStatus());
+            System.out.printf("Order total: $%.2f%n", order.getTotalAmount());
+            
+            // Wait for order processing
+            Thread.sleep(8000);
+            
+            System.out.println("Final order status: " + order.getStatus());
+            
+        } catch (InsufficientStockException e) {
+            System.err.println("Order failed: " + e.getMessage());
+        }
+        
+        // Search functionality
+        System.out.println("\nSearch Results for 'gaming':");
+        List&lt;Product&gt; searchResults = processor.searchProducts("gaming");
+        searchResults.forEach(product -> 
+            System.out.printf("%s - $%.2f (Stock: %d)%n", 
+                product.getName(), product.getPrice(), product.getStockQuantity()));
+        
+        // Category browsing
+        System.out.println("\nElectronics Category:");
+        List&lt;Product&gt; electronics = processor.getProductsByCategory("Electronics");
+        electronics.forEach(product -> 
+            System.out.printf("%s - $%.2f%n", product.getName(), product.getPrice()));
+        
+        // Order statistics
+        System.out.println("\nOrder Statistics:");
+        Map&lt;String, Long&gt; stats = processor.getOrderStatistics();
+        stats.forEach((status, count) -> 
+            System.out.printf("%s: %d orders%n", status, count));
+        
+        processor.shutdown();
+    }
+}
+</code></pre>
+            </section>
+
+            <!-- Best Practices & Performance -->
+            <section>
+                <h2>Best Practices & Performance Optimization</h2>
+                <div class="two-column">
+                    <div class="column">
+                        <h3>Memory Management</h3>
+                        <div class="concept-box">
+                            <strong>Key Principles:</strong>
+                            <ul>
+                                <li>Use appropriate collection types</li>
+                                <li>Implement proper equals() and hashCode()</li>
+                                <li>Close resources with try-with-resources</li>
+                                <li>Avoid memory leaks with listeners</li>
+                            </ul>
+                        </div>
+                        <pre><code class="java">
+// Efficient resource management
+public class DataProcessor implements AutoCloseable {
+    private final List&lt;String&gt; data;
+    private final ExecutorService executor;
+    
+    public DataProcessor() {
+        // Use ArrayList for indexed access
+        this.data = new ArrayList&lt;&gt;();
+        this.executor = Executors.newFixedThreadPool(4);
+    }
+    
+    public void processLargeDataset(Path filePath) throws IOException {
+        // Use try-with-resources for automatic cleanup
+        try (BufferedReader reader = Files.newBufferedReader(filePath);
+             Stream&lt;String&gt; lines = reader.lines()) {
+            
+            // Process in parallel for better performance
+            List&lt;CompletableFuture&lt;String&gt;&gt; futures = lines
+                .filter(line -> !line.trim().isEmpty())
+                .map(line -> CompletableFuture.supplyAsync(() -> 
+                    processLine(line), executor))
+                .collect(Collectors.toList());
+            
+            // Collect results
+            for (CompletableFuture&lt;String&gt; future : futures) {
+                try {
+                    data.add(future.get());
+                } catch (InterruptedException | ExecutionException e) {
+                    // Handle errors appropriately
+                    Thread.currentThread().interrupt();
+                    throw new RuntimeException("Processing failed", e);
+                }
+            }
+        }
+    }
+    
+    private String processLine(String line) {
+        // Simulate processing
+        return line.toUpperCase().trim();
+    }
+    
+    @Override
+    public void close() {
+        executor.shutdown();
+        try {
+            if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
+                executor.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            executor.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
+    }
+}
+                        </code></pre>
+                    </div>
+                    <div class="column">
+                        <h3>Error Handling Strategies</h3>
+                        <div class="concept-box">
+                            <strong>Exception Handling Patterns:</strong>
+                            <ul>
+                                <li>Use specific exception types</li>
+                                <li>Fail fast with validation</li>
+                                <li>Log errors appropriately</li>
+                                <li>Provide meaningful error messages</li>
+                            </ul>
+                        </div>
+                        <pre><code class="java">
+// Comprehensive error handling
+public class UserService {
+    private static final Logger logger = 
+        LoggerFactory.getLogger(UserService.class);
+    
+    public User createUser(String email, String name, int age) 
+            throws ValidationException, UserCreationException {
+        
+        // Input validation with specific exceptions
+        validateUserInput(email, name, age);
+        
+        try {
+            // Check if user already exists
+            if (userExists(email)) {
+                throw new UserCreationException(
+                    "User with email " + email + " already exists");
+            }
+            
+            User user = new User(email, name, age);
+            saveUser(user);
+            
+            logger.info("Successfully created user: {}", email);
+            return user;
+            
+        } catch (DatabaseException e) {
+            logger.error("Database error while creating user: {}", email, e);
+            throw new UserCreationException(
+                "Failed to create user due to database error", e);
+        } catch (Exception e) {
+            logger.error("Unexpected error while creating user: {}", email, e);
+            throw new UserCreationException(
+                "An unexpected error occurred", e);
+        }
+    }
+    
+    private void validateUserInput(String email, String name, int age) 
+            throws ValidationException {
+        
+        List&lt;String&gt; errors = new ArrayList&lt;&gt;();
+        
+        if (email == null || !isValidEmail(email)) {
+            errors.add("Invalid email format");
+        }
+        
+        if (name == null || name.trim().isEmpty()) {
+            errors.add("Name cannot be empty");
+        }
+        
+        if (age < 0 || age > 150) {
+            errors.add("Age must be between 0 and 150");
+        }
+        
+        if (!errors.isEmpty()) {
+            throw new ValidationException(
+                "Validation failed: " + String.join(", ", errors));
+        }
+    }
+    
+    // Retry mechanism for transient failures
+    public &lt;T&gt; T executeWithRetry(Supplier&lt;T&gt; operation, int maxRetries) 
+            throws Exception {
+        
+        Exception lastException = null;
+        
+        for (int attempt = 1; attempt <= maxRetries; attempt++) {
+            try {
+                return operation.get();
+            } catch (TransientException e) {
+                lastException = e;
+                logger.warn("Attempt {} failed, retrying... Error: {}", 
+                          attempt, e.getMessage());
+                
+                if (attempt < maxRetries) {
+                    try {
+                        Thread.sleep(1000 * attempt); // Exponential backoff
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        throw new RuntimeException("Interrupted during retry", ie);
+                    }
+                }
+            }
+        }
+        
+        throw new RuntimeException(
+            "Operation failed after " + maxRetries + " attempts", lastException);
+    }
+}
+                        </code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Testing Examples -->
+            <section>
+                <h2>Unit Testing Examples</h2>
+                <div class="two-column">
+                    <div class="column">
+                        <h3>JUnit Test Examples</h3>
+                        <pre><code class="java">
+// StudentTest.java
+import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+class StudentTest {
+    private Student student;
+    private Course javaCourse;
+    private Course mathCourse;
+    
+    @BeforeEach
+    void setUp() {
+        student = new Student("S001", "John Doe", "john@email.com");
+        javaCourse = new Course("CS101", "Java Programming", 3, "Dr. Smith", 30);
+        mathCourse = new Course("MATH201", "Calculus", 4, "Dr. Johnson", 25);
+    }
+    
+    @Test
+    @DisplayName("Should enroll student in course successfully")
+    void testEnrollInCourse() {
+        student.enrollInCourse(javaCourse);
+        
+        assertTrue(student.getCourses().contains(javaCourse));
+        assertTrue(javaCourse.getEnrolledStudents().contains(student));
+    }
+    
+    @Test
+    @DisplayName("Should prevent duplicate enrollment")
+    void testPreventDuplicateEnrollment() {
+        student.enrollInCourse(javaCourse);
+        student.enrollInCourse(javaCourse); // Attempt duplicate
+        
+        assertEquals(1, student.getCourses().size());
+        assertEquals(1, javaCourse.getEnrolledStudents().size());
+    }
+    
+    @Test
+    @DisplayName("Should calculate GPA correctly")
+    void testGPACalculation() {
+        student.addGrade("CS101", new Grade(3.7, 3)); // A = 3.7 * 3 = 11.1
+        student.addGrade("MATH201", new Grade(3.0, 4)); // B+ = 3.0 * 4 = 12.0
+        
+        // Total points: 23.1, Total credits: 7
+        // Expected GPA: 23.1 / 7 = 3.3
+        assertEquals(3.3, student.calculateGPA(), 0.01);
+    }
+    
+    @Test
+    @DisplayName("Should return 0 GPA when no grades")
+    void testZeroGPAWithNoGrades() {
+        assertEquals(0.0, student.calculateGPA());
+    }
+    
+    @Test
+    @DisplayName("Should handle null course enrollment")
+    void testNullCourseEnrollment() {
+        assertThrows(NullPointerException.class, () -> {
+            student.enrollInCourse(null);
+        });
+    }
+}
+                        </code></pre>
+                    </div>
+                    <div class="column">
+                        <h3>Bank Account Tests</h3>
+                        <pre><code class="java">
+// BankAccountTest.java
+import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+class BankAccountTest {
+    private SavingsAccount savingsAccount;
+    private CheckingAccount checkingAccount;
+    
+    @BeforeEach
+    void setUp() {
+        savingsAccount = new SavingsAccount(
+            "SAV001", "Alice Smith", 1000.0, 0.02);
+        checkingAccount = new CheckingAccount(
+            "CHK001", "Bob Johnson", 500.0, 200.0);
+    }
+    
+    @Test
+    @DisplayName("Should deposit money successfully")
+    void testSuccessfulDeposit() {
+        assertTrue(savingsAccount.deposit(500.0));
+        assertEquals(1500.0, savingsAccount.getBalance(), 0.01);
+    }
+    
+    @Test
+    @DisplayName("Should reject negative deposit")
+    void testNegativeDeposit() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            savingsAccount.deposit(-100.0);
+        });
+    }
+    
+    @Test
+    @DisplayName("Should withdraw within balance")
+    void testValidWithdrawal() {
+        assertTrue(savingsAccount.withdraw(300.0));
+        assertEquals(700.0, savingsAccount.getBalance(), 0.01);
+    }
+    
+    @Test
+    @DisplayName("Should reject withdrawal exceeding balance for savings")
+    void testExcessiveWithdrawalSavings() {
+        assertFalse(savingsAccount.withdraw(1500.0));
+        assertEquals(1000.0, savingsAccount.getBalance(), 0.01);
+    }
+    
+    @Test
+    @DisplayName("Should allow overdraft for checking account")
+    void testOverdraftChecking() {
+        assertTrue(checkingAccount.withdraw(600.0)); // $500 + $200 overdraft = $700 available
+        assertEquals(-100.0, checkingAccount.getBalance(), 0.01);
+    }
+    
+    @Test
+    @DisplayName("Should track transaction history")
+    void testTransactionHistory() {
+        savingsAccount.deposit(200.0);
+        savingsAccount.withdraw(150.0);
+        
+        List&lt;Transaction&gt; history = savingsAccount.getTransactionHistory();
+        assertEquals(2, history.size());
+        
+        Transaction lastTransaction = history.get(history.size() - 1);
+        assertEquals(TransactionType.WITHDRAWAL, lastTransaction.getType());
+        assertEquals(150.0, lastTransaction.getAmount(), 0.01);
+    }
+    
+    @ParameterizedTest
+    @ValueSource(doubles = {0.0, -50.0, -1.0})
+    @DisplayName("Should reject invalid withdrawal amounts")
+    void testInvalidWithdrawalAmounts(double amount) {
+        assertThrows(IllegalArgumentException.class, () -> {
+            savingsAccount.withdraw(amount);
+        });
+    }
+    
+    @Test
+    @DisplayName("Should apply monthly interest correctly")
+    void testMonthlyInterest() {
+        savingsAccount.applyMonthlyInterest();
+        
+        // Expected: 1000 + (1000 * 0.02 / 12) = 1000 + 1.67 = 1001.67
+        assertEquals(1001.67, savingsAccount.getBalance(), 0.01);
+    }
+}
+                        </code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Summary & Key Takeaways -->
+            <section>
+                <h2>Summary & Key Takeaways</h2>
+                <div class="two-column">
+                    <div class="column">
+                        <h3>Programming Concepts Applied</h3>
+                        <ul>
+                            <li><strong>Object-Oriented Design:</strong> Inheritance, polymorphism, encapsulation</li>
+                            <li><strong>Collections Framework:</strong> Lists, Maps, Sets, Queues</li>
+                            <li><strong>Exception Handling:</strong> Custom exceptions, try-with-resources</li>
+                            <li><strong>Multithreading:</strong> ExecutorService, synchronization, CompletableFuture</li>
+                            <li><strong>File I/O:</strong> Serialization, NIO, resource management</li>
+                            <li><strong>Stream API:</strong> Filtering, mapping, collecting</li>
+                            <li><strong>Generics:</strong> Type safety, wildcards</li>
+                            <li><strong>Interfaces:</strong> Default methods, functional interfaces</li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <h3>Development Best Practices</h3>
+                        <ul>
+                            <li><strong>SOLID Principles:</strong> Single responsibility, dependency injection</li>
+                            <li><strong>Design Patterns:</strong> Observer, Factory, Strategy</li>
+                            <li><strong>Error Handling:</strong> Fail-fast validation, meaningful exceptions</li>
+                            <li><strong>Performance:</strong> Efficient algorithms, proper synchronization</li>
+                            <li><strong>Testing:</strong> Unit tests, parameterized tests, mocking</li>
+                            <li><strong>Code Quality:</strong> Clean code, documentation, logging</li>
+                            <li><strong>Concurrency:</strong> Thread safety, deadlock prevention</li>
+                            <li><strong>Resource Management:</strong> AutoCloseable, proper cleanup</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="example-box">
+                    <h3>Real-World Application Architecture</h3>
+                    <p>These examples demonstrate how to build scalable, maintainable Java applications by:</p>
+                    <ul>
+                        <li>Separating concerns with proper layering (data, business logic, presentation)</li>
+                        <li>Using appropriate data structures for different use cases</li>
+                        <li>Implementing robust error handling and logging</li>
+                        <li>Applying concurrent programming for performance</li>
+                        <li>Writing comprehensive tests for reliability</li>
+                        <li>Following Java best practices and conventions</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Final Slide -->
+            <section>
+                <h1>Java Programming Mastery</h1>
+                <h3>Complete Course Summary</h3>
+                <div class="concept-box">
+                    <h3>Course Completion Checklist</h3>
+                    <ul>
+                        <li>✅ Java Fundamentals & Syntax</li>
+                        <li>✅ Object-Oriented Programming</li>
+                        <li>✅ Exception Handling & File I/O</li>
+                        <li>✅ Collections Framework & Generics</li>
+                        <li>✅ Multithreading & Concurrency</li>
+                        <li>✅ Advanced Features & Best Practices</li>
+                        <li>✅ Real-World Application Development</li>
+                        <li>✅ Testing & Quality Assurance</li>
+                    </ul>
+                </div>
+                
+                <div style="text-align: center; margin-top: 30px;">
+                    <h3>Ready for Professional Java Development!</h3>
+                    <p>Continue learning: Spring Framework, Microservices, and Advanced Patterns</p>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/highlight.min.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            controls: true,
+            progress: true,
+            center: true,
+            transition: 'slide',
+            plugins: [ RevealHighlight ]
+        });
+    </script>
+</body>
+</html>

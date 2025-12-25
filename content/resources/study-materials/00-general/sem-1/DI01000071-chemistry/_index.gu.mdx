@@ -1,0 +1,11 @@
+---
+title: "એન્જિનિયરિંગ રસાયણશાસ્ત્ર (DI01000071)"
+date: 2024-01-15
+description: "એન્જિનિયરિંગ રસાયણશાસ્ત્ર (DI01000071) માટે અભ્યાસ સામગ્રી, પ્રશ્નપત્રો અને ઉકેલો - સામાન્ય અભ્યાસ, સેમેસ્ટર 1"
+summary: "એન્જિનિયરિંગ રસાયણશાસ્ત્ર માટે સંપૂર્ણ અભ્યાસ સંસાધનોનો સંગ્રહ જેમાં સિલેબસ, 2024ના પ્રશ્નપત્રો અને વિગતવાર ઉકેલોનો સમાવેશ થાય છે"
+tags: ["study-material", "00-general", "semester-1", "chemistry", "engineering-chemistry", "DI01000071"]
+cascade:
+  showReadingTime: false
+  showWordCount: false
+  showPagination: false
+---

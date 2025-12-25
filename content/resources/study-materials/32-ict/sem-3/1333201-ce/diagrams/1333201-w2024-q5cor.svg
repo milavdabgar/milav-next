@@ -1,0 +1,225 @@
+<svg viewBox="0 0 900 700" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .title { font: bold 16px Arial; text-anchor: middle; }
+      .label { font: 12px Arial; text-anchor: middle; }
+      .axis { font: 10px Arial; }
+      .block { fill: #e3f2fd; stroke: #1976d2; stroke-width: 2; }
+      .quantizer { fill: #ffebee; stroke: #d32f2f; stroke-width: 2; }
+      .integrator { fill: #e8f5e8; stroke: #388e3c; stroke-width: 2; }
+      .adaptive { fill: #fff3e0; stroke: #ff9800; stroke-width: 2; }
+      .block-text { font: 11px Arial; text-anchor: middle; }
+      .wave { fill: none; stroke-width: 2; }
+      .input { stroke: #2e7d32; }
+      .dm-output { stroke: #1976d2; stroke-dasharray: 3,3; }
+      .adm-output { stroke: #ff9800; stroke-width: 3; }
+      .digital { stroke: #9c27b0; stroke-width: 3; }
+      .arrow { stroke: #333; stroke-width: 2; marker-end: url(#arrowhead); }
+      .description { font: 11px Arial; }
+      .section-title { font: bold 14px Arial; text-anchor: middle; }
+      .step-control { stroke: #ff5722; stroke-width: 2; stroke-dasharray: 2,2; }
+    </style>
+  </defs>
+
+  <!-- Title -->
+  <text x="450" y="25" class="title">Adaptive Delta Modulation (ADM) System</text>
+
+  <!-- ADM Block Diagram -->
+  <g transform="translate(50, 60)">
+    <text x="400" y="15" class="section-title" fill="#1976d2">Adaptive Delta Modulator Block Diagram</text>
+
+    <!-- Input -->
+    <circle cx="30" cy="80" r="5" fill="#4caf50"/>
+    <text x="15" y="75" class="axis">x(n)</text>
+    <text x="15" y="90" class="axis">Input</text>
+
+    <!-- Summer (subtractor) -->
+    <circle cx="100" cy="80" r="25" class="block"/>
+    <text x="85" y="85" class="block-text">+</text>
+    <text x="115" y="95" class="block-text">-</text>
+    <text x="100" y="120" class="axis">Σ</text>
+
+    <!-- 1-bit Quantizer -->
+    <rect x="170" y="60" width="60" height="40" class="quantizer" rx="5"/>
+    <text x="200" y="75" class="block-text">1-bit</text>
+    <text x="200" y="88" class="block-text">Quantizer</text>
+    <text x="200" y="115" class="axis">±Δ(n)</text>
+
+    <!-- Output -->
+    <circle cx="280" cy="80" r="5" fill="#9c27b0"/>
+    <text x="295" y="75" class="axis">d(n)</text>
+    <text x="295" y="90" class="axis">Output</text>
+
+    <!-- Step Size Control -->
+    <rect x="170" y="140" width="60" height="40" class="adaptive" rx="5"/>
+    <text x="200" y="155" class="block-text">Step Size</text>
+    <text x="200" y="168" class="block-text">Control</text>
+    <text x="200" y="195" class="axis">Δ(n)</text>
+
+    <!-- Integrator -->
+    <rect x="60" y="140" width="60" height="30" class="integrator" rx="5"/>
+    <text x="90" y="160" class="block-text">∫ Integrator</text>
+
+    <!-- Connections -->
+    <path class="arrow" d="M45,80 L75,80"/>
+    <path class="arrow" d="M125,80 L170,80"/>
+    <path class="arrow" d="M230,80 L275,80"/>
+
+    <!-- Feedback path -->
+    <path class="arrow" d="M200,100 L200,140"/>
+    <path class="arrow" d="M170,160 L120,160"/>
+    <path class="arrow" d="M90,140 L90,105"/>
+
+    <!-- Step size control connection -->
+    <path class="step-control" d="M200,180 L200,200 L260,200 L260,190 L200,190"/>
+    <text x="235" y="215" class="axis">Variable Δ(n)</text>
+
+    <!-- Labels -->
+    <text x="140" y="70" class="axis">e(n)</text>
+    <text x="50" y="125" class="axis">y(n)</text>
+    <text x="240" y="125" class="axis">d(n)</text>
+  </g>
+
+  <!-- Comparison: DM vs ADM Waveforms -->
+  <g transform="translate(50, 250)">
+    <text x="400" y="15" class="section-title" fill="#1976d2">DM vs ADM Signal Tracking Comparison</text>
+
+    <!-- Time axis -->
+    <line x1="30" y1="200" x2="750" y2="200" stroke="black" stroke-width="1"/>
+    <text x="760" y="205" class="axis">Time</text>
+
+    <!-- Input Signal -->
+    <text x="0" y="45" class="axis">Input</text>
+    <text x="0" y="57" class="axis">Signal</text>
+    <path class="wave input" d="M30,70 Q100,40 170,60 Q240,90 310,50 Q380,30 450,70 Q520,100 590,55 Q660,25 730,65">
+      <animate attributeName="d" values="M30,70 Q100,40 170,60 Q240,90 310,50 Q380,30 450,70 Q520,100 590,55 Q660,25 730,65;M30,65 Q100,45 170,65 Q240,85 310,55 Q380,35 450,75 Q520,95 590,60 Q660,30 730,70;M30,70 Q100,40 170,60 Q240,90 310,50 Q380,30 450,70 Q520,100 590,55 Q660,25 730,65" dur="6s" repeatCount="indefinite"/>
+    </path>
+
+    <!-- DM Output (Fixed Step Size) -->
+    <text x="0" y="95" class="axis">DM</text>
+    <text x="0" y="107" class="axis">Output</text>
+    <path class="wave dm-output" d="M30,115 L50,115 L50,110 L70,110 L70,105 L90,105 L90,100 L110,100 L110,105 L130,105 L130,110 L150,110 L150,115 L170,115 L170,120 L190,120 L190,125 L210,125 L210,120 L230,120 L230,115 L250,115 L250,110 L270,110 L270,105 L290,105 L290,100 L310,100 L310,105 L330,105 L330,110 L350,110 L350,115 L370,115 L370,120 L390,120 L390,125 L410,125 L410,130 L430,130 L430,125 L450,125 L450,120 L470,120 L470,115 L490,115 L490,120 L510,120 L510,125 L530,125 L530,120 L550,120 L550,115 L570,115 L570,110 L590,110 L590,105 L610,105 L610,100 L630,100 L630,105 L650,105 L650,110 L670,110 L670,115 L690,115 L690,120 L710,120 L710,115 L730,115"/>
+
+    <!-- ADM Output (Variable Step Size) -->
+    <text x="0" y="145" class="axis">ADM</text>
+    <text x="0" y="157" class="axis">Output</text>
+    <path class="wave adm-output" d="M30,155 L45,155 L45,145 L60,145 L60,135 L75,135 L75,125 L90,125 L90,130 L105,130 L105,135 L120,135 L120,145 L135,145 L135,155 L150,155 L150,165 L165,165 L165,170 L180,170 L180,175 L195,175 L195,170 L210,170 L210,165 L225,165 L225,160 L240,160 L240,155 L255,155 L255,150 L270,150 L270,145 L285,145 L285,140 L300,140 L300,135 L315,135 L315,140 L330,140 L330,145 L345,145 L345,150 L360,150 L360,155 L375,155 L375,160 L390,160 L390,165 L405,165 L405,170 L420,170 L420,175 L435,175 L435,170 L450,170 L450,165 L465,165 L465,160 L480,160 L480,165 L495,165 L495,170 L510,170 L510,165 L525,165 L525,160 L540,160 L540,155 L555,155 L555,150 L570,150 L570,145 L585,145 L585,140 L600,140 L600,135 L615,135 L615,140 L630,140 L630,145 L645,145 L645,150 L660,150 L660,155 L675,155 L675,160 L690,160 L690,155 L705,155 L705,160 L720,160 L720,155 L730,155">
+      <animate attributeName="d" values="M30,155 L45,155 L45,145 L60,145 L60,135 L75,135 L75,125 L90,125 L90,130 L105,130 L105,135 L120,135 L120,145 L135,145 L135,155 L150,155 L150,165 L165,165 L165,170 L180,170 L180,175 L195,175 L195,170 L210,170 L210,165 L225,165 L225,160 L240,160 L240,155 L255,155 L255,150 L270,150 L270,145 L285,145 L285,140 L300,140 L300,135 L315,135 L315,140 L330,140 L330,145 L345,145 L345,150 L360,150 L360,155 L375,155 L375,160 L390,160 L390,165 L405,165 L405,170 L420,170 L420,175 L435,175 L435,170 L450,170 L450,165 L465,165 L465,160 L480,160 L480,165 L495,165 L495,170 L510,170 L510,165 L525,165 L525,160 L540,160 L540,155 L555,155 L555,150 L570,150 L570,145 L585,145 L585,140 L600,140 L600,135 L615,135 L615,140 L630,140 L630,145 L645,145 L645,150 L660,150 L660,155 L675,155 L675,160 L690,160 L690,155 L705,155 L705,160 L720,160 L720,155 L730,155;M30,160 L45,160 L45,150 L60,150 L60,140 L75,140 L75,130 L90,130 L90,135 L105,135 L105,140 L120,140 L120,150 L135,150 L135,160 L150,160 L150,170 L165,170 L165,175 L180,175 L180,170 L195,170 L195,165 L210,165 L210,160 L225,160 L225,155 L240,155 L240,150 L255,150 L255,145 L270,145 L270,140 L285,140 L285,135 L300,135 L300,140 L315,140 L315,145 L330,145 L330,150 L345,150 L345,155 L360,155 L360,160 L375,160 L375,165 L390,165 L390,170 L405,170 L405,175 L420,175 L420,170 L435,170 L435,165 L450,165 L450,160 L465,160 L465,165 L480,165 L480,170 L495,170 L495,165 L510,165 L510,160 L525,160 L525,155 L540,155 L540,150 L555,150 L555,145 L570,145 L570,140 L585,140 L585,135 L600,135 L600,140 L615,140 L615,145 L630,145 L630,150 L645,150 L645,155 L660,155 L660,160 L675,160 L675,155 L690,155 L690,160 L705,160 L705,155 L720,155 L720,160 L730,160;M30,155 L45,155 L45,145 L60,145 L60,135 L75,135 L75,125 L90,125 L90,130 L105,130 L105,135 L120,135 L120,145 L135,145 L135,155 L150,155 L150,165 L165,165 L165,170 L180,170 L180,175 L195,175 L195,170 L210,170 L210,165 L225,165 L225,160 L240,160 L240,155 L255,155 L255,150 L270,150 L270,145 L285,145 L285,140 L300,140 L300,135 L315,135 L315,140 L330,140 L330,145 L345,145 L345,150 L360,150 L360,155 L375,155 L375,160 L390,160 L390,165 L405,165 L405,170 L420,170 L420,175 L435,175 L435,170 L450,170 L450,165 L465,165 L465,160 L480,160 L480,165 L495,165 L495,170 L510,170 L510,165 L525,165 L525,160 L540,160 L540,155 L555,155 L555,150 L570,150 L570,145 L585,145 L585,140 L600,140 L600,135 L615,135 L615,140 L630,140 L630,145 L645,145 L645,150 L660,150 L660,155 L675,155 L675,160 L690,160 L690,155 L705,155 L705,160 L720,160 L720,155 L730,155" dur="6s" repeatCount="indefinite"/>
+    </path>
+
+    <!-- Step size indicators for ADM -->
+    <g opacity="0.7">
+      <text x="100" y="180" class="axis" font-size="8">Small Δ</text>
+      <text x="250" y="180" class="axis" font-size="8">Large Δ</text>
+      <text x="400" y="180" class="axis" font-size="8">Large Δ</text>
+      <text x="550" y="180" class="axis" font-size="8">Small Δ</text>
+    </g>
+  </g>
+
+  <!-- Step Size Adaptation Logic -->
+  <g transform="translate(50, 480)">
+    <text x="400" y="15" class="section-title" fill="#e65100">Step Size Adaptation Algorithm</text>
+
+    <!-- Algorithm flowchart -->
+    <g transform="translate(100, 30)">
+      <rect x="0" y="0" width="200" height="60" class="adaptive" rx="5"/>
+      <text x="100" y="25" class="block-text">Check consecutive</text>
+      <text x="100" y="38" class="block-text">output bits</text>
+      <text x="100" y="51" class="block-text">d(n) and d(n-1)</text>
+    </g>
+
+    <!-- Decision branches -->
+    <g transform="translate(50, 110)">
+      <rect x="0" y="0" width="150" height="50" fill="#e8f5e8" stroke="#4caf50" stroke-width="2" rx="5"/>
+      <text x="75" y="20" class="block-text">Same polarity</text>
+      <text x="75" y="33" class="block-text">(11 or 00)</text>
+      <text x="75" y="60" class="axis">Δ(n) = Δ(n-1) × K</text>
+      <text x="75" y="72" class="axis">(Increase step size)</text>
+    </g>
+
+    <g transform="translate(250, 110)">
+      <rect x="0" y="0" width="150" height="50" fill="#ffebee" stroke="#f44336" stroke-width="2" rx="5"/>
+      <text x="75" y="20" class="block-text">Different polarity</text>
+      <text x="75" y="33" class="block-text">(01 or 10)</text>
+      <text x="75" y="60" class="axis">Δ(n) = Δ(n-1) / K</text>
+      <text x="75" y="72" class="axis">(Decrease step size)</text>
+    </g>
+
+    <!-- Arrows -->
+    <path class="arrow" d="M150,90 L125,110"/>
+    <path class="arrow" d="M250,90 L275,110"/>
+
+    <!-- Adaptation constant -->
+    <g transform="translate(450, 50)">
+      <rect x="0" y="0" width="200" height="80" fill="#f3e5f5" stroke="#9c27b0" stroke-width="2" rx="5"/>
+      <text x="100" y="20" class="label" fill="#7b1fa2">Adaptation Parameters</text>
+      <text x="10" y="40" class="description">• K = 1.5 to 2.0 (typical)</text>
+      <text x="10" y="55" class="description">• Δmin ≤ Δ(n) ≤ Δmax</text>
+      <text x="10" y="70" class="description">• Fast adaptation to signal changes</text>
+    </g>
+  </g>
+
+  <!-- Performance Comparison -->
+  <g transform="translate(50, 590)">
+    <text x="400" y="15" class="section-title" fill="#1976d2">ADM vs DM Performance Comparison</text>
+
+    <!-- Table -->
+    <rect x="0" y="25" width="120" height="30" fill="#f5f5f5" stroke="#666"/>
+    <text x="60" y="45" class="label" font-weight="bold">Parameter</text>
+
+    <rect x="120" y="25" width="200" height="30" fill="#e3f2fd" stroke="#1976d2"/>
+    <text x="220" y="45" class="label" font-weight="bold">Delta Modulation (DM)</text>
+
+    <rect x="320" y="25" width="200" height="30" fill="#fff3e0" stroke="#ff9800"/>
+    <text x="420" y="45" class="label" font-weight="bold">Adaptive DM (ADM)</text>
+
+    <rect x="520" y="25" width="180" height="30" fill="#e8f5e8" stroke="#4caf50"/>
+    <text x="610" y="45" class="label" font-weight="bold">Improvement</text>
+
+    <!-- Step Size -->
+    <rect x="0" y="55" width="120" height="25" fill="#f5f5f5" stroke="#666"/>
+    <text x="60" y="72" class="description">Step Size</text>
+
+    <rect x="120" y="55" width="200" height="25" fill="#e3f2fd" stroke="#1976d2"/>
+    <text x="220" y="72" class="description">Fixed</text>
+
+    <rect x="320" y="55" width="200" height="25" fill="#fff3e0" stroke="#ff9800"/>
+    <text x="420" y="72" class="description">Variable (adaptive)</text>
+
+    <rect x="520" y="55" width="180" height="25" fill="#e8f5e8" stroke="#4caf50"/>
+    <text x="610" y="72" class="description">Better tracking</text>
+
+    <!-- Slope Overload -->
+    <rect x="0" y="80" width="120" height="25" fill="#f5f5f5" stroke="#666"/>
+    <text x="60" y="97" class="description">Slope Overload</text>
+
+    <rect x="120" y="80" width="200" height="25" fill="#e3f2fd" stroke="#1976d2"/>
+    <text x="220" y="97" class="description">High for fast signals</text>
+
+    <rect x="320" y="80" width="200" height="25" fill="#fff3e0" stroke="#ff9800"/>
+    <text x="420" y="97" class="description">Reduced significantly</text>
+
+    <rect x="520" y="80" width="180" height="25" fill="#e8f5e8" stroke="#4caf50"/>
+    <text x="610" y="97" class="description">6-10 dB better SNR</text>
+
+    <!-- Granular Noise -->
+    <rect x="0" y="105" width="120" height="25" fill="#f5f5f5" stroke="#666"/>
+    <text x="60" y="122" class="description">Granular Noise</text>
+
+    <rect x="120" y="105" width="200" height="25" fill="#e3f2fd" stroke="#1976d2"/>
+    <text x="220" y="122" class="description">High for slow signals</text>
+
+    <rect x="320" y="105" width="200" height="25" fill="#fff3e0" stroke="#ff9800"/>
+    <text x="420" y="122" class="description">Minimized</text>
+
+    <rect x="520" y="105" width="180" height="25" fill="#e8f5e8" stroke="#4caf50"/>
+    <text x="610" y="122" class="description">4-6 dB improvement</text>
+  </g>
+
+  <!-- Arrow marker definition -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+    </marker>
+  </defs>
+</svg>

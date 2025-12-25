@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Authorization</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/white.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/monokai.css">
+    <style>
+        .reveal h1, .reveal h2, .reveal h3 {
+            color: #2c3e50;
+        }
+        .reveal .slides section {
+            text-align: left;
+        }
+        .reveal .title-slide {
+            text-align: center;
+        }
+        .reveal .highlight {
+            background-color: #3498db;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        .reveal .authz-box {
+            background-color: #e8f5e8;
+            border-left: 4px solid #27ae60;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .reveal .concept-box {
+            background-color: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .reveal .implementation-box {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .reveal .challenge-box {
+            background-color: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .reveal .example-box {
+            background-color: #f8f9fa;
+            border: 2px solid #6c757d;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 0.85em;
+        }
+        .reveal img {
+            border: none !important;
+            box-shadow: none !important;
+        }
+        .reveal .principle-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- Title Slide -->
+            <section class="title-slide">
+                <h1>Authorization</h1>
+                <h3>Controlling Access to Resources</h3>
+                <p>
+                    <small>Defining What Users Can Do</small>
+                </p>
+                <div style="text-align: center; margin-top: 30px;">
+                    <img src="diagrams/authorization-methods.svg" alt="Authorization Methods" style="width: 70%; height: auto; max-width: 700px;">
+                </div>
+            </section>
+
+            <!-- What is Authorization? -->
+            <section>
+                <h2>Authorization Definition</h2>
+                <div class="authz-box">
+                    <strong>Authorization</strong> is the process of determining what an authenticated user is allowed to do - which resources they can access and what actions they can perform on those resources.
+                </div>
+                <h3>Core Questions Authorization Answers:</h3>
+                <ul>
+                    <li><strong>"What can you access?"</strong> - Resource permissions</li>
+                    <li><strong>"What actions can you perform?"</strong> - Operation permissions</li>
+                    <li><strong>"When can you access it?"</strong> - Time-based restrictions</li>
+                    <li><strong>"From where can you access it?"</strong> - Location constraints</li>
+                </ul>
+            </section>
+
+            <!-- Authorization vs Authentication -->
+            <section>
+                <h2>Authorization vs Authentication</h2>
+                <table style="font-size: 0.8em;">
+                    <tr>
+                        <th>Aspect</th>
+                        <th>Authentication</th>
+                        <th>Authorization</th>
+                    </tr>
+                    <tr>
+                        <td>Purpose</td>
+                        <td>Verify identity</td>
+                        <td>Grant permissions</td>
+                    </tr>
+                    <tr>
+                        <td>Question</td>
+                        <td>"Who are you?"</td>
+                        <td>"What can you do?"</td>
+                    </tr>
+                    <tr>
+                        <td>Process</td>
+                        <td>Login with credentials</td>
+                        <td>Check access rights</td>
+                    </tr>
+                    <tr>
+                        <td>Frequency</td>
+                        <td>Once per session</td>
+                        <td>Every resource request</td>
+                    </tr>
+                    <tr>
+                        <td>Example</td>
+                        <td>Username + password</td>
+                        <td>Read/write file permissions</td>
+                    </tr>
+                    <tr>
+                        <td>Dependency</td>
+                        <td>Independent</td>
+                        <td>Requires authentication first</td>
+                    </tr>
+                </table>
+            </section>
+
+            <!-- Significance in Cybersecurity -->
+            <section>
+                <h2>Significance in Cybersecurity</h2>
+                <div class="authz-box">
+                    <h3>Why Authorization is Critical:</h3>
+                    <ul>
+                        <li><strong>Principle of Least Privilege:</strong> Users get minimum necessary access</li>
+                        <li><strong>Data Protection:</strong> Prevents unauthorized data exposure</li>
+                        <li><strong>Compliance:</strong> Meets regulatory requirements</li>
+                        <li><strong>Risk Mitigation:</strong> Limits damage from compromised accounts</li>
+                        <li><strong>Operational Security:</strong> Maintains system integrity</li>
+                        <li><strong>Audit Trail:</strong> Tracks who accessed what resources</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Key Concepts -->
+            <section>
+                <h2>Key Authorization Concepts</h2>
+                <div class="principle-grid">
+                    <div class="concept-box">
+                        <h4>Subject:</h4>
+                        <p>Entity requesting access (user, process, system)</p>
+                        <ul>
+                            <li>Human users</li>
+                            <li>Service accounts</li>
+                            <li>Applications</li>
+                            <li>Devices</li>
+                        </ul>
+                    </div>
+                    <div class="concept-box">
+                        <h4>Object/Resource:</h4>
+                        <p>What is being accessed</p>
+                        <ul>
+                            <li>Files and folders</li>
+                            <li>Database records</li>
+                            <li>Network resources</li>
+                            <li>Applications</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="concept-box">
+                    <h4>Action/Operation:</h4>
+                    <p>What the subject wants to do with the object</p>
+                    <ul>
+                        <li><strong>Read:</strong> View or access data</li>
+                        <li><strong>Write:</strong> Modify or create data</li>
+                        <li><strong>Execute:</strong> Run programs or scripts</li>
+                        <li><strong>Delete:</strong> Remove data or resources</li>
+                        <li><strong>Admin:</strong> Change permissions or settings</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Authorization Process -->
+            <section>
+                <h2>Authorization Process Flow</h2>
+                <div class="example-box">
+                    <strong>Step-by-step Authorization Process:</strong><br><br>
+                    
+                    1. <strong>User Authentication:</strong> User successfully logs in<br>
+                    &nbsp;&nbsp;&nbsp;Example: Alice authenticates with username/password<br><br>
+                    
+                    2. <strong>Resource Request:</strong> User requests access to resource<br>
+                    &nbsp;&nbsp;&nbsp;Example: Alice tries to open "financial_report.xlsx"<br><br>
+                    
+                    3. <strong>Policy Lookup:</strong> System checks authorization policies<br>
+                    &nbsp;&nbsp;&nbsp;Example: Check Alice's permissions for financial files<br><br>
+                    
+                    4. <strong>Decision Making:</strong> Grant or deny access<br>
+                    &nbsp;&nbsp;&nbsp;Example: Alice has "read" but not "write" permission<br><br>
+                    
+                    5. <strong>Enforcement:</strong> Apply the authorization decision<br>
+                    &nbsp;&nbsp;&nbsp;Example: Allow file opening, disable editing features<br><br>
+                    
+                    6. <strong>Logging:</strong> Record the access attempt<br>
+                    &nbsp;&nbsp;&nbsp;Example: Log "Alice accessed financial_report.xlsx (read)"
+                </div>
+            </section>
+
+            <!-- Implementation Mechanisms -->
+            <section>
+                <h2>Authorization Implementation</h2>
+                <div class="implementation-box">
+                    <h3>Common Implementation Methods:</h3>
+                    <ul>
+                        <li><strong>Access Control Lists (ACLs):</strong> Lists of permissions per resource</li>
+                        <li><strong>Role-Based Access Control (RBAC):</strong> Permissions assigned to roles</li>
+                        <li><strong>Attribute-Based Access Control (ABAC):</strong> Policy-based decisions</li>
+                        <li><strong>Capability-Based Security:</strong> Tokens representing permissions</li>
+                        <li><strong>Mandatory Access Control (MAC):</strong> System-enforced policies</li>
+                        <li><strong>Discretionary Access Control (DAC):</strong> Owner-controlled permissions</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Access Control Lists (ACLs) -->
+            <section>
+                <h2>Access Control Lists (ACLs)</h2>
+                <div class="concept-box">
+                    <strong>ACL Concept:</strong> Each resource has a list specifying which users/groups can perform which actions
+                </div>
+                <div class="example-box">
+                    <strong>File System ACL Example:</strong><br><br>
+                    
+                    File: /documents/budget.xlsx<br>
+                    Access Control List:<br>
+                    - Owner (Alice): Read, Write, Delete<br>
+                    - Group (Finance): Read, Write<br>
+                    - Group (Managers): Read<br>
+                    - Others: No access<br><br>
+                    
+                    <strong>Database ACL Example:</strong><br>
+                    Table: customer_data<br>
+                    - User (sales_user): SELECT, INSERT<br>
+                    - User (admin_user): SELECT, INSERT, UPDATE, DELETE<br>
+                    - Role (reports): SELECT only
+                </div>
+            </section>
+
+            <!-- Role-Based Access Control (RBAC) -->
+            <section>
+                <h2>Role-Based Access Control (RBAC)</h2>
+                <div class="concept-box">
+                    <strong>RBAC Concept:</strong> Permissions are assigned to roles, and users are assigned to roles
+                </div>
+                <div class="example-box">
+                    <strong>Corporate RBAC Example:</strong><br><br>
+                    
+                    <strong>Roles and Permissions:</strong><br>
+                    Employee Role: Read company handbook, Submit timesheets<br>
+                    Manager Role: Employee permissions + Approve leave, View team reports<br>
+                    HR Role: Employee permissions + Access personnel files, Manage benefits<br>
+                    IT Admin Role: All permissions + System administration<br><br>
+                    
+                    <strong>User Assignments:</strong><br>
+                    John Smith → Manager Role<br>
+                    Sarah Jones → HR Role<br>
+                    Mike Wilson → IT Admin Role
+                </div>
+            </section>
+
+            <!-- Attribute-Based Access Control (ABAC) -->
+            <section>
+                <h2>Attribute-Based Access Control (ABAC)</h2>
+                <div class="concept-box">
+                    <strong>ABAC Concept:</strong> Access decisions based on attributes of users, resources, and environment
+                </div>
+                <div class="example-box">
+                    <strong>ABAC Policy Example:</strong><br><br>
+                    
+                    Rule: "Allow access to patient records IF:"<br>
+                    - User.Department = "Medical"<br>
+                    - User.Role = "Doctor" OR "Nurse"<br>
+                    - Resource.Type = "PatientRecord"<br>
+                    - Time.Hour BETWEEN 06:00 AND 22:00<br>
+                    - Location.Zone = "Hospital"<br>
+                    - Patient.AssignedDoctor = User.ID OR User.Role = "Emergency"<br><br>
+                    
+                    <strong>Dynamic Evaluation:</strong><br>
+                    Every access request evaluates all conditions in real-time
+                </div>
+            </section>
+
+            <!-- Authorization Challenges -->
+            <section>
+                <h2>Authorization Challenges</h2>
+                <div class="challenge-box">
+                    <h3>Common Implementation Challenges:</h3>
+                    <ul>
+                        <li><strong>Complexity:</strong> Managing permissions across multiple systems</li>
+                        <li><strong>Scalability:</strong> Performance impact with many users/resources</li>
+                        <li><strong>Consistency:</strong> Ensuring uniform policies across platforms</li>
+                        <li><strong>Maintenance:</strong> Keeping permissions current as roles change</li>
+                        <li><strong>Granularity:</strong> Balancing detailed control with simplicity</li>
+                        <li><strong>Delegation:</strong> Allowing users to grant permissions to others</li>
+                        <li><strong>Audit:</strong> Tracking who has access to what</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Permission Models -->
+            <section>
+                <h2>Permission Models</h2>
+                <div class="principle-grid">
+                    <div class="implementation-box">
+                        <h4>Positive Permissions:</h4>
+                        <p>Explicitly grant access</p>
+                        <ul>
+                            <li>Default: No access</li>
+                            <li>Must be granted explicitly</li>
+                            <li>More secure approach</li>
+                            <li>Example: "Allow read access"</li>
+                        </ul>
+                    </div>
+                    <div class="implementation-box">
+                        <h4>Negative Permissions:</h4>
+                        <p>Explicitly deny access</p>
+                        <ul>
+                            <li>Default: Full access</li>
+                            <li>Deny specific actions</li>
+                            <li>Used for exceptions</li>
+                            <li>Example: "Deny delete access"</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="concept-box">
+                    <h4>Mixed Model:</h4>
+                    <p>Combination of positive and negative permissions with precedence rules</p>
+                    <ul>
+                        <li>Typically: Deny permissions override allow permissions</li>
+                        <li>More flexible but complex</li>
+                        <li>Requires careful policy design</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Time and Location-Based Authorization -->
+            <section>
+                <h2>Contextual Authorization</h2>
+                <div class="concept-box">
+                    <h3>Time-Based Authorization:</h3>
+                    <ul>
+                        <li>Business hours restrictions</li>
+                        <li>Scheduled access windows</li>
+                        <li>Temporary permissions</li>
+                        <li>Time-limited tokens</li>
+                    </ul>
+                </div>
+                <div class="concept-box">
+                    <h3>Location-Based Authorization:</h3>
+                    <ul>
+                        <li>IP address restrictions</li>
+                        <li>Geographic limitations</li>
+                        <li>Network zone requirements</li>
+                        <li>Device location verification</li>
+                    </ul>
+                </div>
+                <div class="example-box">
+                    <strong>Example Policy:</strong><br>
+                    "Financial data can only be accessed from corporate offices during business hours by Finance department employees"
+                </div>
+            </section>
+
+            <!-- Authorization in Modern Systems -->
+            <section>
+                <h2>Authorization in Modern Systems</h2>
+                <h3>Cloud and Microservices:</h3>
+                <ul>
+                    <li><strong>API-Based Authorization:</strong> Token-based access control</li>
+                    <li><strong>Zero Trust Networks:</strong> Verify every request</li>
+                    <li><strong>Service-to-Service Auth:</strong> Machine-to-machine authorization</li>
+                    <li><strong>Dynamic Policies:</strong> Real-time policy evaluation</li>
+                    <li><strong>Centralized Authorization:</strong> Policy decision points</li>
+                </ul>
+                <div class="implementation-box">
+                    <strong>OAuth 2.0 & JWT:</strong> Modern standards for API authorization and token-based access control
+                </div>
+            </section>
+
+            <!-- Best Practices -->
+            <section>
+                <h2>Authorization Best Practices</h2>
+                <ol>
+                    <li><strong>Principle of Least Privilege:</strong> Grant minimum necessary access</li>
+                    <li><strong>Regular Access Reviews:</strong> Periodic audits of permissions</li>
+                    <li><strong>Separation of Duties:</strong> Divide critical functions</li>
+                    <li><strong>Default Deny:</strong> No access unless explicitly granted</li>
+                    <li><strong>Centralized Management:</strong> Single point of policy control</li>
+                    <li><strong>Automated Provisioning:</strong> Consistent permission assignment</li>
+                    <li><strong>Logging and Monitoring:</strong> Track all authorization decisions</li>
+                    <li><strong>Documentation:</strong> Clear policies and procedures</li>
+                </ol>
+            </section>
+
+            <!-- Common Pitfalls -->
+            <section>
+                <h2>Common Authorization Pitfalls</h2>
+                <div class="challenge-box">
+                    <h3>Avoid These Mistakes:</h3>
+                    <ul>
+                        <li><strong>Over-Privileging:</strong> Granting excessive permissions</li>
+                        <li><strong>Permission Creep:</strong> Accumulating unnecessary access over time</li>
+                        <li><strong>Shared Accounts:</strong> Multiple users with same credentials</li>
+                        <li><strong>Stale Permissions:</strong> Not removing access when roles change</li>
+                        <li><strong>Inconsistent Policies:</strong> Different rules across systems</li>
+                        <li><strong>Poor Documentation:</strong> Unclear authorization procedures</li>
+                        <li><strong>Lack of Monitoring:</strong> No visibility into access patterns</li>
+                        <li><strong>Emergency Backdoors:</strong> Uncontrolled bypass mechanisms</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Authorization Compliance -->
+            <section>
+                <h2>Regulatory Compliance</h2>
+                <h3>Authorization Requirements in Regulations:</h3>
+                <ul>
+                    <li><strong>SOX:</strong> Financial data access controls and segregation of duties</li>
+                    <li><strong>HIPAA:</strong> Patient data access based on minimum necessary rule</li>
+                    <li><strong>GDPR:</strong> Data access controls and purpose limitation</li>
+                    <li><strong>PCI DSS:</strong> Cardholder data access restrictions</li>
+                    <li><strong>SOC 2:</strong> Logical access controls and user access reviews</li>
+                </ul>
+                <div class="implementation-box">
+                    <strong>Common Requirements:</strong> Role-based access, regular reviews, audit trails, access documentation
+                </div>
+            </section>
+
+            <!-- Future Trends -->
+            <section>
+                <h2>Future of Authorization</h2>
+                <ul>
+                    <li><strong>AI-Driven Policies:</strong> Machine learning for access patterns</li>
+                    <li><strong>Risk-Based Authorization:</strong> Dynamic access based on risk assessment</li>
+                    <li><strong>Zero Trust Authorization:</strong> Continuous verification approach</li>
+                    <li><strong>Blockchain Identity:</strong> Decentralized authorization systems</li>
+                    <li><strong>Privacy-Preserving Auth:</strong> Access without revealing identity</li>
+                    <li><strong>Intent-Based Authorization:</strong> Access based on declared intent</li>
+                    <li><strong>Quantum-Safe Authorization:</strong> Preparing for quantum computing</li>
+                </ul>
+            </section>
+
+            <!-- Key Takeaways -->
+            <section>
+                <h2>Key Takeaways</h2>
+                <ul>
+                    <li>Authorization determines what authenticated users can do</li>
+                    <li>Follows authentication in the security process</li>
+                    <li>Must implement principle of least privilege</li>
+                    <li>Requires regular review and maintenance</li>
+                    <li>Should be centrally managed when possible</li>
+                    <li>Must support audit and compliance requirements</li>
+                    <li>Context-aware authorization provides enhanced security</li>
+                </ul>
+                <div class="authz-box">
+                    <strong>Remember:</strong> Good authorization is the key to data protection and regulatory compliance
+                </div>
+            </section>
+
+            <!-- Thank You -->
+            <section class="title-slide">
+                <h1>Thank You</h1>
+                <h3>Questions & Discussion</h3>
+                <p>Next: Authorization Methods Deep Dive</p>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/notes/notes.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/markdown/markdown.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/highlight.min.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            transition: 'slide',
+            plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+        });
+    </script>
+</body>
+</html>

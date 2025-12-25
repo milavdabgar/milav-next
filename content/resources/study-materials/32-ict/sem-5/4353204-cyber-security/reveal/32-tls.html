@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TLS (Transport Layer Security)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/white.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/monokai.css">
+    <style>
+        .reveal h1, .reveal h2, .reveal h3 {
+            color: #2c3e50;
+        }
+        .reveal .slides section {
+            text-align: left;
+        }
+        .reveal .title-slide {
+            text-align: center;
+        }
+        .reveal .highlight {
+            background-color: #3498db;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        .reveal .tls-box {
+            background-color: #e8f5e8;
+            border-left: 4px solid #27ae60;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .reveal .security-box {
+            background-color: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .reveal .protocol-box {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .reveal .version-box {
+            background-color: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .reveal .example-box {
+            background-color: #f8f9fa;
+            border: 2px solid #6c757d;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 0.85em;
+        }
+        .reveal img {
+            border: none !important;
+            box-shadow: none !important;
+        }
+        .reveal .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            font-size: 0.9em;
+        }
+        .reveal .version-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 15px;
+            font-size: 0.8em;
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- Title Slide -->
+            <section class="title-slide">
+                <h1>TLS</h1>
+                <h3>Transport Layer Security - Modern Internet Encryption</h3>
+                <p>
+                    <small>The Successor to SSL and Foundation of Web Security</small>
+                </p>
+                <div style="text-align: center; margin-top: 30px;">
+                    <img src="diagrams/https-ssl-tls-architecture.svg" alt="HTTPS SSL TLS Architecture" style="width: 70%; height: auto; max-width: 700px;">
+                </div>
+            </section>
+
+            <!-- What is TLS? -->
+            <section>
+                <h2>TLS Definition</h2>
+                <div class="tls-box">
+                    <strong>TLS (Transport Layer Security)</strong> is a cryptographic protocol that provides secure communications over a computer network, serving as the modern successor to SSL and the foundation for HTTPS, email security, and other secure protocols.
+                </div>
+                <h3>Core Functions:</h3>
+                <ul>
+                    <li><strong>Authentication:</strong> Verify server and optionally client identity</li>
+                    <li><strong>Confidentiality:</strong> Encrypt data to prevent eavesdropping</li>
+                    <li><strong>Integrity:</strong> Detect message tampering or corruption</li>
+                    <li><strong>Forward Secrecy:</strong> Protect past communications if keys are compromised</li>
+                    <li><strong>Replay Protection:</strong> Prevent replay attacks</li>
+                </ul>
+                <div class="security-box">
+                    <strong>Position:</strong> TLS operates between the transport layer (TCP) and application layer (HTTP, SMTP, etc.)
+                </div>
+            </section>
+
+            <!-- TLS vs SSL Evolution -->
+            <section>
+                <h2>TLS Evolution from SSL</h2>
+                <div class="example-box">
+                    <strong>Historical Timeline:</strong><br><br>
+                    
+                    <strong>SSL 1.0 (1994):</strong> Never released (security flaws)<br><br>
+                    
+                    <strong>SSL 2.0 (1995):</strong> First public release by Netscape<br>
+                    • Multiple security vulnerabilities<br>
+                    • Deprecated in 2011<br><br>
+                    
+                    <strong>SSL 3.0 (1996):</strong> Complete redesign<br>
+                    • Foundation for TLS<br>
+                    • POODLE vulnerability (2014)<br>
+                    • Deprecated in 2015<br><br>
+                    
+                    <strong>TLS 1.0 (1999):</strong> RFC 2246<br>
+                    • Based on SSL 3.0 with improvements<br>
+                    • Deprecated in 2021<br><br>
+                    
+                    <strong>TLS 1.1 (2006):</strong> RFC 4346<br>
+                    • Protection against CBC attacks<br>
+                    • Deprecated in 2021<br><br>
+                    
+                    <strong>TLS 1.2 (2008):</strong> RFC 5246<br>
+                    • Current widespread standard<br>
+                    • Support for modern cipher suites<br><br>
+                    
+                    <strong>TLS 1.3 (2018):</strong> RFC 8446<br>
+                    • Major protocol overhaul<br>
+                    • Improved security and performance
+                </div>
+            </section>
+
+            <!-- TLS Version Comparison -->
+            <section>
+                <h2>TLS Version Comparison</h2>
+                <div class="version-grid">
+                    <div class="version-box">
+                        <h4>TLS 1.0/1.1:</h4>
+                        <ul>
+                            <li><strong>Status:</strong> Deprecated</li>
+                            <li><strong>Security:</strong> Multiple vulnerabilities</li>
+                            <li><strong>Performance:</strong> 2-RTT handshake</li>
+                            <li><strong>Support:</strong> Legacy only</li>
+                        </ul>
+                    </div>
+                    <div class="security-box">
+                        <h4>TLS 1.2:</h4>
+                        <ul>
+                            <li><strong>Status:</strong> Current standard</li>
+                            <li><strong>Security:</strong> Strong when configured properly</li>
+                            <li><strong>Performance:</strong> 2-RTT handshake</li>
+                            <li><strong>Support:</strong> Universal</li>
+                        </ul>
+                    </div>
+                    <div class="tls-box">
+                        <h4>TLS 1.3:</h4>
+                        <ul>
+                            <li><strong>Status:</strong> Latest standard</li>
+                            <li><strong>Security:</strong> Enhanced security</li>
+                            <li><strong>Performance:</strong> 1-RTT handshake</li>
+                            <li><strong>Support:</strong> Growing adoption</li>
+                        </ul>
+                    </div>
+                    <div class="protocol-box">
+                        <h4>Future:</h4>
+                        <ul>
+                            <li><strong>Post-Quantum:</strong> Quantum-resistant</li>
+                            <li><strong>0-RTT:</strong> Zero round-trip time</li>
+                            <li><strong>QUIC:</strong> UDP-based transport</li>
+                            <li><strong>HTTP/3:</strong> Next-gen web</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TLS 1.2 Handshake -->
+            <section>
+                <h2>TLS 1.2 Handshake Process</h2>
+                <div class="example-box">
+                    <strong>TLS 1.2 Full Handshake (2-RTT):</strong><br><br>
+                    
+                    <strong>Client → Server:</strong> Client Hello<br>
+                    • TLS version, cipher suites, random number<br>
+                    • Extensions (SNI, ALPN, etc.)<br><br>
+                    
+                    <strong>Server → Client:</strong> Server Hello + Certificate + Key Exchange<br>
+                    • Chosen TLS version and cipher suite<br>
+                    • Server certificate chain<br>
+                    • Server key exchange (if needed)<br>
+                    • Certificate request (optional)<br>
+                    • Server Hello Done<br><br>
+                    
+                    <strong>Client → Server:</strong> Key Exchange + Change Cipher Spec + Finished<br>
+                    • Client key exchange (pre-master secret)<br>
+                    • Client certificate (if requested)<br>
+                    • Certificate verify (if client cert)<br>
+                    • Change cipher spec<br>
+                    • Encrypted handshake message<br><br>
+                    
+                    <strong>Server → Client:</strong> Change Cipher Spec + Finished<br>
+                    • Change cipher spec<br>
+                    • Encrypted handshake message<br><br>
+                    
+                    <strong>Result:</strong> Secure channel established, application data can flow
+                </div>
+            </section>
+
+            <!-- TLS 1.3 Improvements -->
+            <section>
+                <h2>TLS 1.3 Major Improvements</h2>
+                <div class="comparison-grid">
+                    <div class="tls-box">
+                        <h4>Performance Enhancements:</h4>
+                        <ul>
+                            <li><strong>1-RTT Handshake:</strong> Faster connection setup</li>
+                            <li><strong>0-RTT Resumption:</strong> Instant resume (with caveats)</li>
+                            <li><strong>Simplified Negotiation:</strong> Fewer round trips</li>
+                            <li><strong>Encrypted Extensions:</strong> More data protected</li>
+                        </ul>
+                    </div>
+                    <div class="security-box">
+                        <h4>Security Improvements:</h4>
+                        <ul>
+                            <li><strong>Perfect Forward Secrecy:</strong> Always enabled</li>
+                            <li><strong>Authenticated Encryption:</strong> Only AEAD ciphers</li>
+                            <li><strong>Simplified Cipher Suites:</strong> Removed weak options</li>
+                            <li><strong>Encrypted Handshake:</strong> More metadata protected</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="protocol-box">
+                    <h3>Removed Legacy Features:</h3>
+                    <ul>
+                        <li>Static RSA key exchange</li>
+                        <li>Non-AEAD cipher suites</li>
+                        <li>Compression</li>
+                        <li>Renegotiation</li>
+                        <li>Custom DHE groups</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- TLS 1.3 Handshake -->
+            <section>
+                <h2>TLS 1.3 Handshake Process</h2>
+                <div class="example-box">
+                    <strong>TLS 1.3 Full Handshake (1-RTT):</strong><br><br>
+                    
+                    <strong>Client → Server:</strong> Client Hello + Key Share<br>
+                    • TLS 1.3 version<br>
+                    • Cipher suites (simplified)<br>
+                    • Key shares for supported groups<br>
+                    • Extensions<br><br>
+                    
+                    <strong>Server → Client:</strong> Server Hello + Encrypted Extensions + Certificate + Finished<br>
+                    • Selected cipher suite<br>
+                    • Key share<br>
+                    • Encrypted extensions<br>
+                    • Server certificate<br>
+                    • Certificate verify<br>
+                    • Finished (encrypted)<br><br>
+                    
+                    <strong>Client → Server:</strong> Finished<br>
+                    • Client finished (encrypted)<br><br>
+                    
+                    <strong>Result:</strong> Application data can immediately flow<br><br>
+                    
+                    <strong>0-RTT Resumption:</strong><br>
+                    Client can send application data with first message (with replay risk)
+                </div>
+            </section>
+
+            <!-- TLS Cipher Suites -->
+            <section>
+                <h2>TLS Cipher Suites</h2>
+                <div class="security-box">
+                    <strong>Cipher Suite:</strong> Combination of algorithms for key exchange, authentication, encryption, and message authentication.
+                </div>
+                <div class="comparison-grid">
+                    <div class="protocol-box">
+                        <h4>TLS 1.2 Format:</h4>
+                        <strong>TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256</strong><br><br>
+                        • <strong>ECDHE:</strong> Key exchange<br>
+                        • <strong>RSA:</strong> Authentication<br>
+                        • <strong>AES_128_GCM:</strong> Encryption + MAC<br>
+                        • <strong>SHA256:</strong> Handshake hash<br>
+                    </div>
+                    <div class="tls-box">
+                        <h4>TLS 1.3 Format:</h4>
+                        <strong>TLS_AES_128_GCM_SHA256</strong><br><br>
+                        • <strong>AES_128_GCM:</strong> AEAD cipher<br>
+                        • <strong>SHA256:</strong> Hash function<br>
+                        • Key exchange: Separate negotiation<br>
+                        • Authentication: Certificate-based<br>
+                    </div>
+                </div>
+                <div class="example-box">
+                    <strong>Recommended TLS 1.3 Cipher Suites:</strong><br>
+                    • TLS_AES_128_GCM_SHA256<br>
+                    • TLS_AES_256_GCM_SHA384<br>
+                    • TLS_CHACHA20_POLY1305_SHA256<br>
+                    • TLS_AES_128_CCM_SHA256<br>
+                    • TLS_AES_128_CCM_8_SHA256
+                </div>
+            </section>
+
+            <!-- Key Exchange Methods -->
+            <section>
+                <h2>TLS Key Exchange Methods</h2>
+                <table style="font-size: 0.7em;">
+                    <tr>
+                        <th>Method</th>
+                        <th>TLS Version</th>
+                        <th>Forward Secrecy</th>
+                        <th>Performance</th>
+                        <th>Security</th>
+                    </tr>
+                    <tr>
+                        <td>Static RSA</td>
+                        <td>1.0-1.2</td>
+                        <td>❌ No</td>
+                        <td>Fast</td>
+                        <td>Vulnerable if key compromised</td>
+                    </tr>
+                    <tr>
+                        <td>DHE (Finite Field)</td>
+                        <td>1.0-1.2</td>
+                        <td>✅ Yes</td>
+                        <td>Slow</td>
+                        <td>Good with large keys</td>
+                    </tr>
+                    <tr>
+                        <td>ECDHE</td>
+                        <td>1.0-1.2</td>
+                        <td>✅ Yes</td>
+                        <td>Fast</td>
+                        <td>Excellent</td>
+                    </tr>
+                    <tr>
+                        <td>ECDHE (Required)</td>
+                        <td>1.3</td>
+                        <td>✅ Always</td>
+                        <td>Very Fast</td>
+                        <td>Excellent</td>
+                    </tr>
+                    <tr>
+                        <td>X25519</td>
+                        <td>1.3</td>
+                        <td>✅ Always</td>
+                        <td>Very Fast</td>
+                        <td>State-of-the-art</td>
+                    </tr>
+                </table>
+                <div class="tls-box">
+                    <strong>Forward Secrecy:</strong> Ensures that past communications remain secure even if long-term keys are compromised
+                </div>
+            </section>
+
+            <!-- TLS Extensions -->
+            <section>
+                <h2>Important TLS Extensions</h2>
+                <div class="comparison-grid">
+                    <div class="security-box">
+                        <h4>Essential Extensions:</h4>
+                        <ul>
+                            <li><strong>SNI (Server Name Indication):</strong> Virtual hosting support</li>
+                            <li><strong>ALPN (Application Layer Protocol):</strong> HTTP/2, HTTP/3 negotiation</li>
+                            <li><strong>Supported Groups:</strong> Elliptic curves, FFDHE groups</li>
+                            <li><strong>Signature Algorithms:</strong> Supported signature schemes</li>
+                            <li><strong>Key Share:</strong> Ephemeral keys (TLS 1.3)</li>
+                        </ul>
+                    </div>
+                    <div class="protocol-box">
+                        <h4>Security Extensions:</h4>
+                        <ul>
+                            <li><strong>OCSP Stapling:</strong> Certificate status</li>
+                            <li><strong>Certificate Transparency:</strong> SCT timestamps</li>
+                            <li><strong>Extended Master Secret:</strong> Enhanced key derivation</li>
+                            <li><strong>Encrypt-then-MAC:</strong> Improved MAC verification</li>
+                            <li><strong>Record Size Limit:</strong> Fragment size control</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="tls-box">
+                    <strong>TLS 1.3 Extensions:</strong> Pre-shared Key, Early Data, Cookie, Certificate Authorities, Post-handshake Authentication
+                </div>
+            </section>
+
+            <!-- TLS Record Protocol -->
+            <section>
+                <h2>TLS Record Protocol</h2>
+                <div class="protocol-box">
+                    <strong>TLS Record:</strong> Low-level protocol that encapsulates higher-level protocols (handshake, application data, alerts, change cipher spec).
+                </div>
+                <div class="example-box">
+                    <strong>TLS Record Format:</strong><br><br>
+                    
+                    <strong>TLS 1.2 Record:</strong><br>
+                    | Type (1) | Version (2) | Length (2) | Data (variable) |<br><br>
+                    
+                    <strong>Types:</strong><br>
+                    • 20: Change Cipher Spec<br>
+                    • 21: Alert<br>
+                    • 22: Handshake<br>
+                    • 23: Application Data<br><br>
+                    
+                    <strong>TLS 1.3 Changes:</strong><br>
+                    • All records after ServerHello are encrypted<br>
+                    • Content type hidden in encrypted payload<br>
+                    • Outer content type always "Application Data"<br>
+                    • Real content type in encrypted padding<br><br>
+                    
+                    <strong>Maximum Record Size:</strong> 2^14 bytes (16,384 bytes)
+                </div>
+            </section>
+
+            <!-- TLS Configuration Best Practices -->
+            <section>
+                <h2>TLS Configuration Best Practices</h2>
+                <ol>
+                    <li><strong>Use Modern TLS Versions:</strong> TLS 1.2 minimum, prefer TLS 1.3</li>
+                    <li><strong>Disable Legacy Protocols:</strong> No SSL 2.0/3.0, TLS 1.0/1.1</li>
+                    <li><strong>Strong Cipher Suites:</strong> AEAD ciphers only, perfect forward secrecy</li>
+                    <li><strong>Proper Certificate Chain:</strong> Complete, trusted certificate chain</li>
+                    <li><strong>Enable HSTS:</strong> HTTP Strict Transport Security</li>
+                    <li><strong>OCSP Stapling:</strong> Improve performance and privacy</li>
+                    <li><strong>Session Management:</strong> Secure session resumption</li>
+                    <li><strong>Key Management:</strong> Regular key rotation, secure storage</li>
+                </ol>
+                <div class="security-box">
+                    <strong>Testing:</strong> Use SSL Labs, testssl.sh, or similar tools to validate configuration
+                </div>
+            </section>
+
+            <!-- Common TLS Vulnerabilities -->
+            <section>
+                <h2>TLS Vulnerabilities and Attacks</h2>
+                <table style="font-size: 0.65em;">
+                    <tr>
+                        <th>Attack</th>
+                        <th>Year</th>
+                        <th>Affected Versions</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td>BEAST</td>
+                        <td>2011</td>
+                        <td>TLS 1.0</td>
+                        <td>CBC cipher attack</td>
+                    </tr>
+                    <tr>
+                        <td>CRIME</td>
+                        <td>2012</td>
+                        <td>TLS with compression</td>
+                        <td>Compression ratio attack</td>
+                    </tr>
+                    <tr>
+                        <td>Lucky 13</td>
+                        <td>2013</td>
+                        <td>TLS 1.0-1.2 CBC</td>
+                        <td>Timing attack on CBC</td>
+                    </tr>
+                    <tr>
+                        <td>POODLE</td>
+                        <td>2014</td>
+                        <td>SSL 3.0, TLS CBC</td>
+                        <td>Padding oracle attack</td>
+                    </tr>
+                    <tr>
+                        <td>FREAK</td>
+                        <td>2015</td>
+                        <td>TLS with export ciphers</td>
+                        <td>Weak encryption forced</td>
+                    </tr>
+                    <tr>
+                        <td>Logjam</td>
+                        <td>2015</td>
+                        <td>TLS with weak DH</td>
+                        <td>Weak Diffie-Hellman</td>
+                    </tr>
+                    <tr>
+                        <td>SWEET32</td>
+                        <td>2016</td>
+                        <td>64-bit block ciphers</td>
+                        <td>Birthday attack on 3DES</td>
+                    </tr>
+                    <tr>
+                        <td>ROBOT</td>
+                        <td>2017</td>
+                        <td>TLS with RSA PKCS#1</td>
+                        <td>Bleichenbacher attack</td>
+                    </tr>
+                </table>
+                <div class="version-box">
+                    <strong>TLS 1.3 Resistance:</strong> TLS 1.3 eliminates most of these attack vectors through design improvements
+                </div>
+            </section>
+
+            <!-- TLS Performance Optimization -->
+            <section>
+                <h2>TLS Performance Optimization</h2>
+                <div class="comparison-grid">
+                    <div class="protocol-box">
+                        <h4>Handshake Optimization:</h4>
+                        <ul>
+                            <li><strong>TLS 1.3:</strong> 1-RTT vs 2-RTT handshake</li>
+                            <li><strong>Session Resumption:</strong> PSK, session tickets</li>
+                            <li><strong>0-RTT Data:</strong> Early data (with replay risks)</li>
+                            <li><strong>OCSP Stapling:</strong> Avoid OCSP lookups</li>
+                            <li><strong>Certificate Chain:</strong> Minimize chain length</li>
+                        </ul>
+                    </div>
+                    <div class="tls-box">
+                        <h4>Runtime Optimization:</h4>
+                        <ul>
+                            <li><strong>Hardware Acceleration:</strong> AES-NI, ECDH acceleration</li>
+                            <li><strong>Connection Reuse:</strong> HTTP/2, connection pooling</li>
+                            <li><strong>Cipher Selection:</strong> ChaCha20-Poly1305 for mobile</li>
+                            <li><strong>Record Size:</strong> Optimize for application needs</li>
+                            <li><strong>False Start:</strong> Send data before handshake complete</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="security-box">
+                    <strong>Measurement:</strong> Monitor handshake time, connection establishment, and data transfer rates
+                </div>
+            </section>
+
+            <!-- TLS Implementation Libraries -->
+            <section>
+                <h2>TLS Implementation Libraries</h2>
+                <table style="font-size: 0.75em;">
+                    <tr>
+                        <th>Library</th>
+                        <th>Language</th>
+                        <th>TLS 1.3</th>
+                        <th>Key Features</th>
+                    </tr>
+                    <tr>
+                        <td>OpenSSL</td>
+                        <td>C</td>
+                        <td>✅ 1.1.1+</td>
+                        <td>Most widely used, comprehensive</td>
+                    </tr>
+                    <tr>
+                        <td>BoringSSL</td>
+                        <td>C</td>
+                        <td>✅ Yes</td>
+                        <td>Google fork, simplified API</td>
+                    </tr>
+                    <tr>
+                        <td>LibreSSL</td>
+                        <td>C</td>
+                        <td>✅ Yes</td>
+                        <td>OpenBSD fork, security focused</td>
+                    </tr>
+                    <tr>
+                        <td>wolfSSL</td>
+                        <td>C</td>
+                        <td>✅ Yes</td>
+                        <td>Embedded systems, small footprint</td>
+                    </tr>
+                    <tr>
+                        <td>GnuTLS</td>
+                        <td>C</td>
+                        <td>✅ Yes</td>
+                        <td>GNU project, LGPL license</td>
+                    </tr>
+                    <tr>
+                        <td>mbedTLS</td>
+                        <td>C</td>
+                        <td>✅ Yes</td>
+                        <td>ARM, IoT focused</td>
+                    </tr>
+                    <tr>
+                        <td>rustls</td>
+                        <td>Rust</td>
+                        <td>✅ Yes</td>
+                        <td>Memory safe, modern design</td>
+                    </tr>
+                </table>
+            </section>
+
+            <!-- TLS Monitoring and Debugging -->
+            <section>
+                <h2>TLS Monitoring and Debugging</h2>
+                <div class="comparison-grid">
+                    <div class="security-box">
+                        <h4>Testing Tools:</h4>
+                        <ul>
+                            <li><strong>SSL Labs:</strong> Online TLS configuration testing</li>
+                            <li><strong>testssl.sh:</strong> Command-line TLS scanner</li>
+                            <li><strong>nmap:</strong> Network scanning with SSL scripts</li>
+                            <li><strong>sslyze:</strong> Fast SSL configuration scanner</li>
+                            <li><strong>OpenSSL s_client:</strong> Manual connection testing</li>
+                        </ul>
+                    </div>
+                    <div class="protocol-box">
+                        <h4>Monitoring Metrics:</h4>
+                        <ul>
+                            <li><strong>Handshake Latency:</strong> Connection establishment time</li>
+                            <li><strong>Cipher Distribution:</strong> Which ciphers are used</li>
+                            <li><strong>Protocol Versions:</strong> TLS version adoption</li>
+                            <li><strong>Certificate Health:</strong> Expiration, validation errors</li>
+                            <li><strong>Error Rates:</strong> Handshake failures, alerts</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="example-box">
+                    <strong>OpenSSL Debug Commands:</strong><br>
+                    # Test TLS 1.3 connection<br>
+                    openssl s_client -connect example.com:443 -tls1_3<br><br>
+                    # Show certificate chain<br>
+                    openssl s_client -connect example.com:443 -showcerts<br><br>
+                    # Test specific cipher suite<br>
+                    openssl s_client -connect example.com:443 -cipher 'ECDHE+AESGCM'
+                </div>
+            </section>
+
+            <!-- Future of TLS -->
+            <section>
+                <h2>Future of TLS</h2>
+                <ul>
+                    <li><strong>Post-Quantum TLS:</strong> Quantum-resistant key exchange and signatures</li>
+                    <li><strong>TLS 1.4:</strong> Potential future version with further improvements</li>
+                    <li><strong>Encrypted ClientHello:</strong> Hide more metadata from observers</li>
+                    <li><strong>Compact TLS:</strong> Optimized for IoT and constrained devices</li>
+                    <li><strong>QUIC Integration:</strong> TLS over UDP for HTTP/3</li>
+                    <li><strong>Certificate Transparency v2:</strong> Enhanced certificate monitoring</li>
+                    <li><strong>Delegated Credentials:</strong> Short-lived certificate delegation</li>
+                    <li><strong>Automated Certificate Management:</strong> ACME protocol evolution</li>
+                </ul>
+            </section>
+
+            <!-- Key Takeaways -->
+            <section>
+                <h2>Key Takeaways</h2>
+                <ul>
+                    <li>TLS is the modern successor to SSL and foundation of internet security</li>
+                    <li>TLS 1.3 provides significant security and performance improvements</li>
+                    <li>Proper configuration is essential for security and performance</li>
+                    <li>Forward secrecy should always be enabled in modern deployments</li>
+                    <li>Regular monitoring and updates are crucial for maintaining security</li>
+                    <li>Legacy versions (TLS 1.0/1.1) should be disabled</li>
+                    <li>Certificate management is a critical operational component</li>
+                    <li>Future developments will focus on quantum resistance and metadata protection</li>
+                </ul>
+                <div class="tls-box">
+                    <strong>Remember:</strong> TLS security depends on proper implementation, configuration, and ongoing maintenance - not just the protocol version
+                </div>
+            </section>
+
+            <!-- Thank You -->
+            <section class="title-slide">
+                <h1>Thank You</h1>
+                <h3>Questions & Discussion</h3>
+                <p>Next: VPNs (Virtual Private Networks)</p>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/notes/notes.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/markdown/markdown.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/highlight.min.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            transition: 'slide',
+            plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+        });
+    </script>
+</body>
+</html>
