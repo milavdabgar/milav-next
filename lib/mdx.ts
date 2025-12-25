@@ -1,3 +1,4 @@
+
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
@@ -13,6 +14,7 @@ export interface ContentMetadata {
   showAuthor?: boolean;
   showReadingTime?: boolean;
   showEdit?: boolean;
+  tags?: string[];
   [key: string]: any;
 }
 
@@ -33,7 +35,6 @@ export function getContentBySlug(
 
     const contentPath = path.join(contentDirectory, folder);
 
-    // Try locale-specific file first, then fall back to default
     // Try locale-specific file first, then fall back to default
     // We construct the path manually to avoid Next.js build warnings
     let fullPath = path.normalize(`${process.cwd()}/content/${folder}/${fileName}`);
@@ -89,6 +90,64 @@ export function getAllContent(folder: string, locale?: string): ContentItem[] {
     console.error(`Error reading content folder: ${folder}`, error);
     return [];
   }
+}
+
+// Recursive function to get all MDX files
+export function getAllContentRecursive(folder: string = '', locale?: string): ContentItem[] {
+  const items: ContentItem[] = [];
+  const absolutePath = path.join(contentDirectory, folder);
+
+  if (!fs.existsSync(absolutePath)) return [];
+
+  const entries = fs.readdirSync(absolutePath, { withFileTypes: true });
+
+  for (const entry of entries) {
+    const relativePath = path.join(folder, entry.name);
+
+    if (entry.isDirectory()) {
+      items.push(...getAllContentRecursive(relativePath, locale));
+    } else if (entry.isFile() && entry.name.endsWith('.mdx') && !entry.name.includes('.gu.')) {
+      // We found an MDX file
+      // Determine slug (relative path to content root, minus extension)
+      // But getContentBySlug expects (folder, slug)
+
+      // For recursively found files, strict (folder, slug) separation is tricky 
+      // because getContentBySlug builds path as content/folder/slug.mdx
+      // So we can pass 'folder' as the directory path relative to content, and 'slug' as filename without extension.
+
+      const fileDirectory = folder;
+      const slug = entry.name.replace(/\.mdx$/, '');
+
+      // Skip _index.mdx if we only want "pages" or arguably include them. 
+      // Usually tags are on leaf nodes or important section pages. Let's include everything.
+
+      const content = getContentBySlug(fileDirectory, slug, locale);
+      if (content) {
+        // Adjust slug to be the full relative path from content root if needed for linking. 
+        // However, getContentBySlug returns just the filename slug.
+        // For global search/tags, we likely need the full path to link correctly.
+        // Let's attach a 'fullSlug' or similar if needed, or rebuild the slug.
+
+        // Construct a clickable URI-friendly slug
+        const uriSlug = path.join(fileDirectory, slug).replace(/\\/g, '/'); // ensure forward slashes
+
+        // We overwrite slug to be the full path so links work like /blog/slug or /resources/path/to/slug
+        // But wait, /blog/slug is a specific route. /resources/path/to/slug is another.
+        // We need to know which top-level section it belongs to for the Link href.
+
+        // Let's store the full relative text path as the slug for now? 
+        // Standard getAllContent just returns filename as slug for blog.
+        // But for nested resources, simple filename isn't unique or sufficient.
+
+        items.push({
+          ...content,
+          slug: uriSlug // Override slug with full relative path
+        });
+      }
+    }
+  }
+
+  return items;
 }
 
 export function getAvailableLocales(folder: string, slug: string): string[] {
