@@ -42,7 +42,7 @@ export function ContentTemplate({
   // Use passed breadcrumbs or default minimal ones if not provided
   const items = breadcrumbs || [
     { label: 'Home', href: '/' },
-    { label: 'Content', href: '#' },
+    { label: 'Content', href: '/content' },
     { label: contentType === 'blog' ? 'Blog' : 'Resources', href: contentType === 'blog' ? '/blog' : '/resources' },
     { label: title, href: '#' }
   ];

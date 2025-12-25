@@ -20,7 +20,7 @@ export function getBreadcrumbs(basePath: string, slug: string[], locale?: string
     // Handle base path (e.g. Resources -> Study Materials)
     // This part is static for now based on the section
     // Add 'Content' node as requested
-    breadcrumbs.push({ label: 'Content', href: '#' });
+    breadcrumbs.push({ label: 'Content', href: '/content' });
 
     if (basePath.includes('resources')) {
         breadcrumbs.push({ label: 'Resources', href: '/resources' });
