@@ -86,15 +86,18 @@ def refactor_latex(file_path):
     
     # Regex to detect start of answer
     # Matches "\textbf{Answer}:", "\textbf{Answer:}" or similar
-    answer_start_re = re.compile(r'\\textbf{Answer[:\s}]')
+    # Also support Gujarati "Jawab" -> \textbf{જવાબ}
+    answer_start_re = re.compile(r'\\textbf{(?:Answer|જવાબ)[:\s}]')
     
     # Regex to detect start of Mnemonic
-    mnemonic_start_re = re.compile(r'\\textbf{Mnemonic[:\s}]')
+    # Also support Gujarati "Yadshakti Sutra" -> \textbf{યાદશક્તિ સૂત્ર} and "Memory Trick" -> \textbf{મેમરી ટ્રીક}
+    mnemonic_start_re = re.compile(r'\\textbf{(?:Mnemonic|યાદશક્તિ સૂત્ર|મેમરી ટ્રીક)[:\s}]')
 
     # Regex to identify "Mermaid" blocks (Shaded environment)
     # Regex for Table Caption (e.g. \textbf{Table: Title})
     # We want to capture the Title part.
-    table_caption_re = re.compile(r'\\textbf{Table\s*:\s*(.*)}')
+    # Also support Gujarati "Koshtak" -> \textbf{કોષ્ટક}
+    table_caption_re = re.compile(r'\\textbf{(?:Table|કોષ્ટક)\s*:\s*(.*)}')
     pending_caption = None
     
     in_shaded = False
@@ -183,7 +186,7 @@ def refactor_latex(file_path):
         if is_answer_start:
             new_lines.append(r"\begin{solutionbox}")
             in_solution_box = True
-            clean_line = re.sub(r'\\textbf{Answer[^}]*}(\s*:)?', '', line).strip()
+            clean_line = re.sub(r'\\textbf{(?:Answer|જવાબ)[^}]*}(\s*:)?', '', line).strip()
             if clean_line:
                 new_lines.append(clean_line)
             continue
@@ -192,7 +195,7 @@ def refactor_latex(file_path):
         if is_mnemonic_start:
             new_lines.append(r"\begin{mnemonicbox}")
             in_mnemonic_box = True
-            clean_line = re.sub(r'\\textbf{Mnemonic[^}]*}(\s*:)?', '', line).strip()
+            clean_line = re.sub(r'\\textbf{(?:Mnemonic|યાદશક્તિ સૂત્ર|મેમરી ટ્રીક)[^}]*}(\s*:)?', '', line).strip()
             if clean_line:
                 new_lines.append(clean_line)
             continue
