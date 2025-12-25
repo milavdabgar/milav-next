@@ -45,10 +45,19 @@ export function Mermaid({ children }: MermaidProps) {
                     edgeStroke: '#ffffff',
                 } : undefined;
 
+                // Force CSS overrides to guarantee visibility
+                // This targets the SVG internals directly to bypass any theme specificity issues
+                const themeCSS = currentTheme === 'dark' ? `
+                    .edgePath .path { stroke: #ffffff !important; }
+                    .marker { fill: #ffffff !important; stroke: #ffffff !important; }
+                    .flowchart-link { stroke: #ffffff !important; }
+                ` : undefined;
+
                 mermaid.initialize({
                     startOnLoad: false,
                     theme: mermaidTheme,
                     themeVariables,
+                    themeCSS,
                     securityLevel: 'loose',
                     // Use standard system fonts to prevent width calculation errors where text gets chopped off
                     fontFamily: 'ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
