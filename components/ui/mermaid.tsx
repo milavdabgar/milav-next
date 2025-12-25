@@ -96,7 +96,7 @@ export function Mermaid({ children }: MermaidProps) {
     return (
         <div
             ref={elementRef}
-            className={`flex justify-center my-6 overflow-x-auto ${isRendered ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
+            className={`mermaid-diagram flex justify-center my-6 overflow-x-auto ${isRendered ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
         />
     );
 }
