@@ -85,6 +85,9 @@ export default async function StudyMaterialDynamicPage({
     const directoryPath = `resources/study-materials/${slugPath}`;
     const { directories, files } = getDirectoryContent(directoryPath, locale === 'gu' ? 'gu' : undefined);
 
+    const mdxFiles = files.filter((f: any) => f.type === 'mdx');
+    const staticFiles = files.filter((f: any) => f.type !== 'mdx');
+
     // Try to find index file for this directory for metadata
     const indexContent = getContentBySlug(directoryPath, '_index', locale === 'gu' ? 'gu' : undefined);
 
@@ -142,19 +145,59 @@ export default async function StudyMaterialDynamicPage({
                 </Link>
             ))}
 
-            {files.map((file) => (
-                <Link key={file.slug} href={`/resources/study-materials/${slugPath}/${file.slug}${isGujarati ? '?lang=gu' : ''}`}>
-                    <Card className="h-full hover:bg-muted/50 transition-colors">
-                        <CardHeader className="flex flex-row items-center gap-4">
-                            <FileText className="h-8 w-8 text-green-500" />
-                            <div>
-                                <CardTitle className="text-lg">{file.title || file.slug}</CardTitle>
-                                <CardDescription>{file.description}</CardDescription>
-                            </div>
-                        </CardHeader>
-                    </Card>
-                </Link>
-            ))}
+            {/* Articles Section */}
+            {mdxFiles.length > 0 && (
+                <div className="col-span-full mt-8">
+                    <h2 className="text-2xl font-bold mb-4">Articles</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {mdxFiles.map((file) => (
+                            <Link key={file.slug} href={`/resources/study-materials/${slugPath}/${file.slug}${isGujarati ? '?lang=gu' : ''}`}>
+                                <Card className="h-full hover:bg-muted/50 transition-colors">
+                                    <CardHeader className="flex flex-row items-center gap-4">
+                                        <FileText className="h-8 w-8 text-green-500" />
+                                        <div>
+                                            <CardTitle className="text-lg">{file.title || file.slug}</CardTitle>
+                                            <CardDescription>{file.description}</CardDescription>
+                                        </div>
+                                    </CardHeader>
+                                </Card>
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {/* Static Files Section */}
+            {staticFiles.length > 0 && (
+                <div className="col-span-full mt-8">
+                    <h2 className="text-2xl font-bold mb-4">Files</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {staticFiles.map((file) => {
+                            // Construct the path for the API
+                            // resource/study-materials/maths/book.pdf
+                            const filePath = `resources/study-materials/${slugPath}/${file.filename}`;
+                            const fileUrl = `/api/file?path=${encodeURIComponent(filePath)}`;
+
+                            return (
+                                <Link key={file.filename} href={fileUrl} target="_blank" rel="noopener noreferrer">
+                                    <Card className="h-full hover:bg-muted/50 transition-colors">
+                                        <CardHeader className="flex flex-row items-center gap-4">
+                                            <FileText className="h-8 w-8 text-red-500" />
+                                            <div>
+                                                <CardTitle className="text-lg truncate max-w-[200px]" title={file.title}>{file.title}</CardTitle>
+                                                <CardDescription>{file.extension?.toUpperCase().replace('.', '') || 'FILE'}</CardDescription>
+                                            </div>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <span className="text-sm font-medium text-blue-600 dark:text-blue-400">View File &rarr;</span>
+                                        </CardContent>
+                                    </Card>
+                                </Link>
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
         </GridPageLayout>
     );
 }
