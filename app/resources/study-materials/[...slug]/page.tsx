@@ -16,7 +16,27 @@ import remarkMath from 'remark-math';
 import remarkGfm from 'remark-gfm';
 import rehypeKatex from 'rehype-katex';
 import { getBreadcrumbs } from '@/lib/breadcrumbs';
+import { visit } from 'unist-util-visit';
 import { mdxComponents } from '@/components/mdx-components';
+
+// Custom rehype plugin to rewrite relative image paths
+const rehypeRelativeImages = (options: { baseUrl: string }) => {
+    return (tree: any) => {
+        visit(tree, 'element', (node: any) => {
+            if (node.tagName === 'img' && node.properties && node.properties.src) {
+                const src = node.properties.src as string;
+                if (src.startsWith('./')) {
+                    // Replace ./ with the base URL
+                    // Ensure baseUrl ends with / and src starts with ./
+                    // resulting path: baseUrl + src.slice(2)
+                    let baseUrl = options.baseUrl;
+                    if (!baseUrl.endsWith('/')) baseUrl += '/';
+                    node.properties.src = baseUrl + src.slice(2);
+                }
+            }
+        });
+    };
+};
 
 type Params = Promise<{ slug: string[]; lang?: string }>;
 
@@ -60,7 +80,10 @@ export default async function StudyMaterialDynamicPage({
                         options={{
                             mdxOptions: {
                                 remarkPlugins: [remarkMath, remarkGfm],
-                                rehypePlugins: [rehypeKatex],
+                                rehypePlugins: [
+                                    rehypeKatex,
+                                    [rehypeRelativeImages, { baseUrl: `/${folderPath}` }]
+                                ],
                             }
                         }}
                         components={mdxComponents}
@@ -100,7 +123,10 @@ export default async function StudyMaterialDynamicPage({
                     options={{
                         mdxOptions: {
                             remarkPlugins: [remarkMath, remarkGfm],
-                            rehypePlugins: [rehypeKatex],
+                            rehypePlugins: [
+                                rehypeKatex,
+                                [rehypeRelativeImages, { baseUrl: `/resources/study-materials/${slugPath}` }]
+                            ],
                         }
                     }}
                     components={mdxComponents}
