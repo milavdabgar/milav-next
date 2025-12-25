@@ -57,7 +57,8 @@
 }
 
 % Spacing
-\setlength{\parskip}{3pt}
+\setlength{\parskip}{6pt}
+\linespread{1.15}
 \setlist[itemize]{nosep}
 \setlist[enumerate]{nosep}
 
@@ -109,7 +110,8 @@
 \textbf{બંધારણ:}
 \begin{itemize}
 \item કેડમિયમ સલ્ફાઇડ (CdS) જેવા ઉચ્ચ અવરોધક સેમિકન્ડક્ટરથી બનેલું.
-\item સિરામિક સબસ્ટ્રેટ પર ઝિગ-ઝેગ (સર્પેન્ટાઇન) ટ્રેક તરીકે જમા કરવામાં આવે છે.
+\item સિરામિક સબસ્ટ્રેટ પર ઝિગ-ઝેગ (સર્પેન્ટાઇન) ટ્રેક તરીકે જમા કરવામાં આવે છે જેથી લંબાઈ વધે અને ક્ષેત્રફળ ઘટે.
+\item ક્લિયર વિન્ડો સાથે પ્લાસ્ટિક/રેઝિનમાં બંધ કરવામાં આવે છે.
 \end{itemize}
 
 \textbf{ડાયાગ્રામ:}
@@ -153,6 +155,10 @@
 \textbf{લક્ષણો}: ઊંચી કેપેસિટન્સ, પોલરાઇઝ્ડ (ધન/ઋણ ધ્યાન રાખવું).
 \end{solutionbox}
 
+\begin{mnemonicbox}
+``એલ્યુમિનિયમ હંમેશા એમ્પ્લિફાય કરે (કેપેસિટન્સ)''
+\end{mnemonicbox}
+
 %----------------------------------------
 \section*{પ્રશ્ન 1(ક OR) [7 ગુણ]}
 \textbf{રેઝિસ્ટરની કલર બેન્ડ કોડિંગ પદ્ધતિ સમજાવો. 32 $\Omega$ $\pm$ 10\% કિંમતનો કલર બેન્ડ લખો.}
@@ -170,6 +176,10 @@
 \end{itemize}
 \end{solutionbox}
 
+\begin{mnemonicbox}
+``BBROYGBVGW'' (બ્લેક બ્રાઉન રેડ ઓરેન્જ યલો ગ્રીન બ્લુ વાયોલેટ ગ્રે વ્હાઇટ)
+\end{mnemonicbox}
+
 %----------------------------------------
 \section*{પ્રશ્ન 2(અ) [3 ગુણ]}
 \textbf{નીચેના શબ્દો વ્યાખ્યાયિત કરો: 1) રેક્ટિફાયર 2) રિપલ ફેક્ટર 3) ફિલ્ટર}
@@ -181,6 +191,10 @@
 \item \textbf{ફિલ્ટર}: પલ્સેટિંગ DC માંથી રિપલ્સ દૂર કરી સ્મૂથ DC બનાવનાર સર્કિટ.
 \end{enumerate}
 \end{solutionbox}
+
+\begin{mnemonicbox}
+``રેક્ટિફાયર રિપલ્સ, ફિલ્ટર ફિક્સિસ''
+\end{mnemonicbox}
 
 %----------------------------------------
 \section*{પ્રશ્ન 2(બ) [4 ગુણ]}
@@ -202,6 +216,17 @@
 \item જ્યારે $V_{in} > V_{ref}$, ડાયોડ શોર્ટ થાય છે અને આઉટપુટ $V_{ref}$ પર ક્લિપ થાય છે.
 \item જ્યારે $V_{in} < V_{ref}$, ડાયોડ ઓપન હોય છે અને આઉટપુટ ઇનપુટ જેવું જ મળે છે.
 \end{itemize}
+
+\textbf{વેવફોર્મ:}
+\begin{center}
+\begin{tikzpicture}[scale=0.6]
+\draw[->] (0,0) -- (5,0) node[right] {$t$};
+\draw[->] (0,-1.5) -- (0,2) node[above] {$V$};
+\draw[gray, dashed] (0,1) -- (5,1) node[right] {$V_{ref}$};
+\draw[blue, thick] plot[domain=0:4*pi, samples=100] (\x/2.5, {sin(\x r)});
+\draw[red, thick, dashed] plot[domain=0:4*pi, samples=100] (\x/2.5, {min(sin(\x r), 1)});
+\end{tikzpicture}
+\end{center}
 \end{solutionbox}
 
 %----------------------------------------
@@ -210,6 +235,20 @@
 
 \begin{solutionbox}
 \textbf{સેન્ટર-ટેપ ફુલ વેવ રેક્ટિફાયર:}
+
+\begin{center}
+\begin{circuitikz}[scale=0.8]
+\draw (0,0) node[transformer core] (T) {};
+\draw (T.A1) -- ++(-0.5,0) node[left] {AC};
+\draw (T.A2) -- ++(-0.5,0) node[left] {Mains};
+\draw (T.B1) to[D, l=$D_1$] ++(2,0) -- ++(1,0) coordinate (top);
+\draw (T.B2) to[D, l=$D_2$] ++(2,0) -- ++(1,0) coordinate (bot);
+\draw (top) -- (bot); % Short D1 D2 cathodes
+\draw ($(T.B1)!0.5!(T.B2)$) -- ++(1,0) coordinate (center); % Center tap
+\draw (center) to[R, l=$R_L$] ++(0, -2) coordinate (gnd);
+\draw (top) -- ++(1,0) to[R, l=$R_L$] ++(0,-3) -- ++(-2,0) -- ($(T.B1)!0.5!(T.B2)$); 
+\end{circuitikz}
+\end{center}
 \begin{itemize}
 \item \textbf{પોઝિટિવ હાફ}: $D_1$ ચાલુ, $D_2$ બંધ. કરંટ $R_L$ માંથી વહે છે.
 \item \textbf{નેગેટિવ હાફ}: $D_2$ ચાલુ, $D_1$ બંધ. કરંટ $R_L$ માંથી \textbf{એક જ દિશામાં} વહે છે.
@@ -244,7 +283,13 @@
 \end{circuitikz}
 \end{center}
 
-\textbf{કાર્ય}: $C_1$ અને $C_2$ રિપલ્સને ગ્રાઉન્ડ કરે છે, અને $L$ રિપલ્સને બ્લોક કરે છે. આથી ખૂબ સ્મૂથ DC મળે છે.
+\textbf{કાર્ય}:
+\begin{itemize}
+\item $C_1$: મોટાભાગના AC રિપલ્સને ગ્રાઉન્ડ કરે છે (AC માટે ઓછો રિએક્ટન્સ).
+\item $L$: AC ઘટકોને બ્લોક કરે છે (ઉચ્ચ રિએક્ટન્સ) અને DC ને પસાર કરે છે.
+\item $C_2$: બાકી રહેલા AC રિપલ્સને ગ્રાઉન્ડ કરે છે.
+\item \textbf{પરિણામ}: ખૂબ જ સ્મૂથ DC આઉટપુટ મળે છે. આને CLC ફિલ્ટર પણ કહે છે.
+\end{itemize}
 \end{solutionbox}
 
 %----------------------------------------
@@ -290,7 +335,13 @@
 \textbf{LED ની રચના અને કાર્ય સમજાવો.}
 
 \begin{solutionbox}
-\textbf{કાર્ય સિદ્ધાંત}: ફોરવર્ડ બાયાસમાં જ્યારે ઇલેક્ટ્રોન અને હોલ્સ રિકોમ્બાઇન થાય છે ત્યારે ઊર્જા પ્રકાશ સ્વરૂપે મુક્ત થાય છે.
+\textbf{કાર્ય સિદ્ધાંત}:
+\begin{itemize}
+\item \textbf{ફોરવર્ડ બાયાસ}માં કાર્ય કરે છે.
+\item N-તરફથી ઇલેક્ટ્રોન P-તરફના હોલ્સ સાથે રિકોમ્બાઇન થાય છે.
+\item રિકોમ્બિનેશન દરમ્યાન મુક્ત થતી ઊર્જા ફોટોન (પ્રકાશ) સ્વરૂપે બહાર આવે છે.
+\item પ્રકાશનો રંગ મટિરિયલના બેન્ડ ગેપ એનર્જી પર આધાર રાખે છે.
+\end{itemize}
 \end{solutionbox}
 
 %----------------------------------------
@@ -298,10 +349,74 @@
 \textbf{ઝેનર ડાયોડની કાર્યકારી લાક્ષણિકતાઓ સમજાવો.}
 
 \begin{solutionbox}
+\textbf{V-I લાક્ષણિકતાઓ}:
+
+\begin{center}
+\begin{tikzpicture}[scale=0.7]
+\draw[->] (-3,0) -- (3,0) node[right] {$V$};
+\draw[->] (0,-3) -- (0,3) node[above] {$I$};
+\draw[blue, thick] (0,0) -- (0.7,0) .. controls (1,0.5) .. (1,2.5) node[right] {Forward};
+\draw[blue, thick] (0,0) -- (-2,0) .. controls (-2.1,-0.5) .. (-2.1,-2.5) node[below] {Breakdown};
+\node at (-2.1, 0.2) {$V_Z$};
+\end{tikzpicture}
+\end{center}
+
+
 \textbf{વિસ્તારો}:
 \begin{itemize}
 \item \textbf{ફોરવર્ડ}: સામાન્ય ડાયોડ જેવું વર્તન.
 \item \textbf{રિવર્સ બ્રેકડાઉન}: ચોક્કસ વોલ્ટેજ ($V_Z$) પછી કરંટ ઝડપથી વધે છે પણ વોલ્ટેજ અચળ રહે છે. આ ગુણધર્મ વોલ્ટેજ રેગ્યુલેશનમાં વપરાય છે.
+\end{itemize}
+\end{solutionbox}
+
+%----------------------------------------
+\section*{પ્રશ્ન 3(અ OR) [3 ગુણ]}
+\textbf{વેરેક્ટર ડાયોડના ઉપયોગો જણાવો.}
+
+\begin{solutionbox}
+\begin{itemize}
+\item FM રેડિયો ટ્રાન્સમિટર્સ (મોડ્યુલેશન).
+\item TV રિસીવર્સ (ઇલેક્ટ્રોનિક ટ્યુનિંગ).
+\item વોલ્ટેજ કંટ્રોલ્ડ ઓસિલેટર્સ (VCOs).
+\item એડજસ્ટેબલ બેન્ડપાસ ફિલ્ટર્સ.
+\end{itemize}
+\textbf{સિદ્ધાંત}: રિવર્સ બાયાસમાં વોલ્ટેજ-વેરિયેબલ કેપેસિટર તરીકે વર્તે છે.
+\end{solutionbox}
+
+%----------------------------------------
+\section*{પ્રશ્ન 3(બ OR) [4 ગુણ]}
+\textbf{ફોટો ડાયોડનું કાર્ય સમજાવો.}
+
+\begin{solutionbox}
+\textbf{કાર્ય}:
+\begin{itemize}
+\item \textbf{રિવર્સ બાયાસ}માં કાર્ય કરે છે.
+\item જ્યારે જંક્શન પર પ્રકાશ પડે છે, ત્યારે ઊર્જા બોન્ડ્સ તોડે છે અને ઇલેક્ટ્રોન-હોલ પેર્સ બનાવે છે.
+\item ઇલેક્ટ્રિક ફીલ્ડ આ કેરિયર્સને ખેંચે છે, જેથી \textbf{રિવર્સ કરંટ} ઉત્પન્ન થાય છે.
+\item કરંટ પ્રકાશની તીવ્રતાના સમપ્રમાણમાં હોય છે.
+\end{itemize}
+\end{solutionbox}
+
+%----------------------------------------
+\section*{પ્રશ્ન 3(ક OR) [7 ગુણ]}
+\textbf{ઝેનર ડાયોડ વોલ્ટેજ રેગ્યુલેટર તરીકે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{સર્કિટ}:
+\begin{center}
+\begin{circuitikz}[scale=0.8]
+\draw (0,0) to[battery1, l=$V_{in}$] (0,3) to[R, l=$R_s$] (3,3) -- (5,3) node[right] {$V_{out}$};
+\draw (3,3) to[zD, l=$Zener$] (3,0);
+\draw (5,3) to[R, l=$R_L$] (5,0);
+\draw (5,0) -- (0,0);
+\end{circuitikz}
+\end{center}
+
+\textbf{કાર્ય}:
+\begin{itemize}
+\item ઝેનર લોડની સમાંતરમાં રિવર્સ બ્રેકડાઉન મોડમાં જોડાયેલ છે.
+\item જો $V_{in}$ વધે, તો ઝેનર કરંટ $I_z$ વધે છે, $R_s$ પર વોલ્ટેજ ડ્રોપ વધારે છે, જેથી $V_{out}$ (= $V_z$) અચળ રહે છે.
+\item જો $I_L$ બદલાય, તો $I_z$ એડજસ્ટ થાય છે જેથી $V_{out}$ સ્થિર રહે.
 \end{itemize}
 \end{solutionbox}
 
