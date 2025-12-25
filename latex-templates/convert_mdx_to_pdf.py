@@ -4,9 +4,14 @@ MDX to PDF Converter for Study Materials
 Converts MDX files to LaTeX, refactors them, and generates PDFs.
 
 Usage:
+    # Single file
     python3 convert_mdx_to_pdf.py <mdx_file>
-    python3 convert_mdx_to_pdf.py <mdx_file> --no-pdf  # Skip PDF generation
-    python3 convert_mdx_to_pdf.py <mdx_file> --keep-aux  # Keep auxiliary files
+    
+    # Directory (processes all *-solution.mdx and *-solution.gu.mdx files)
+    python3 convert_mdx_to_pdf.py <directory>
+    
+    # With options
+    python3 convert_mdx_to_pdf.py <path> --no-pdf --keep-aux
 """
 
 import sys
@@ -14,10 +19,54 @@ import os
 import subprocess
 import argparse
 from pathlib import Path
+import re
 
 # Import the refactor function from refactor_latex.py
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from refactor_latex import refactor_latex
+
+
+def is_solution_file(filename):
+    """Check if filename matches the solution file pattern."""
+    pattern = r'.*-solution(\.gu)?\.mdx$'
+    return re.match(pattern, filename) is not None
+
+
+def find_solution_files(path):
+    """
+    Find all solution MDX files in the given path.
+    
+    Args:
+        path: Path object (file or directory)
+    
+    Returns:
+        List of Path objects for solution files
+    """
+    if path.is_file():
+        # Single file - check if it matches pattern
+        if is_solution_file(path.name):
+            return [path]
+        else:
+            print(f"⚠️  WARNING: File does not match solution pattern: {path.name}")
+            print(f"Expected pattern: *-solution.mdx or *-solution.gu.mdx")
+            return []
+    
+    elif path.is_dir():
+        # Directory - find all matching files
+        solution_files = []
+        for mdx_file in path.glob('*.mdx'):
+            if is_solution_file(mdx_file.name):
+                solution_files.append(mdx_file)
+        
+        if not solution_files:
+            print(f"⚠️  WARNING: No solution files found in: {path}")
+            print(f"Looking for files matching: *-solution.mdx or *-solution.gu.mdx")
+        
+        return sorted(solution_files)
+    
+    else:
+        print(f"❌ ERROR: Path does not exist: {path}")
+        return []
 
 
 def run_command(cmd, cwd=None, description=""):
@@ -146,26 +195,82 @@ def convert_mdx_to_pdf(mdx_file, generate_pdf=True, keep_aux=False):
     return True
 
 
+def process_files(files, generate_pdf=True, keep_aux=False):
+    """
+    Process multiple MDX files.
+    
+    Args:
+        files: List of Path objects
+        generate_pdf: Whether to generate PDFs
+        keep_aux: Whether to keep auxiliary files
+    
+    Returns:
+        Tuple of (success_count, failure_count)
+    """
+    if not files:
+        return 0, 0
+    
+    total = len(files)
+    success_count = 0
+    failure_count = 0
+    
+    print(f"\n{'#'*60}")
+    print(f"BATCH PROCESSING: {total} file(s)")
+    print(f"{'#'*60}\n")
+    
+    for i, mdx_file in enumerate(files, 1):
+        print(f"\n{'#'*60}")
+        print(f"Processing file {i}/{total}: {mdx_file.name}")
+        print(f"{'#'*60}\n")
+        
+        if convert_mdx_to_pdf(mdx_file, generate_pdf, keep_aux):
+            success_count += 1
+        else:
+            failure_count += 1
+            print(f"\n⚠️  Failed to process: {mdx_file.name}\n")
+    
+    # Summary
+    print(f"\n{'#'*60}")
+    print(f"BATCH PROCESSING COMPLETE")
+    print(f"{'#'*60}")
+    print(f"Total:   {total}")
+    print(f"Success: {success_count} ✅")
+    print(f"Failed:  {failure_count} ❌")
+    print(f"{'#'*60}\n")
+    
+    return success_count, failure_count
+
+
 def main():
     parser = argparse.ArgumentParser(
         description='Convert MDX study materials to PDF via LaTeX',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  # Convert MDX to PDF (full pipeline)
+  # Convert single file to PDF
   python3 convert_mdx_to_pdf.py 4300003-winter-2023-solution.mdx
   
+  # Convert all solution files in a directory
+  python3 convert_mdx_to_pdf.py /path/to/subject/directory
+  
   # Convert to LaTeX only (skip PDF generation)
-  python3 convert_mdx_to_pdf.py 4300003-winter-2023-solution.mdx --no-pdf
+  python3 convert_mdx_to_pdf.py /path/to/directory --no-pdf
   
   # Keep auxiliary files (.aux, .log, etc.)
-  python3 convert_mdx_to_pdf.py 4300003-winter-2023-solution.mdx --keep-aux
+  python3 convert_mdx_to_pdf.py /path/to/directory --keep-aux
+
+Pattern Matching:
+  Only files matching these patterns will be processed:
+  - *-solution.mdx (English solutions)
+  - *-solution.gu.mdx (Gujarati solutions)
+  
+  Files like "4300003.mdx" or "notes.mdx" will be skipped.
         """
     )
     
     parser.add_argument(
-        'mdx_file',
-        help='Path to the MDX file to convert'
+        'path',
+        help='Path to MDX file or directory containing solution files'
     )
     
     parser.add_argument(
@@ -182,13 +287,23 @@ Examples:
     
     args = parser.parse_args()
     
-    success = convert_mdx_to_pdf(
-        args.mdx_file,
+    # Find files to process
+    path = Path(args.path).resolve()
+    files = find_solution_files(path)
+    
+    if not files:
+        print("❌ No files to process!")
+        sys.exit(1)
+    
+    # Process files
+    success_count, failure_count = process_files(
+        files,
         generate_pdf=not args.no_pdf,
         keep_aux=args.keep_aux
     )
     
-    sys.exit(0 if success else 1)
+    # Exit with appropriate code
+    sys.exit(0 if failure_count == 0 else 1)
 
 
 if __name__ == '__main__':
