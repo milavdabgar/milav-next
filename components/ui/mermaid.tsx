@@ -20,7 +20,7 @@ export function Mermaid({ children }: MermaidProps) {
                 const mermaid = (await import('mermaid')).default;
 
                 const currentTheme = theme === 'system' ? systemTheme : theme;
-                const mermaidTheme = currentTheme === 'dark' ? 'dark' : 'default';
+                const mermaidTheme = currentTheme === 'dark' ? 'base' : 'default';
 
                 // Define theme variables to ensure high contrast in dark mode
                 // User requested lighter background colors to make things easier
@@ -39,6 +39,10 @@ export function Mermaid({ children }: MermaidProps) {
                     arrowheadColor: '#ffffff', // White arrowheads
                     titleColor: '#f8fafc', // Light title
                     edgeLabelBackground: '#1e293b', // Dark background for edge labels
+
+                    // Additional overrides to force white lines
+                    stroke: '#ffffff',
+                    edgeStroke: '#ffffff',
                 } : undefined;
 
                 mermaid.initialize({
