@@ -55,18 +55,16 @@ export default async function StudyMaterialDynamicPage({
                     contentType="resource"
                     breadcrumbs={breadcrumbItems}
                 >
-                    <div className="max-w-none">
-                        <MDXRemote
-                            source={fileContent.content}
-                            options={{
-                                mdxOptions: {
-                                    remarkPlugins: [remarkMath, remarkGfm],
-                                    rehypePlugins: [rehypeKatex],
-                                }
-                            }}
-                            components={mdxComponents}
-                        />
-                    </div>
+                    <MDXRemote
+                        source={fileContent.content}
+                        options={{
+                            mdxOptions: {
+                                remarkPlugins: [remarkMath, remarkGfm],
+                                rehypePlugins: [rehypeKatex],
+                            }
+                        }}
+                        components={mdxComponents}
+                    />
                 </PageTemplate>
             </SinglePageLayout>
         );
@@ -97,18 +95,16 @@ export default async function StudyMaterialDynamicPage({
             breadcrumbs={breadcrumbItems}
         >
             {indexContent && (
-                <div className="col-span-full max-w-none mb-8">
-                    <MDXRemote
-                        source={indexContent.content}
-                        options={{
-                            mdxOptions: {
-                                remarkPlugins: [remarkMath, remarkGfm],
-                                rehypePlugins: [rehypeKatex],
-                            }
-                        }}
-                        components={mdxComponents}
-                    />
-                </div>
+                <MDXRemote
+                    source={indexContent.content}
+                    options={{
+                        mdxOptions: {
+                            remarkPlugins: [remarkMath, remarkGfm],
+                            rehypePlugins: [rehypeKatex],
+                        }
+                    }}
+                    components={mdxComponents}
+                />
             )}
 
             {directories.map((dir) => (
