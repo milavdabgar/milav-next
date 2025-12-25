@@ -30,19 +30,30 @@ export function getContentBySlug(
   locale?: string
 ): ContentItem | null {
   try {
-    const fileName = locale ? `${slug}.${locale}.mdx` : `${slug}.mdx`;
-    const fallbackFileName = `${slug}.mdx`;
-
     const contentPath = path.join(contentDirectory, folder);
 
-    // Try locale-specific file first, then fall back to default
-    // We construct the path manually to avoid Next.js build warnings
-    let fullPath = path.normalize(`${process.cwd()}/content/${folder}/${fileName}`);
-    if (!fs.existsSync(fullPath) && locale) {
-      fullPath = path.normalize(`${process.cwd()}/content/${folder}/${fallbackFileName}`);
-    }
+    // Potential file paths to check
+    // 1. folder/slug.locale.mdx (Localized Leaf)
+    // 2. folder/slug.mdx (Default Leaf)
+    // 3. folder/slug/index.locale.mdx (Localized Bundle)
+    // 4. folder/slug/index.mdx (Default Bundle)
 
-    if (!fs.existsSync(fullPath)) {
+    let possiblePaths: string[] = [];
+
+    if (locale) {
+      possiblePaths.push(path.join(contentPath, `${slug}.${locale}.mdx`));
+    }
+    possiblePaths.push(path.join(contentPath, `${slug}.mdx`));
+
+    if (locale) {
+      possiblePaths.push(path.join(contentPath, slug, `index.${locale}.mdx`));
+    }
+    possiblePaths.push(path.join(contentPath, slug, 'index.mdx'));
+
+    // Find the first path that exists
+    const fullPath = possiblePaths.find((p) => fs.existsSync(p));
+
+    if (!fullPath) {
       return null;
     }
 
@@ -68,16 +79,44 @@ export function getAllContent(folder: string, locale?: string): ContentItem[] {
       return [];
     }
 
-    const files = fs.readdirSync(contentPath);
-    const mdxFiles = files.filter((file) =>
-      file.endsWith('.mdx') && !file.includes('.gu.') && !file.startsWith('_index')
-    );
+    const entries = fs.readdirSync(contentPath, { withFileTypes: true });
 
-    const allContent = mdxFiles
-      .map((file) => {
-        const slug = file.replace(/\.mdx$/, '');
-        return getContentBySlug(folder, slug, locale);
-      })
+    // Identify potential slugs
+    const slugs = new Set<string>();
+
+    for (const entry of entries) {
+      if (entry.isFile() && entry.name.endsWith('.mdx')) {
+        // Leaf file
+        const name = entry.name;
+        if (name.startsWith('_index')) continue; // Skip section indices in list
+        if (name.includes('.gu.')) {
+          // It's a localized file.
+          // If we are listing for 'en', we usually ignore it unless we want to include 'gu' posts in 'en' list?
+          // Usually 'getAllContent' is for a specific locale list or all?
+          // The previous logic filtered `!file.includes('.gu.')` indiscriminately.
+          // Let's assume we collect slugs based on the main file, and `getContentBySlug` handles locale fallback.
+          // So for list calculation, we valid check if base slug exists.
+          // But actually, we just need the slug.
+          const slug = name.replace(/\.gu\.mdx$/, '').replace(/\.mdx$/, '');
+          slugs.add(slug);
+        } else {
+          const slug = name.replace(/\.mdx$/, '');
+          slugs.add(slug);
+        }
+      } else if (entry.isDirectory()) {
+        // Page bundle
+        // Check if it has index.mdx or index.gu.mdx
+        const hasIndex = fs.existsSync(path.join(contentPath, entry.name, 'index.mdx'));
+        const hasGuIndex = fs.existsSync(path.join(contentPath, entry.name, 'index.gu.mdx'));
+
+        if (hasIndex || hasGuIndex) {
+          slugs.add(entry.name);
+        }
+      }
+    }
+
+    const allContent = Array.from(slugs)
+      .map((slug) => getContentBySlug(folder, slug, locale))
       .filter((item): item is ContentItem => item !== null);
 
     return allContent.sort((a, b) => {

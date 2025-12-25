@@ -18,7 +18,13 @@ export function CodeBlock({ children, className = '', inline }: CodeBlockProps) 
   const { theme } = useTheme();
 
   // Extract language from className (format: language-xxx)
-  const language = className.replace(/language-/, '') || 'text';
+  // Split by whitespace to ignore Hugo-style metadata (e.g. language-html {hl_lines=[...]})
+  let language = className.replace(/language-/, '').split(/\s+/)[0] || 'text';
+
+  // Handle case where language is missing but metadata exists (e.g. ```{hl_lines=[...]})
+  if (language.startsWith('{')) {
+    language = 'text';
+  }
 
   // If inline code, render as simple code tag
   if (inline) {
