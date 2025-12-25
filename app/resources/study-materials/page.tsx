@@ -4,8 +4,8 @@ import { notFound } from 'next/navigation';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import { SinglePageLayout } from '@/components/layouts';
 import { ContentTemplate as PageTemplate } from '@/components/templates';
+import { ResourceCard } from '@/components/ui/resource-card';
 import Link from 'next/link';
-import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import fs from 'fs';
 import path from 'path';
 
@@ -61,13 +61,13 @@ export default async function StudyMaterialsPage({
 
                 <div className="grid gap-6 md:grid-cols-2">
                     {departments.map((dept) => (
-                        <Link key={dept.slug} href={`/resources/study-materials/${dept.slug}${isGujarati ? '?lang=gu' : ''}`}>
-                            <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
-                                <CardHeader>
-                                    <CardTitle>{dept.title}</CardTitle>
-                                    <CardDescription>{dept.description}</CardDescription>
-                                </CardHeader>
-                            </Card>
+                        <Link key={dept.slug} href={`/resources/study-materials/${dept.slug}${isGujarati ? '?lang=gu' : ''}`} className="block h-full">
+                            <ResourceCard
+                                title={dept.title}
+                                description={dept.description}
+                                type="folder"
+                                className="h-full"
+                            />
                         </Link>
                     ))}
                 </div>

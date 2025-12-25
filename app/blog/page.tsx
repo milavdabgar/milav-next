@@ -2,9 +2,8 @@ import { getAllContent } from '@/lib/mdx';
 import { getBreadcrumbs } from '@/lib/breadcrumbs';
 import Link from 'next/link';
 import { GridPageLayout } from '@/components/layouts';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Calendar, Clock, Tag } from 'lucide-react';
+import { ResourceCard } from '@/components/ui/resource-card';
+import { Card } from '@/components/ui/card';
 import { formatDate } from '@/lib/utils';
 
 export default async function BlogPage({
@@ -30,42 +29,16 @@ export default async function BlogPage({
       breadcrumbs={breadcrumbItems}
     >
       {posts.map((post) => (
-        <Link key={post.slug} href={`/blog/${post.slug}${isGujarati ? '?lang=gu' : ''}`}>
-          <Card className="h-full hover:shadow-lg transition-shadow">
-            <CardHeader>
-              <CardTitle className="line-clamp-2">
-                {post.metadata.title}
-              </CardTitle>
-              <CardDescription className="line-clamp-3">
-                {post.metadata.description || post.metadata.summary}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {post.metadata.date && (
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <Calendar className="mr-2 h-4 w-4" />
-                    {formatDate(post.metadata.date)}
-                  </div>
-                )}
-                {post.metadata.tags && post.metadata.tags.length > 0 && (
-                  <div className="flex flex-wrap gap-1">
-                    {post.metadata.tags.slice(0, 3).map((tag: string) => (
-                      <Badge key={tag} variant="secondary" className="text-xs">
-                        {tag}
-                      </Badge>
-                    ))}
-                    {post.metadata.tags.length > 3 && (
-                      <Badge variant="outline" className="text-xs">
-                        +{post.metadata.tags.length - 3}
-                      </Badge>
-                    )}
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </Link>
+        <ResourceCard
+          key={post.slug}
+          title={post.metadata.title}
+          description={post.metadata.description || post.metadata.summary}
+          date={post.metadata.date ? formatDate(post.metadata.date) : undefined}
+          type="article"
+          tags={post.metadata.tags}
+          href={`/blog/${post.slug}${isGujarati ? '?lang=gu' : ''}`}
+          className="h-full"
+        />
       ))}
 
       {posts.length === 0 && (

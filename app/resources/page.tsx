@@ -4,8 +4,8 @@ import { notFound } from 'next/navigation';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import { SinglePageLayout } from '@/components/layouts';
 import { ContentTemplate as PageTemplate } from '@/components/templates';
+import { ResourceCard } from '@/components/ui/resource-card';
 import Link from 'next/link';
-import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import remarkMath from 'remark-math';
 import remarkGfm from 'remark-gfm';
 import rehypeKatex from 'rehype-katex';
@@ -62,13 +62,13 @@ export default async function ResourcesPage({
 
                 <div className="grid gap-6 md:grid-cols-2">
                     {sections.map((section) => (
-                        <Link key={section.slug} href={`/resources/${section.slug}${isGujarati ? '?lang=gu' : ''}`}>
-                            <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
-                                <CardHeader>
-                                    <CardTitle>{section.title}</CardTitle>
-                                    <CardDescription>{section.description}</CardDescription>
-                                </CardHeader>
-                            </Card>
+                        <Link key={section.slug} href={`/resources/${section.slug}${isGujarati ? '?lang=gu' : ''}`} className="block h-full">
+                            <ResourceCard
+                                title={section.title}
+                                description={section.description}
+                                type="folder"
+                                className="h-full"
+                            />
                         </Link>
                     ))}
                 </div>

@@ -37,6 +37,7 @@ export default async function ContentPage({
             title={isGujarati ? 'સામગ્રી' : 'Content'}
             description={isGujarati ? 'અમારી તમામ સામગ્રી અને સંસાધનોનું અન્વેષણ કરો' : 'Explore all our content and resources'}
             columns={{ default: 1, md: 2 }}
+            breadcrumbs={[{ label: 'Content', href: '#' }]}
         >
             {items.map((item) => (
                 <Link key={item.href} href={isGujarati ? `${item.href}?lang=gu` : item.href}>

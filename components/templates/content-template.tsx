@@ -7,6 +7,7 @@ import { ResponsiveToc } from '@/components/ui/responsive-toc';
 import { BlogDownload } from '@/components/ui/blog-download';
 import { ArticleNavigation } from '@/components/ui/article-navigation';
 import { Breadcrumbs, BreadcrumbItem } from '@/components/ui/breadcrumbs';
+import Link from 'next/link';
 
 interface ContentTemplateProps {
   title: string;
@@ -96,9 +97,11 @@ export function ContentTemplate({
           {tags && tags.length > 0 && (
             <div className="flex flex-wrap gap-2 pt-2">
               {tags.map((tag: string) => (
-                <Badge key={tag} variant="secondary">
-                  {tag}
-                </Badge>
+                <Link key={tag} href={`/tags/${tag}`}>
+                  <Badge variant="secondary" className="hover:bg-secondary/80 transition-colors cursor-pointer">
+                    {tag}
+                  </Badge>
+                </Link>
               ))}
             </div>
           )}
