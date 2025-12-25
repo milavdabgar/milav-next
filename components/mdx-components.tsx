@@ -96,7 +96,7 @@ const CustomLink = ({ className, href, ...props }: React.AnchorHTMLAttributes<HT
 }
 
 const Pre = ({ className, ...props }: React.HTMLAttributes<HTMLPreElement>) => (
-    <pre className={cn("mb-4 mt-6 overflow-x-auto rounded-lg border bg-black py-4", className)} {...props} />
+    <pre className={cn("mb-4 mt-6 overflow-x-auto rounded-lg border bg-secondary/50 py-4", className)} {...props} />
 )
 
 const Code = ({ className, children, ...props }: React.HTMLAttributes<HTMLElement>) => {

@@ -6,9 +6,12 @@ interface MermaidProps {
     children?: string;
 }
 
+import { useTheme } from 'next-themes';
+
 export function Mermaid({ children }: MermaidProps) {
     const elementRef = useRef<HTMLDivElement>(null);
     const [isRendered, setIsRendered] = useState(false);
+    const { theme, systemTheme } = useTheme();
 
     useEffect(() => {
         const loadMermaid = async () => {
@@ -16,9 +19,12 @@ export function Mermaid({ children }: MermaidProps) {
                 // Dynamically import mermaid to avoid SSR issues
                 const mermaid = (await import('mermaid')).default;
 
+                const currentTheme = theme === 'system' ? systemTheme : theme;
+                const mermaidTheme = currentTheme === 'dark' ? 'dark' : 'default';
+
                 mermaid.initialize({
                     startOnLoad: false,
-                    theme: 'default',
+                    theme: mermaidTheme,
                     securityLevel: 'loose',
                     fontFamily: 'inherit',
                 });
@@ -30,6 +36,7 @@ export function Mermaid({ children }: MermaidProps) {
                 if (elementRef.current) {
                     // Clear previous content
                     elementRef.current.innerHTML = '';
+                    elementRef.current.removeAttribute('data-processed'); // Help mermaid re-render content if needed
 
                     // Generate unique ID
                     const id = `mermaid-${Math.random().toString(36).substr(2, 9)}`;
@@ -50,7 +57,7 @@ export function Mermaid({ children }: MermaidProps) {
         };
 
         loadMermaid();
-    }, [children]);
+    }, [children, theme, systemTheme]);
 
     return (
         <div
