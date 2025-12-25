@@ -47,7 +47,7 @@ export default async function ResourcesPage({
             columns={{ default: 1, md: 2 }}
             breadcrumbs={breadcrumbItems}
         >
-            <div className="col-span-full prose dark:prose-invert max-w-none mb-8">
+            <div className="col-span-full max-w-none mb-8">
                 <MDXRemote
                     source={page.content}
                     options={{

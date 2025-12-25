@@ -55,7 +55,7 @@ export default async function StudyMaterialDynamicPage({
                     contentType="resource"
                     breadcrumbs={breadcrumbItems}
                 >
-                    <div className="prose dark:prose-invert max-w-none">
+                    <div className="max-w-none">
                         <MDXRemote
                             source={fileContent.content}
                             options={{
@@ -97,7 +97,7 @@ export default async function StudyMaterialDynamicPage({
             breadcrumbs={breadcrumbItems}
         >
             {indexContent && (
-                <div className="col-span-full prose dark:prose-invert max-w-none mb-8">
+                <div className="col-span-full max-w-none mb-8">
                     <MDXRemote
                         source={indexContent.content}
                         options={{
