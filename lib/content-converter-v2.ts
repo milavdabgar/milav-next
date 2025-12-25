@@ -969,92 +969,25 @@ ${processedContent}`;
 
             fs.writeFileSync(tempMdPath, fullMarkdown);
 
-            // Try enhanced LaTeX template first, fallback to basic if it fails
-            try {
-                // Create enhanced LaTeX template based on reference templates
-                const dateString: string = typeof date === 'string' ? date : String(date);
-                const latexTemplate = this.generateProfessionalLatexTemplate(title, author, dateString, options);
-                fs.writeFileSync(tempTexPath, latexTemplate);
+            // Use Pandoc with default template (reliable for complex tables)
+            const pandocCommand = [
+                'pandoc',
+                `"${tempMdPath}"`,
+                '-o', `"${tempPdfPath}"`,
+                '--pdf-engine=xelatex',
+                '--standalone',
+                '--toc',
+                '--variable=colorlinks:true',
+                '--variable=linkcolor:blue',
+                '--variable=urlcolor:blue',
+                '--variable=toccolor:blue',
+                '--variable=fontsize:11pt',
+                '--variable=geometry:margin=1in',
+                '--shift-heading-level-by=-1'
+            ].join(' ');
 
-                // Try XeLaTeX first, fallback to pdfLaTeX if XeLaTeX fails
-                let pandocCommand = [
-                    'pandoc',
-                    `"${tempMdPath}"`,
-                    '-o', `"${tempPdfPath}"`,
-                    '--pdf-engine=xelatex',
-                    '--template', `"${tempTexPath}"`,
-                    '--standalone',
-                    '--toc',
-                    '--variable=colorlinks:true',
-                    '--variable=linkcolor:blue',
-                    '--variable=urlcolor:blue',
-                    '--variable=toccolor:blue',
-                    '--variable=fontsize:11pt',
-                    '--variable=geometry:margin=1in',
-                    '--shift-heading-level-by=-1'
-                ].join(' ');
-
-                try {
-                    await execAsync(pandocCommand);
-                } catch (xelatexError) {
-                    console.warn('XeLaTeX failed, trying pdfLaTeX:', xelatexError);
-
-                    // Clean up failed attempt
-                    if (fs.existsSync(tempPdfPath)) {
-                        fs.unlinkSync(tempPdfPath);
-                    }
-
-                    // Try with pdfLaTeX instead
-                    pandocCommand = [
-                        'pandoc',
-                        `"${tempMdPath}"`,
-                        '-o', `"${tempPdfPath}"`,
-                        '--pdf-engine=pdflatex',
-                        '--template', `"${tempTexPath}"`,
-                        '--standalone',
-                        '--toc',
-                        '--variable=colorlinks:true',
-                        '--variable=linkcolor:blue',
-                        '--variable=urlcolor:blue',
-                        '--variable=toccolor:blue',
-                        '--variable=fontsize:11pt',
-                        '--variable=geometry:margin=1in',
-                        '--shift-heading-level-by=-1'
-                    ].join(' ');
-
-                    await execAsync(pandocCommand);
-                }
-
-                if (!fs.existsSync(tempPdfPath)) {
-                    throw new Error('Custom template PDF generation failed');
-                }
-            } catch (templateError) {
-                console.warn('Custom template failed, falling back to basic pandoc:', templateError);
-
-                // Clean up failed attempt
-                if (fs.existsSync(tempPdfPath)) {
-                    fs.unlinkSync(tempPdfPath);
-                }
-
-                // Fallback to basic pandoc without custom template - try pdfLaTeX for better compatibility
-                const basicPandocCommand = [
-                    'pandoc',
-                    `"${tempMdPath}"`,
-                    '-o', `"${tempPdfPath}"`,
-                    '--pdf-engine=pdflatex',
-                    '--standalone',
-                    '--toc',
-                    '--variable=colorlinks:true',
-                    '--variable=linkcolor:blue',
-                    '--variable=urlcolor:blue',
-                    '--variable=toccolor:blue',
-                    '--variable=fontsize:11pt',
-                    '--variable=geometry:margin=1in',
-                    '--shift-heading-level-by=-1'
-                ].join(' ');
-
-                await execAsync(basicPandocCommand);
-            }
+            // Increase maxBuffer to handle large SVG conversion output (especially for documents with many images)
+            await execAsync(pandocCommand, { maxBuffer: 10 * 1024 * 1024 }); // 10MB buffer
 
             if (!fs.existsSync(tempPdfPath)) {
                 throw new Error('PDF generation failed - output file not created');
@@ -2171,189 +2104,6 @@ ${presentationContent}`;
         }
 
         return processedContent;
-    }
-
-    private generateProfessionalLatexTemplate(title: string, author: string, date: string, options: ConversionOptions = {}): string {
-        const isGujarati = options.language === 'gu' || options.language === 'gujarati';
-
-        // Font configuration
-        // We use Noto Sans Gujarati for Monospace globally to ensure mixed-language code blocks
-        // (e.g. Gujarati comments in English code) render correctly without "tofu" boxes.
-        const fontConfig = isGujarati ? `
-% Gujarati Fonts (Main Text)
-\\setmainfont{Noto Sans Gujarati}[Script=Gujarati, Scale=1.0]
-\\setsansfont{Noto Sans Gujarati}[Script=Gujarati, Scale=1.0]` : `
-% English Fonts (Main Text)
-\\setmainfont{Times New Roman}[Scale=1.0]
-\\setsansfont{Helvetica}[Scale=1.0]`;
-
-        return `%-------------------------
-% Professional Document Template
-% Based on reference templates with enhanced styling
-% Compiled with XeLaTeX for best results
-%-------------------------
-
-\\documentclass[11pt,a4paper]{article}
-
-% Packages for XeLaTeX
-\\usepackage{fontspec}
-\\usepackage{xunicode}
-\\usepackage{xltxtra}
-
-% Fonts
-${fontConfig}
-% Global Monospace Font (supports both English and Gujarati)
-\\setmonofont{Noto Sans Gujarati}[Script=Gujarati, Scale=0.9]
-
-% Packages
-\\usepackage[top=1in, bottom=1in, left=1in, right=1in]{geometry}
-\\usepackage{xcolor}
-\\usepackage{titlesec}
-\\usepackage{enumitem}
-\\usepackage{multicol}
-\\usepackage{hyperref}
-\\usepackage{tikz}
-\\usepackage{graphicx}
-\\usepackage{adjustbox}
-\\usepackage{array}
-\\usepackage{tabularx}
-\\usepackage{ragged2e}
-\\usepackage{setspace}
-\\usepackage{fancyhdr}
-\\usepackage{changepage}
-\\usepackage{longtable}
-\\usepackage{calc}
-\\usepackage{booktabs}
-
-% Colors - Professional palette
-\\definecolor{primary}{RGB}{0, 79, 144}
-\\definecolor{secondary}{RGB}{45, 45, 45}
-\\definecolor{accent}{RGB}{0, 122, 204}
-\\definecolor{lightgray}{RGB}{248, 248, 248}
-\\definecolor{mediumgray}{RGB}{128, 128, 128}
-\\definecolor{success}{RGB}{40, 167, 69}
-
-% Hyperref setup
-\\hypersetup{
-    colorlinks=true,
-    linkcolor=primary,
-    urlcolor=primary,
-    pdfauthor={${author}},
-    pdftitle={${title}},
-    pdfsubject={Professional Document}
-}
-
-% Header and footer
-\\pagestyle{fancy}
-\\fancyhf{}
-\\renewcommand{\\headrulewidth}{0pt}
-\\renewcommand{\\footrulewidth}{0.5pt}
-\\cfoot{\\color{mediumgray}\\small\\thepage}
-
-% Custom section formatting with enhanced styling
-\\titleformat{\\section}
-    {\\color{primary}\\Large\\sffamily\\bfseries}
-    {}
-    {0em}
-    {}[{\\color{primary}\\titlerule[1pt]\\vspace{-3pt}}]
-
-\\titleformat{\\subsection}
-    {\\color{secondary}\\large\\sffamily\\bfseries}
-    {}
-    {0em}
-    {}
-
-\\titleformat{\\subsubsection}
-    {\\color{secondary}\\normalsize\\sffamily\\bfseries}
-    {}
-    {0em}
-    {}
-
-% Improved spacing
-\\titlespacing*{\\section}{0pt}{12pt}{8pt}
-\\titlespacing*{\\subsection}{0pt}{8pt}{4pt}
-\\titlespacing*{\\subsubsection}{0pt}{6pt}{3pt}
-
-% Custom list formatting
-\\setlist[itemize]{leftmargin=15pt, itemsep=2pt, parsep=1pt, topsep=5pt}
-\\setlist[enumerate]{leftmargin=15pt, itemsep=2pt, parsep=1pt, topsep=5pt}
-
-% Table formatting
-\\renewcommand{\\arraystretch}{1.2}
-
-% Pandoc compatibility
-\\providecommand{\\tightlist}{\\setlength{\\itemsep}{0pt}\\setlength{\\parskip}{0pt}}
-
-% Define \pandocbounded for image sizing (used by Pandoc)
-\\makeatletter
-\\def\\pandocbounded#1{\\adjustbox{max width=\\linewidth, max height=0.75\\textheight, keepaspectratio}{#1}}
-\\makeatother
-
-% Highlight macros for Pandoc (Fixes 'Environment Shaded undefined' error)
-$highlighting-macros$
-
-% Code block formatting
-\\usepackage{listings}
-\\lstset{
-    basicstyle=\\small\\ttfamily,
-    backgroundcolor=\\color{lightgray},
-    frame=single,
-    rulecolor=\\color{primary},
-    breaklines=true,
-    breakatwhitespace=true,
-    tabsize=2,
-    showstringspaces=false,
-    numbers=left,
-    numberstyle=\\tiny\\color{mediumgray},
-    xleftmargin=2em,
-    framexleftmargin=1.5em
-}
-
-% Quote formatting
-\\usepackage{csquotes}
-\\renewenvironment{quote}
-    {\\begin{adjustwidth}{2em}{2em}\\color{secondary}\\itshape}
-    {\\end{adjustwidth}}
-
-% Enhanced document header
-\\newcommand{\\makeheader}{
-    \\begin{center}
-        \\begin{tikzpicture}[remember picture, overlay]
-            \\fill[lightgray] (current page.north west) rectangle ([yshift=-2cm]current page.north east);
-        \\end{tikzpicture}
-        
-        \\vspace{0.5cm}
-        {\\Huge\\sffamily\\bfseries\\color{primary} $title$}
-        
-        \\vspace{0.3cm}
-        {\\Large\\sffamily\\color{secondary} $author$}
-        
-        \\vspace{0.2cm}
-        {\\normalsize\\color{mediumgray} $date$}
-        
-        \\vspace{0.5cm}
-    \\end{center}
-}
-
-% Begin document
-\\begin{document}
-
-% Make professional header
-\\makeheader
-
-% Table of contents with professional styling
-$if(toc)$
-\\vspace{0.3cm}
-\\renewcommand\\contentsname{\\centering\\color{primary}\\Large\\sffamily\\bfseries Contents}
-\\tableofcontents
-\\newpage
-$endif$
-
-% Document body
-$body$
-
-\\end{document}
-`;
     }
 
     private ensureDirectoryExists(dirPath: string): void {
