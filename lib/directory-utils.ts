@@ -13,6 +13,13 @@ export function getDirectoryContent(folderPath: string, locale?: string) {
             };
         }
 
+        if (!fs.statSync(fullPath).isDirectory()) {
+            return {
+                directories: [],
+                files: []
+            };
+        }
+
         const items = fs.readdirSync(fullPath);
 
         const directories = items.filter(item => {

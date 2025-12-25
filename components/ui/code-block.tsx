@@ -49,6 +49,7 @@ export function CodeBlock({ children, className = '', inline }: CodeBlockProps) 
         if (language === 'yml') actualLanguage = 'yaml';
         if (language === 'js') actualLanguage = 'javascript';
         if (language === 'ts') actualLanguage = 'typescript';
+        if (language === 'assembly') actualLanguage = 'asm';
 
         const html = await codeToHtml(children, {
           lang: actualLanguage as BundledLanguage,
@@ -103,7 +104,9 @@ export function CodeBlock({ children, className = '', inline }: CodeBlockProps) 
       'css': 'CSS',
       'sql': 'SQL',
       'text': 'Plain Text',
-      'plain': 'Plain Text'
+      'plain': 'Plain Text',
+      'assembly': 'Assembly',
+      'asm': 'Assembly'
     };
     return languageMap[lang.toLowerCase()] || lang;
   };
