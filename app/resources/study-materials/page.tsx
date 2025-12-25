@@ -2,8 +2,7 @@ import { getContentBySlug } from '@/lib/mdx';
 import { getBreadcrumbs } from '@/lib/breadcrumbs';
 import { notFound } from 'next/navigation';
 import { MDXRemote } from 'next-mdx-remote/rsc';
-import { SinglePageLayout } from '@/components/layouts';
-import { ContentTemplate as PageTemplate } from '@/components/templates';
+import { GridPageLayout } from '@/components/layouts';
 import { ResourceCard } from '@/components/ui/resource-card';
 import Link from 'next/link';
 import fs from 'fs';
@@ -48,31 +47,32 @@ export default async function StudyMaterialsPage({
     const breadcrumbItems = getBreadcrumbs('resources/study-materials', [], locale);
 
     return (
-        <SinglePageLayout>
-            <PageTemplate
-                title={page?.metadata.title || 'Study Materials'}
-                description={page?.metadata.description}
-                contentType="resource"
-                breadcrumbs={breadcrumbItems}
-            >
-                <div className="prose dark:prose-invert max-w-none mb-8">
-                    {page && <MDXRemote source={page.content} />}
-                </div>
+        <GridPageLayout
+            title={page?.metadata.title || 'Study Materials'}
+            description={page?.metadata.description}
+            columns={{ default: 1, md: 2 }}
+            breadcrumbs={breadcrumbItems}
+        >
+            <div className="col-span-full prose dark:prose-invert max-w-none mb-8">
+                {page && <MDXRemote source={page.content} options={{
+                    mdxOptions: {
+                        remarkPlugins: [],
+                        rehypePlugins: [],
+                    }
+                }} />}
+            </div>
 
-                <div className="grid gap-6 md:grid-cols-2">
-                    {departments.map((dept) => (
-                        <ResourceCard
-                            key={dept.slug}
-                            title={dept.title}
-                            description={dept.description}
-                            type="folder"
-                            className="h-full"
-                            href={`/resources/study-materials/${dept.slug}${isGujarati ? '?lang=gu' : ''}`}
-                        />
-                    ))}
-                </div>
-            </PageTemplate>
-        </SinglePageLayout>
+            {departments.map((dept) => (
+                <ResourceCard
+                    key={dept.slug}
+                    title={dept.title}
+                    description={dept.description}
+                    type="folder"
+                    className="h-full"
+                    href={`/resources/study-materials/${dept.slug}${isGujarati ? '?lang=gu' : ''}`}
+                />
+            ))}
+        </GridPageLayout>
     );
 }
 

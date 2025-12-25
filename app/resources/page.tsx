@@ -2,8 +2,7 @@ import { getContentBySlug } from '@/lib/mdx';
 import { getBreadcrumbs } from '@/lib/breadcrumbs';
 import { notFound } from 'next/navigation';
 import { MDXRemote } from 'next-mdx-remote/rsc';
-import { SinglePageLayout } from '@/components/layouts';
-import { ContentTemplate as PageTemplate } from '@/components/templates';
+import { GridPageLayout } from '@/components/layouts';
 import { ResourceCard } from '@/components/ui/resource-card';
 import Link from 'next/link';
 import remarkMath from 'remark-math';
@@ -41,39 +40,35 @@ export default async function ResourcesPage({
     const breadcrumbItems = getBreadcrumbs('resources', [], locale);
 
     return (
-        <SinglePageLayout>
-            <PageTemplate
-                title={page.metadata.title}
-                description={page.metadata.description}
-                contentType="resource"
-                breadcrumbs={breadcrumbItems}
-            >
-                <div className="prose dark:prose-invert max-w-none mb-8">
-                    <MDXRemote
-                        source={page.content}
-                        options={{
-                            mdxOptions: {
-                                remarkPlugins: [remarkMath, remarkGfm],
-                                rehypePlugins: [rehypeKatex],
-                            }
-                        }}
-                    />
-                </div>
+        <GridPageLayout
+            title={page.metadata.title}
+            description={page.metadata.description}
+            columns={{ default: 1, md: 2 }}
+            breadcrumbs={breadcrumbItems}
+        >
+            <div className="col-span-full prose dark:prose-invert max-w-none mb-8">
+                <MDXRemote
+                    source={page.content}
+                    options={{
+                        mdxOptions: {
+                            remarkPlugins: [remarkMath, remarkGfm],
+                            rehypePlugins: [rehypeKatex],
+                        }
+                    }}
+                />
+            </div>
 
-                <div className="grid gap-6 md:grid-cols-2">
-                    {sections.map((section) => (
-                        <ResourceCard
-                            key={section.slug}
-                            title={section.title}
-                            description={section.description}
-                            type="folder"
-                            className="h-full"
-                            href={`/resources/${section.slug}${isGujarati ? '?lang=gu' : ''}`}
-                        />
-                    ))}
-                </div>
-            </PageTemplate>
-        </SinglePageLayout>
+            {sections.map((section) => (
+                <ResourceCard
+                    key={section.slug}
+                    title={section.title}
+                    description={section.description}
+                    type="folder"
+                    className="h-full"
+                    href={`/resources/${section.slug}${isGujarati ? '?lang=gu' : ''}`}
+                />
+            ))}
+        </GridPageLayout>
     );
 }
 
