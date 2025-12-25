@@ -5,6 +5,7 @@ import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { CodeBlock } from "@/components/ui/code-block"
 import { Mermaid } from "@/components/ui/mermaid"
+import { CarouselGallery } from "@/components/mdx/carousel-gallery"
 
 // Table components
 const Table = ({ className, ...props }: React.HTMLAttributes<HTMLTableElement>) => (
@@ -137,4 +138,5 @@ export const mdxComponents = {
     th: TableHead,
     td: TableCell,
     Image,
+    CarouselGallery,
 }
