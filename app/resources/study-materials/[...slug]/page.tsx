@@ -8,6 +8,7 @@ import { CodeBlock } from '@/components/ui/code-block';
 import { Mermaid } from '@/components/ui/mermaid';
 import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Folder, FileText } from 'lucide-react';
 import fs from 'fs';
 import path from 'path';
@@ -95,11 +96,32 @@ export default async function StudyMaterialDynamicPage({
         notFound();
     }
 
+    // Generate breadcrumbs
+    const breadcrumbItems = [
+        { label: 'Resources', href: '/resources' },
+        { label: 'Study Materials', href: '/resources/study-materials' }
+    ];
+
+    let currentPath = '/resources/study-materials';
+    slug.forEach((part, index) => {
+        currentPath += `/${part}`;
+        const isLast = index === slug.length - 1;
+
+        // Format label: "4300001-maths1" -> "4300001 Maths1"
+        const label = part.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+
+        breadcrumbItems.push({
+            label: isLast ? (indexContent?.metadata.title || label) : label,
+            href: currentPath
+        });
+    });
+
     return (
         <GridPageLayout
             title={indexContent?.metadata.title || slug[slug.length - 1]}
             description={indexContent?.metadata.description}
             columns={{ default: 1, md: 2 }}
+            breadcrumbs={<Breadcrumbs items={breadcrumbItems} />}
         >
             {indexContent && (
                 <div className="col-span-full prose dark:prose-invert max-w-none mb-8">

@@ -22,6 +22,7 @@ interface GridPageLayoutProps {
     lg?: number;
     xl?: number;
   };
+  breadcrumbs?: ReactNode;
 }
 
 export function GridPageLayout({
@@ -30,6 +31,7 @@ export function GridPageLayout({
   description,
   backLink,
   actions,
+  breadcrumbs,
   locale = 'en',
   availableLocales = [],
   showLanguageSwitcher = false,
@@ -52,6 +54,13 @@ export function GridPageLayout({
     <div className="container mx-auto px-4 py-8 max-w-7xl">
       {/* Header Section */}
       <div className="mb-8">
+        {/* Breadcrumbs */}
+        {breadcrumbs && (
+          <div className="mb-4">
+            {breadcrumbs}
+          </div>
+        )}
+
         {/* Navigation Row */}
         {(backLink || actions || (showLanguageSwitcher && availableLocales.length > 0)) && (
           <div className="flex items-center justify-between mb-6">
@@ -64,7 +73,7 @@ export function GridPageLayout({
             ) : (
               <div />
             )}
-            
+
             <div className="flex items-center gap-2">
               {actions}
               {showLanguageSwitcher && availableLocales.length > 0 && (
@@ -73,8 +82,8 @@ export function GridPageLayout({
                   <div className="flex gap-2">
                     {availableLocales.map((loc) => (
                       <Link key={loc} href={`?lang=${loc}`}>
-                        <Button 
-                          variant={locale === loc ? 'default' : 'outline'} 
+                        <Button
+                          variant={locale === loc ? 'default' : 'outline'}
                           size="sm"
                         >
                           {loc.toUpperCase()}
