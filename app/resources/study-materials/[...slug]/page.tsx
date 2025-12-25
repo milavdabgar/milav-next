@@ -10,6 +10,7 @@ import { Folder, FileText } from 'lucide-react';
 import fs from 'fs';
 import path from 'path';
 import remarkMath from 'remark-math';
+import remarkGfm from 'remark-gfm';
 import rehypeKatex from 'rehype-katex';
 
 type Params = Promise<{ slug: string[]; lang?: string }>;
@@ -47,7 +48,7 @@ export default async function StudyMaterialDynamicPage({
                             source={fileContent.content}
                             options={{
                                 mdxOptions: {
-                                    remarkPlugins: [remarkMath],
+                                    remarkPlugins: [remarkMath, remarkGfm],
                                     rehypePlugins: [rehypeKatex],
                                 }
                             }}
@@ -81,7 +82,7 @@ export default async function StudyMaterialDynamicPage({
                         source={indexContent.content}
                         options={{
                             mdxOptions: {
-                                remarkPlugins: [remarkMath],
+                                remarkPlugins: [remarkMath, remarkGfm],
                                 rehypePlugins: [rehypeKatex],
                             }
                         }}

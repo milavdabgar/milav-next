@@ -6,6 +6,7 @@ import { SingleContentTemplate as PageTemplate } from '@/components/templates';
 import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import remarkMath from 'remark-math';
+import remarkGfm from 'remark-gfm';
 import rehypeKatex from 'rehype-katex';
 
 export default async function ResourcesPage({
@@ -47,7 +48,7 @@ export default async function ResourcesPage({
                         source={page.content}
                         options={{
                             mdxOptions: {
-                                remarkPlugins: [remarkMath],
+                                remarkPlugins: [remarkMath, remarkGfm],
                                 rehypePlugins: [rehypeKatex],
                             }
                         }}

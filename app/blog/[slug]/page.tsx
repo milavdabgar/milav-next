@@ -4,6 +4,9 @@ import { MDXRemote } from 'next-mdx-remote/rsc';
 import { SinglePageLayout } from '@/components/layouts';
 import { BlogPostTemplate } from '@/components/templates';
 import { CodeBlock } from '@/components/ui/code-block';
+import remarkMath from 'remark-math';
+import remarkGfm from 'remark-gfm';
+import rehypeKatex from 'rehype-katex';
 
 export default async function BlogPostPage({
   params,
@@ -15,7 +18,7 @@ export default async function BlogPostPage({
   const { slug } = await params;
   const searchParamsData = await searchParams;
   const locale = searchParamsData.lang || 'en';
-  
+
   const post = getContentBySlug('blog', slug, locale === 'gu' ? 'gu' : undefined);
 
   if (!post) {
@@ -43,17 +46,23 @@ export default async function BlogPostPage({
         previousPost={previousPost ? { slug: previousPost.slug, title: previousPost.metadata.title } : undefined}
         nextPost={nextPost ? { slug: nextPost.slug, title: nextPost.metadata.title } : undefined}
       >
-        <MDXRemote 
+        <MDXRemote
           source={post.content}
+          options={{
+            mdxOptions: {
+              remarkPlugins: [remarkMath, remarkGfm],
+              rehypePlugins: [rehypeKatex],
+            }
+          }}
           components={{
             code: ({ inline, className, children, ...props }: any) => {
               // Check if it's a code block (has className starting with language-) or inline
               const isCodeBlock = className && className.startsWith('language-');
-              
+
               if (isCodeBlock) {
                 return <CodeBlock className={className}>{String(children).replace(/\n$/, '')}</CodeBlock>;
               }
-              
+
               // Inline code
               return <code className={className} {...props}>{children}</code>;
             }
