@@ -21,9 +21,9 @@ import argparse
 from pathlib import Path
 import re
 
-# Import the refactor function from refactor_latex_v2.py
+# Import the refactor function from refactor_pandoc_latex.py
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from refactor_latex_v2 import refactor_latex
+from refactor_pandoc_latex import refactor_latex
 
 
 def is_solution_file(filename):
@@ -68,6 +68,59 @@ def find_solution_files(path):
         print(f"❌ ERROR: Path does not exist: {path}")
         return []
 
+def process_mermaid_blocks(content, work_dir):
+    """
+    Find mermaid blocks, generate PDF diagrams, and replace blocks with image links.
+    Returns: (new_content, generated_files)
+    """
+    import hashlib
+    
+    generated_files = []
+    
+    def replace_block(match):
+        diagram_code = match.group(1)
+        # Create a unique hash for the filename to avoid collisions/rebuilds
+        hash_obj = hashlib.md5(diagram_code.encode('utf-8'))
+        file_hash = hash_obj.hexdigest()[:8]
+        mmd_file = work_dir / f"mermaid-{file_hash}.mmd"
+        pdf_file = work_dir / f"mermaid-{file_hash}.pdf"
+        
+        # Only regenerate if PDF doesn't exist
+        if not pdf_file.exists():
+            # Write MMD file
+            with open(mmd_file, 'w', encoding='utf-8') as f:
+                f.write(diagram_code)
+                
+            # Generate PDF
+            # We use npx to run the locally installed mmdc
+            cmd = [
+                'npx', 'mmdc',
+                '-i', str(mmd_file),
+                '-o', str(pdf_file),
+                '--pdfFit',
+                '--backgroundColor', 'transparent'
+            ]
+            
+            # We process synchronously
+            if not run_command(cmd, cwd=work_dir, description=f"Generating Mermaid diagram {file_hash}"):
+                print(f"⚠️  WARNING: Failed to generate mermaid diagram. Keeping original block.")
+                if mmd_file.exists(): mmd_file.unlink()
+                return match.group(0) # Return original text
+                
+            # Clean up mmd source immediately
+            if mmd_file.exists():
+                mmd_file.unlink()
+            
+        generated_files.append(pdf_file)
+        
+        # Return markdown image link with width constraint
+        # We use 100% to ensure it fits well within the solution boxes/margins
+        return f"![](mermaid-{file_hash}.pdf){{width=100%}}"
+
+    pattern = r'```mermaid\s*\n(.*?)```'
+    new_content = re.sub(pattern, replace_block, content, flags=re.DOTALL)
+    
+    return new_content, generated_files
 
 def run_command(cmd, cwd=None, description=""):
     """Run a shell command and handle errors."""
@@ -144,13 +197,45 @@ def convert_mdx_to_pdf(mdx_file, generate_pdf=True, keep_aux=False):
     print(f"Dir:    {work_dir}")
     print(f"{'='*60}\n")
     
+    # Pre-process Mermaid blocks
+    try:
+        with open(mdx_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+            
+        # Convert goat blocks to text blocks for simple verbatim rendering
+        content = re.sub(r'```goat', r'```text', content)
+            
+        new_content, mermaid_files = process_mermaid_blocks(content, work_dir)
+        
+        # If content changed, write to temp file
+        input_file = mdx_path
+        temp_mdx = None
+        
+        if mermaid_files:
+            print(f"🧜‍♀️ Generated {len(mermaid_files)} Mermaid diagram(s)")
+            temp_mdx = work_dir / f"{mdx_path.stem}_processed.mdx"
+            with open(temp_mdx, 'w', encoding='utf-8') as f:
+                f.write(new_content)
+            input_file = temp_mdx
+            
+    except Exception as e:
+        print(f"⚠️  WARNING: Failed to process Mermaid blocks: {e}")
+        input_file = mdx_path
+        temp_mdx = None
+
     # Step 1: Pandoc conversion
     if not run_command(
-        ['pandoc', str(mdx_path), '-o', str(tex_path)],
+        ['pandoc', str(input_file), '--listings', '-o', str(tex_path)],
         cwd=work_dir,
         description="Converting MDX to LaTeX with Pandoc"
     ):
+        if temp_mdx and temp_mdx.exists():
+            temp_mdx.unlink()
         return False
+        
+    # Clean up temp MDX
+    if temp_mdx and temp_mdx.exists():
+        temp_mdx.unlink()
     
     print(f"✅ Generated: {tex_path.name}\n")
     
@@ -206,7 +291,12 @@ def convert_mdx_to_pdf(mdx_file, generate_pdf=True, keep_aux=False):
                 if aux_file_gu.exists():
                     aux_file_gu.unlink()
                     print(f"🗑️  Removed: {aux_file_gu.name}")
-    
+            
+            # Remove generated Mermaid PDFs (they are embedded now)
+            for m_pdf in work_dir.glob('mermaid-*.pdf'):
+                m_pdf.unlink()
+                print(f"🗑️  Removed: {m_pdf.name}")
+
     print(f"\n{'='*60}")
     print(f"✅ SUCCESS: Conversion complete!")
     print(f"{'='*60}")

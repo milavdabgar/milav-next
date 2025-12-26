@@ -2,6 +2,7 @@
 """
 Enhanced LaTeX Refactoring Script - v2
 Critical improvements for 98/100 quality
+Now standalone (merged with refactor_latex.py logic)
 """
 
 import re
@@ -47,27 +48,7 @@ def convert_unicode_to_latex(content):
         'ₙ': r'_{n}', 'ₚ': r'_{p}', 'ₛ': r'_{s}', 'ₜ': r'_{t}',
     }
     
-    # Greek letters (lowercase)
-    greek_lower = {
-        'α': r'\alpha', 'β': r'\beta', 'γ': r'\gamma', 'δ': r'\delta',
-        'ε': r'\epsilon', 'ζ': r'\zeta', 'η': r'\eta', 'θ': r'\theta',
-        'ι': r'\iota', 'κ': r'\kappa', 'λ': r'\lambda', 'μ': r'\mu',
-        'ν': r'\nu', 'ξ': r'\xi', 'π': r'\pi', 'ρ': r'\rho',
-        'σ': r'\sigma', 'τ': r'\tau', 'υ': r'\upsilon', 'φ': r'\phi',
-        'χ': r'\chi', 'ψ': r'\psi', 'ω': r'\omega',
-    }
-    
-    # Greek letters (uppercase)
-    greek_upper = {
-        'Α': r'\Alpha', 'Β': r'\Beta', 'Γ': r'\Gamma', 'Δ': r'\Delta',
-        'Ε': r'\Epsilon', 'Ζ': r'\Zeta', 'Η': r'\Eta', 'Θ': r'\Theta',
-        'Ι': r'\Iota', 'Κ': r'\Kappa', 'Λ': r'\Lambda', 'Μ': r'\Mu',
-        'Ν': r'\Nu', 'Ξ': r'\Xi', 'Π': r'\Pi', 'Ρ': r'\Rho',
-        'Σ': r'\Sigma', 'Τ': r'\Tau', 'Υ': r'\Upsilon', 'Φ': r'\Phi',
-        'Χ': r'\Chi', 'Ψ': r'\Psi', 'Ω': r'\Omega',
-    }
-    
-    # Mathematical symbols
+    # Math symbols
     math_symbols = {
         '×': r'\times',
         '÷': r'\div',
@@ -84,9 +65,9 @@ def convert_unicode_to_latex(content):
         '√': r'\sqrt',
         '∂': r'\partial',
         '∇': r'\nabla',
-        '°': r'^\circ',  # Degree symbol
-        '′': r"'",  # Prime
-        '″': r"''",  # Double prime
+        '°': r'^\circ',  
+        '′': r"'",  
+        '″': r"''",  
         '‰': r'\text{\textperthousand}',
         '℃': r'^\circ C',
         '℉': r'^\circ F',
@@ -113,20 +94,11 @@ def convert_unicode_to_latex(content):
         '⊗': r'\otimes',
     }
     
-    # Apply conversions (order matters - do superscripts/subscripts first)
     for unicode_char, latex_cmd in superscripts.items():
         content = content.replace(unicode_char, latex_cmd)
     
     for unicode_char, latex_cmd in subscripts.items():
         content = content.replace(unicode_char, latex_cmd)
-    
-    # DISABLED: Greek letters are already properly formatted in source
-    # Converting them causes math mode issues in tables
-    # for unicode_char, latex_cmd in greek_lower.items():
-    #     content = content.replace(unicode_char, latex_cmd)
-    
-    # for unicode_char, latex_cmd in greek_upper.items():
-    #     content = content.replace(unicode_char, latex_cmd)
     
     for unicode_char, latex_cmd in math_symbols.items():
         content = content.replace(unicode_char, latex_cmd)
@@ -162,19 +134,16 @@ def fix_section_titles(content):
     return '\n'.join(fixed_lines)
 
 def format_calculation_steps(lines):
-    """Separate multi-line equations - CRITICAL FIX."""
+    """Separate multi-line equations."""
     formatted_lines = []
     
     for line in lines:
         stripped = line.strip()
         
-        # Detect: "α = ... α = ... α = ..."
         if '=' in stripped and not stripped.startswith('\\'):
             eq_count = stripped.count('=')
             
             if eq_count >= 2:
-                # Simple split: look for variable names followed by =
-                # Pattern: "α = result α = next"
                 import re
                 parts = re.split(r'(?<=[^\s=])\s+(?=[α-ωΑ-Ωa-zA-Z]\s*=)', stripped)
                 
@@ -182,7 +151,7 @@ def format_calculation_steps(lines):
                     for part in parts:
                         if part.strip():
                             formatted_lines.append(part.strip())
-                            formatted_lines.append('')  # Blank line
+                            formatted_lines.append('')
                 else:
                     formatted_lines.append(line)
             else:
@@ -232,37 +201,193 @@ def simplify_labels(content):
     
     return content
 
-# Import original functions from refactor_latex.py
-from refactor_latex import refactor_latex as original_refactor
+def apply_box_structure(content, file_path):
+    """Applies solution boxes, headers, and structural fixes (Replacing original refactor_latex.py logic)."""
+    
+    # 1. Standardize Header/Preamble
+    if "\\begin{document}" in content:
+        body = content.split("\\begin{document}")[1]
+        if "\\end{document}" in body:
+            body = body.replace("\\end{document}", "")
+    else:
+        body = content
+
+    # New Header Logic
+    is_gujarati = ".gu.tex" in file_path or ".gu." in file_path
+    box_template = "gujarati-boxes.tex" if is_gujarati else "english-boxes.tex"
+    
+    basename = os.path.basename(file_path)
+    filename_no_ext = os.path.splitext(basename)[0]
+    
+    subject_code = "Unknown Code"
+    exam_season = "Study Material"
+    subject_name = "Subject Name"
+
+    # Minimal Subject Map (Expand as needed)
+    subject_map = {
+        "4300003": "Environment and Sustainability",
+        "4300002": "Communication Skills", 
+        "DI01000061": "Modern Physics",
+        "DI01000071": "Chemistry",
+        "DI01000021": "Mathematics-I",
+        "DI01000051": "Basic Electronics",
+        "DI01000101": "Basic Electronics"
+    }
+
+    parts = filename_no_ext.split('-')
+    if len(parts) >= 1:
+        subject_code = parts[0]
+        if subject_code in subject_map:
+            subject_name = subject_map[subject_code]
+    
+    if len(parts) >= 3:
+        season = parts[1].capitalize()
+        year = parts[2]
+        if season in ["Summer", "Winter"] and year.isdigit():
+            exam_season = f"{season} {year}"
+
+    if is_gujarati:
+        header_title = r"{\Huge\bfseries\color{headcolor} %s (Gujarati)}\\[5pt]" % subject_name
+    else:
+        header_title = r"{\Huge\bfseries\color{headcolor} %s Solutions}\\[5pt]" % subject_name
+
+    header = r"""\documentclass[10pt,a4paper]{article}
+\input{../../../../../../latex-templates/gtu-solutions/preamble.tex}
+\input{../../../../../../latex-templates/gtu-solutions/%s}
+
+\begin{document}
+
+\begin{center}
+%s
+{\LARGE %s -- %s}\\[3pt]
+{\large Semester 1 Study Material}\\[3pt]
+{\normalsize\textit{Detailed Solutions and Explanations}}
+\end{center}
+
+\vspace{10pt}
+
+""" % (box_template, header_title, subject_code, exam_season)
+    
+    lines = body.split('\n')
+    new_lines = []
+    in_solution_box = False
+    in_mnemonic_box = False
+    
+    answer_start_re = re.compile(r'\\textbf{(?:Answer|જવાબ)[:\s}]')
+    mnemonic_start_re = re.compile(r'\\textbf{(?:Mnemonic|યાદશક્તિ સૂત્ર|મેમરી ટ્રીક)[:\s}]')
+    table_caption_re = re.compile(r'\\textbf{(?:Table|કોષ્ટક)\s*:\s*(.*)}')
+    
+    pending_caption = None
+    
+    # NOTE: Shaded block handling removed to rely on Pandoc's lstlisting + listings package
+    
+    for line in lines:
+        stripped = line.strip()
+
+        # Fix Section/Subsection Numbering
+        if line.strip().startswith(r"\subsection{"):
+            line = line.replace(r"\subsection{", r"\subsection*{")
+        if line.strip().startswith(r"\section{"):
+            line = line.replace(r"\section{", r"\section*{")
+
+        # Break Point Detection
+        is_section_break = (
+            stripped.startswith(r"\section") or 
+            stripped.startswith(r"\subsection") or
+            stripped.startswith(r"\subsubsection") or
+            stripped.startswith(r"\paragraph") or
+            stripped.startswith(r"\subparagraph")
+        )
+        
+        is_horizontal_rule = r"\begin{center}\rule{" in line
+        is_mnemonic_start = mnemonic_start_re.search(line)
+        is_answer_start = answer_start_re.search(line)
+
+        # Logic to CLOSE boxes
+        if is_section_break or is_mnemonic_start or is_answer_start or is_horizontal_rule:
+            if pending_caption:
+                new_lines.append(r"\textbf{Table: %s}" % pending_caption)
+                pending_caption = None
+
+            if in_solution_box:
+                new_lines.append(r"\end{solutionbox}")
+                in_solution_box = False
+            if in_mnemonic_box:
+                new_lines.append(r"\end{mnemonicbox}")
+                in_mnemonic_box = False
+
+        # Logic to OPEN boxes
+        
+        # 1. Answer Box
+        if is_answer_start:
+            new_lines.append(r"\begin{solutionbox}")
+            in_solution_box = True
+            clean_line = re.sub(r'\\textbf{(?:Answer|જવાબ)[^}]*}(\s*:)?', '', line).strip()
+            if clean_line:
+                new_lines.append(clean_line)
+            continue
+            
+        # 2. Mnemonic Box
+        if is_mnemonic_start:
+            new_lines.append(r"\begin{mnemonicbox}")
+            in_mnemonic_box = True
+            clean_line = re.sub(r'\\textbf{(?:Mnemonic|યાદશક્તિ સૂત્ર|મેમરી ટ્રીક)[^}]*}(\s*:)?', '', line).strip()
+            if clean_line:
+                new_lines.append(clean_line)
+            continue
+            
+        # 3. Table Caption Detection
+        caption_match = table_caption_re.match(line.strip())
+        if caption_match:
+            pending_caption = caption_match.group(1)
+            continue # Don't print this line yet
+
+        # 4. Table Start Detection (Inject Caption)
+        if r"\begin{longtable}" in line:
+             if pending_caption:
+                 new_lines.append(r"\vspace{-5pt}") 
+                 new_lines.append(r"\captionof{table}{%s}" % pending_caption)
+                 new_lines.append(r"\vspace{-10pt}") 
+                 pending_caption = None
+             new_lines.append(line)
+             continue
+        
+        # 5. Flush pending caption
+        if pending_caption and stripped and not stripped.startswith(r"{\def\LTcaptype") and not stripped.startswith(r"\begin{longtable}") and not stripped.startswith(r">") and not stripped.startswith(r"@"):
+             if stripped.startswith("%") or stripped.startswith(r"{\def\LTcaptype"):
+                 pass 
+             else:
+                 new_lines.append(r"\textbf{Table: %s}" % pending_caption)
+                 pending_caption = None
+        
+        new_lines.append(line)
+
+    if in_solution_box:
+        new_lines.append(r"\end{solutionbox}")
+    if in_mnemonic_box:
+        new_lines.append(r"\end{mnemonicbox}")
+
+    new_lines.append(r"\end{document}")
+    
+    return header + "\n".join(new_lines)
 
 def refactor_latex(file_path):
     """Enhanced refactor with all improvements."""
+    
     # Read file
     with open(file_path, 'r', encoding='utf-8') as f:
         content = f.read()
     
-    # IMPROVEMENT 1: Fix escaped brackets (CRITICAL)
+    # 1. Pre-processing Fixes
     content = clean_escaped_brackets(content)
-    
-    # IMPROVEMENT 2: Convert Unicode to LaTeX (NEW - CRITICAL)
     content = convert_unicode_to_latex(content)
-    
-    # IMPROVEMENT 3: Fix section titles
     content = fix_section_titles(content)
     
-    # Write temp file
-    temp_path = file_path + '.temp'
-    with open(temp_path, 'w', encoding='utf-8') as f:
-        f.write(content)
-    
-    # Run original refactor on temp file
-    original_refactor(temp_path)
-    
-    # Read result
-    with open(temp_path, 'r', encoding='utf-8') as f:
-        content = f.read()
-    
-    # Extract body for further processing
+    # 2. Apply Structural Changes (Box Logic) - Merged from refactor_latex.py
+    content = apply_box_structure(content, file_path)
+
+    # 3. Post-processing on the structured content
+    # Extract body again since apply_box_structure adds headers
     if "\\begin{document}" in content:
         header = content.split("\\begin{document}")[0] + "\\begin{document}"
         body = content.split("\\begin{document}")[1]
@@ -274,25 +399,15 @@ def refactor_latex(file_path):
     
     lines = body.split('\n')
     
-    # IMPROVEMENT 3: Format calculations (CRITICAL)
     lines = format_calculation_steps(lines)
-    
-    # IMPROVEMENT 4: Clean enumerate
     lines = clean_enumerate_env(lines)
     
-    # Reconstruct
     final_content = header + '\n'.join(lines) + '\n\\end{document}\n'
-    
-    # IMPROVEMENT 5: Simplify labels
     final_content = simplify_labels(final_content)
     
     # Write final
     with open(file_path, 'w', encoding='utf-8') as f:
         f.write(final_content)
-    
-    # Clean up temp
-    if os.path.exists(temp_path):
-        os.remove(temp_path)
     
     print(f"✅ Refactored with improvements: {file_path}")
 
