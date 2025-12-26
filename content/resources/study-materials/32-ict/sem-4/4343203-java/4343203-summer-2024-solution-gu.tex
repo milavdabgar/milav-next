@@ -1,0 +1,1228 @@
+\documentclass{article}
+\input{../../../../../../latex-templates/gtu-solutions/preamble.tex}
+\input{../../../../../../latex-templates/gtu-solutions/gujarati-boxes.tex}
+\input{../../../../../../latex-templates/gtu-solutions/commands.tex}
+
+\title{જાવા પ્રોગ્રામિંગ (4343203) -- સમર 2024 સોલ્યુશન}
+\date{June 15, 2024}
+
+\begin{document}
+\maketitle
+
+\questionmarks{1(અ)}{3}{જાવામાં Garbage collection સમજાવો.}
+
+\begin{solutionbox}
+જાવામાં Garbage collection વણવપરાયેલા ઓબ્જેક્ટ્સને દૂર કરીને આપમેળે મેમરી ખાલી કરે છે.
+
+\begin{center}
+\captionof{table}{Garbage Collection પ્રક્રિયા}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{તબક્કો} & \textbf{વર્ણન} \\ \hline
+Mark & JVM મેમરીમાં બધા live ઓબ્જેક્ટ્સને ઓળખે છે \\ \hline
+Sweep & વણવપરાયેલા ઓબ્જેક્ટ્સ દૂર કરવામાં આવે છે \\ \hline
+Compact & બાકીના ઓબ્જેક્ટ્સને જગ્યા ખાલી કરવા માટે પુનર્ગઠિત કરવામાં આવે છે \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{આપમેળે}: મેન્યુઅલ મેમરી મેનેજમેન્ટની જરૂર નથી
+    \item \textbf{બેકગ્રાઉન્ડ}: અલગ ઓછી પ્રાથમિકતાવાળા થ્રેડમાં ચાલે છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{MSC: Mark-Sweep-Compact આપમેળે મેમરી ખાલી કરે છે}
+\end{mnemonicbox}
+
+\questionmarks{1(બ)}{4}{JVM ને વિગતવાર સમજાવો.}
+
+\begin{solutionbox}
+JVM (Java Virtual Machine) એક વર્ચ્યુઅલ મશીન છે જે bytecode ને મશીન કોડમાં રૂપાંતરિત કરીને જાવાની પ્લેટફોર્મ સ્વતંત્રતા આપે છે.
+
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm, auto]
+    \node (code) [process] {Java Code};
+    \node (comp) [process, below of=code] {Compiler};
+    \node (byte) [process, below of=comp] {Bytecode};
+    \node (jvm) [process, below of=byte] {JVM};
+    \node (mach) [process, below of=jvm] {Machine Code};
+
+    \draw [arrow] (code) -- (comp);
+    \draw [arrow] (comp) -- (byte);
+    \draw [arrow] (byte) -- (jvm);
+    \draw [arrow] (jvm) -- (mach);
+    
+    \node (comp_box) [draw=red, dashed, fit=(jvm), label=right:JVM ઘટકો: Class Loader, Runtime Data, Exec Engine] {};
+\end{tikzpicture}
+\captionof{figure}{JVM આર્કિટેક્ચર}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{પ્લેટફોર્મ સ્વતંત્રતા}: એકવાર લખો, બધે ચલાવો
+    \item \textbf{સુરક્ષા}: Bytecode વેરિફિકેશન ખતરનાક કામગીરીને રોકે છે
+    \item \textbf{ઓપ્ટિમાઈઝેશન}: Just-in-time કમ્પાઈલેશન કામગીરી સુધારે છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{CLASS: Class Loader સુરક્ષિત સિસ્ટમ સંચાલન કરે છે}
+\end{mnemonicbox}
+
+\questionmarks{1(ક)}{7}{Fibonacci series પ્રિન્ટ કરવા માટેનો જાવા પ્રોગ્રામ લખો.}
+
+\begin{solutionbox}
+Fibonacci series એવી શ્રેણી બનાવે છે જેમાં દરેક સંખ્યા તેના અગાઉની બે સંખ્યાઓનો સરવાળો હોય.
+
+\begin{lstlisting}[language=Java, caption={Fibonacci Series Program}]
+import java.util.Scanner;
+
+public class FibonacciSeries {
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        
+        System.out.print("Enter number of terms: ");
+        int n = input.nextInt();
+        
+        int first = 0, second = 1;
+        
+        System.out.print("Fibonacci Series: ");
+        
+        for (int i = 1; i <= n; i++) {
+            System.out.print(first + " ");
+            
+            int next = first + second;
+            first = second;
+            second = next;
+        }
+        
+        input.close();
+    }
+}
+\end{lstlisting}
+
+\begin{itemize}
+    \item \textbf{પ્રારંભિક}: 0 અને 1 થી શરૂઆત કરો
+    \item \textbf{લૂપ}: શ્રેણી બનાવવા માટે N વખત પુનરાવર્તન કરો
+    \item \textbf{ગણતરી}: દરેક સંખ્યા પાછલી બે સંખ્યાનો સરવાળો છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{FSN: પ્રથમ + બીજી = આગળની સંખ્યા શ્રેણીમાં}
+\end{mnemonicbox}
+
+\questionmarks{1(ક OR)}{7}{કમાન્ડ લાઇન arguments નો ઉપયોગ કરીને કોઈપણ દસ સંખ્યાઓ માંથી ન્યૂનતમ શોધવા માટે જાવા પ્રોગ્રામ લખો.}
+
+\begin{solutionbox}
+કમાન્ડ લાઇન આર્ગ્યુમેન્ટ્સ જાવા પ્રોગ્રામ ચલાવતી વખતે સીધા ઇનપુટ આપવાની સુવિધા આપે છે.
+
+\begin{lstlisting}[language=Java, caption={Find Minimum using Command Line Args}]
+public class FindMinimum {
+    public static void main(String[] args) {
+        if (args.length < 10) {
+            System.out.println("Please provide 10 numbers");
+            return;
+        }
+        
+        int min = Integer.parseInt(args[0]);
+        
+        for (int i = 1; i < 10; i++) {
+            int current = Integer.parseInt(args[i]);
+            if (current < min) {
+                min = current;
+            }
+        }
+        
+        System.out.println("Minimum number is: " + min);
+    }
+}
+\end{lstlisting}
+
+\begin{itemize}
+    \item \textbf{આર્ગ્યુમેન્ટ્સ પારસિંગ}: સ્ટ્રિંગ આર્ગ્યુમેન્ટ્સને ઇન્ટીજરમાં રૂપાંતરિત કરો
+    \item \textbf{પ્રારંભિક}: પ્રથમ સંખ્યાને ન્યૂનતમ તરીકે સેટ કરો
+    \item \textbf{તુલના}: દરેક સંખ્યાને વર્તમાન ન્યૂનતમ સાથે ચકાસો
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{ICU: શરૂઆત, ચકાસણી, અપડેટ ન્યૂનતમ}
+\end{mnemonicbox}
+
+\questionmarks{2(અ)}{3}{Java OOP ના મૂળભૂત ખ્યાલોની યાદી બનાવો. કોઈપણ એક વિગતવાર સમજાવો.}
+
+\begin{solutionbox}
+જાવા ઓબ્જેક્ટ-ઓરિએન્ટેડ પ્રોગ્રામિંગ વાસ્તવિક દુનિયાની વસ્તુઓને મોડેલિંગ કરવા માટે મૂળભૂત સિદ્ધાંતો પર આધારિત છે.
+
+\begin{center}
+\captionof{table}{જાવામાં OOP ખ્યાલો}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{ખ્યાલ} & \textbf{વર્ણન} \\ \hline
+Encapsulation & ડેટા અને મેથડને એક એકમ તરીકે જોડવું \\ \hline
+Inheritance & હાલના class માંથી નવા class બનાવવા \\ \hline
+Polymorphism & એક ઇન્ટરફેસ, વિવિધ અમલીકરણો \\ \hline
+Abstraction & અમલીકરણની વિગતો છુપાવવી, કાર્યક્ષમતા બતાવવી \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{Encapsulation}: એક્સેસ કંટ્રોલ દ્વારા ડેટાનું રક્ષણ કરે છે
+    \item \textbf{ડેટા છુપાવવો}: ખાનગી વેરિયેબલ્સ મેથડ્સ દ્વારા એક્સેસ થાય છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{PEAI: પ્રોગ્રામિંગ Encapsulates Abstracts Inherits}
+\end{mnemonicbox}
+
+\questionmarks{2(બ)}{4}{final કી-વર્ડ ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+જાવામાં final કી-વર્ડ ફેરફાર, વારસો અને ઓવરરાઇડિંગને મર્યાદિત કરવા માટે વપરાય છે.
+
+\begin{center}
+\captionof{table}{final કી-વર્ડના ઉપયોગો}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{ઉપયોગ} & \textbf{અસર} & \textbf{ઉદાહરણ} \\ \hline
+final variable & બદલી શકાતું નથી & \code{final int MAX = 100;} \\ \hline
+final method & ઓવરરાઇડ કરી શકાતી નથી & \code{final void display() \{\}} \\ \hline
+final class & વારસામાં લઈ શકાતો નથી & \code{final class Math \{\}} \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{lstlisting}[language=Java, caption={Final Keyword Demo}]
+public class FinalDemo {
+    final int MAX_VALUE = 100;  // નિયતાંક
+    
+    final void display() {
+        System.out.println("This method cannot be overridden");
+    }
+}
+
+final class MathOperations {
+    // આ class નો વારસો મળી શકતો નથી
+}
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{VCM: Variables Constants Methods બદલી શકાતા નથી}
+\end{mnemonicbox}
+
+\questionmarks{2(ક)}{7}{કન્સ્ટ્રક્ટર શું છે? Parameterized કન્સ્ટ્રક્ટર ને ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+કન્સ્ટ્રક્ટર એ ઓબ્જેક્ટ બનાવતી વખતે તેને શરૂઆતી મૂલ્યો આપવા માટેની વિશેષ મેથડ છે.
+
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm]
+    \node (cons) [process] {Constructors};
+    \node (def) [process, below left of=cons, xshift=-2cm] {Default};
+    \node (param) [process, below of=cons] {Parameterized};
+    \node (copy) [process, below right of=cons, xshift=2cm] {Copy};
+
+    \draw [arrow] (cons) -- (def);
+    \draw [arrow] (cons) -- (param);
+    \draw [arrow] (cons) -- (copy);
+\end{tikzpicture}
+\captionof{figure}{કન્સ્ટ્રક્ટરના પ્રકારો}
+\end{center}
+
+\begin{lstlisting}[language=Java, caption={Parameterized Constructor}]
+public class Student {
+    String name;
+    int age;
+    
+    // Parameterized constructor
+    Student(String n, int a) {
+        name = n;
+        age = a;
+    }
+    
+    void display() {
+        System.out.println("Name: " + name + ", Age: " + age);
+    }
+    
+    public static void main(String[] args) {
+        // Object creation using parameterized constructor
+        Student s1 = new Student("John", 20);
+        s1.display();
+    }
+}
+\end{lstlisting}
+
+\begin{itemize}
+    \item \textbf{પેરામીટર્સ}: ઓબ્જેક્ટ બનાવતી વખતે કિંમતો સ્વીકારે છે
+    \item \textbf{પ્રારંભિક}: પાસ કરેલા મૂલ્યો સાથે ઓબ્જેક્ટ પ્રોપર્ટી સેટ કરે છે
+    \item \textbf{ઓવરલોડિંગ}: અલગ અલગ પેરામીટર્સ સાથે ઘણા કન્સ્ટ્રક્ટર્સ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{SPO: વિદ્યાર્થી પેરામીટર્સ ઓબ્જેક્ટ પ્રોપર્ટી શરૂ કરે છે}
+\end{mnemonicbox}
+
+\questionmarks{2(અ OR)}{3}{ઉદાહરણ સાથે જાવા પ્રોગ્રામ સ્ટ્રક્ચર સમજાવો.}
+
+\begin{solutionbox}
+જાવા પ્રોગ્રામ સ્ટ્રક્ચર તાર્કિક રીતે ગોઠવાયેલા તત્વોના વિશિષ્ટ ક્રમને અનુસરે છે.
+
+\begin{center}
+\begin{tikzpicture}[
+    node distance=0.5cm,
+    box/.style={draw, rectangle, minimum width=5cm, align=left, fill=white, inner sep=5pt}
+]
+    \node[box] (doc) {Documentation};
+    \node[box, below=of doc] (pkg) {Package Declaration};
+    \node[box, below=of pkg] (imp) {Import Statements};
+    
+    \node[box, below=of imp, minimum height=2.5cm] (cls) {};
+    \node[anchor=north west] at (cls.north west) {\textbf{Class Declaration}};
+    
+    \node[box, minimum width=4cm, below=0.5cm of cls.north] (vars) {Variables};
+    \node[box, minimum width=4cm, below=0cm of vars] (cons) {Constructors};
+    \node[box, minimum width=4cm, below=0cm of cons] (meth) {Methods};
+
+    \path [arrow] (doc) -- (pkg);
+    \path [arrow] (pkg) -- (imp);
+    \path [arrow] (imp) -- (cls);
+\end{tikzpicture}
+\captionof{figure}{જાવા પ્રોગ્રામ સ્ટ્રક્ચર}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{Package}: સંબંધિત ક્લાસને જૂથમાં રાખે છે
+    \item \textbf{Import}: બાહ્ય ક્લાસને સમાવે છે
+    \item \textbf{Class}: વેરિયેબલ્સ અને મેથડ્સ ધરાવે છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{PIC: દરેક પ્રોગ્રામમાં Package Imports Class}
+\end{mnemonicbox}
+
+\questionmarks{2(બ OR)}{4}{યોગ્ય ઉદાહરણ સાથે static કી-વર્ડ સમજાવો.}
+
+\begin{solutionbox}
+Static કી-વર્ડ ક્લાસ-લેવલ વેરિયેબલ્સ અને મેથડ્સ બનાવે છે જે બધા ઓબ્જેક્ટ્સ વચ્ચે શેર થાય છે.
+
+\begin{center}
+\captionof{table}{Static vs Non-Static}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{ફીચર} & \textbf{Static} & \textbf{Non-Static} \\ \hline
+મેમરી & એક કોપી & ઘણી કોપીઓ \\ \hline
+એક્સેસ & ઓબ્જેક્ટ વગર & ઓબ્જેક્ટ દ્વારા \\ \hline
+રેફરન્સ & ક્લાસ નામ & ઓબ્જેક્ટ નામ \\ \hline
+લોડ થવાનો સમય & ક્લાસ લોડિંગ & ઓબ્જેક્ટ બનાવટ \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{lstlisting}[language=Java, caption={Static Keyword Demo}]
+public class Counter {
+    static int count = 0;  // બધા ઓબ્જેક્ટ્સ માટે શેર
+    int instanceCount = 0; // દરેક ઓબ્જેક્ટ માટે અલગ
+    
+    Counter() {
+        count++;
+        instanceCount++;
+    }
+    
+    public static void main(String[] args) {
+        Counter c1 = new Counter();
+        Counter c2 = new Counter();
+        
+        System.out.println("Static count: " + Counter.count);
+        System.out.println("c1's instance count: " + c1.instanceCount);
+        System.out.println("c2's instance count: " + c2.instanceCount);
+    }
+}
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{SCM: Static બધા ઓબ્જેક્ટ માટે એકવાર મેમરી બનાવે છે}
+\end{mnemonicbox}
+
+\questionmarks{2(ક OR)}{7}{ઇનહેરીટન્સ વ્યાખ્યાયિત કરો. તેના પ્રકારોની યાદી બનાવો. Multilevel અને Hierarchical ઇનહેરીટન્સ ને યોગ્ય ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+ઇનહેરીટન્સ એ OOP સિદ્ધાંત છે જેમાં નવો ક્લાસ હાલના ક્લાસની સંપત્તિઓ અને વર્તનને મેળવે છે.
+
+\begin{center}
+\captionof{table}{જાવામાં ઇનહેરીટન્સના પ્રકારો}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{પ્રકાર} & \textbf{વર્ણન} \\ \hline
+Single & એક સબક્લાસ એક સુપરક્લાસથી વિસ્તરે છે \\ \hline
+Multilevel & ઇનહેરીટન્સની સાંકળ ($A \to B \to C$) \\ \hline
+Hierarchical & ઘણા સબક્લાસ એક સુપરક્લાસથી વિસ્તરે છે \\ \hline
+Multiple & એક ક્લાસ ઘણા ક્લાસથી વિસ્તરે છે (ઇન્ટરફેસ દ્વારા) \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{lstlisting}[language=Java, caption={Inheritance Example}]
+// Multilevel inheritance
+class Animal {
+    void eat() { System.out.println("eating"); }
+}
+
+class Dog extends Animal {
+    void bark() { System.out.println("barking"); }
+}
+
+class Labrador extends Dog {
+    void color() { System.out.println("golden"); }
+}
+
+// Hierarchical inheritance
+class Vehicle {
+    void move() { System.out.println("moving"); }
+}
+
+class Car extends Vehicle {
+    void wheels() { System.out.println("4 wheels"); }
+}
+
+class Bike extends Vehicle {
+    void wheels() { System.out.println("2 wheels"); }
+}
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{SMHM: Single Multilevel Hierarchical ઇનહેરીટન્સના પ્રકારો છે}
+\end{mnemonicbox}
+
+\questionmarks{3(અ)}{3}{this કી-વર્ડને યોગ્ય ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+જાવામાં \code{this} કી-વર્ડ વર્તમાન ઓબ્જેક્ટનો સંદર્ભ આપે છે, જે ઇન્સ્ટન્સ વેરિયેબલ્સ અને પેરામીટર્સ વચ્ચે તફાવત પાડે છે.
+
+\begin{center}
+\captionof{table}{'this' કી-વર્ડના ઉપયોગો}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{ઉપયોગ} & \textbf{હેતુ} \\ \hline
+\code{this.variable} & ઇન્સ્ટન્સ વેરિયેબલ્સ એક્સેસ કરવા \\ \hline
+\code{this()} & વર્તમાન ક્લાસના કન્સ્ટ્રક્ટરને કોલ કરવા \\ \hline
+\code{return this} & વર્તમાન ઓબ્જેક્ટ પાછો આપવા \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{lstlisting}[language=Java, caption={This Keyword}]
+public class Student {
+    String name;
+    
+    Student(String name) {
+        this.name = name;  // ઇન્સ્ટન્સ વેરિયેબલનો સંદર્ભ આપે છે
+    }
+    
+    void display() {
+        System.out.println("Name: " + this.name);
+    }
+}
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{VAR: Variables Access Resolution this નો ઉપયોગ કરીને}
+\end{mnemonicbox}
+
+\questionmarks{3(બ)}{4}{જાવામાં વિવિધ એક્સેસ કંટ્રોલ સમજાવો.}
+
+\begin{solutionbox}
+જાવામાં એક્સેસ કંટ્રોલ ક્લાસેસ, મેથડ્સ અને વેરિયેબલ્સની દૃશ્યતા અને પહોંચને નિયંત્રિત કરે છે.
+
+\begin{center}
+\captionof{table}{જાવા એક્સેસ મોડિફાયર્સ}
+\begin{tabulary}{\linewidth}{|L|C|C|C|C|}
+\hline
+\textbf{મોડિફાયર} & \textbf{ક્લાસ} & \textbf{પેકેજ} & \textbf{સબક્લાસ} & \textbf{જગત} \\ \hline
+private & \checkmark{} & \ding{55} & \ding{55} & \ding{55} \\ \hline
+default & \checkmark{} & \checkmark{} & \ding{55} & \ding{55} \\ \hline
+protected & \checkmark{} & \checkmark{} & \checkmark{} & \ding{55} \\ \hline
+public & \checkmark{} & \checkmark{} & \checkmark{} & \checkmark{} \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{Private}: માત્ર તે જ ક્લાસની અંદર
+    \item \textbf{Default}: તે જ પેકેજની અંદર
+    \item \textbf{Protected}: પેકેજ અને સબક્લાસમાં
+    \item \textbf{Public}: બધે જ પહોંચ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{PDPP: Private Default Protected Public સંકુચિતથી વિશાળ}
+\end{mnemonicbox}
+
+\questionmarks{3(ક)}{7}{ઈન્ટરફેસ શું છે? ઈન્ટરફેસ દ્વારા ઉદાહરણ સાથે multiple inheritance સમજાવો.}
+
+\begin{solutionbox}
+ઈન્ટરફેસ એક એવો કરાર છે જે ક્લાસે શું કરવું જોઈએ તે નિર્દિષ્ટ કરે છે, જેમાં abstract મેથડ્સ, નિયતાંકો અને (Java 8થી) default મેથડ્સ હોય છે.
+
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm]
+    \node (prt) [class] {$\ll$interface$\gg$ Printable};
+    \node (scn) [class, right of=prt, xshift=3cm] {$\ll$interface$\gg$ Scannable};
+    \node (impl) [class, below of=prt, xshift=1.5cm] {Printer};
+
+    \draw [dashed, ->] (impl) -- (prt);
+    \draw [dashed, ->] (impl) -- (scn);
+\end{tikzpicture}
+\captionof{figure}{ઈન્ટરફેસથી Multiple Inheritance}
+\end{center}
+
+\begin{lstlisting}[language=Java, caption={Interface Example}]
+interface Printable {
+    void print();
+}
+
+interface Scannable {
+    void scan();
+}
+
+// Multiple inheritance using interfaces
+class Printer implements Printable, Scannable {
+    public void print() {
+        System.out.println("Printing...");
+    }
+    
+    public void scan() {
+        System.out.println("Scanning...");
+    }
+    
+    public static void main(String[] args) {
+        Printer p = new Printer();
+        p.print();
+        p.scan();
+    }
+}
+\end{lstlisting}
+
+\begin{itemize}
+    \item \textbf{કરાર}: અમલીકરણ વગર વર્તન વ્યાખ્યાયિત કરે છે
+    \item \textbf{Implements}: ક્લાસ કરાર પૂર્ણ કરે છે
+    \item \textbf{Multiple}: ઘણા ઈન્ટરફેસ લાગુ કરી શકાય છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{CIM: કરાર Implements Multiple ઈન્ટરફેસ}
+\end{mnemonicbox}
+
+\questionmarks{3(અ OR)}{3}{super કી-વર્ડ ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+super કી-વર્ડ પેરન્ટ ક્લાસનો સંદર્ભ આપે છે, જે પેરન્ટ મેથડ્સ, કન્સ્ટ્રક્ટર્સ અને વેરિયેબલ્સ એક્સેસ કરવા વપરાય છે.
+
+\begin{center}
+\captionof{table}{super કી-વર્ડના ઉપયોગો}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{ઉપયોગ} & \textbf{હેતુ} \\ \hline
+\code{super.variable} & પેરન્ટ વેરિયેબલ એક્સેસ કરવા \\ \hline
+\code{super.method()} & પેરન્ટ મેથડ કોલ કરવા \\ \hline
+\code{super()} & પેરન્ટ કન્સ્ટ્રક્ટર કોલ કરવા \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{lstlisting}[language=Java, caption={Super Keyword}]
+class Vehicle {
+    String color = "white";
+    
+    void display() {
+        System.out.println("Vehicle class");
+    }
+}
+
+class Car extends Vehicle {
+    String color = "black";
+    
+    void display() {
+        super.display();  // પેરન્ટ મેથડ કોલ કરે છે
+        System.out.println("Car color: " + color);
+        System.out.println("Vehicle color: " + super.color);
+    }
+}
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{VMC: Variables Methods Constructors super દ્વારા એક્સેસ થાય છે}
+\end{mnemonicbox}
+
+\questionmarks{3(બ OR)}{4}{પેકેજ શું છે? પેકેજ બનાવવાના પગલાં લખો અને તેનું ઉદાહરણ આપો.}
+
+\begin{solutionbox}
+પેકેજ એ જાવામાં સંબંધિત ક્લાસ અને ઈન્ટરફેસને સંગઠિત કરતું નેમસ્પેસ છે, જે નામકરણ સંઘર્ષને રોકે છે.
+
+\begin{center}
+\captionof{table}{પેકેજ બનાવવાના પગલાં}
+\begin{tabulary}{\linewidth}{|C|L|}
+\hline
+\textbf{પગલું} & \textbf{ક્રિયા} \\ \hline
+1 & ફાઈલની ટોચે પેકેજ નામ જાહેર કરો \\ \hline
+2 & પેકેજ નામને અનુરૂપ ડિરેક્ટરી સ્ટ્રક્ચર બનાવો \\ \hline
+3 & જાવા ફાઈલને ડિરેક્ટરીમાં સેવ કરો \\ \hline
+4 & \code{-d} વિકલ્પ સાથે કમ્પાઈલ કરો \\ \hline
+5 & ઉપયોગ કરવા માટે પેકેજ ઈમ્પોર્ટ કરો \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{lstlisting}[language=Java, caption={Package Example}]
+// પગલું 1: પેકેજ જાહેર કરો (Calculator.java તરીકે સેવ કરો)
+package mathematics;
+
+public class Calculator {
+    public int add(int a, int b) {
+        return a + b;
+    }
+}
+
+// બીજી ફાઈલમાં (UseCalculator.java)
+import mathematics.Calculator;
+
+class UseCalculator {
+    public static void main(String[] args) {
+        Calculator calc = new Calculator();
+        System.out.println(calc.add(10, 20));
+    }
+}
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{DISCO: Declare Import Save Compile Organize}
+\end{mnemonicbox}
+
+\questionmarks{3(ક OR)}{7}{વ્યાખ્યાયિત કરો: થ્રેડ ઓવરરાઇડિંગ. થ્રેડ ઓવરરાઇડિંગ માટેના નિયમોની યાદી બનાવો. થ્રેડ ઓવરરાઇડિંગને ઇમ્પલેમેન્ટ કરતો જાવા પ્રોગ્રામ લખો.}
+
+\begin{solutionbox}
+\textit{(નોંધ: પ્રશ્નમાં ``થ્રેડ ઓવરરાઇડિંગ'' પૂછ્યું છે, પણ જાવામાં ``મેથડ ઓવરરાઇડિંગ'' હોય છે. જવાબ મેથડ ઓવરરાઇડિંગ સંદર્ભે છે.)}
+
+મેથડ ઓવરરાઈડિંગ ત્યારે થાય છે જ્યારે સબક્લાસ તેના પેરન્ટ ક્લાસમાં વ્યાખ્યાયિત મેથડ માટે ચોક્કસ અમલીકરણ આપે છે.
+
+\begin{center}
+\captionof{table}{મેથડ ઓવરરાઈડિંગના નિયમો}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{નિયમ} & \textbf{વર્ણન} \\ \hline
+એક જ નામ & મેથડનું નામ સરખું હોવું જોઈએ \\ \hline
+એક જ પેરામીટર્સ & પેરામીટર સંખ્યા અને પ્રકાર મેળ ખાવા જોઈએ \\ \hline
+એક જ રિટર્ન પ્રકાર & રિટર્ન પ્રકાર સરખો અથવા સબટાઈપ હોવો જોઈએ \\ \hline
+એક્સેસ મોડિફાયર & વધુ પ્રતિબંધિત ન હોઈ શકે \\ \hline
+એક્સેપ્શન્સ & વધુ વિસ્તૃત checked exception ફેંકી ન શકે \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{lstlisting}[language=Java, caption={Method Overriding}]
+class Animal {
+    void makeSound() {
+        System.out.println("Animal makes a sound");
+    }
+}
+
+class Dog extends Animal {
+    // મેથડ ઓવરરાઈડિંગ
+    @Override
+    void makeSound() {
+        System.out.println("Dog barks");
+    }
+}
+
+class Cat extends Animal {
+    // મેથડ ઓવરરાઈડિંગ
+    @Override
+    void makeSound() {
+        System.out.println("Cat meows");
+    }
+}
+
+public class MethodOverridingDemo {
+    public static void main(String[] args) {
+        Animal animal = new Animal();
+        Animal dog = new Dog();
+        Animal cat = new Cat();
+        
+        animal.makeSound();  // Output: Animal makes a sound
+        dog.makeSound();     // Output: Dog barks
+        cat.makeSound();     // Output: Cat meows
+    }
+}
+\end{lstlisting}
+
+\begin{itemize}
+    \item \textbf{રનટાઈમ પોલિમોર્ફિઝમ}: રનટાઈમ પર મેથડનું રિઝોલ્યુશન થાય છે
+    \item \textbf{@Override}: એનોટેશન ખાતરી કરે છે કે મેથડ ઓવરરાઈડ થઈ રહી છે
+    \item \textbf{ઇનહેરીટન્સ}: IS-A સંબંધની જરૂર છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{SPARE: એક જ પેરામીટર્સ, એક્સેસ, રિટર્ન, એક્સેપ્શન્સ}
+\end{mnemonicbox}
+
+\questionmarks{4(અ)}{3}{યોગ્ય ઉદાહરણ સાથે abstract class સમજાવો.}
+
+\begin{solutionbox}
+Abstract class ને ઈન્સ્ટન્સ બનાવી ન શકાય અને તેમાં abstract મેથડ્સ હોઈ શકે જે સબક્લાસમાં અમલીકરણ કરવી જરૂરી છે.
+
+\begin{center}
+\captionof{table}{Abstract Class vs Interface}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{ફીચર} & \textbf{Abstract Class} & \textbf{Interface} \\ \hline
+ઈન્સ્ટન્સ & બનાવી ન શકાય & બનાવી ન શકાય \\ \hline
+મેથડ્સ & કોન્ક્રીટ અને abstract & Abstract (+ Java 8થી default) \\ \hline
+વેરિયેબલ્સ & કોઈપણ પ્રકાર & માત્ર નિયતાંકો \\ \hline
+કન્સ્ટ્રક્ટર & ધરાવે છે & ધરાવતું નથી \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{lstlisting}[language=Java, caption={Abstract Class}]
+abstract class Shape {
+    // Abstract મેથડ - અમલીકરણ નથી
+    abstract double area();
+    
+    // કોન્ક્રીટ મેથડ
+    void display() {
+        System.out.println("This is a shape");
+    }
+}
+
+class Circle extends Shape {
+    double radius;
+    
+    Circle(double r) {
+        radius = r;
+    }
+    
+    // Abstract મેથડનું અમલીકરણ
+    double area() {
+        return 3.14 * radius * radius;
+    }
+}
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{PAI: આંશિક Abstract અમલીકરણ મુખ્ય છે}
+\end{mnemonicbox}
+
+\questionmarks{4(બ)}{4}{થ્રેડ શું છે? થ્રેડ જીવનચક્ર સમજાવો.}
+
+\begin{solutionbox}
+થ્રેડ એ લાઈટવેઈટ સબપ્રોસેસ છે, જે પ્રોસેસિંગની સૌથી નાની એકમ છે જે એક સાથે ચાલતી પ્રક્રિયાઓની મંજૂરી આપે છે.
+
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm]
+    \node (new) [process] {New};
+    \node (runnable) [process, right of=new, xshift=1.5cm] {Runnable};
+    \node (running) [process, right of=runnable, xshift=1.5cm] {Running};
+    \node (blocked) [process, below of=running] {Blocked};
+    \node (term) [process, right of=running, xshift=1.5cm] {Terminated};
+
+    \draw [arrow] (new) -- node[above, font=\tiny] {start()} (runnable);
+    \draw [arrow] (runnable) -- node[above, font=\tiny] {scheduler} (running);
+    \draw [arrow] (running) -- node[right, font=\tiny] {sleep/wait} (blocked);
+    \draw [arrow] (blocked) -| node[above, font=\tiny, xshift=-1cm] {notify} (runnable);
+    \draw [arrow] (running) -- node[above, font=\tiny] {complete} (term);
+\end{tikzpicture}
+\captionof{figure}{થ્રેડ જીવનચક્ર}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{New}: થ્રેડ બનેલ છે પણ શરૂ થયેલ નથી
+    \item \textbf{Runnable}: CPU સમય મળે ત્યારે ચાલવા તૈયાર
+    \item \textbf{Running}: હાલમાં ચાલી રહ્યું છે
+    \item \textbf{Blocked/Waiting}: અસ્થાયી રૂપે નિષ્ક્રિય
+    \item \textbf{Terminated}: કાર્ય પૂર્ણ થયેલ છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{NRRBT: New Runnable Running Blocked Terminated}
+\end{mnemonicbox}
+
+\questionmarks{4(ક)}{7}{જાવામાં એક પ્રોગ્રામ લખો જે Thread Class નો અમલ કરીને બહુવિધ થ્રેડો બનાવે છે.}
+
+\begin{solutionbox}
+Thread class ને અમલ કરીને થ્રેડ બનાવવાથી ઘણા કાર્યો એક સાથે ચલાવી શકાય છે.
+
+\begin{lstlisting}[language=Java, caption={Multithreading Example}]
+class MyThread extends Thread {
+    private String threadName;
+    
+    MyThread(String name) {
+        this.threadName = name;
+    }
+    
+    @Override
+    public void run() {
+        try {
+            for (int i = 1; i <= 5; i++) {
+                System.out.println(threadName + ": " + i);
+                Thread.sleep(500);
+            }
+        } catch (InterruptedException e) {
+            System.out.println(threadName + " interrupted");
+        }
+        System.out.println(threadName + " completed");
+    }
+}
+
+public class MultiThreadDemo {
+    public static void main(String[] args) {
+        MyThread thread1 = new MyThread("Thread-1");
+        MyThread thread2 = new MyThread("Thread-2");
+        MyThread thread3 = new MyThread("Thread-3");
+        
+        thread1.start();
+        thread2.start();
+        thread3.start();
+    }
+}
+\end{lstlisting}
+
+\begin{itemize}
+    \item \textbf{Thread વિસ્તારો}: Thread class વિસ્તારી થ્રેડ બનાવો
+    \item \textbf{run() ઓવરરાઈડ}: run મેથડમાં કાર્ય વ્યાખ્યાયિત કરો
+    \item \textbf{start()}: થ્રેડ ચલાવવાનું શરૂ કરો
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{ERS: Extend Run Start થ્રેડ બનાવવા માટે}
+\end{mnemonicbox}
+
+\questionmarks{4(અ OR)}{3}{યોગ્ય ઉદાહરણ સાથે final class સમજાવો.}
+
+\begin{solutionbox}
+Final class નો વારસો મળી શકતો નથી, જેથી તેના ડિઝાઈનમાં ફેરફાર અને વિસ્તરણ અટકાવે છે.
+
+\begin{center}
+\captionof{table}{Final Class લક્ષણો}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{ફીચર} & \textbf{વર્ણન} \\ \hline
+ઇનહેરીટન્સ & સબક્લાસ બનાવી શકાતો નથી \\ \hline
+મેથડ્સ & અંતર્નિહિત final છે \\ \hline
+સુરક્ષા & ડિઝાઈન ફેરફારને રોકે છે \\ \hline
+ઉદાહરણ & String, Math ક્લાસ \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{lstlisting}[language=Java, caption={Final Class}]
+final class Security {
+    void secureMethod() {
+        System.out.println("Secure implementation");
+    }
+}
+
+// Error: Cannot extend final class
+// class HackAttempt extends Security { }
+\end{lstlisting}
+
+\begin{itemize}
+    \item \textbf{સુરક્ષા}: સંવેદનશીલ અમલીકરણનું રક્ષણ કરે છે
+    \item \textbf{અપરિવર્તનશીલતા}: અપરિવર્તનશીલ ક્લાસ બનાવવામાં મદદ કરે છે
+    \item \textbf{ઓપ્ટિમાઈઝેશન}: JVM final ક્લાસને ઓપ્ટિમાઈઝ કરી શકે છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{SIO: સુરક્ષા અપરિવર્તનશીલતા ઓપ્ટિમાઈઝેશન}
+\end{mnemonicbox}
+
+\questionmarks{4(બ OR)}{4}{યોગ્ય ઉદાહરણ સાથે thread ની પ્રાથમિકતાઓ સમજાવો.}
+
+\begin{solutionbox}
+થ્રેડ પ્રાથમિકતાઓ નક્કી કરે છે કે થ્રેડ્સને અમલીકરણ માટે કયા ક્રમમાં શેડ્યુલ કરવા, 1 (ન્યૂનતમ) થી 10 (ઉચ્ચતમ).
+
+\begin{center}
+\captionof{table}{થ્રેડ પ્રાયોરિટી નિયતાંકો}
+\begin{tabulary}{\linewidth}{|L|C|L|}
+\hline
+\textbf{નિયતાંક} & \textbf{મૂલ્ય} & \textbf{વર્ણન} \\ \hline
+MIN\_PRIORITY & 1 & ન્યૂનતમ પ્રાથમિકતા \\ \hline
+NORM\_PRIORITY & 5 & ડિફોલ્ટ પ્રાથમિકતા \\ \hline
+MAX\_PRIORITY & 10 & ઉચ્ચતમ પ્રાથમિકતા \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{lstlisting}[language=Java, caption={Thread Priority}]
+class PriorityThread extends Thread {
+    PriorityThread(String name) {
+        super(name);
+    }
+    
+    public void run() {
+        System.out.println("Running: " + getName() + 
+                          " with priority: " + getPriority());
+    }
+}
+
+public class ThreadPriorityDemo {
+    public static void main(String[] args) {
+        PriorityThread low = new PriorityThread("Low Priority");
+        PriorityThread norm = new PriorityThread("Normal Priority");
+        PriorityThread high = new PriorityThread("High Priority");
+        
+        low.setPriority(Thread.MIN_PRIORITY);
+        high.setPriority(Thread.MAX_PRIORITY);
+        
+        low.start();
+        norm.start();
+        high.start();
+    }
+}
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{HNL: ઉચ્ચ સામાન્ય નિમ્ન પ્રાથમિકતાઓ થ્રેડ્સમાં}
+\end{mnemonicbox}
+
+\questionmarks{4(ક OR)}{7}{Exception શું છે? Arithmetic Exception નો ઉપયોગ દર્શાવતો પ્રોગ્રામ લખો.}
+
+\begin{solutionbox}
+Exception એ અસામાન્ય સ્થિતિ છે જે પ્રોગ્રામના સામાન્ય પ્રવાહને વિક્ષેપિત કરે છે.
+
+\begin{center}
+\captionof{table}{Exception હાયરાર્કી}
+\begin{tikzpicture}[node distance=1cm]
+    \node (throw) [class] {Throwable};
+    \node (exc) [class, below left of=throw, xshift=-1cm] {Exception};
+    \node (err) [class, below right of=throw, xshift=1cm] {Error};
+    \node (run) [class, below of=exc] {RuntimeException};
+    \node (arith) [class, below left of=run, xshift=-0.5cm] {ArithmeticException};
+    \node (null) [class, below right of=run, xshift=0.5cm] {NullPointerException};
+
+    \draw [arrow] (throw) -- (exc);
+    \draw [arrow] (throw) -- (err);
+    \draw [arrow] (exc) -- (run);
+    \draw [arrow] (run) -- (arith);
+    \draw [arrow] (run) -- (null);
+\end{tikzpicture}
+\end{center}
+
+\begin{lstlisting}[language=Java, caption={Arithmetic Exception Demo}]
+public class ArithmeticExceptionDemo {
+    public static void main(String[] args) {
+        try {
+            // આ ArithmeticException ઉત્પન્ન કરશે
+            int result = 100 / 0;
+            System.out.println("Result: " + result);
+        } 
+        catch (ArithmeticException e) {
+            System.out.println("ArithmeticException caught: " + e.getMessage());
+            System.out.println("Cannot divide by zero");
+        }
+        finally {
+            System.out.println("This block always executes");
+        }
+        
+        System.out.println("Program continues after exception handling");
+    }
+}
+\end{lstlisting}
+
+\begin{itemize}
+    \item \textbf{Try Block}: એવો કોડ ધરાવે છે જે exception ફેંકી શકે છે
+    \item \textbf{Catch Block}: ચોક્કસ exception હેન્ડલ કરે છે
+    \item \textbf{Finally Block}: exception ફેંકાય કે ન ફેંકાય, હંમેશા ચાલે છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{TCF: Try Catch Finally exceptions હેન્ડલ કરે છે}
+\end{mnemonicbox}
+
+\questionmarks{5(અ)}{3}{એરેની 10 સંખ્યાઓનો સરવાળો અને સરેરાશ શોધવા માટેનો જાવા પ્રોગ્રામ લખો.}
+
+\begin{solutionbox}
+એરે એક જ પ્રકારની ઘણી કિંમતો સંગ્રહે છે, જે તત્વોની ક્રમિક પ્રક્રિયા કરવાની મંજૂરી આપે છે.
+
+\begin{lstlisting}[language=Java, caption={Array Sum Average}]
+public class ArraySumAverage {
+    public static void main(String[] args) {
+        int[] numbers = {10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
+        
+        int sum = 0;
+        
+        // સરવાળો ગણો
+        for (int i = 0; i < numbers.length; i++) {
+            sum += numbers[i];
+        }
+        
+        // સરેરાશ ગણો
+        double average = (double) sum / numbers.length;
+        
+        System.out.println("Sum = " + sum);
+        System.out.println("Average = " + average);
+    }
+}
+\end{lstlisting}
+
+\begin{itemize}
+    \item \textbf{ઘોષણા}: નિશ્ચિત-કદના સંગ્રહ બનાવે છે
+    \item \textbf{પુનરાવર્તન}: તત્વોનો ક્રમિક એક્સેસ
+    \item \textbf{ગણતરી}: પરિણામો માટે મૂલ્યો પર પ્રક્રિયા કરો
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{DIC: Declare Iterate Calculate એરે પ્રોસેસિંગ માટે}
+\end{mnemonicbox}
+
+\questionmarks{5(બ)}{4}{`DivideByZero' એરર માટે યુઝર ડિફાઈન્ડ Exception હેન્ડલ કરવા માટે જાવા પ્રોગ્રામ લખો.}
+
+\begin{solutionbox}
+યુઝર-ડિફાઈન્ડ exception ચોક્કસ એપ્લિકેશન જરૂરિયાતો માટે કસ્ટમ exception પ્રકારો બનાવવાની મંજૂરી આપે છે.
+
+\begin{lstlisting}[language=Java, caption={Custom Exception}]
+// કસ્ટમ exception ક્લાસ
+class DivideByZeroException extends Exception {
+    public DivideByZeroException(String message) {
+        super(message);
+    }
+}
+
+public class CustomExceptionDemo {
+    // કસ્ટમ exception ફેંકતી મેથડ
+    static double divide(int numerator, int denominator) throws DivideByZeroException {
+        if (denominator == 0) {
+            throw new DivideByZeroException("Cannot divide by zero!");
+        }
+        return (double) numerator / denominator;
+    }
+    
+    public static void main(String[] args) {
+        try {
+            System.out.println(divide(10, 2));
+            System.out.println(divide(20, 0));
+        } catch (DivideByZeroException e) {
+            System.out.println("Custom exception caught: " + e.getMessage());
+        }
+    }
+}
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{CTE: Create Throw Exception જ્યારે જરૂર હોય}
+\end{mnemonicbox}
+
+\questionmarks{5(ક)}{7}{ટેક્સ્ટ ફાઇલ બનાવવા માટે જાવા પ્રોગ્રામ લખો અને ટેક્સ્ટ ફાઇલ પર રીડ ઑપરેશન કરો.}
+
+\begin{solutionbox}
+જાવા I/O ક્લાસ ફાઇલો સાથે કામ કરવા માટે સગવડ આપે છે, જે સર્જન, લેખન અને વાંચન ઓપરેશન્સની મંજૂરી આપે છે.
+
+\begin{lstlisting}[language=Java, caption={File Read Write}]
+import java.io.FileWriter;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.BufferedReader;
+
+public class FileOperationsDemo {
+    public static void main(String[] args) {
+        try {
+            // ફાઇલ બનાવો અને લખો
+            FileWriter writer = new FileWriter("sample.txt");
+            writer.write("Hello World!\n");
+            writer.write("Welcome to Java File Handling.\n");
+            writer.write("This is the third line.");
+            writer.close();
+            System.out.println("Successfully wrote to the file.");
+            
+            // ફાઇલમાંથી વાંચો
+            FileReader reader = new FileReader("sample.txt");
+            BufferedReader buffReader = new BufferedReader(reader);
+            
+            String line;
+            System.out.println("\nFile contents:");
+            while ((line = buffReader.readLine()) != null) {
+                System.out.println(line);
+            }
+            
+            reader.close();
+            
+        } catch (IOException e) {
+            System.out.println("An error occurred: " + e.getMessage());
+        }
+    }
+}
+\end{lstlisting}
+
+\begin{itemize}
+    \item \textbf{FileWriter}: ફાઇલો બનાવે અને લખે છે
+    \item \textbf{FileReader}: ફાઇલોમાંથી અક્ષર ડેટા વાંચે છે
+    \item \textbf{BufferedReader}: લાઇન દ્વારા ટેક્સ્ટ કાર્યક્ષમતાથી વાંચે છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{WRC: Write Read Close ફાઇલ ઓપરેશન્સ માટે}
+\end{mnemonicbox}
+
+\questionmarks{5(અ OR)}{3}{Java I/O પ્રક્રિયા સમજાવો.}
+
+\begin{solutionbox}
+Java I/O પ્રક્રિયામાં સ્ટ્રીમ્સનો ઉપયોગ કરીને વિવિધ સ્રોતોથી ડેટા ટ્રાન્સફર કરવાનો સમાવેશ થાય છે.
+
+\begin{center}
+\captionof{table}{Java I/O સ્ટ્રીમ પ્રકારો}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{વર્ગીકરણ} & \textbf{પ્રકારો} \\ \hline
+દિશા & ઇનપુટ, આઉટપુટ \\ \hline
+ડેટા પ્રકાર & બાઇટ સ્ટ્રીમ્સ, કેરેક્ટર સ્ટ્રીમ્સ \\ \hline
+કાર્યક્ષમતા & બેઝિક, બફર્ડ, ડેટા, ઓબ્જેક્ટ \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[node distance=1cm]
+    \node (stream) [process] {Stream};
+    
+    \node (input) [process, below left of=stream, xshift=-1cm] {Input};
+    \node (output) [process, below right of=stream, xshift=1cm] {Output};
+    
+    \node (byte1) [process, below of=input] {Byte};
+    \node (char1) [process, below of=output] {Char};
+
+    \draw [arrow] (stream) -- (input);
+    \draw [arrow] (stream) -- (output);
+    \draw [arrow] (input) -- (byte1);
+    \draw [arrow] (output) -- (char1);
+    \draw [arrow] (input) -- (char1); % Just linking roughly to show structure
+\end{tikzpicture}
+\captionof{figure}{Java I/O હાયરાર્કી}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{સ્ટ્રીમ}: સ્રોત અને લક્ષ્ય વચ્ચે વહેતા ડેટાની શ્રેણી
+    \item \textbf{બફરિંગ}: ડિસ્ક એક્સેસ ઘટાડીને કાર્યક્ષમતા સુધારે છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{SBI: સ્ટ્રીમ બફર્ડ ઇનપુટ/આઉટપુટ}
+\end{mnemonicbox}
+
+\questionmarks{5(બ OR)}{4}{Exception હેન્ડલિંગમાં throw અને finally ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+Exception હેન્ડલિંગ મેકેનિઝમ્સ ભૂલો દરમિયાન પ્રોગ્રામ ફ્લોને નિયંત્રિત કરે છે, સુંદર અમલીકરણ સુનિશ્ચિત કરે છે.
+
+\begin{center}
+\captionof{table}{throw vs finally}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{ફીચર} & \textbf{throw} & \textbf{finally} \\ \hline
+હેતુ & સ્પષ્ટપણે exception ફેંકે છે & કોડ અમલીકરણ સુનિશ્ચિત કરે છે \\ \hline
+સ્થાન & મેથડની અંદર & try-catch બ્લોક્સ પછી \\ \hline
+અમલીકરણ & શરત પૂરી થાય ત્યારે & return હોય તો પણ હંમેશા \\ \hline
+ઉપયોગ & કંટ્રોલ ફ્લો & રિસોર્સ ક્લીનઅપ \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{lstlisting}[language=Java, caption={Throw and Finally}]
+public class ThrowFinallyDemo {
+    public static void validateAge(int age) {
+        try {
+            if (age < 18) {
+                throw new ArithmeticException("Not eligible to vote");
+            } else {
+                System.out.println("Welcome to vote");
+            }
+        } catch (ArithmeticException e) {
+            System.out.println("Exception caught: " + e.getMessage());
+        } finally {
+            System.out.println("Validation process completed");
+        }
+    }
+    
+    public static void main(String[] args) {
+        validateAge(15);
+        System.out.println("---------");
+        validateAge(20);
+    }
+}
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{TERA: Throw Exception, Regardless Always, finally હંમેશા ચાલે છે}
+\end{mnemonicbox}
+
+\questionmarks{5(ક OR)}{7}{ટેક્સ્ટ ફાઇલ ના કન્ટેન્ટ ડિસ્પ્લે કરવા અને ટેક્સ્ટ ફાઇલ પર એપેન્ડ ઓપરેશન કરવા માટે જાવા પ્રોગ્રામ લખો.}
+
+\begin{solutionbox}
+જાવામાં ફાઇલ ઓપરેશન્સ ફાઇલ કન્ટેન્ટને હેરફેર કરવાની મંજૂરી આપે છે, નવા ડેટા ઉમેરવા સહિત.
+
+\begin{lstlisting}[language=Java, caption={File Append}]
+import java.io.*;
+
+public class FileAppendDemo {
+    public static void main(String[] args) {
+        try {
+            // પ્રારંભિક ફાઇલ બનાવો
+            FileWriter writer = new FileWriter("example.txt");
+            writer.write("Original content line 1\n");
+            writer.write("Original content line 2\n");
+            writer.close();
+            
+            // ફાઇલ કન્ટેન્ટ દર્શાવો
+            System.out.println("Original file content:");
+            readFile("example.txt");
+            
+            // ફાઇલમાં ઉમેરો
+            FileWriter appendWriter = new FileWriter("example.txt", true);
+            appendWriter.write("Appended content line 1\n");
+            appendWriter.write("Appended content line 2\n");
+            appendWriter.close();
+            
+            // અપડેટ થયેલ કન્ટેન્ટ દર્શાવો
+            System.out.println("\nFile content after append:");
+            readFile("example.txt");
+            
+        } catch (IOException e) {
+            System.out.println("An error occurred: " + e.getMessage());
+        }
+    }
+    
+    // ફાઇલ કન્ટેન્ટ વાંચવા અને દર્શાવવા માટેની મેથડ
+    public static void readFile(String fileName) {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(fileName));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
+            }
+            reader.close();
+        } catch (IOException e) {
+            System.out.println("Error reading file: " + e.getMessage());
+        }
+    }
+}
+\end{lstlisting}
+
+\begin{itemize}
+    \item \textbf{FileWriter(file, true)}: બીજો પેરામીટર એપેન્ડ મોડ સક્ષમ કરે છે
+    \item \textbf{BufferedReader}: લાઇન દ્વારા ટેક્સ્ટને કાર્યક્ષમતાથી વાંચે છે
+    \item \textbf{ફરીથી વાપરી શકાય તેવી મેથડ}: વાચન કાર્યક્ષમતાને સંકલિત કરે છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{CAD: Create Append Display ફાઇલ ઓપરેશન્સ}
+\end{mnemonicbox}
+
+\end{document}
