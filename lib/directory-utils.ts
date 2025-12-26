@@ -4,7 +4,10 @@ import matter from 'gray-matter';
 
 export function getDirectoryContent(folderPath: string, locale?: string) {
     try {
-        const fullPath = path.normalize(`${process.cwd()}/content/${folderPath}`);
+        // Use template strings to avoid overly broad pattern matching by Turbopack
+        const contentRoot = path.join(process.cwd(), 'content');
+        // Normalize to ensure consistent separators, but construct via string
+        const fullPath = path.normalize(`${contentRoot}/${folderPath}`);
 
         if (!fs.existsSync(fullPath)) {
             return {
@@ -26,7 +29,7 @@ export function getDirectoryContent(folderPath: string, locale?: string) {
         const files: any[] = [];
 
         items.forEach(item => {
-            const itemPath = path.join(fullPath, item);
+            const itemPath = `${fullPath}/${item}`;
             const isDirectory = fs.statSync(itemPath).isDirectory();
 
             if (item.startsWith('.') || item.startsWith('_') || item === 'index.json') return;
@@ -34,8 +37,8 @@ export function getDirectoryContent(folderPath: string, locale?: string) {
             if (isDirectory) {
                 // Check if it's a Page Bundle (contains index.mdx)
                 const indexName = locale === 'gu' ? 'index.gu.mdx' : 'index.mdx';
-                const bundlePath = path.join(itemPath, indexName);
-                const fallbackBundlePath = path.join(itemPath, 'index.mdx');
+                const bundlePath = `${itemPath}/${indexName}`;
+                const fallbackBundlePath = `${itemPath}/index.mdx`;
 
                 let isBundle = false;
                 let finalBundlePath = '';
@@ -44,10 +47,6 @@ export function getDirectoryContent(folderPath: string, locale?: string) {
                     isBundle = true;
                     finalBundlePath = bundlePath;
                 } else if (locale === 'gu' && fs.existsSync(fallbackBundlePath)) {
-                    // Fallback to English content for bundle? 
-                    // Usually we want localized content. If absent, maybe we don't list it?
-                    // Or follow standard fallback logic. Let's assume strict locale for now or fallback if needed.
-                    // Existing logic in getContentBySlug uses fallback. 
                     isBundle = true;
                     finalBundlePath = fallbackBundlePath;
                 }
@@ -73,8 +72,8 @@ export function getDirectoryContent(folderPath: string, locale?: string) {
                 } else {
                     // It is a standard Directory (Section)
                     // Check for _index.mdx for metadata
-                    const indexPath = path.join(itemPath, locale === 'gu' ? '_index.gu.mdx' : '_index.mdx');
-                    const fallbackIndexPath = path.join(itemPath, '_index.mdx');
+                    const indexPath = `${itemPath}/${locale === 'gu' ? '_index.gu.mdx' : '_index.mdx'}`;
+                    const fallbackIndexPath = `${itemPath}/_index.mdx`;
 
                     let title = item;
                     let description = '';
@@ -102,28 +101,18 @@ export function getDirectoryContent(folderPath: string, locale?: string) {
                 // It is a File
                 // Logic for files...
                 if (item.includes('.gu.') && locale !== 'gu') return;
-                // Note: file.gu.mdx should be picked up if locale is gu.
-                // If locale is en, we pick file.mdx. 
-                // If file.mdx exists and file.gu.mdx exists, both are in 'items'.
-                // If we are 'gu', we take .gu.mdx. We should ignore .mdx if .gu.mdx exists?
-                // Simplifying: specific locale logic handled loosely here.
 
                 const extension = path.extname(item).toLowerCase();
                 const isMdx = extension === '.mdx';
 
                 if (isMdx) {
-                    // Check if it's the specific locale version we want
-                    // If we want 'gu', we want '*.gu.mdx'.
-                    // If we want 'en', we want '*.mdx' but NOT '*.gu.mdx'.
-
                     if (locale === 'gu' && !item.includes('.gu.')) {
-                        // This is an English file. Check if Guj version exists.
                         const gujVersion = item.replace('.mdx', '.gu.mdx');
-                        if (items.includes(gujVersion)) return; // Skip, prefer the Guj version
+                        if (items.includes(gujVersion)) return;
                     }
 
                     try {
-                        const fileContent = fs.readFileSync(path.join(fullPath, item), 'utf8');
+                        const fileContent = fs.readFileSync(itemPath, 'utf8');
                         const { data } = matter(fileContent);
                         files.push({
                             slug: item.replace(/\.gu\.mdx$/, '').replace(/\.mdx$/, ''),

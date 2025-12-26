@@ -150,6 +150,23 @@ def run_command(cmd, cwd=None, description=""):
         return False
 
 
+def get_mdx_title(mdx_path):
+    """Extract title from MDX frontmatter."""
+    try:
+        with open(mdx_path, 'r', encoding='utf-8') as f:
+            for _ in range(20): # Check first 20 lines
+                line = f.readline()
+                if not line: break
+                
+                # Match title: "..." or title: ...
+                match = re.match(r'^title:\s*["\']?(.*?)["\']?\s*$', line.strip())
+                if match:
+                    return match.group(1)
+    except Exception:
+        pass
+    return None
+
+
 def convert_mdx_to_pdf(mdx_file, generate_pdf=True, keep_aux=False):
     """
     Convert MDX file to PDF through LaTeX pipeline.
@@ -243,8 +260,14 @@ def convert_mdx_to_pdf(mdx_file, generate_pdf=True, keep_aux=False):
     print(f"{'='*60}")
     print(f"Step: Refactoring LaTeX")
     print(f"{'='*60}")
+    
+    # Extract title from MDX
+    mdx_title = get_mdx_title(mdx_path)
+    if mdx_title:
+        print(f"📄 Found Title: {mdx_title}")
+    
     try:
-        refactor_latex(str(tex_path))
+        refactor_latex(str(tex_path), title=mdx_title)
         print(f"✅ Refactored: {tex_path.name}\n")
     except Exception as e:
         print(f"❌ ERROR: Refactoring failed!")

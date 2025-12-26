@@ -190,7 +190,8 @@ function BlogDownloadContent({ title, slug }: BlogDownloadProps) {
       case 'html': return Globe;
       case 'json': return Code;
       case 'pdf':
-      case 'pdf-pandoc': return File;
+      case 'pdf-pandoc':
+      case 'pdf-latex-color': return File;
       case 'docx':
       case 'odt':
       case 'rtf': return FileText;

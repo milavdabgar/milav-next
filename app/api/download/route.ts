@@ -137,6 +137,13 @@ export async function GET(request: NextRequest) {
             category: 'document'
           },
           {
+            id: 'pdf-latex-color',
+            name: 'PDF (XeLaTeX Color)',
+            description: 'Full-color PDF with syntax highlighting (Solutions only)',
+            extension: 'pdf',
+            category: 'document'
+          },
+          {
             id: 'txt',
             name: 'Plain Text',
             description: 'Clean plain text format',
@@ -214,6 +221,11 @@ function getFileDetails(baseFilename: string, format: string) {
       isBuffer: true
     },
     'pdf-pandoc': {
+      extension: 'pdf',
+      contentType: 'application/pdf',
+      isBuffer: true
+    },
+    'pdf-latex-color': {
       extension: 'pdf',
       contentType: 'application/pdf',
       isBuffer: true

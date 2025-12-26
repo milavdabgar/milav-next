@@ -201,7 +201,7 @@ def simplify_labels(content):
     
     return content
 
-def apply_box_structure(content, file_path):
+def apply_box_structure(content, file_path, title=None):
     """Applies solution boxes, headers, and structural fixes (Replacing original refactor_latex.py logic)."""
     
     # 1. Standardize Header/Preamble
@@ -246,7 +246,9 @@ def apply_box_structure(content, file_path):
         if season in ["Summer", "Winter"] and year.isdigit():
             exam_season = f"{season} {year}"
 
-    if is_gujarati:
+    if title:
+        header_title = r"{\Huge\bfseries\color{headcolor} %s}\\[5pt]" % title
+    elif is_gujarati:
         header_title = r"{\Huge\bfseries\color{headcolor} %s (Gujarati)}\\[5pt]" % subject_name
     else:
         header_title = r"{\Huge\bfseries\color{headcolor} %s Solutions}\\[5pt]" % subject_name
@@ -371,7 +373,7 @@ def apply_box_structure(content, file_path):
     
     return header + "\n".join(new_lines)
 
-def refactor_latex(file_path):
+def refactor_latex(file_path, title=None):
     """Enhanced refactor with all improvements."""
     
     # Read file
@@ -384,7 +386,7 @@ def refactor_latex(file_path):
     content = fix_section_titles(content)
     
     # 2. Apply Structural Changes (Box Logic) - Merged from refactor_latex.py
-    content = apply_box_structure(content, file_path)
+    content = apply_box_structure(content, file_path, title=title)
 
     # 3. Post-processing on the structured content
     # Extract body again since apply_box_structure adds headers
@@ -399,6 +401,30 @@ def refactor_latex(file_path):
     
     lines = body.split('\n')
     
+    # 4. Clean up Pandoc listings (Inline Code)
+    def clean_pandoc_listings(text):
+        """Clean up unnecessary escaping in Pandoc's lstinline output."""
+        def unescape(match):
+            delimiter = match.group(1)
+            code = match.group(2)
+            
+            # Remove backslashes before special LaTeX chars and pipes
+            code = code.replace(r'\%', '%')
+            code = code.replace(r'\_', '_')
+            code = code.replace(r'\&', '&')
+            code = code.replace(r'\#', '#')
+            code = code.replace(r'\$', '$')
+            code = code.replace(r'\|', '|') # For escaped pipes
+            code = code.replace(r'\^', '^')
+            code = code.replace(r'\~', '~')
+            
+            return f"\\lstinline{delimiter}{code}{delimiter}"
+
+        # Match \lstinline followed by a delimiter, content, and same delimiter
+        return re.sub(r'\\lstinline(\W)(.*?)\1', unescape, text)
+
+    lines = [clean_pandoc_listings(line) for line in lines]
+
     lines = format_calculation_steps(lines)
     lines = clean_enumerate_env(lines)
     
