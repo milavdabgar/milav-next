@@ -42,18 +42,19 @@ JVM (Java Virtual Machine) એક વર્ચ્યુઅલ મશીન છ�
 
 \begin{center}
 \begin{tikzpicture}[node distance=1.5cm, auto]
-    \node (code) [process] {Java Code};
-    \node (comp) [process, below of=code] {Compiler};
-    \node (byte) [process, below of=comp] {Bytecode};
-    \node (jvm) [process, below of=byte] {JVM};
-    \node (mach) [process, below of=jvm] {Machine Code};
+    \node [gtu block] (java) {Java Code};
+    \node [gtu block, right=0.8cm of java] (compiler) {Compiler};
+    \node [gtu block, right=0.8cm of compiler] (bytecode) {Bytecode};
+    \node [gtu block, right=0.8cm of bytecode] (jvm) {JVM};
+    \node [gtu block, right=0.8cm of jvm] (machine) {Machine Code};
 
-    \draw [arrow] (code) -- (comp);
-    \draw [arrow] (comp) -- (byte);
-    \draw [arrow] (byte) -- (jvm);
-    \draw [arrow] (jvm) -- (mach);
-    
-    \node (comp_box) [draw=red, dashed, fit=(jvm), label=right:JVM ઘટકો: Class Loader, Runtime Data, Exec Engine] {};
+    \path [gtu arrow] (java) -- (compiler);
+    \path [gtu arrow] (compiler) -- (bytecode);
+    \path [gtu arrow] (bytecode) -- (jvm);
+    \path [gtu arrow] (jvm) -- (machine);
+
+    \node [draw, dashed, inner sep=0.2cm, below=0.5cm of jvm, text width=3cm, align=center, font=\footnotesize] (components) {\textbf{JVM Components}\\Class Loader\\Runtime Data Areas\\Execution Engine};
+    \path [gtu arrow, dashed] (jvm) -- (components);
 \end{tikzpicture}
 \captionof{figure}{JVM આર્કિટેક્ચર}
 \end{center}
@@ -218,15 +219,15 @@ final class MathOperations {
 કન્સ્ટ્રક્ટર એ ઓબ્જેક્ટ બનાવતી વખતે તેને શરૂઆતી મૂલ્યો આપવા માટેની વિશેષ મેથડ છે.
 
 \begin{center}
-\begin{tikzpicture}[node distance=1.5cm]
-    \node (cons) [process] {Constructors};
-    \node (def) [process, below left of=cons, xshift=-2cm] {Default};
-    \node (param) [process, below of=cons] {Parameterized};
-    \node (copy) [process, below right of=cons, xshift=2cm] {Copy};
+\begin{tikzpicture}[node distance=1.5cm, auto]
+    \node [gtu block] (root) {Constructors};
+    \node [gtu block, below left=1cm of root] (default) {Default Constructor};
+    \node [gtu block, below=1cm of root] (param) {Parameterized Constructor};
+    \node [gtu block, below right=1cm of root] (copy) {Copy Constructor};
 
-    \draw [arrow] (cons) -- (def);
-    \draw [arrow] (cons) -- (param);
-    \draw [arrow] (cons) -- (copy);
+    \path [gtu arrow] (root) -- (default);
+    \path [gtu arrow] (root) -- (param);
+    \path [gtu arrow] (root) -- (copy);
 \end{tikzpicture}
 \captionof{figure}{કન્સ્ટ્રક્ટરના પ્રકારો}
 \end{center}
@@ -272,23 +273,23 @@ public class Student {
 
 \begin{center}
 \begin{tikzpicture}[
-    node distance=0.5cm,
-    box/.style={draw, rectangle, minimum width=5cm, align=left, fill=white, inner sep=5pt}
+    box/.style={draw, rectangle, minimum width=4cm, minimum height=1cm, align=left, fill=white}
 ]
-    \node[box] (doc) {Documentation};
-    \node[box, below=of doc] (pkg) {Package Declaration};
-    \node[box, below=of pkg] (imp) {Import Statements};
+    \node[gtu container, minimum height=4cm] (outer) {};
+    \node[anchor=north, font=\bfseries] at (outer.north) {Source File};
     
-    \node[box, below=of imp, minimum height=2.5cm] (cls) {};
-    \node[anchor=north west] at (cls.north west) {\textbf{Class Declaration}};
+    \node[box, below=0.5cm of outer.north] (top) {
+        Documentation\\
+        \code{package} statement\\
+        \code{import} statements
+    };
     
-    \node[box, minimum width=4cm, below=0.5cm of cls.north] (vars) {Variables};
-    \node[box, minimum width=4cm, below=0cm of vars] (cons) {Constructors};
-    \node[box, minimum width=4cm, below=0cm of cons] (meth) {Methods};
-
-    \path [arrow] (doc) -- (pkg);
-    \path [arrow] (pkg) -- (imp);
-    \path [arrow] (imp) -- (cls);
+    \node[box, below=0.2cm of top, minimum height=2cm] (class) {
+        \textbf{Class declaration}\\
+        - Variables\\
+        - Constructors\\
+        - Methods
+    };
 \end{tikzpicture}
 \captionof{figure}{જાવા પ્રોગ્રામ સ્ટ્રક્ચર}
 \end{center}
@@ -362,6 +363,31 @@ Multilevel & ઇનહેરીટન્સની સાંકળ ($A \to B \to 
 Hierarchical & ઘણા સબક્લાસ એક સુપરક્લાસથી વિસ્તરે છે \\ \hline
 Multiple & એક ક્લાસ ઘણા ક્લાસથી વિસ્તરે છે (ઇન્ટરફેસ દ્વારા) \\ \hline
 \end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[node distance=1.2cm, auto]
+    % Multilevel
+    \node [gtu class] (A) {Animal};
+    \node [gtu class, below=0.8cm of A] (B) {Dog};
+    \node [gtu class, below=0.8cm of B] (C) {Labrador};
+    \node [above=0.2cm of A] {\textbf{Multilevel}};
+
+    \path [gtu arrow] (B) -- (A);
+    \path [gtu arrow] (C) -- (B);
+
+    % Hierarchical
+    \node [gtu class, right=3cm of A] (V) {Vehicle};
+    \node [gtu class, below left=1cm and -0.5cm of V] (C1) {Car};
+    \node [gtu class, below=1cm of V] (C2) {Bike};
+    \node [gtu class, below right=1cm and -0.5cm of V] (C3) {Truck};
+    \node [above=0.2cm of V] {\textbf{Hierarchical}};
+
+    \path [gtu arrow] (C1) -- (V);
+    \path [gtu arrow] (C2) -- (V);
+    \path [gtu arrow] (C3) -- (V);
+\end{tikzpicture}
+\captionof{figure}{Multilevel vs Hierarchical ઇનહેરીટન્સ}
 \end{center}
 
 \begin{lstlisting}[language=Java, caption={Inheritance Example}]
@@ -467,13 +493,13 @@ public & \checkmark{} & \checkmark{} & \checkmark{} & \checkmark{} \\ \hline
 ઈન્ટરફેસ એક એવો કરાર છે જે ક્લાસે શું કરવું જોઈએ તે નિર્દિષ્ટ કરે છે, જેમાં abstract મેથડ્સ, નિયતાંકો અને (Java 8થી) default મેથડ્સ હોય છે.
 
 \begin{center}
-\begin{tikzpicture}[node distance=1.5cm]
-    \node (prt) [class] {$\ll$interface$\gg$ Printable};
-    \node (scn) [class, right of=prt, xshift=3cm] {$\ll$interface$\gg$ Scannable};
-    \node (impl) [class, below of=prt, xshift=1.5cm] {Printer};
+\begin{tikzpicture}[node distance=1.5cm, auto]
+    \node [gtu interface] (P) {\textit{<<interface>>}\\Printable};
+    \node [gtu interface, right=2cm of P] (S) {\textit{<<interface>>}\\Scannable};
+    \node [gtu class, below left=1.5cm and -1cm of S] (I) {Printer};
 
-    \draw [dashed, ->] (impl) -- (prt);
-    \draw [dashed, ->] (impl) -- (scn);
+    \path [gtu arrow] (I) -- (P);
+    \path [gtu arrow] (I) -- (S);
 \end{tikzpicture}
 \captionof{figure}{ઈન્ટરફેસથી Multiple Inheritance}
 \end{center}
@@ -721,18 +747,18 @@ class Circle extends Shape {
 થ્રેડ એ લાઈટવેઈટ સબપ્રોસેસ છે, જે પ્રોસેસિંગની સૌથી નાની એકમ છે જે એક સાથે ચાલતી પ્રક્રિયાઓની મંજૂરી આપે છે.
 
 \begin{center}
-\begin{tikzpicture}[node distance=1.5cm]
-    \node (new) [process] {New};
-    \node (runnable) [process, right of=new, xshift=1.5cm] {Runnable};
-    \node (running) [process, right of=runnable, xshift=1.5cm] {Running};
-    \node (blocked) [process, below of=running] {Blocked};
-    \node (term) [process, right of=running, xshift=1.5cm] {Terminated};
+\begin{tikzpicture}[node distance=1.5cm, auto]
+    \node [gtu state] (N) {New};
+    \node [gtu state, right=1.5cm of N] (R) {Runnable};
+    \node [gtu state, right=1.5cm of R] (Ru) {Running};
+    \node [gtu state, right=1.5cm of Ru] (T) {Terminated};
+    \node [gtu state, below=1.5cm of Ru] (B) {Blocked};
 
-    \draw [arrow] (new) -- node[above, font=\tiny] {start()} (runnable);
-    \draw [arrow] (runnable) -- node[above, font=\tiny] {scheduler} (running);
-    \draw [arrow] (running) -- node[right, font=\tiny] {sleep/wait} (blocked);
-    \draw [arrow] (blocked) -| node[above, font=\tiny, xshift=-1cm] {notify} (runnable);
-    \draw [arrow] (running) -- node[above, font=\tiny] {complete} (term);
+    \path [gtu arrow] (N) -- (R);
+    \path [gtu arrow] (R) -- node[font=\tiny]{Scheduler} (Ru);
+    \path [gtu arrow] (Ru) -- (T);
+    \path [gtu arrow] (Ru) -- node[right, font=\tiny]{Wait} (B);
+    \path [gtu arrow] (B) -| node[pos=0.2, above, font=\tiny]{Notify} (R);
 \end{tikzpicture}
 \captionof{figure}{થ્રેડ જીવનચક્ર}
 \end{center}
@@ -896,19 +922,19 @@ Exception એ અસામાન્ય સ્થિતિ છે જે પ્�
 
 \begin{center}
 \captionof{table}{Exception હાયરાર્કી}
-\begin{tikzpicture}[node distance=1cm]
-    \node (throw) [class] {Throwable};
-    \node (exc) [class, below left of=throw, xshift=-1cm] {Exception};
-    \node (err) [class, below right of=throw, xshift=1cm] {Error};
-    \node (run) [class, below of=exc] {RuntimeException};
-    \node (arith) [class, below left of=run, xshift=-0.5cm] {ArithmeticException};
-    \node (null) [class, below right of=run, xshift=0.5cm] {NullPointerException};
+\begin{tikzpicture}[node distance=1cm, auto]
+    \node [gtu class] (T) {Throwable};
+    \node [gtu class, below left=1cm of T] (E) {Exception};
+    \node [gtu class, below right=1cm of T] (Err) {Error};
+    \node [gtu class, below=1cm of E] (RE) {RuntimeException};
+    \node [gtu class, below left=1cm and -1.5cm of RE] (AE) {ArithmeticException};
+    \node [gtu class, below right=1cm and -1.5cm of RE] (NPE) {NullPointerException};
 
-    \draw [arrow] (throw) -- (exc);
-    \draw [arrow] (throw) -- (err);
-    \draw [arrow] (exc) -- (run);
-    \draw [arrow] (run) -- (arith);
-    \draw [arrow] (run) -- (null);
+    \path [gtu arrow] (E) -- (T);
+    \path [gtu arrow] (Err) -- (T);
+    \path [gtu arrow] (RE) -- (E);
+    \path [gtu arrow] (AE) -- (RE);
+    \path [gtu arrow] (NPE) -- (RE);
 \end{tikzpicture}
 \end{center}
 
@@ -1088,20 +1114,17 @@ Java I/O પ્રક્રિયામાં સ્ટ્રીમ્સનો 
 \end{center}
 
 \begin{center}
-\begin{tikzpicture}[node distance=1cm]
-    \node (stream) [process] {Stream};
-    
-    \node (input) [process, below left of=stream, xshift=-1cm] {Input};
-    \node (output) [process, below right of=stream, xshift=1cm] {Output};
-    
-    \node (byte1) [process, below of=input] {Byte};
-    \node (char1) [process, below of=output] {Char};
+\begin{tikzpicture}[node distance=1cm, auto]
+    \node [gtu class] (S) {Stream};
+    \node [gtu class, below left=1cm of S] (I) {Input};
+    \node [gtu class, below right=1cm of S] (O) {Output};
+    \node [gtu class, below=1cm of I] (B1) {Byte};
+    \node [gtu class, below=1cm of O] (B2) {Char};
 
-    \draw [arrow] (stream) -- (input);
-    \draw [arrow] (stream) -- (output);
-    \draw [arrow] (input) -- (byte1);
-    \draw [arrow] (output) -- (char1);
-    \draw [arrow] (input) -- (char1); % Just linking roughly to show structure
+    \path [gtu arrow] (S) -- (I);
+    \path [gtu arrow] (S) -- (O);
+    \path [gtu arrow] (I) -- (B1);
+    \path [gtu arrow] (O) -- (B2);
 \end{tikzpicture}
 \captionof{figure}{Java I/O હાયરાર્કી}
 \end{center}
