@@ -309,3 +309,131 @@ content/.../solution.tex  # Individual solution files
 **Version**: 1.0  
 **Last Updated**: December 26, 2024  
 **Maintained by**: Milav Dabgar
+
+---
+
+## 🔄 Converting to Semantic Commands (Optional)
+
+For maximum professional quality, you can convert existing solutions to use semantic commands.
+
+### Quick Conversion Guide
+
+#### 1. **Question Headings**
+```latex
+% Old style (works fine):
+\section*{Question 1(a) [3 marks]}
+\textbf{Explain garbage collection.}
+
+% New style (semantic):
+\questionmarks{1(a)}{3}{Explain garbage collection.}
+```
+
+#### 2. **Tables**
+```latex
+% Old style:
+\begin{center}
+\captionof{table}{Table Title}
+\begin{tabular}{|l|l|}
+...
+\end{tabular}
+\end{center}
+
+% New style (proper float):
+\begin{table}[htbp]
+\centering
+\caption{Table Title}
+\begin{tabular}{|l|l|}
+...
+\end{tabular}
+\end{table}
+```
+
+#### 3. **Figures/Diagrams**
+```latex
+% Old style:
+\begin{center}
+\captionof{figure}{Diagram Title}
+\begin{tikzpicture}
+...
+\end{tikzpicture}
+\end{center}
+
+% New style (proper float):
+\begin{figure}[htbp]
+\centering
+\caption{Diagram Title}
+\begin{tikzpicture}
+...
+\end{tikzpicture}
+\end{figure}
+```
+
+#### 4. **TikZ Styles**
+```latex
+% Old style (inline):
+\begin{tikzpicture}[
+    block/.style={rectangle, draw, fill=blue!10, ...},
+    line/.style={draw, -latex}]
+    \node [block] (a) {Text};
+\end{tikzpicture}
+
+% New style (global):
+\begin{tikzpicture}
+    \node [gtu block] (a) {Text};
+    \path [gtu arrow] (a) -- (b);
+\end{tikzpicture}
+```
+
+#### 5. **Keywords**
+```latex
+% Old style:
+\item \textbf{Automatic}: Description
+
+% New style (semantic):
+\item \keyword{Automatic}: Description
+```
+
+#### 6. **Mnemonics**
+```latex
+% Old style:
+\begin{mnemonicbox}
+"ABC: Always Be Consistent"
+\end{mnemonicbox}
+
+% New style (semantic):
+\begin{mnemonicbox}
+\mnemonic{ABC: Always Be Consistent}
+\end{mnemonicbox}
+```
+
+### Benefits of Semantic Commands
+
+1. **Consistency**: Same markup across all documents
+2. **Maintainability**: Change style in one place
+3. **Readability**: Code is self-documenting
+4. **Future-proof**: Easy to update formatting later
+5. **Professional**: Industry-standard LaTeX practice
+
+### When to Convert
+
+- **New documents**: Always use semantic commands
+- **Existing documents**: Convert when making major updates
+- **GTU solutions**: Current style is fine, convert for books
+- **Books/Papers**: Definitely use semantic commands
+
+### Example Template
+
+See `example-solution.tex` in the templates directory for a complete working example using all semantic commands and proper environments.
+
+---
+
+## 📌 Caption Position Standards
+
+Following professional typesetting conventions:
+
+- **Tables**: Caption at **top** (standard in academic publishing)
+- **Figures**: Caption at **bottom** (standard in academic publishing)  
+- **Code Listings**: Caption at **top** (easier to identify code blocks)
+
+This is now configured automatically in the template.
+
