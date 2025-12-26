@@ -1,0 +1,1371 @@
+\documentclass{article}
+% Adjust the relative path to point to the latex-templates directory from:
+% content/resources/study-materials/32-ict/sem-4/4343203-java/
+\input{../../../../../../latex-templates/gtu-solutions/preamble.tex}
+\input{../../../../../../latex-templates/gtu-solutions/english-boxes.tex}
+
+\title{Java Programming (4343203) - Summer 2024 Solution}
+\date{June 15, 2024}
+
+\begin{document}
+\maketitle
+
+\section*{Question 1(a) [3 marks]}
+\textbf{Explain Garbage collection in java.}
+
+\begin{solutionbox}
+Garbage collection in Java automatically reclaims memory by removing unused objects.
+
+\begin{center}
+\captionof{table}{Garbage Collection Process}
+
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Phase} & \textbf{Description} \\ \hline
+Mark & JVM identifies all live objects in memory \\ \hline
+Sweep & Unused objects are removed \\ \hline
+Compact & Remaining objects are reorganized to free up space \\ \hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{Automatic}: No manual memory management required
+    \item \textbf{Background}: Runs in separate low-priority thread
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+"MSC: Mark-Sweep-Compact frees memory automatically"
+\end{mnemonicbox}
+
+\section*{Question 1(b) [4 marks]}
+\textbf{Explain JVM in detail.}
+
+\begin{solutionbox}
+JVM (Java Virtual Machine) is a virtual machine that enables Java's platform independence by converting bytecode to machine code.
+
+\begin{center}
+\captionof{figure}{JVM Architecture}
+
+\begin{tikzpicture}[node distance=1.5cm, auto,
+    block/.style={rectangle, draw, fill=blue!10, align=center, rounded corners, minimum height=2em, font=\small},
+    line/.style={draw, -latex}]
+
+    \node [block] (java) {Java Code};
+    \node [block, right=0.8cm of java] (compiler) {Compiler};
+    \node [block, right=0.8cm of compiler] (bytecode) {Bytecode};
+    \node [block, right=0.8cm of bytecode] (jvm) {JVM};
+    \node [block, right=0.8cm of jvm] (machine) {Machine Code};
+
+    \path [line] (java) -- (compiler);
+    \path [line] (compiler) -- (bytecode);
+    \path [line] (bytecode) -- (jvm);
+    \path [line] (jvm) -- (machine);
+
+    \node [draw, dashed, inner sep=0.2cm, below=0.5cm of jvm, text width=3cm, align=center, font=\footnotesize] (components) {\textbf{JVM Components}\\Class Loader\\Runtime Data Areas\\Execution Engine};
+    \path [line, dashed] (jvm) -- (components);
+
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{Platform Independence}: Write once, run anywhere
+    \item \textbf{Security}: Bytecode verification prevents dangerous operations
+    \item \textbf{Optimization}: Just-in-time compilation improves performance
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+"CLASS: Class Loader Leads All System Security"
+\end{mnemonicbox}
+
+\section*{Question 1(c) [7 marks]}
+\textbf{Write a program in java to print Fibonacci series for N terms.}
+
+\begin{solutionbox}
+Fibonacci series generates numbers where each is the sum of the two preceding ones.
+
+\begin{codebox}
+\begin{lstlisting}[language=Java]
+import java.util.Scanner;
+
+public class FibonacciSeries {
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        
+        System.out.print("Enter number of terms: ");
+        int n = input.nextInt();
+        
+        int first = 0, second = 1;
+        
+        System.out.print("Fibonacci Series: ");
+        
+        for (int i = 1; i <= n; i++) {
+            System.out.print(first + " ");
+            
+            int next = first + second;
+            first = second;
+            second = next;
+        }
+        
+        input.close();
+    }
+}
+\end{lstlisting}
+\end{codebox}
+
+\begin{itemize}
+    \item \textbf{Initialize}: Start with 0 and 1
+    \item \textbf{Loop}: Iterate N times to generate sequence
+    \item \textbf{Calculation}: Each number is sum of previous two
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+"FSN: First + Second = Next number in sequence"
+\end{mnemonicbox}
+
+\section*{Question 1(c OR) [7 marks]}
+\textbf{Write a program in java to find out minimum from any ten numbers using command line argument.}
+
+\begin{solutionbox}
+Command line arguments allow passing input values directly when executing a Java program.
+
+\begin{codebox}
+\begin{lstlisting}[language=Java]
+public class FindMinimum {
+    public static void main(String[] args) {
+        if (args.length < 10) {
+            System.out.println("Please provide 10 numbers");
+            return;
+        }
+        
+        int min = Integer.parseInt(args[0]);
+        
+        for (int i = 1; i < 10; i++) {
+            int current = Integer.parseInt(args[i]);
+            if (current < min) {
+                min = current;
+            }
+        }
+        
+        System.out.println("Minimum number is: " + min);
+    }
+}
+\end{lstlisting}
+\end{codebox}
+
+\begin{itemize}
+    \item \textbf{Parse Arguments}: Convert string arguments to integers
+    \item \textbf{Initialize}: Set first number as minimum
+    \item \textbf{Compare}: Check each number against current minimum
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+"ICU: Initialize, Compare, Update the minimum"
+\end{mnemonicbox}
+
+\section*{Question 2(a) [3 marks]}
+\textbf{List out basic concepts of Java OOP. Explain any one in details.}
+
+\begin{solutionbox}
+Java Object-Oriented Programming is built on fundamental concepts for modeling real-world entities.
+
+\begin{center}
+\captionof{table}{OOP Concepts in Java}
+
+\begin{tabular}{|l|p{8cm}|}
+\hline
+\textbf{Concept} & \textbf{Description} \\ \hline
+Encapsulation & Binding data and methods together as a single unit \\ \hline
+Inheritance & Creating new classes from existing ones \\ \hline
+Polymorphism & One interface, multiple implementations \\ \hline
+Abstraction & Hiding implementation details, showing functionality \\ \hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{Encapsulation}: Protects data through access control
+    \item \textbf{Data Hiding}: Private variables accessible through methods
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+"PEAI: Programming Encapsulates Abstracts Inherits"
+\end{mnemonicbox}
+
+\section*{Question 2(b) [4 marks]}
+\textbf{Explain final keyword with example.}
+
+\begin{solutionbox}
+The final keyword in Java restricts modification and creates constants, unchangeable methods, and non-inheritable classes.
+
+\begin{center}
+\captionof{table}{Uses of final Keyword}
+
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Usage} & \textbf{Effect} & \textbf{Example} \\ \hline
+final variable & Cannot be changed & \texttt{final int MAX = 100;} \\ \hline
+final method & Cannot be overridden & \texttt{final void display() \{\}} \\ \hline
+final class & Cannot be extended & \texttt{final class Math \{\}} \\ \hline
+\end{tabular}
+\end{center}
+
+\begin{codebox}
+\begin{lstlisting}[language=Java]
+public class FinalDemo {
+    final int MAX_VALUE = 100;  // constant
+    
+    final void display() {
+        System.out.println("This method cannot be overridden");
+    }
+}
+
+final class MathOperations {
+    // This class cannot be inherited
+}
+\end{lstlisting}
+\end{codebox}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+"VCM: Variables Constants Methods can't change"
+\end{mnemonicbox}
+
+\section*{Question 2(c) [7 marks]}
+\textbf{What is constructor? Explain parameterized constructor with example.}
+
+\begin{solutionbox}
+A constructor initializes objects when created, with the same name as its class and no return type.
+
+\begin{center}
+\captionof{figure}{Constructor Types}
+
+\begin{tikzpicture}[node distance=1.5cm, auto,
+    block/.style={rectangle, draw, fill=green!10, align=center, rounded corners, minimum height=2em, font=\small},
+    line/.style={draw, -latex}]
+
+    \node [block] (root) {Constructors};
+    \node [block, below left=1cm of root] (default) {Default Constructor};
+    \node [block, below=1cm of root] (param) {Parameterized Constructor};
+    \node [block, below right=1cm of root] (copy) {Copy Constructor};
+
+    \path [line] (root) -- (default);
+    \path [line] (root) -- (param);
+    \path [line] (root) -- (copy);
+\end{tikzpicture}
+\end{center}
+
+\begin{codebox}
+\begin{lstlisting}[language=Java]
+public class Student {
+    String name;
+    int age;
+    
+    // Parameterized constructor
+    Student(String n, int a) {
+        name = n;
+        age = a;
+    }
+    
+    void display() {
+        System.out.println("Name: " + name + ", Age: " + age);
+    }
+    
+    public static void main(String[] args) {
+        // Object creation using parameterized constructor
+        Student s1 = new Student("John", 20);
+        s1.display();
+    }
+}
+\end{lstlisting}
+\end{codebox}
+
+\begin{itemize}
+    \item \textbf{Parameters}: Accept values during object creation
+    \item \textbf{Initialization}: Set object properties with passed values
+    \item \textbf{Overloading}: Multiple constructors with different parameters
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+"SPO: Student Parameters Object initializes properties"
+\end{mnemonicbox}
+
+\section*{Question 2(a OR) [3 marks]}
+\textbf{Explain the Java Program Structure with example.}
+
+\begin{solutionbox}
+Java program structure follows a specific hierarchy of elements organized logically.
+
+\begin{center}
+\captionof{figure}{Java Program Structure}
+
+\begin{tikzpicture}[
+    box/.style={draw, rectangle, minimum width=4cm, minimum height=1cm, align=left, fill=white},
+    container/.style={draw, rectangle, minimum width=4.5cm, fill=blue!5}
+]
+    \node[container, minimum height=4cm] (outer) {};
+    \node[anchor=north, font=\bfseries] at (outer.north) {Source File};
+    
+    \node[box, below=0.5cm of outer.north] (top) {
+        Documentation\\
+        package statement\\
+        import statements
+    };
+    
+    \node[box, below=0.2cm of top, minimum height=2cm] (class) {
+        \textbf{Class declaration}\\
+        - Variables\\
+        - Constructors\\
+        - Methods
+    };
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{Package}: Groups related classes
+    \item \textbf{Import}: Includes external classes
+    \item \textbf{Class}: Contains variables and methods
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+"PIC: Package Imports Class in every program"
+\end{mnemonicbox}
+
+\section*{Question 2(b OR) [4 marks]}
+\textbf{Explain static keyword with suitable example.}
+
+\begin{solutionbox}
+Static keyword creates class-level variables and methods shared by all objects, accessible without creating instances.
+
+\begin{center}
+\captionof{table}{Static vs Non-Static}
+
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Feature} & \textbf{Static} & \textbf{Non-Static} \\ \hline
+Memory & Single copy & Multiple copies \\ \hline
+Access & Without object & Through object \\ \hline
+Reference & Class name & Object name \\ \hline
+When loaded & Class loading & Object creation \\ \hline
+\end{tabular}
+\end{center}
+
+\begin{codebox}
+\begin{lstlisting}[language=Java]
+public class Counter {
+    static int count = 0;  // Shared by all objects
+    int instanceCount = 0; // Unique to each object
+    
+    Counter() {
+        count++;
+        instanceCount++;
+    }
+    
+    public static void main(String[] args) {
+        Counter c1 = new Counter();
+        Counter c2 = new Counter();
+        
+        System.out.println("Static count: " + Counter.count);
+        System.out.println("c1's instance count: " + c1.instanceCount);
+        System.out.println("c2's instance count: " + c2.instanceCount);
+    }
+}
+\end{lstlisting}
+\end{codebox}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+"SCM: Static Creates Memory once for all objects"
+\end{mnemonicbox}
+
+\section*{Question 2(c OR) [7 marks]}
+\textbf{Define Inheritance. List out types of it. Explain multilevel and hierarchical inheritance with suitable example.}
+
+\begin{solutionbox}
+Inheritance is an OOP principle where a new class acquires properties and behaviors from an existing class.
+
+\begin{center}
+\captionof{table}{Types of Inheritance in Java}
+
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Type} & \textbf{Description} \\ \hline
+Single & One subclass extends one superclass \\ \hline
+Multilevel & Chain of inheritance (\texttt{A}$\rightarrow$\texttt{B}$\rightarrow$\texttt{C}) \\ \hline
+Hierarchical & Multiple subclasses extend one superclass \\ \hline
+Multiple & One class extends multiple classes (via interfaces) \\ \hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\captionof{figure}{Multilevel vs Hierarchical Inheritance}
+
+\begin{tikzpicture}[node distance=1.2cm, auto,
+    cls/.style={rectangle, draw, fill=yellow!10, align=center, minimum width=2cm},
+    line/.style={draw, -latex}]
+
+    % Multilevel
+    \node [cls] (A) {Animal};
+    \node [cls, below=0.8cm of A] (B) {Dog};
+    \node [cls, below=0.8cm of B] (C) {Labrador};
+    \node [above=0.2cm of A] {\textbf{Multilevel}};
+
+    \path [line] (B) -- (A);
+    \path [line] (C) -- (B);
+
+    % Hierarchical
+    \node [cls, right=3cm of A] (V) {Vehicle};
+    \node [cls, below left=1cm and -0.5cm of V] (C1) {Car};
+    \node [cls, below=1cm of V] (C2) {Bike};
+    \node [cls, below right=1cm and -0.5cm of V] (C3) {Truck};
+    \node [above=0.2cm of V] {\textbf{Hierarchical}};
+
+    \path [line] (C1) -- (V);
+    \path [line] (C2) -- (V);
+    \path [line] (C3) -- (V);
+\end{tikzpicture}
+\end{center}
+
+\begin{codebox}
+\begin{lstlisting}[language=Java]
+// Multilevel inheritance
+class Animal {
+    void eat() { System.out.println("eating"); }
+}
+
+class Dog extends Animal {
+    void bark() { System.out.println("barking"); }
+}
+
+class Labrador extends Dog {
+    void color() { System.out.println("golden"); }
+}
+
+// Hierarchical inheritance
+class Vehicle {
+    void move() { System.out.println("moving"); }
+}
+
+class Car extends Vehicle {
+    void wheels() { System.out.println("4 wheels"); }
+}
+
+class Bike extends Vehicle {
+    void wheels() { System.out.println("2 wheels"); }
+}
+\end{lstlisting}
+\end{codebox}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+"SMHM: Single Multilevel Hierarchical Makes inheritance types"
+\end{mnemonicbox}
+
+\section*{Question 3(a) [3 marks]}
+\textbf{Explain this keyword with suitable example.}
+
+\begin{solutionbox}
+The `this' keyword in Java refers to the current object, used to differentiate between instance variables and parameters.
+
+\begin{center}
+\captionof{table}{Uses of `this' Keyword}
+
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Use} & \textbf{Purpose} \\ \hline
+this.variable & Access instance variables \\ \hline
+this() & Call current class constructor \\ \hline
+return this & Return current object \\ \hline
+\end{tabular}
+\end{center}
+
+\begin{codebox}
+\begin{lstlisting}[language=Java]
+public class Student {
+    String name;
+    
+    Student(String name) {
+        this.name = name;  // Refers to instance variable
+    }
+    
+    void display() {
+        System.out.println("Name: " + this.name);
+    }
+}
+\end{lstlisting}
+\end{codebox}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+"VAR: Variables Access Resolution using this"
+\end{mnemonicbox}
+
+\section*{Question 3(b) [4 marks]}
+\textbf{Explain different access controls in Java.}
+
+\begin{solutionbox}
+Access controls in Java regulate visibility and accessibility of classes, methods, and variables.
+
+\begin{center}
+\captionof{table}{Java Access Modifiers}
+
+\begin{tabular}{|l|c|c|c|c|}
+\hline
+\textbf{Modifier} & \textbf{Class} & \textbf{Package} & \textbf{Subclass} & \textbf{World} \\ \hline
+private & $\checkmark$ & $\times$ & $\times$ & $\times$ \\ \hline
+default & $\checkmark$ & $\checkmark$ & $\times$ & $\times$ \\ \hline
+protected & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\times$ \\ \hline
+public & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ \\ \hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{Private}: Only within the same class
+    \item \textbf{Default}: Within the same package
+    \item \textbf{Protected}: Within package and subclasses
+    \item \textbf{Public}: Accessible everywhere
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+"PDPP: Private Default Protected Public from narrow to wide"
+\end{mnemonicbox}
+
+\section*{Question 3(c) [7 marks]}
+\textbf{What is interface? Explain multiple inheritance using interface with example.}
+
+\begin{solutionbox}
+An interface is a contract that specifies what a class must do, containing abstract methods, constants, and (since Java 8) default methods.
+
+\begin{center}
+\captionof{figure}{Multiple Inheritance with Interfaces}
+
+\begin{tikzpicture}[node distance=1.5cm, auto,
+    cls/.style={rectangle, draw, fill=orange!10, align=center, minimum width=2cm},
+    iface/.style={rectangle, draw, fill=green!10, align=center, minimum width=2cm, dashed},
+    line/.style={draw, -latex, dashed}]
+
+    \node [iface] (P) {\textit{<<interface>>}\\Printable};
+    \node [iface, right=2cm of P] (S) {\textit{<<interface>>}\\Scannable};
+    \node [cls, below left=1.5cm and -1cm of S] (I) {Printer};
+
+    \path [line] (I) -- (P);
+    \path [line] (I) -- (S);
+\end{tikzpicture}
+\end{center}
+
+\begin{codebox}
+\begin{lstlisting}[language=Java]
+interface Printable {
+    void print();
+}
+
+interface Scannable {
+    void scan();
+}
+
+// Multiple inheritance using interfaces
+class Printer implements Printable, Scannable {
+    public void print() {
+        System.out.println("Printing...");
+    }
+    
+    public void scan() {
+        System.out.println("Scanning...");
+    }
+    
+    public static void main(String[] args) {
+        Printer p = new Printer();
+        p.print();
+        p.scan();
+    }
+}
+\end{lstlisting}
+\end{codebox}
+
+\begin{itemize}
+    \item \textbf{Contract}: Defines behavior without implementation
+    \item \textbf{Implements}: Classes fulfill the contract
+    \item \textbf{Multiple}: Can implement many interfaces
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+"CIM: Contract Implements Multiple interfaces"
+\end{mnemonicbox}
+
+\section*{Question 3(a OR) [3 marks]}
+\textbf{Explain super keyword with example.}
+
+\begin{solutionbox}
+The super keyword refers to the parent class, used to access parent methods, constructors, and variables.
+
+\begin{center}
+\captionof{table}{Uses of super Keyword}
+
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Use} & \textbf{Purpose} \\ \hline
+super.variable & Access parent variable \\ \hline
+super.method() & Call parent method \\ \hline
+super() & Call parent constructor \\ \hline
+\end{tabular}
+\end{center}
+
+\begin{codebox}
+\begin{lstlisting}[language=Java]
+class Vehicle {
+    String color = "white";
+    
+    void display() {
+        System.out.println("Vehicle class");
+    }
+}
+
+class Car extends Vehicle {
+    String color = "black";
+    
+    void display() {
+        super.display();  // Calls parent method
+        System.out.println("Car color: " + color);
+        System.out.println("Vehicle color: " + super.color);
+    }
+}
+\end{lstlisting}
+\end{codebox}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+"VMC: Variables Methods Constructors accessed by super"
+\end{mnemonicbox}
+
+\section*{Question 3(b OR) [4 marks]}
+\textbf{What is package? Write steps to create a package and give example of it.}
+
+\begin{solutionbox}
+A package in Java is a namespace that organizes related classes and interfaces, preventing naming conflicts.
+
+\begin{center}
+\captionof{table}{Steps to Create a Package}
+
+\begin{tabular}{|c|l|}
+\hline
+\textbf{Step} & \textbf{Action} \\ \hline
+1 & Declare package name at top of file \\ \hline
+2 & Create directory structure matching package name \\ \hline
+3 & Save Java file in the directory \\ \hline
+4 & Compile with -d option \\ \hline
+5 & Import package to use it \\ \hline
+\end{tabular}
+\end{center}
+
+\begin{codebox}
+\begin{lstlisting}[language=Java]
+// Step 1: Declare package (save as Calculator.java)
+package mathematics;
+
+public class Calculator {
+    public int add(int a, int b) {
+        return a + b;
+    }
+}
+
+// In another file (UseCalculator.java)
+import mathematics.Calculator;
+
+class UseCalculator {
+    public static void main(String[] args) {
+        Calculator calc = new Calculator();
+        System.out.println(calc.add(10, 20));
+    }
+}
+\end{lstlisting}
+\end{codebox}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+"DISCO: Declare Import Save Compile Organize"
+\end{mnemonicbox}
+
+\section*{Question 3(c OR) [7 marks]}
+\textbf{Define: Method Overriding. List out Rules for method overriding. Write a java program that implements method overriding.}
+
+\begin{solutionbox}
+Method overriding occurs when a subclass provides a specific implementation for a method already defined in its parent class.
+
+\begin{center}
+\captionof{table}{Rules for Method Overriding}
+
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Rule} & \textbf{Description} \\ \hline
+Same name & Method must have same name \\ \hline
+Same parameters & Parameter count and type must match \\ \hline
+Same return type & Return type must be same or subtype (covariant) \\ \hline
+Access modifier & Can't be more restrictive \\ \hline
+Exceptions & Can't throw broader checked exceptions \\ \hline
+\end{tabular}
+\end{center}
+
+\begin{codebox}
+\begin{lstlisting}[language=Java]
+class Animal {
+    void makeSound() {
+        System.out.println("Animal makes a sound");
+    }
+}
+
+class Dog extends Animal {
+    // Method overriding
+    @Override
+    void makeSound() {
+        System.out.println("Dog barks");
+    }
+}
+
+class Cat extends Animal {
+    // Method overriding
+    @Override
+    void makeSound() {
+        System.out.println("Cat meows");
+    }
+}
+
+public class MethodOverridingDemo {
+    public static void main(String[] args) {
+        Animal animal = new Animal();
+        Animal dog = new Dog();
+        Animal cat = new Cat();
+        
+        animal.makeSound();  // Output: Animal makes a sound
+        dog.makeSound();     // Output: Dog barks
+        cat.makeSound();     // Output: Cat meows
+    }
+}
+\end{lstlisting}
+\end{codebox}
+
+\begin{itemize}
+    \item \textbf{Runtime Polymorphism}: Method resolution at runtime
+    \item \textbf{@Override}: Annotation ensures method is overriding
+    \item \textbf{Inheritance}: Requires IS-A relationship
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+"SPARE: Same Parameters Access Return Exceptions"
+\end{mnemonicbox}
+
+\section*{Question 4(a) [3 marks]}
+\textbf{Explain abstract class with suitable example.}
+
+\begin{solutionbox}
+An abstract class cannot be instantiated and may contain abstract methods that must be implemented by subclasses.
+
+\begin{center}
+\captionof{table}{Abstract Class vs Interface}
+
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Feature} & \textbf{Abstract Class} & \textbf{Interface} \\ \hline
+Instantiation & Cannot & Cannot \\ \hline
+Methods & Concrete and abstract & Abstract (+ default since Java 8) \\ \hline
+Variables & Any type & Only constants \\ \hline
+Constructor & Has & Doesn't have \\ \hline
+\end{tabular}
+\end{center}
+
+\begin{codebox}
+\begin{lstlisting}[language=Java]
+abstract class Shape {
+    // Abstract method - no implementation
+    abstract double area();
+    
+    // Concrete method
+    void display() {
+        System.out.println("This is a shape");
+    }
+}
+
+class Circle extends Shape {
+    double radius;
+    
+    Circle(double r) {
+        radius = r;
+    }
+    
+    // Implementation of abstract method
+    double area() {
+        return 3.14 * radius * radius;
+    }
+}
+\end{lstlisting}
+\end{codebox}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+"PAI: Partial Abstract Implementation is key"
+\end{mnemonicbox}
+
+\section*{Question 4(b) [4 marks]}
+\textbf{What is Thread? Explain Thread life cycle.}
+
+\begin{solutionbox}
+A thread is a lightweight subprocess, the smallest unit of processing that allows concurrent execution.
+
+\begin{center}
+\captionof{figure}{Thread Life Cycle}
+
+\begin{tikzpicture}[node distance=1.5cm, auto,
+    state/.style={draw, circle, fill=blue!10, align=center, minimum width=2.5em},
+    line/.style={draw, -latex}]
+
+    \node [state] (N) {New};
+    \node [state, right=1.5cm of N] (R) {Runnable};
+    \node [state, right=1.5cm of R] (Ru) {Running};
+    \node [state, right=1.5cm of Ru] (T) {Terminated};
+    \node [state, below=1.5cm of Ru] (B) {Blocked};
+
+    \path [line] (N) -- (R);
+    \path [line] (R) -- node[font=\tiny]{Scheduler} (Ru);
+    \path [line] (Ru) -- (T);
+    \path [line] (Ru) -- node[right, font=\tiny]{Wait} (B);
+    \path [line] (B) -| node[pos=0.2, above, font=\tiny]{Notify} (R);
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{New}: Thread created but not started
+    \item \textbf{Runnable}: Ready to run when CPU time is given
+    \item \textbf{Running}: Currently executing
+    \item \textbf{Blocked/Waiting}: Temporarily inactive
+    \item \textbf{Terminated}: Completed execution
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+"NRRBT: New Runnable Running Blocked Terminated"
+\end{mnemonicbox}
+
+\section*{Question 4(c) [7 marks]}
+\textbf{Write a program in java that creates the multiple threads by implementing the Thread class.}
+
+\begin{solutionbox}
+Creating threads by implementing Thread class allows multiple tasks to execute concurrently.
+
+\begin{codebox}
+\begin{lstlisting}[language=Java]
+class MyThread extends Thread {
+    private String threadName;
+    
+    MyThread(String name) {
+        this.threadName = name;
+    }
+    
+    @Override
+    public void run() {
+        try {
+            for (int i = 1; i <= 5; i++) {
+                System.out.println(threadName + ": " + i);
+                Thread.sleep(500);
+            }
+        } catch (InterruptedException e) {
+            System.out.println(threadName + " interrupted");
+        }
+        System.out.println(threadName + " completed");
+    }
+}
+
+public class MultiThreadDemo {
+    public static void main(String[] args) {
+        MyThread thread1 = new MyThread("Thread-1");
+        MyThread thread2 = new MyThread("Thread-2");
+        MyThread thread3 = new MyThread("Thread-3");
+        
+        thread1.start();
+        thread2.start();
+        thread3.start();
+    }
+}
+\end{lstlisting}
+\end{codebox}
+
+\begin{itemize}
+    \item \textbf{Extend Thread}: Create thread by extending Thread class
+    \item \textbf{Override run()}: Define task in run method
+    \item \textbf{start()}: Begin thread execution
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+"ERS: Extend Run Start to create threads"
+\end{mnemonicbox}
+
+\section*{Question 4(a OR) [3 marks]}
+\textbf{Explain final class with suitable example.}
+
+\begin{solutionbox}
+A final class cannot be extended, preventing inheritance and modification of its design.
+
+\begin{center}
+\captionof{table}{Final Class Characteristics}
+
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Feature} & \textbf{Description} \\ \hline
+Inheritance & Cannot be subclassed \\ \hline
+Methods & Implicitly final \\ \hline
+Security & Prevents design alteration \\ \hline
+Example & String, Math classes \\ \hline
+\end{tabular}
+\end{center}
+
+\begin{codebox}
+\begin{lstlisting}[language=Java]
+final class Security {
+    void secureMethod() {
+        System.out.println("Secure implementation");
+    }
+}
+
+// Error: Cannot extend final class
+// class HackAttempt extends Security { }
+\end{lstlisting}
+\end{codebox}
+
+\begin{itemize}
+    \item \textbf{Security}: Protects sensitive implementations
+    \item \textbf{Immutability}: Helps create immutable classes
+    \item \textbf{Optimization}: JVM can optimize final classes
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+"SIO: Security Immutability Optimization"
+\end{mnemonicbox}
+
+\section*{Question 4(b OR) [4 marks]}
+\textbf{Explain thread priorities with suitable example.}
+
+\begin{solutionbox}
+Thread priorities determine the order in which threads are scheduled for execution, from 1 (lowest) to 10 (highest).
+
+\begin{center}
+\captionof{table}{Thread Priority Constants}
+
+\begin{tabular}{|l|c|l|}
+\hline
+\textbf{Constant} & \textbf{Value} & \textbf{Description} \\ \hline
+MIN\_PRIORITY & 1 & Lowest priority \\ \hline
+NORM\_PRIORITY & 5 & Default priority \\ \hline
+MAX\_PRIORITY & 10 & Highest priority \\ \hline
+\end{tabular}
+\end{center}
+
+\begin{codebox}
+\begin{lstlisting}[language=Java]
+class PriorityThread extends Thread {
+    PriorityThread(String name) {
+        super(name);
+    }
+    
+    public void run() {
+        System.out.println("Running: " + getName() + 
+                          " with priority: " + getPriority());
+    }
+}
+
+public class ThreadPriorityDemo {
+    public static void main(String[] args) {
+        PriorityThread low = new PriorityThread("Low Priority");
+        PriorityThread norm = new PriorityThread("Normal Priority");
+        PriorityThread high = new PriorityThread("High Priority");
+        
+        low.setPriority(Thread.MIN_PRIORITY);
+        high.setPriority(Thread.MAX_PRIORITY);
+        
+        low.start();
+        norm.start();
+        high.start();
+    }
+}
+\end{lstlisting}
+\end{codebox}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+"HNL: High Normal Low priorities in threads"
+\end{mnemonicbox}
+
+\section*{Question 4(c OR) [7 marks]}
+\textbf{What is Exception? Write a program that shows the use of Arithmetic Exception.}
+
+\begin{solutionbox}
+An exception is an abnormal condition that disrupts the normal flow of program execution.
+
+\begin{center}
+\captionof{figure}{Exception Hierarchy}
+
+\begin{tikzpicture}[node distance=1cm, auto,
+    cls/.style={rectangle, draw, fill=red!10, align=center, minimum width=2.5cm},
+    line/.style={draw, -latex}]
+
+    \node [cls] (T) {Throwable};
+    \node [cls, below left=1cm of T] (E) {Exception};
+    \node [cls, below right=1cm of T] (Err) {Error};
+    \node [cls, below=1cm of E] (RE) {RuntimeException};
+    \node [cls, below left=1cm and -1.5cm of RE] (AE) {ArithmeticException};
+    \node [cls, below right=1cm and -1.5cm of RE] (NPE) {NullPointerException};
+
+    \path [line] (E) -- (T);
+    \path [line] (Err) -- (T);
+    \path [line] (RE) -- (E);
+    \path [line] (AE) -- (RE);
+    \path [line] (NPE) -- (RE);
+\end{tikzpicture}
+\end{center}
+
+\begin{codebox}
+\begin{lstlisting}[language=Java]
+public class ArithmeticExceptionDemo {
+    public static void main(String[] args) {
+        try {
+            // This will cause ArithmeticException
+            int result = 100 / 0;
+            System.out.println("Result: " + result);
+        } 
+        catch (ArithmeticException e) {
+            System.out.println("ArithmeticException caught: " + e.getMessage());
+            System.out.println("Cannot divide by zero");
+        }
+        finally {
+            System.out.println("This block always executes");
+        }
+        
+        System.out.println("Program continues after exception handling");
+    }
+}
+\end{lstlisting}
+\end{codebox}
+
+\begin{itemize}
+    \item \textbf{Try Block}: Contains code that might throw exceptions
+    \item \textbf{Catch Block}: Handles the specific exception
+    \item \textbf{Finally Block}: Always executes regardless of exception
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+"TCF: Try Catch Finally handles exceptions"
+\end{mnemonicbox}
+
+\section*{Question 5(a) [3 marks]}
+\textbf{Write a Java Program to find sum and average of 10 numbers of an array.}
+
+\begin{solutionbox}
+Arrays store multiple values of the same type, enabling sequential processing of elements.
+
+\begin{codebox}
+\begin{lstlisting}[language=Java]
+public class ArraySumAverage {
+    public static void main(String[] args) {
+        int[] numbers = {10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
+        
+        int sum = 0;
+        
+        // Calculate sum
+        for (int i = 0; i < numbers.length; i++) {
+            sum += numbers[i];
+        }
+        
+        // Calculate average
+        double average = (double) sum / numbers.length;
+        
+        System.out.println("Sum = " + sum);
+        System.out.println("Average = " + average);
+    }
+}
+\end{lstlisting}
+\end{codebox}
+
+\begin{itemize}
+    \item \textbf{Declaration}: Creates fixed-size collection
+    \item \textbf{Iteration}: Sequential access to elements
+    \item \textbf{Calculation}: Process values for results
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+"DIC: Declare Iterate Calculate for array processing"
+\end{mnemonicbox}
+
+\section*{Question 5(b) [4 marks]}
+\textbf{Write a Java program to handle user defined exception for `Divide by Zero' error.}
+
+\begin{solutionbox}
+User-defined exceptions allow creating custom exception types for specific application requirements.
+
+\begin{codebox}
+\begin{lstlisting}[language=Java]
+// Custom exception class
+class DivideByZeroException extends Exception {
+    public DivideByZeroException(String message) {
+        super(message);
+    }
+}
+
+public class CustomExceptionDemo {
+    // Method that throws custom exception
+    static double divide(int numerator, int denominator) throws DivideByZeroException {
+        if (denominator == 0) {
+            throw new DivideByZeroException("Cannot divide by zero!");
+        }
+        return (double) numerator / denominator;
+    }
+    
+    public static void main(String[] args) {
+        try {
+            System.out.println(divide(10, 2));
+            System.out.println(divide(20, 0));
+        } catch (DivideByZeroException e) {
+            System.out.println("Custom exception caught: " + e.getMessage());
+        }
+    }
+}
+\end{lstlisting}
+\end{codebox}
+
+\begin{itemize}
+    \item \textbf{Custom Class}: Extends Exception class
+    \item \textbf{Throwing}: Use throw keyword with new instance
+    \item \textbf{Handling}: Catch specific exception type
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+"CTE: Create Throw Exception when needed"
+\end{mnemonicbox}
+
+\section*{Question 5(c) [7 marks]}
+\textbf{Write a java program to create a text file and perform read operation on the text file.}
+
+\begin{solutionbox}
+Java provides I/O classes to work with files, allowing creation, writing, and reading operations.
+
+\begin{codebox}
+\begin{lstlisting}[language=Java]
+import java.io.FileWriter;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.BufferedReader;
+
+public class FileOperationsDemo {
+    public static void main(String[] args) {
+        try {
+            // Create and write to file
+            FileWriter writer = new FileWriter("sample.txt");
+            writer.write("Hello World!\n");
+            writer.write("Welcome to Java File Handling.\n");
+            writer.write("This is the third line.");
+            writer.close();
+            System.out.println("Successfully wrote to the file.");
+            
+            // Read from file
+            FileReader reader = new FileReader("sample.txt");
+            BufferedReader buffReader = new BufferedReader(reader);
+            
+            String line;
+            System.out.println("\nFile contents:");
+            while ((line = buffReader.readLine()) != null) {
+                System.out.println(line);
+            }
+            
+            reader.close();
+            
+        } catch (IOException e) {
+            System.out.println("An error occurred: " + e.getMessage());
+        }
+    }
+}
+\end{lstlisting}
+\end{codebox}
+
+\begin{itemize}
+    \item \textbf{FileWriter}: Creates and writes to files
+    \item \textbf{FileReader}: Reads character data from files
+    \item \textbf{BufferedReader}: Efficiently reads text by lines
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+"WRC: Write Read Close for file operations"
+\end{mnemonicbox}
+
+\section*{Question 5(a OR) [3 marks]}
+\textbf{Explain java I/O process.}
+
+\begin{solutionbox}
+Java I/O process involves transferring data to and from various sources using streams.
+
+\begin{center}
+\captionof{table}{Java I/O Stream Types}
+
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Classification} & \textbf{Types} \\ \hline
+Direction & Input, Output \\ \hline
+Data Type & Byte Streams, Character Streams \\ \hline
+Functionality & Basic, Buffered, Data, Object \\ \hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\captionof{figure}{Java I/O Hierarchy}
+
+\begin{tikzpicture}[node distance=1cm, auto,
+    cls/.style={rectangle, draw, fill=cyan!10, align=center, minimum width=2cm, rounded corners},
+    line/.style={draw, -latex}]
+
+    \node [cls] (S) {Stream};
+    \node [cls, below left=1cm of S] (I) {Input};
+    \node [cls, below right=1cm of S] (O) {Output};
+    \node [cls, below=1cm of I] (B1) {Byte};
+    \node [cls, below=1cm of O] (B2) {Char};
+
+    \path [line] (S) -- (I);
+    \path [line] (S) -- (O);
+    \path [line] (I) -- (B1);
+    \path [line] (O) -- (B2);
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{Stream}: Sequence of data flowing between source and destination
+    \item \textbf{Buffering}: Improves performance by reducing disk access
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+"SBI: Stream Buffered Input/Output"
+\end{mnemonicbox}
+
+\section*{Question 5(b OR) [4 marks]}
+\textbf{Explain throw and finally in Exception Handling with example.}
+
+\begin{solutionbox}
+Exception handling mechanisms control program flow during errors, ensuring graceful execution.
+
+\begin{center}
+\captionof{table}{throw vs finally}
+
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Feature} & \textbf{throw} & \textbf{finally} \\ \hline
+Purpose & Explicitly throws exception & Ensures code execution \\ \hline
+Placement & Inside method & After try-catch blocks \\ \hline
+Execution & When condition met & Always, even with return \\ \hline
+Usage & Control flow & Resource cleanup \\ \hline
+\end{tabular}
+\end{center}
+
+\begin{codebox}
+\begin{lstlisting}[language=Java]
+public class ThrowFinallyDemo {
+    public static void validateAge(int age) {
+        try {
+            if (age < 18) {
+                throw new ArithmeticException("Not eligible to vote");
+            } else {
+                System.out.println("Welcome to vote");
+            }
+        } catch (ArithmeticException e) {
+            System.out.println("Exception caught: " + e.getMessage());
+        } finally {
+            System.out.println("Validation process completed");
+        }
+    }
+    
+    public static void main(String[] args) {
+        validateAge(15);
+        System.out.println("---------");
+        validateAge(20);
+    }
+}
+\end{lstlisting}
+\end{codebox}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+"TERA: Throw Exception Regardless Always finally executes"
+\end{mnemonicbox}
+
+\section*{Question 5(c OR) [7 marks]}
+\textbf{Write a java program to display the content of a text file and perform append operation on the text file.}
+
+\begin{solutionbox}
+\begin{codebox}
+\begin{lstlisting}[language=Java]
+import java.io.*;
+
+public class FileAppendDemo {
+    public static void main(String[] args) {
+        try {
+            // Create initial file
+            FileWriter writer = new FileWriter("example.txt");
+            writer.write("Original content line 1\n");
+            writer.write("Original content line 2\n");
+            writer.close();
+            
+            // Display file content
+            System.out.println("Original file content:");
+            readFile("example.txt");
+            
+            // Append to file
+            FileWriter appendWriter = new FileWriter("example.txt", true);
+            appendWriter.write("Appended content line 1\n");
+            appendWriter.write("Appended content line 2\n");
+            appendWriter.close();
+            
+            // Display updated content
+            System.out.println("\nFile content after append:");
+            readFile("example.txt");
+            
+        } catch (IOException e) {
+            System.out.println("An error occurred: " + e.getMessage());
+        }
+    }
+    
+    // Method to read and display file content
+    public static void readFile(String fileName) {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(fileName));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
+            }
+            reader.close();
+        } catch (IOException e) {
+            System.out.println("Error reading file: " + e.getMessage());
+        }
+    }
+}
+\end{lstlisting}
+\end{codebox}
+
+\begin{itemize}
+    \item \textbf{FileWriter(file, true)}: Second parameter enables append mode
+    \item \textbf{BufferedReader}: Efficiently reads text by lines
+    \item \textbf{Reusable Method}: Encapsulates reading functionality
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+"CAD: Create Append Display file operations"
+\end{mnemonicbox}
+
+\end{document}
