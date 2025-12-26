@@ -437,3 +437,42 @@ Following professional typesetting conventions:
 
 This is now configured automatically in the template.
 
+
+---
+
+## ⚠️ IMPORTANT: Figure Caption Position
+
+**Critical Rule**: In `figure` environments, `\caption{}` must come **AFTER** the content (tikzpicture, image, etc.)
+
+### ✅ Correct (Caption AFTER content):
+```latex
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}
+  ... diagram code ...
+\end{tikzpicture}
+\caption{Diagram Title}  % ← Caption AFTER
+\end{figure}
+```
+
+### ❌ Wrong (Caption BEFORE content):
+```latex
+\begin{figure}[htbp]
+\centering
+\caption{Diagram Title}  % ← DON'T DO THIS
+\begin{tikzpicture}
+  ... diagram code ...
+\end{tikzpicture}
+\end{figure}
+```
+
+### Why This Matters:
+- **Standard convention**: Figures have captions below
+- **Professional appearance**: Matches published books/papers
+- **LaTeX best practice**: Caption placement affects spacing
+
+### Quick Reference:
+- **Tables**: `\caption{}` at TOP (before tabular)
+- **Figures**: `\caption{}` at BOTTOM (after tikzpicture/image)
+- **Code**: `caption={}` in lstlisting options (at top)
+
