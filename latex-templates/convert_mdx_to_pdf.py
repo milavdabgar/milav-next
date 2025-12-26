@@ -169,18 +169,17 @@ def convert_mdx_to_pdf(mdx_file, generate_pdf=True, keep_aux=False):
     # Step 3: Compile to PDF (optional)
     if generate_pdf:
         # Run XeLaTeX twice for proper references
+        # Note: XeLaTeX may return non-zero exit codes due to warnings,
+        # but still successfully generate PDFs. We check for PDF existence instead.
         for run_num in [1, 2]:
-            if not run_command(
+            run_command(
                 ['xelatex', '-interaction=nonstopmode', tex_path.name],
                 cwd=work_dir,
                 description=f"Compiling LaTeX to PDF (pass {run_num}/2)"
-            ):
-                print(f"⚠️  WARNING: XeLaTeX compilation failed on pass {run_num}")
-                if run_num == 1:
-                    print("Attempting second pass anyway...")
-                else:
-                    return False
+            )
+            # Don't check exit code - xelatex returns non-zero for warnings
         
+        # Check if PDF was actually created (the real success indicator)
         if pdf_path.exists():
             print(f"✅ Generated PDF: {pdf_path.name}\n")
         else:
