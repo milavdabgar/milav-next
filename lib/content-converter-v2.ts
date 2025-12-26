@@ -793,7 +793,7 @@ ${rtf}
         }
 
         // Path to python script (resolved relative to project root)
-        const scriptPath = path.resolve(process.cwd(), 'latex-templates/convert_mdx_to_pdf.py');
+        const scriptPath = path.resolve(process.cwd(), 'scripts/convert_mdx_to_pdf.py');
 
         // Run script
         try {
