@@ -21,9 +21,9 @@ import argparse
 from pathlib import Path
 import re
 
-# Import the refactor function from refactor_latex.py
+# Import the refactor function from refactor_latex_v2.py
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from refactor_latex import refactor_latex
+from refactor_latex_v2 import refactor_latex
 
 
 def is_solution_file(filename):
@@ -102,7 +102,7 @@ def convert_mdx_to_pdf(mdx_file, generate_pdf=True, keep_aux=False):
     Convert MDX file to PDF through LaTeX pipeline.
     
     Steps:
-    1. Convert MDX to LaTeX using Pandoc
+    1. Convert MDX to LaTeX using Pandoc (with -pandoc suffix)
     2. Refactor LaTeX using refactor_latex.py
     3. Compile LaTeX to PDF using XeLaTeX (optional)
     4. Clean up auxiliary files (optional)
@@ -117,9 +117,21 @@ def convert_mdx_to_pdf(mdx_file, generate_pdf=True, keep_aux=False):
         print(f"❌ ERROR: File must have .mdx extension: {mdx_path}")
         return False
     
-    # Determine output paths
-    tex_path = mdx_path.with_suffix('.tex')
-    pdf_path = mdx_path.with_suffix('.pdf')
+    # Determine output paths with -pandoc suffix
+    # Example: 4300003-summer-2022-solution.gu.mdx -> 4300003-summer-2022-solution-pandoc.gu.tex
+    stem = mdx_path.stem  # e.g., "4300003-summer-2022-solution.gu" or "4300003-summer-2022-solution"
+    
+    # Handle .gu.mdx files (double extension)
+    if stem.endswith('.gu'):
+        base_stem = stem[:-3]  # Remove .gu
+        tex_name = f"{base_stem}-pandoc.gu.tex"
+        pdf_name = f"{base_stem}-pandoc.gu.pdf"
+    else:
+        tex_name = f"{stem}-pandoc.tex"
+        pdf_name = f"{stem}-pandoc.pdf"
+    
+    tex_path = mdx_path.parent / tex_name
+    pdf_path = mdx_path.parent / pdf_name
     work_dir = mdx_path.parent
     
     print(f"\n{'='*60}")
@@ -175,14 +187,26 @@ def convert_mdx_to_pdf(mdx_file, generate_pdf=True, keep_aux=False):
             print(f"❌ ERROR: PDF was not generated")
             return False
         
-        # Step 4: Clean up auxiliary files
+        # Step 4: Clean up auxiliary files (with -pandoc suffix)
         if not keep_aux:
             aux_extensions = ['.aux', '.log', '.out', '.toc', '.lof', '.lot']
+            # Build base name for aux files (matches tex_path stem)
+            tex_stem = tex_path.stem
+            if tex_stem.endswith('.gu'):
+                tex_stem = tex_stem[:-3]  # Remove .gu for aux file matching
+            
             for ext in aux_extensions:
-                aux_file = mdx_path.with_suffix(ext)
+                # Try both with and without .gu
+                aux_file = work_dir / f"{tex_stem}{ext}"
                 if aux_file.exists():
                     aux_file.unlink()
                     print(f"🗑️  Removed: {aux_file.name}")
+                
+                # Also try .gu version
+                aux_file_gu = work_dir / f"{tex_stem}.gu{ext}"
+                if aux_file_gu.exists():
+                    aux_file_gu.unlink()
+                    print(f"🗑️  Removed: {aux_file_gu.name}")
     
     print(f"\n{'='*60}")
     print(f"✅ SUCCESS: Conversion complete!")
