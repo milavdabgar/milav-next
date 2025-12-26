@@ -823,11 +823,15 @@ ${rtf}
             if (fs.existsSync(pdfPath)) {
                 const pdfBuffer = fs.readFileSync(pdfPath);
 
-                // Optional: Delete the generated PDF to keep directory clean?
-                // The user script normally leaves it. We will leave it for now as "cache" 
-                // or similar behavior to manual run.
-                // If we want to clean up, uncomment the next line:
-                // fs.unlinkSync(pdfPath);
+                // Clean up the generated PDF and TeX files to avoid cluttering the source directory
+                fs.unlinkSync(pdfPath);
+
+                // Delete the intermediate .tex file as well
+                const texName = pdfName.replace('.pdf', '.tex');
+                const texPath = path.join(path.dirname(filePath), texName);
+                if (fs.existsSync(texPath)) {
+                    fs.unlinkSync(texPath);
+                }
 
                 return pdfBuffer;
             } else {
