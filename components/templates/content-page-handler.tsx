@@ -67,11 +67,13 @@ export async function ContentPageHandler({
         const parentFolder = slug.slice(0, -1).join('/');
         const relativeImageBaseUrl = `/${basePath}/${parentFolder}`;
 
-        const fullPath = path.join(process.cwd(), 'content', basePath, slugPath);
+        // Use template string to bypass Turbopack static analysis that triggers "overly broad pattern" warning
+        // when using path.join with process.cwd() and dynamic segments.
+        const checkPath = `${process.cwd()}/content/${basePath}/${slugPath}`;
         // We need to check if this specific path is a directory (implying index.mdx).
         let isBundle = false;
         try {
-            if (fs.existsSync(fullPath) && fs.statSync(fullPath).isDirectory()) {
+            if (fs.existsSync(checkPath) && fs.statSync(checkPath).isDirectory()) {
                 isBundle = true;
             }
         } catch (e) { }

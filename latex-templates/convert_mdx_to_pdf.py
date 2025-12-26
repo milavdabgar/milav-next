@@ -54,7 +54,7 @@ def find_solution_files(path):
     elif path.is_dir():
         # Directory - find all matching files
         solution_files = []
-        for mdx_file in path.glob('*.mdx'):
+        for mdx_file in path.rglob('*.mdx'):
             if is_solution_file(mdx_file.name):
                 solution_files.append(mdx_file)
         
