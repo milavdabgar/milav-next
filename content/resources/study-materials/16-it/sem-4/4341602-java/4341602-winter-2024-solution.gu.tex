@@ -1,0 +1,1023 @@
+\documentclass{article}
+\input{c:/Users/milav/OneDrive/Git/milav-next/latex-templates/gtu-solutions/preamble.tex}
+\input{c:/Users/milav/OneDrive/Git/milav-next/latex-templates/gtu-solutions/gujarati-boxes.tex}
+\input{c:/Users/milav/OneDrive/Git/milav-next/latex-templates/gtu-solutions/commands.tex}
+
+\title{Object Oriented Programming with JAVA (4341602) - Winter 2024 Solution}
+\date{November 26, 2024}
+
+\begin{document}
+\maketitle
+
+\questionmarks{1(અ)}{3}{OOP અને POP વચ્ચેનો તફાવત લખો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{OOP vs POP}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પાસાં} & \textbf{OOP} & \textbf{POP} \\ \hline
+\textbf{અભિગમ} & બોટમ-અપ અભિગમ & ટોપ-ડાઉન અભિગમ \\ \hline
+\textbf{ફોકસ} & ઓબ્જેક્ટ અને ક્લાસ & ફંક્શન અને પ્રોસીજર \\ \hline
+\textbf{ડેટા સિક્યોરિટી} & એન્કેપ્સુલેશન દ્વારા ડેટા હાઇડિંગ & ડેટા હાઇડિંગ નથી \\ \hline
+\textbf{પ્રોબ્લેમ સોલ્વિંગ} & સમસ્યાને ઓબ્જેક્ટમાં વિભાજિત કરો & સમસ્યાને ફંક્શનમાં વિભાજિત કરો \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Objects Bottom, Procedures Top}
+\end{mnemonicbox}
+
+\questionmarks{1(બ)}{4}{બાઇટ કોડ શું છે? JVM ને વિગતવાર સમજાવો.}
+
+\begin{solutionbox}
+\textbf{બાઇટ કોડ} (Byte Code): Java compiler દ્વારા સોર્સ કોડમાંથી જનરેટ થતો પ્લેટફોર્મ-ઇન્ડિપેન્ડન્ટ ઇન્ટરમીડિયેટ કોડ.
+
+\begin{center}
+\begin{tikzpicture}[auto, node distance=2cm]
+    \node [gtu block] (source) {Java Source Code};
+    \node [gtu block, right=of source] (compiler) {Java Compiler javac};
+    \node [gtu block, below=of compiler] (bytecode) {Byte Code .class};
+    \node [gtu block, left=of bytecode] (jvm) {JVM};
+    \node [gtu block, left=of jvm] (machine) {Machine Code};
+
+    \path [gtu arrow] (source) -- (compiler);
+    \path [gtu arrow] (compiler) -- (bytecode);
+    \path [gtu arrow] (bytecode) -- (jvm);
+    \path [gtu arrow] (jvm) -- (machine);
+\end{tikzpicture}
+\end{center}
+
+\textbf{JVM કોમ્પોનન્ટ્સ}:
+\begin{itemize}
+    \item \textbf{Class Loader}: .class ફાઇલોને મેમરીમાં લોડ કરે છે
+    \item \textbf{Memory Area}: Heap, stack, method area સ્ટોરેજ
+    \item \textbf{Execution Engine}: બાઇટકોડને ઇન્ટરપ્રેટ અને એક્ઝિક્યુટ કરે છે
+    \item \textbf{Garbage Collector}: ઓટોમેટિક મેમરી મેનેજમેન્ટ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Byte Code Runs Everywhere}
+\end{mnemonicbox}
+
+\questionmarks{1(ક)}{7}{એરેના એલિમેન્ટ્સને ચડતા ક્રમમાં સૉર્ટ કરવા માટે જાવામાં પ્રોગ્રામ લખો}
+
+\begin{solutionbox}
+\begin{lstlisting}[language=Java,caption={Array Sort}]
+import java.util.Arrays;
+
+public class ArraySort {
+    public static void main(String[] args) {
+        int[] arr = {64, 34, 25, 12, 22, 11, 90};
+        
+        // Bubble Sort
+        for(int i = 0; i < arr.length-1; i++) {
+            for(int j = 0; j < arr.length-i-1; j++) {
+                if(arr[j] > arr[j+1]) {
+                    int temp = arr[j];
+                    arr[j] = arr[j+1];
+                    arr[j+1] = temp;
+                }
+            }
+        }
+        
+        System.out.println("Sorted array: " + Arrays.toString(arr));
+    }
+}
+\end{lstlisting}
+
+\textbf{મુખ્ય મુદ્દાઓ}:
+\begin{itemize}
+    \item \textbf{Bubble Sort}: બાજુના એલિમેન્ટ્સની તુલના કરે છે
+    \item \textbf{Time Complexity}: O(n\textsuperscript{2})
+    \item \textbf{Space Complexity}: O(1)
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Bubble Up The Smallest}
+\end{mnemonicbox}
+
+\questionmarks{1(ક OR)}{7}{કમાંડ લાઇન આર્ગ્યુમેન્ટ્સનો ઉપયોગ કરીને કોઈપણ દસ સંખ્યાઓમાંથી મહત્તમ શોધવા માટે જાવામાં પ્રોગ્રામ લખો.}
+
+\begin{solutionbox}
+\begin{lstlisting}[language=Java,caption={Find Maximum from Command Line}]
+public class FindMaximum {
+    public static void main(String[] args) {
+        if(args.length != 10) {
+            System.out.println("Please enter exactly 10 numbers");
+            return;
+        }
+        
+        int max = Integer.parseInt(args[0]);
+        
+        for(int i = 1; i < args.length; i++) {
+            int num = Integer.parseInt(args[i]);
+            if(num > max) {
+                max = num;
+            }
+        }
+        
+        System.out.println("Maximum number: " + max);
+    }
+}
+\end{lstlisting}
+
+\textbf{મુખ્ય મુદ્દાઓ}:
+\begin{itemize}
+    \item \textbf{Command Line}: \code{args[]} array આર્ગ્યુમેન્ટ્સ સ્ટોર કરે છે
+    \item \textbf{parseInt()}: સ્ટ્રિંગને ઇન્ટિજરમાં કન્વર્ટ કરે છે
+    \item \textbf{Validation}: Array length ચેક કરો
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Arguments Maximum Search}
+\end{mnemonicbox}
+
+\questionmarks{2(અ)}{3}{Wrapper ક્લાસ શું છે? ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Wrapper Class}: પ્રિમિટિવ ડેટા ટાઇપ્સને ઓબ્જેક્ટમાં કન્વર્ટ કરે છે.
+
+\begin{center}
+\captionof{table}{Wrapper Classes}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{Primitive} & \textbf{Wrapper Class} \\ \hline
+int & Integer \\ \hline
+char & Character \\ \hline
+boolean & Boolean \\ \hline
+double & Double \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{lstlisting}[language=Java,caption={Wrapper Class Example}]
+// Boxing
+Integer obj = Integer.valueOf(10);
+// Unboxing  
+int value = obj.intValue();
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Wrap Primitives Into Objects}
+\end{mnemonicbox}
+
+\questionmarks{2(બ)}{4}{જાવાના વિવિધ લક્ષણોની યાદી આપો. કોઈપણ બે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Java Features}:
+\begin{itemize}
+    \item \textbf{Simple}: સરળ syntax, pointers નથી
+    \item \textbf{Platform Independent}: એકવાર લખો, દરેક જગ્યાએ ચલાવો
+    \item \textbf{Object Oriented}: ઓબ્જેક્ટ અને ક્લાસ પર આધારિત
+    \item \textbf{Secure}: explicit pointers નથી, bytecode verification
+\end{itemize}
+
+\textbf{વિગતવાર સમજૂતી}:
+\begin{itemize}
+    \item \textbf{Platform Independence}: Java bytecode JVM વાળા કોઈપણ પ્લેટફોર્મ પર ચાલે છે
+    \item \textbf{Object Oriented}: inheritance, encapsulation, polymorphism, abstraction સપોર્ટ કરે છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Simple Platform Object Security}
+\end{mnemonicbox}
+
+\questionmarks{2(ક)}{7}{ઓવરરાઇડિંગ પદ્ધતિ શું છે? ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Method Overriding}: ચાઇલ્ડ ક્લાસ પેરન્ટ ક્લાસની મેથડનું વિશિષ્ટ implementation પ્રદાન કરે છે.
+
+\begin{lstlisting}[language=Java,caption={Method Overriding}]
+class Animal {
+    public void sound() {
+        System.out.println("Animal makes sound");
+    }
+}
+
+class Dog extends Animal {
+    @Override
+    public void sound() {
+        System.out.println("Dog barks");
+    }
+}
+
+public class Test {
+    public static void main(String[] args) {
+        Animal a = new Dog();
+        a.sound(); // Output: Dog barks
+    }
+}
+\end{lstlisting}
+
+\textbf{મુખ્ય મુદ્દાઓ}:
+\begin{itemize}
+    \item \textbf{Runtime Polymorphism}: ઓબ્જેક્ટ ટાઇપના આધારે મેથડ કોલ થાય છે
+    \item \textbf{@Override}: મેથડ ઓવરરાઇડિંગ માટે annotation
+    \item \textbf{Dynamic Binding}: રનટાઇમ પર મેથડ રિઝોલ્યુશન
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Child Changes Parent Method}
+\end{mnemonicbox}
+
+\questionmarks{2(અ OR)}{3}{જાવામાં Garbage collection સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Garbage Collection}: ઓટોમેટિક મેમરી મેનેજમેન્ટ જે અનુપયોગી ઓબ્જેક્ટ્સને દૂર કરે છે.
+
+\begin{center}
+\begin{tikzpicture}[auto, node distance=1.5cm]
+    \node [gtu block] (created) {Object Created};
+    \node [gtu block, right=of created] (used) {Object Used};
+    \node [gtu block, below=of used] (unref) {Object Unreferenced};
+    \node [gtu block, left=of unref] (gc) {Garbage Collector};
+    \node [gtu block, above=of gc] (freed) {Memory Freed};
+
+    \path [gtu arrow] (created) -- (used);
+    \path [gtu arrow] (used) -- (unref);
+    \path [gtu arrow] (unref) -- (gc);
+    \path [gtu arrow] (gc) -- (freed);
+\end{tikzpicture}
+\end{center}
+
+\textbf{મુખ્ય મુદ્દાઓ}:
+\begin{itemize}
+    \item \textbf{Automatic}: મેન્યુઅલ મેમરી deallocation નથી
+    \item \textbf{Mark and Sweep}: અનુપયોગી ઓબ્જેક્ટ્સને ઓળખે અને દૂર કરે છે
+    \item \textbf{Heap Memory}: heap memory area પર કામ કરે છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Auto Clean Unused Objects}
+\end{mnemonicbox}
+
+\questionmarks{2(બ OR)}{4}{static કીવર્ડ ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Static Keyword}: ઇન્સ્ટન્સને બદલે ક્લાસનું છે.
+
+\begin{lstlisting}[language=Java,caption={Static Example}]
+class Student {
+    static String college = "GTU";  // Static variable
+    String name;
+    
+    static void showCollege() {     // Static method
+        System.out.println("College: " + college);
+    }
+}
+\end{lstlisting}
+
+\textbf{Static Features}:
+\begin{itemize}
+    \item \textbf{Memory}: ક્લાસ લોડિંગ ટાઇમે લોડ થાય છે
+    \item \textbf{Access}: ઓબ્જેક્ટ વિના એક્સેસ કરી શકાય છે
+    \item \textbf{Sharing}: બધા instances વચ્ચે શેર થાય છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Class Level Memory Sharing}
+\end{mnemonicbox}
+
+\questionmarks{2(ક OR)}{7}{કન્સ્ટ્રક્ટર શું છે? કોપી કન્સ્ટ્રક્ટરને ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Constructor}: ઓબ્જેક્ટ્સને initialize કરવા માટેની વિશેષ મેથડ.
+
+\begin{lstlisting}[language=Java,caption={Constructor Types}]
+class Person {
+    String name;
+    int age;
+    
+    // Default constructor
+    Person() {
+        name = "Unknown";
+        age = 0;
+    }
+    
+    // Parameterized constructor
+    Person(String n, int a) {
+        name = n;
+        age = a;
+    }
+    
+    // Copy constructor
+    Person(Person p) {
+        name = p.name;
+        age = p.age;
+    }
+}
+\end{lstlisting}
+
+\textbf{Constructor Types}:
+\begin{itemize}
+    \item \textbf{Default}: કોઈ પેરામીટર નથી
+    \item \textbf{Parameterized}: પેરામીટર લે છે
+    \item \textbf{Copy}: અસ્તિત્વમાં રહેલા ઓબ્જેક્ટમાંથી ઓબ્જેક્ટ બનાવે છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Default Parameter Copy}
+\end{mnemonicbox}
+
+\questionmarks{3(અ)}{3}{Super કીવર્ડ ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Super Keyword}: પેરન્ટ ક્લાસના મેમ્બર્સનો રેફરન્સ આપે છે.
+
+\begin{lstlisting}[language=Java,caption={Super Keyword}]
+class Vehicle {
+    String brand = "Generic";
+}
+
+class Car extends Vehicle {
+    String brand = "Toyota";
+    
+    void display() {
+        System.out.println("Child: " + brand);
+        System.out.println("Parent: " + super.brand);
+    }
+}
+\end{lstlisting}
+
+\textbf{Super ના ઉપયોગો}:
+\begin{itemize}
+    \item \textbf{Variables}: પેરન્ટ ક્લાસના વેરિયેબલ્સ એક્સેસ કરવા
+    \item \textbf{Methods}: પેરન્ટ ક્લાસની મેથડ્સ કોલ કરવા
+    \item \textbf{Constructor}: પેરન્ટ ક્લાસનું કન્સ્ટ્રક્ટર કોલ કરવા
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Super Calls Parent}
+\end{mnemonicbox}
+
+\questionmarks{3(બ)}{4}{ઇન્હેરિટન્સના વિવિધ પ્રકારોની યાદી આપો. મલ્ટિલેવલ ઇન્હેરિટન્સ સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Inheritance Types}:
+\begin{center}
+\captionof{table}{Inheritance Types}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{પ્રકાર} & \textbf{વર્ણન} \\ \hline
+Single & એક પેરન્ટ, એક ચાઇલ્ડ \\ \hline
+Multilevel & ઇન્હેરિટન્સની ચેઇન \\ \hline
+Hierarchical & એક પેરન્ટ, અનેક ચાઇલ્ડ \\ \hline
+Multiple & અનેક પેરન્ટ (ઇન્ટરફેસ દ્વારા) \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{Multilevel Inheritance}:
+
+\begin{lstlisting}[language=Java,caption={Multilevel Inheritance}]
+class Animal {
+    void eat() { System.out.println("Eating"); }
+}
+
+class Mammal extends Animal {
+    void breathe() { System.out.println("Breathing"); }
+}
+
+class Dog extends Mammal {
+    void bark() { System.out.println("Barking"); }
+}
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Single Multi Hierarchical Multiple}
+\end{mnemonicbox}
+
+\questionmarks{3(ક)}{7}{ઇન્ટરફેસ શું છે? ઉદાહરણ સાથે મલ્ટીપલ ઇન્હેરિટન્સ સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Interface}: કોન્ટ્રાક્ટ જે વ્યાખ્યાયિત કરે છે કે ક્લાસ શું કરવું જોઈએ, કેવી રીતે નહીં.
+
+\begin{lstlisting}[language=Java,caption={Multiple Inheritance with Interface}]
+interface Flyable {
+    void fly();
+}
+
+interface Swimmable {
+    void swim();
+}
+
+class Duck implements Flyable, Swimmable {
+    public void fly() {
+        System.out.println("Duck is flying");
+    }
+    
+    public void swim() {
+        System.out.println("Duck is swimming");
+    }
+}
+\end{lstlisting}
+
+\textbf{Interface Features}:
+\begin{itemize}
+    \item \textbf{Multiple Inheritance}: ક્લાસ એકથી વધુ ઇન્ટરફેસને implement કરી શકે છે
+    \item \textbf{Abstract Methods}: બધી મેથડ્સ બાય ડિફોલ્ટ abstract હોય છે
+    \item \textbf{Constants}: બધા વેરિયેબલ્સ public, static, final હોય છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Multiple Abstract Constants}
+\end{mnemonicbox}
+
+\questionmarks{3(અ OR)}{3}{final કીવર્ડ ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Final Keyword}: ફેરફાર, ઇન્હેરિટન્સ અથવા ઓવરરાઇડિંગને પ્રતિબંધિત કરે છે.
+
+\begin{lstlisting}[language=Java,caption={Final Keyword}]
+final class Math {           // ઇન્હેરિટ થઈ શકતું નથી
+    final int PI = 3.14;     // બદલી શકાતું નથી
+    
+    final void calculate() { // ઓવરરાઇડ થઈ શકતું નથી
+        System.out.println("Calculating");
+    }
+}
+\end{lstlisting}
+
+\textbf{Final ના ઉપયોગો}:
+\begin{itemize}
+    \item \textbf{Class}: એક્સટેન્ડ કરી શકાતું નથી
+    \item \textbf{Method}: ઓવરરાઇડ કરી શકાતું નથી
+    \item \textbf{Variable}: ફરીથી assign કરી શકાતું નથી
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Final Stops Changes}
+\end{mnemonicbox}
+
+\questionmarks{3(બ OR)}{4}{જાવામાં વિવિધ access controls સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Access Modifiers}:
+
+\begin{center}
+\captionof{table}{Access Modifiers}
+\begin{tabulary}{\linewidth}{|L|C|C|C|C|}
+\hline
+\textbf{Modifier} & \textbf{Same Class} & \textbf{Same Package} & \textbf{Subclass} & \textbf{Diff Package} \\ \hline
+public & \checkmark & \checkmark & \checkmark & \checkmark \\ \hline
+protected & \checkmark & \checkmark & \checkmark & \ding{55} \\ \hline
+default & \checkmark & \checkmark & \ding{55} & \ding{55} \\ \hline
+private & \checkmark & \ding{55} & \ding{55} & \ding{55} \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Public Protected Default Private}
+\end{mnemonicbox}
+
+\questionmarks{3(ક OR)}{7}{પેકેજ શું છે? પેકેજ બનાવવા માટેના પગલાં લખો અને તેનું ઉદાહરણ આપો.}
+
+\begin{solutionbox}
+\textbf{Package}: સંબંધિત ક્લાસ અને ઇન્ટરફેસનું જૂથ.
+
+\textbf{પેકેજ બનાવવાના પગલાં}:
+\begin{enumerate}
+    \item \textbf{Declare}: ટોચ પર \code{package} વિધાન વાપરો
+    \item \textbf{Compile}: \code{javac -d . ClassName.java}
+    \item \textbf{Run}: \code{java packagename.ClassName}
+\end{enumerate}
+
+\begin{lstlisting}[language=Java,caption={Package Example}]
+// File: mypack/Calculator.java
+package mypack;
+
+public class Calculator {
+    public int add(int a, int b) {
+        return a + b;
+    }
+}
+
+// File: Test.java
+import mypack.Calculator;
+
+public class Test {
+    public static void main(String[] args) {
+        Calculator calc = new Calculator();
+        System.out.println(calc.add(5, 3));
+    }
+}
+\end{lstlisting}
+
+\textbf{Package ના ફાયદા}:
+\begin{itemize}
+    \item \textbf{Organization}: સંબંધિત ક્લાસને જૂથબદ્ધ કરે છે
+    \item \textbf{Access Control}: પેકેજ-લેવલ સુરક્ષા
+    \item \textbf{Namespace}: નામના સંઘર્ષ (naming conflicts) ને ટાળે છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Declare Compile Run}
+\end{mnemonicbox}
+
+\questionmarks{4(અ)}{3}{યોગ્ય ઉદાહરણ સાથે થ્રેડ પ્રાયોરિટીઝ સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Thread Priority}: થ્રેડ એક્ઝિક્યુશનનો ક્રમ નક્કી કરે છે (1-10 સ્કેલ).
+
+\begin{lstlisting}[language=Java,caption={Thread Priority}]
+class MyThread extends Thread {
+    public void run() {
+        System.out.println(getName() + " Priority: " + getPriority());
+    }
+}
+
+public class ThreadPriorityExample {
+    public static void main(String[] args) {
+        MyThread t1 = new MyThread();
+        MyThread t2 = new MyThread();
+        
+        t1.setPriority(Thread.MIN_PRIORITY);  // 1
+        t2.setPriority(Thread.MAX_PRIORITY);  // 10
+        
+        t1.start();
+        t2.start();
+    }
+}
+\end{lstlisting}
+
+\textbf{Priority Constants}:
+\begin{itemize}
+    \item \textbf{MIN\_PRIORITY}: 1
+    \item \textbf{NORM\_PRIORITY}: 5  
+    \item \textbf{MAX\_PRIORITY}: 10
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Min Normal Max}
+\end{mnemonicbox}
+
+\questionmarks{4(બ)}{4}{થ્રેડ શું છે? થ્રેડ લાઈફ સાયકલ સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Thread}: એકસાથે એક્ઝિક્યુશન માટે લાઇટવેઇટ પ્રોસેસ.
+
+\begin{center}
+\begin{tikzpicture}[auto, node distance=2cm]
+    \node [gtu state] (new) {New};
+    \node [gtu state, right=of new] (runnable) {Runnable};
+    \node [gtu state, right=of runnable] (running) {Running};
+    \node [gtu state, right=of running] (dead) {Dead};
+    \node [gtu state, below=of running] (blocked) {Blocked};
+
+    \path [gtu arrow] (new) -- node {start()} (runnable);
+    \path [gtu arrow] (runnable) -- node {CPU allocation} (running);
+    \path [gtu arrow] (running) -- node {complete} (dead);
+    \path [gtu arrow] (running) edge[bend right] node[left] {wait/sleep} (blocked);
+    \path [gtu arrow] (blocked) edge[bend right] node[right] {notify/timeout} (runnable);
+\end{tikzpicture}
+\end{center}
+
+\textbf{Thread States}:
+\begin{itemize}
+    \item \textbf{New}: થ્રેડ બન્યો પણ શરૂ થયો નથી
+    \item \textbf{Runnable}: રન થવા માટે તૈયાર
+    \item \textbf{Running}: હાલમાં એક્ઝિક્યુટ થઈ રહ્યો છે
+    \item \textbf{Blocked}: રિસોર્સ માટે રાહ જોઈ રહ્યો છે
+    \item \textbf{Dead}: એક્ઝિક્યુશન પૂર્ણ થયું
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{New Runnable Running Blocked Dead}
+\end{mnemonicbox}
+
+\questionmarks{4(ક)}{7}{Runnable ઇન્ટરફેસનો અમલ કરીને મલ્ટીપલ થ્રેડ બનાવે તેવો જાવા પ્રોગ્રામ લખો.}
+
+\begin{solutionbox}
+\begin{lstlisting}[language=Java,caption={Multiple Threads}]
+class MyRunnable implements Runnable {
+    private String threadName;
+    
+    MyRunnable(String name) {
+        threadName = name;
+    }
+    
+    public void run() {
+        for(int i = 1; i <= 5; i++) {
+            System.out.println(threadName + " - Count: " + i);
+            try {
+                Thread.sleep(1000);
+            } catch(InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+
+public class MultipleThreads {
+    public static void main(String[] args) {
+        Thread t1 = new Thread(new MyRunnable("Thread-1"));
+        Thread t2 = new Thread(new MyRunnable("Thread-2"));
+        Thread t3 = new Thread(new MyRunnable("Thread-3"));
+        
+        t1.start();
+        t2.start(); 
+        t3.start();
+    }
+}
+\end{lstlisting}
+
+\textbf{મુખ્ય મુદ્દાઓ}:
+\begin{itemize}
+    \item \textbf{Runnable Interface}: Thread ક્લાસને extend કરવા કરતા વધુ સારું
+    \item \textbf{Thread.sleep()}: થ્રેડ એક્ઝિક્યુશનને થોભાવે છે
+    \item \textbf{Multiple Threads}: એકસાથે રન થાય છે (conucrently)
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Implement Runnable Start Multiple}
+\end{mnemonicbox}
+
+\questionmarks{4(અ OR)}{3}{ચાર અલગ અલગ ઇનબિલ્ટ એક્સેપ્શનની યાદી આપો. કોઈપણ એક સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Inbuilt Exceptions}:
+\begin{itemize}
+    \item \textbf{NullPointerException}: null ઓબ્જેક્ટ એક્સેસ કરવું
+    \item \textbf{ArrayIndexOutOfBoundsException}: અમાન્ય એરે ઇન્ડેક્સ
+    \item \textbf{ArithmeticException}: શૂન્ય વડે ભાગાકાર
+    \item \textbf{NumberFormatException}: અમાન્ય નંબર ફોર્મેટ
+\end{itemize}
+
+\textbf{ArithmeticException}: જ્યારે એરિથમેટિક ઑપરેશન નિષ્ફળ જાય ત્યારે throw થાય છે.
+
+\begin{lstlisting}[language=Java,caption={ArithmeticException}]
+int result = 10 / 0; // Throws ArithmeticException
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Null Array Arithmetic Number}
+\end{mnemonicbox}
+
+\questionmarks{4(બ OR)}{4}{Try અને Catch યોગ્ય ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Try-Catch}: એક્સેપ્શન હેન્ડલિંગ મિકેનિઝમ.
+
+\begin{lstlisting}[language=Java,caption={Try Catch Example}]
+public class TryCatchExample {
+    public static void main(String[] args) {
+        try {
+            int[] arr = {1, 2, 3};
+            System.out.println(arr[5]); // Index out of bounds
+        }
+        catch(ArrayIndexOutOfBoundsException e) {
+            System.out.println("Array index error: " + e.getMessage());
+        }
+        finally {
+            System.out.println("Always executed");
+        }
+    }
+}
+\end{lstlisting}
+
+\textbf{Exception Handling Flow}:
+\begin{itemize}
+    \item \textbf{Try}: કોડ જે એક્સેપ્શન throw કરી શકે છે
+    \item \textbf{Catch}: ચોક્કસ એક્સેપ્શન હેન્ડલ કરે છે
+    \item \textbf{Finally}: હંમેશા એક્ઝિક્યુટ થાય છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Try Catch Finally}
+\end{mnemonicbox}
+
+\questionmarks{4(ક OR)}{7}{Exception શું છે? Arithmetic Exception નો ઉપયોગ દર્શાવતો પ્રોગ્રામ લખો.}
+
+\begin{solutionbox}
+\textbf{Exception}: રનટાઇમ એરર જે સામાન્ય પ્રોગ્રામ ફ્લોને વિક્ષેપિત કરે છે.
+
+\begin{lstlisting}[language=Java,caption={ArithmeticException Example}]
+public class ArithmeticExceptionExample {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        
+        try {
+            System.out.print("Enter first number: ");
+            int num1 = sc.nextInt();
+            
+            System.out.print("Enter second number: ");
+            int num2 = sc.nextInt();
+            
+            int result = num1 / num2;
+            System.out.println("Result: " + result);
+        }
+        catch(ArithmeticException e) {
+            System.out.println("Error: Cannot divide by zero!");
+        }
+        catch(Exception e) {
+            System.out.println("General error: " + e.getMessage());
+        }
+        finally {
+            sc.close();
+        }
+    }
+}
+\end{lstlisting}
+
+\textbf{Exception Types}:
+\begin{itemize}
+    \item \textbf{Checked}: Compile-time exceptions
+    \item \textbf{Unchecked}: Runtime exceptions
+    \item \textbf{Error}: System-level problems
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Runtime Error Disrupts Flow}
+\end{mnemonicbox}
+
+\questionmarks{5(અ)}{3}{Java માં ArrayIndexOutOfBound Exception ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{ArrayIndexOutOfBoundsException}: જ્યારે અમાન્ય એરે ઇન્ડેક્સ એક્સેસ કરવામાં આવે ત્યારે throw થાય છે.
+
+\begin{lstlisting}[language=Java,caption={ArrayIndexOutOfBoundsException}]
+public class ArrayIndexExample {
+    public static void main(String[] args) {
+        int[] numbers = {10, 20, 30};
+        
+        try {
+            System.out.println(numbers[5]); // Invalid index
+        }
+        catch(ArrayIndexOutOfBoundsException e) {
+            System.out.println("Invalid array index: " + e.getMessage());
+        }
+    }
+}
+\end{lstlisting}
+
+\textbf{મુખ્ય મુદ્દાઓ}:
+\begin{itemize}
+    \item \textbf{Valid Range}: 0 to array.length-1
+    \item \textbf{Negative Index}: આ પણ એક્સેપ્શન throw કરે છે
+    \item \textbf{Runtime Exception}: Unchecked exception
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Array Index Range Check}
+\end{mnemonicbox}
+
+\questionmarks{5(બ)}{4}{સ્ટ્રીમ ક્લાસીસના બેઝિક્સ સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Stream Classes}: ઇનપુટ/આઉટપુટ ઓપરેશન્સ હેન્ડલ કરે છે.
+
+\begin{center}
+\captionof{table}{Stream Classes}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{Stream Type} & \textbf{Classes} \\ \hline
+Byte Streams & InputStream, OutputStream \\ \hline
+Character Streams & Reader, Writer \\ \hline
+File Streams & FileInputStream, FileOutputStream \\ \hline
+Buffered Streams & BufferedReader, BufferedWriter \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[auto, node distance=1.5cm]
+    \node [gtu block] (stream) {Stream Classes};
+    \node [gtu block, below left=of stream, text width=3cm] (byte) {Byte Streams};
+    \node [gtu block, below right=of stream, text width=3cm] (char) {Character Streams};
+    
+    \node [gtu block, below=0.5cm of byte, text width=3cm] (input) {InputStream};
+    \node [gtu block, below=0.5cm of input, text width=3cm] (output) {OutputStream};
+    
+    \node [gtu block, below=0.5cm of char, text width=3cm] (reader) {Reader};
+    \node [gtu block, below=0.5cm of reader, text width=3cm] (writer) {Writer};
+
+    \path [gtu arrow] (stream) -- (byte);
+    \path [gtu arrow] (stream) -- (char);
+    \path [gtu arrow] (byte) -- (input);
+    \path [gtu arrow] (byte) -- (output);
+    \path [gtu arrow] (char) -- (reader);
+    \path [gtu arrow] (char) -- (writer);
+\end{tikzpicture}
+\end{center}
+
+\textbf{Stream Features}:
+\begin{itemize}
+    \item \textbf{Sequential}: ડેટા ક્રમમાં વહે છે
+    \item \textbf{One Direction}: કાં તો ઇનપુટ અથવા આઉટપુટ
+    \item \textbf{Automatic}: નીચલા સ્તરની વિગતો (low-level details) હેન્ડલ કરે છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Byte Character File Buffered}
+\end{mnemonicbox}
+
+\questionmarks{5(ક)}{7}{ટેક્સ્ટ ફાઇલ બનાવવા માટે જાવા પ્રોગ્રામ લખો અને ટેક્સ્ટ ફાઇલ પર રીડ ઑપરેશન કરો.}
+
+\begin{solutionbox}
+\begin{lstlisting}[language=Java,caption={File Create and Read}]
+import java.io.*;
+
+public class FileReadExample {
+    public static void main(String[] args) {
+        // Create and write to file
+        try {
+            FileWriter writer = new FileWriter("sample.txt");
+            writer.write("Hello World!\n");
+            writer.write("Java File Handling\n");
+            writer.write("GTU Exam 2024");
+            writer.close();
+            System.out.println("File created successfully");
+        }
+        catch(IOException e) {
+            System.out.println("Error creating file: " + e.getMessage());
+        }
+        
+        // Read from file
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("sample.txt"));
+            String line;
+            
+            System.out.println("\nFile contents:");
+            while((line = reader.readLine()) != null) {
+                System.out.println(line);
+            }
+            reader.close();
+        }
+        catch(IOException e) {
+            System.out.println("Error reading file: " + e.getMessage());
+        }
+    }
+}
+\end{lstlisting}
+
+\textbf{મુખ્ય મુદ્દાઓ}:
+\begin{itemize}
+    \item \textbf{FileWriter}: ફાઇલ બનાવે અને લખે છે
+    \item \textbf{BufferedReader}: કાર્યક્ષમ વાંચન
+    \item \textbf{Exception Handling}: IOException handle કરો
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Create Write Read Close}
+\end{mnemonicbox}
+
+\questionmarks{5(અ OR)}{3}{Java માં Divide by Zero Exception ને ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{ArithmeticException}: શૂન્યથી ભાગાકાર ઑપરેશન દરમિયાન throw થાય છે.
+
+\begin{lstlisting}[language=Java,caption={Divide by Zero}]
+public class DivideByZeroExample {
+    public static void main(String[] args) {
+        try {
+            int a = 10;
+            int b = 0;
+            int result = a / b;  // Throws ArithmeticException
+            System.out.println("Result: " + result);
+        }
+        catch(ArithmeticException e) {
+            System.out.println("Cannot divide by zero: " + e.getMessage());
+        }
+    }
+}
+\end{lstlisting}
+
+\textbf{મુખ્ય મુદ્દાઓ}:
+\begin{itemize}
+    \item \textbf{Integer Division}: માત્ર integer division by zero exception throw કરે છે
+    \item \textbf{Floating Point}: floating point division માટે Infinity return કરે છે
+\item \textbf{Runtime Exception}: Unchecked exception
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Zero Division Arithmetic Error}
+\end{mnemonicbox}
+
+\questionmarks{5(બ OR)}{4}{java I/O પ્રક્રિયા સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Java I/O Process}: ડેટા વાંચવા અને લખવાની પદ્ધતિ.
+
+\begin{center}
+\begin{tikzpicture}[auto, node distance=2cm]
+    \node [gtu block, text width=3cm] (source) {Data Source};
+    \node [gtu block, right=of source, text width=3cm] (input) {Input Stream};
+    \node [gtu block, right=of input, text width=3cm] (prog) {Java Program};
+    \node [gtu block, below=of prog, text width=3cm] (output) {Output Stream};
+    \node [gtu block, left=of output, text width=3cm] (dest) {Data Destination};
+
+    \path [gtu arrow] (source) -- (input);
+    \path [gtu arrow] (input) -- (prog);
+    \path [gtu arrow] (prog) -- (output);
+    \path [gtu arrow] (output) -- (dest);
+\end{tikzpicture}
+\end{center}
+
+\textbf{I/O Components}:
+\begin{itemize}
+    \item \textbf{Stream}: ડેટાનો ક્રમ
+    \item \textbf{Buffer}: કાર્યક્ષમતા માટે અસ્થાયી સ્ટોરેજ
+    \item \textbf{File}: સ્થાયી સ્ટોરેજ
+    \item \textbf{Network}: દૂરસ્થ ડેટા ટ્રાન્સફર
+\end{itemize}
+
+\textbf{I/O Types}:
+\begin{itemize}
+    \item \textbf{Byte-oriented}: કાચો ડેટા (images, videos)
+    \item \textbf{Character-oriented}: ટેક્સ્ટ ડેટા
+    \item \textbf{Synchronous}: Blocking operations
+    \item \textbf{Asynchronous}: Non-blocking operations
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Stream Buffer File Network}
+\end{mnemonicbox}
+
+\questionmarks{5(ક OR)}{7}{ટેક્સ્ટ ફાઇલ બનાવવા માટે જાવા પ્રોગ્રામ લખો અને ટેક્સ્ટ ફાઇલ પર રાઇટ ઑપરેશન કરો.}
+
+\begin{solutionbox}
+\begin{lstlisting}[language=Java,caption={File Write Example}]
+import java.io.*;
+import java.util.Scanner;
+
+public class FileWriteExample {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        
+        try {
+            // Create file with FileWriter
+            FileWriter writer = new FileWriter("student.txt");
+            
+            System.out.println("વિદ્યાર્થીની વિગતો દાખલ કરો:");
+            System.out.print("નામ: ");
+            String name = sc.nextLine();
+            
+            System.out.print("રોલ નંબર: ");
+            String rollNo = sc.nextLine();
+            
+            System.out.print("શાખા: ");
+            String branch = sc.nextLine();
+            
+            // Write data to file
+            writer.write("Student Information\n");
+            writer.write("==================\n");
+            writer.write("નામ: " + name + "\n");
+            writer.write("રોલ નંબર: " + rollNo + "\n");
+            writer.write("શાખા: " + branch + "\n");
+            writer.write("તારીખ: " + new java.util.Date() + "\n");
+            
+            writer.close();
+            System.out.println("\nડેટા સફળતાપૂર્વક ફાઇલમાં લખાયો!");
+            
+        }
+        catch(IOException e) {
+            System.out.println("ફાઇલમાં લખવામાં એરર: " + e.getMessage());
+        }
+        finally {
+            sc.close();
+        }
+    }
+}
+\end{lstlisting}
+
+\textbf{મુખ્ય મુદ્દાઓ}:
+\begin{itemize}
+    \item \textbf{FileWriter}: ફાઇલમાં character data લખે છે
+    \item \textbf{BufferedWriter}: મોટા ડેટા માટે વધુ કાર્યક્ષમ
+    \item \textbf{Auto-close}: automatic closing માટે try-with-resources વાપરો
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Create Write Close Handle}
+\end{mnemonicbox}
+
+\end{document}
+
+
+

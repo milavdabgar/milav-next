@@ -1,0 +1,1218 @@
+\documentclass{article}
+\input{c:/Users/milav/OneDrive/Git/milav-next/latex-templates/gtu-solutions/preamble.tex}
+\input{c:/Users/milav/OneDrive/Git/milav-next/latex-templates/gtu-solutions/gujarati-boxes.tex}
+\input{c:/Users/milav/OneDrive/Git/milav-next/latex-templates/gtu-solutions/commands.tex}
+
+\title{ઑબ્જેક્ટ ઓરિએન્ટેડ પ્રોગ્રામિંગ વિથ જાવા (4341602) - સમર 2023 સોલ્યુશન}
+\date{July 15, 2023}
+
+\begin{document}
+\maketitle
+
+\questionmarks{1(a)}{3}{પ્રોસિજર-ઓરિએન્ટેડ પ્રોગ્રામિંગ (POP) અને ઑબ્જેક્ટ-ઓરિએન્ટેડ પ્રોગ્રામિંગ (OOP) વચ્ચે તફાવત કરો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{POP vs OOP}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પાસું} & \textbf{POP} & \textbf{OOP} \\ \hline
+ધ્યાન & ફંક્શન્સ/પ્રોસિજર્સ & ઑબ્જેક્ટ્સ અને ક્લાસ્સિઝ \\ \hline
+ડેટા સિક્યોરિટી & ઓછી સુરક્ષા, ગ્લોબલ ડેટા & વધુ સુરક્ષા, ડેટા encapsulation \\ \hline
+સમસ્યા ઉકેલ & ટોપ-ડાઉન એપ્રોચ & બોટમ-અપ એપ્રોચ \\ \hline
+કોડ પુનઃઉપયોગ & મર્યાદિત & inheritance દ્વારા વધુ \\ \hline
+ઉદાહરણો & C, Pascal & Java, C++, Python \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{POP}: પ્રોગ્રામ ફંક્શન્સમાં વિભાજિત, ડેટા ફંક્શન્સ વચ્ચે વહે છે
+    \item \keyword{OOP}: પ્રોગ્રામ ઑબ્જેક્ટ્સની આસપાસ ગોઠવાયેલું જેમાં ડેટા અને મેથડ્સ બંને હોય છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{POP Functions, OOP Objects}
+\end{mnemonicbox}
+
+\questionmarks{1(b)}{4}{યોગ્ય ઉદાહરણ સાથે inheritance માં Super કીવર્ડ સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Super કીવર્ડ} નો ઉપયોગ child class માંથી parent class ના members ને access કરવા માટે થાય છે.
+
+\begin{center}
+\captionof{table}{Super કીવર્ડના ઉપયોગો}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{ઉપયોગ} & \textbf{હેતુ} & \textbf{ઉદાહરણ} \\ \hline
+\code{super()} & parent constructor ને કૉલ કરે & \code{super(name, age)} \\ \hline
+\code{super.method()} & parent method ને કૉલ કરે & \code{super.display()} \\ \hline
+\code{super.variable} & parent variable ને access કરે & \code{super.name} \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{lstlisting}[language=Java,caption={Super કીવર્ડ ઉદાહરણ}]
+class Animal {
+    String name = "Animal";
+    void eat() { System.out.println("Animal eats"); }
+}
+
+class Dog extends Animal {
+    String name = "Dog";
+    void eat() {
+        super.eat(); // parent method ને કૉલ કરે છે
+        System.out.println("Dog eats bones");
+    }
+    void display() {
+        System.out.println(super.name); // "Animal" પ્રિન્ટ કરે છે
+    }
+}
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Super Calls Parent}
+\end{mnemonicbox}
+
+\questionmarks{1(c)}{7}{વ્યાખ્યાયિત કરો: મેથડ ઓવરરાઇડિંગ. મેથડ ઓવરરાઇડિંગ માટેના નિયમોની યાદી બનાવો. એક જાવા પ્રોગ્રામ લખો જે મેથડ ઓવરરાઇડિંગને implement કરે છે.}
+
+\begin{solutionbox}
+\textbf{મેથડ ઓવરરાઇડિંગ}: Child class પોતાની parent class ના method નું specific implementation આપે છે સમાન signature સાથે.
+
+\begin{center}
+\captionof{table}{મેથડ ઓવરરાઇડિંગના નિયમો}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{નિયમ} & \textbf{વર્ણન} \\ \hline
+સમાન નામ & મેથડનું નામ સમાન હોવું જોઈએ \\ \hline
+સમાન parameters & Parameter list બરાબર મેચ થવી જોઈએ \\ \hline
+IS-A સંબંધ & inheritance હોવું જરૂરી \\ \hline
+Access modifier & visibility ઘટાડી શકાતી નથી \\ \hline
+Return type & સમાન અથવા covariant હોવું જોઈએ \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{lstlisting}[language=Java,caption={મેથડ ઓવરરાઇડિંગ ઉદાહરણ}]
+class Shape {
+    void draw() {
+        System.out.println("Drawing a shape");
+    }
+}
+
+class Circle extends Shape {
+    @Override
+    void draw() {
+        System.out.println("Drawing a circle");
+    }
+}
+
+class Main {
+    public static void main(String[] args) {
+        Shape s = new Circle();
+        s.draw(); // આઉટપુટ: Drawing a circle
+    }
+}
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Override Same Signature}
+\end{mnemonicbox}
+
+\questionmarks{1(c OR)}{7}{વર્ણવો: ઇન્ટરફેસ. મલ્ટિપલ inheritance ને દર્શાવવા માટે interface નો ઉપયોગ કરીને જાવા પ્રોગ્રામ લખો.}
+
+\begin{solutionbox}
+\textbf{Interface}: blueprint જેમાં abstract methods અને constants હોય છે. Classes interfaces ને implement કરીને multiple inheritance પ્રાપ્ત કરે છે.
+
+\begin{center}
+\captionof{table}{Interface ની વિશેષતાઓ}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{વિશેષતા} & \textbf{વર્ણન} \\ \hline
+Abstract methods & કોઈ implementation નથી (Java 8 પહેલાં) \\ \hline
+Constants & બધા variables public static final છે \\ \hline
+Multiple inheritance & Class અનેક interfaces implement કરી શકે \\ \hline
+Default methods & Concrete methods (Java 8+) \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{lstlisting}[language=Java,caption={Interface ઉદાહરણ}]
+interface Flyable {
+    void fly();
+}
+
+interface Swimmable {
+    void swim();
+}
+
+class Duck implements Flyable, Swimmable {
+    public void fly() {
+        System.out.println("Duck flies");
+    }
+    
+    public void swim() {
+        System.out.println("Duck swims");
+    }
+}
+
+class Main {
+    public static void main(String[] args) {
+        Duck d = new Duck();
+        d.fly();
+        d.swim();
+    }
+}
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Interface Multiple Implementation}
+\end{mnemonicbox}
+
+\questionmarks{2(a)}{3}{ઉદાહરણ સાથે Java પ્રોગ્રામ સ્ટ્રક્ચર સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Java પ્રોગ્રામ સ્ટ્રક્ચર} માં package, imports, class declaration અને main method હોય છે.
+
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm, auto]
+    \node [gtu block] (pkg) {Package statement};
+    \node [gtu block, below=0.5cm of pkg] (imp) {Import statements};
+    \node [gtu block, below=0.5cm of imp] (cls) {Class declaration};
+    \node [gtu block, below=0.5cm of cls] (vars) {Variables};
+    \node [gtu block, below=0.5cm of vars] (meth) {Methods};
+    
+    \path [gtu arrow] (pkg) -- (imp);
+    \path [gtu arrow] (imp) -- (cls);
+    \path [gtu arrow] (cls) -- (vars);
+    \path [gtu arrow] (vars) -- (meth);
+\end{tikzpicture}
+\captionof{figure}{Java પ્રોગ્રામ સ્ટ્રક્ચર}
+\end{center}
+
+\begin{lstlisting}[language=Java,caption={પ્રોગ્રામ સ્ટ્રક્ચર ઉદાહરણ}]
+package com.example;        // Package
+import java.util.*;         // Import
+
+public class HelloWorld {   // Class
+    static int count = 0;   // Variable
+    
+    public static void main(String[] args) { // Main method
+        System.out.println("Hello World");
+    }
+}
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Package Import Class Main}
+\end{mnemonicbox}
+
+\questionmarks{2(b)}{4}{યોગ્ય ઉદાહરણ સાથે static કીવર્ડ સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Static કીવર્ડ} class નું છે instance નું નહીં. memory એક વાર allocate થાય છે.
+
+\begin{center}
+\captionof{table}{Static ના ઉપયોગો}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પ્રકાર} & \textbf{વર્ણન} & \textbf{ઉદાહરણ} \\ \hline
+Static variable & બધા objects દ્વારા shared & \code{static int count} \\ \hline
+Static method & object વિના કૉલ થાય & \code{static void display()} \\ \hline
+Static block & main પહેલાં execute થાય & \code{static \{ \}} \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{lstlisting}[language=Java,caption={Static કીવર્ડ ઉદાહરણ}]
+class Student {
+    static String college = "GTU";  // static variable
+    String name;
+    
+    static void showCollege() {     // static method
+        System.out.println(college);
+    }
+    
+    static {                        // static block
+        System.out.println("Static block executed");
+    }
+}
+
+class Main {
+    public static void main(String[] args) {
+        Student.showCollege(); // કોઈ object ની જરૂર નથી
+    }
+}
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Static Shared by Class}
+\end{mnemonicbox}
+
+\questionmarks{2(c)}{7}{વ્યાખ્યાયિત કરો: કન્સ્ટ્રક્ટર. તેના પ્રકારોની યાદી બનાવો. પેરામીટરાઇઝ્ડ અને કોપી કન્સ્ટ્રક્ટરને યોગ્ય ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{કન્સ્ટ્રક્ટર}: objects ને initialize કરવા માટેની special method, class જેવું જ નામ, કોઈ return type નથી.
+
+\begin{center}
+\captionof{table}{કન્સ્ટ્રક્ટરના પ્રકારો}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પ્રકાર} & \textbf{વર્ણન} & \textbf{ઉદાહરણ} \\ \hline
+Default & કોઈ parameters નથી & \code{Student()} \\ \hline
+Parameterized & parameters સાથે & \code{Student(String n)} \\ \hline
+Copy & object ની copy બનાવે & \code{Student(Student s)} \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{lstlisting}[language=Java,caption={કન્સ્ટ્રક્ટર ઉદાહરણ}]
+class Student {
+    String name;
+    int age;
+    
+    // Parameterized constructor
+    Student(String n, int a) {
+        name = n;
+        age = a;
+    }
+    
+    // Copy constructor
+    Student(Student s) {
+        name = s.name;
+        age = s.age;
+    }
+    
+    void display() {
+        System.out.println(name + " " + age);
+    }
+}
+
+class Main {
+    public static void main(String[] args) {
+        Student s1 = new Student("John", 20);  // Parameterized
+        Student s2 = new Student(s1);          // Copy
+        s1.display();
+        s2.display();
+    }
+}
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Constructor Initializes Objects}
+\end{mnemonicbox}
+
+\questionmarks{2(a OR)}{3}{જાવામાં પ્રિમિટિવ ડેટા પ્રકારો અને યુઝર ડિફાઇન્ડ ડેટા પ્રકારો સમજાવો.}
+
+\begin{solutionbox}
+\textbf{પ્રિમિટિવ ડેટા ટાઇપ્સ}: Java language દ્વારા આપવામાં આવેલા built-in types.
+\textbf{યુઝર ડિફાઇન્ડ ટાઇપ્સ}: programmer દ્વારા classes વાપરીને બનાવવામાં આવેલા custom types.
+
+\begin{center}
+\captionof{table}{ડેટા ટાઇપ્સ}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{કેટેગરી} & \textbf{પ્રકારો} & \textbf{સાઇઝ} & \textbf{ઉદાહરણ} \\ \hline
+Primitive & byte, short, int, long & 1,2,4,8 bytes & \code{int x = 10;} \\ \hline
+Primitive & float, double & 4,8 bytes & \code{double d = 3.14;} \\ \hline
+Primitive & char, boolean & 2,1 bytes & \code{char c = 'A';} \\ \hline
+User Defined & Class, Interface, Array & Variable & \code{Student s;} \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{Primitive}: stack માં store થાય, ઝડપી access
+    \item \keyword{User Defined}: heap માં store થાય, જટિલ operations
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Primitive Built-in, User Custom}
+\end{mnemonicbox}
+
+\questionmarks{2(b OR)}{4}{યોગ્ય ઉદાહરણ સાથે this કીવર્ડ સમજાવો.}
+
+\begin{solutionbox}
+\textbf{This કીવર્ડ} વર્તમાન object instance ને refer કરે છે, instance અને local variables વચ્ચે ભેદ પાડવા માટે વાપરાય છે.
+
+\begin{center}
+\captionof{table}{This કીવર્ડના ઉપયોગો}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{ઉપયોગ} & \textbf{હેતુ} & \textbf{ઉદાહરણ} \\ \hline
+\code{this.variable} & instance variable access & \code{this.name = name;} \\ \hline
+\code{this.method()} & instance method call & \code{this.display();} \\ \hline
+\code{this()} & constructor call & \code{this(name, age);} \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{lstlisting}[language=Java,caption={This કીવર્ડ ઉદાહરણ}]
+class Student {
+    String name;
+    int age;
+    
+    Student(String name, int age) {
+        this.name = name;    // this instance અને parameter વચ્ચે
+        this.age = age;      // ભેદ પાડે છે
+    }
+    
+    void setData(String name) {
+        this.name = name;    // this વર્તમાન object ને refer કરે
+    }
+    
+    void display() {
+        System.out.println(this.name + " " + this.age);
+    }
+}
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{This Current Object}
+\end{mnemonicbox}
+
+\questionmarks{2(c OR)}{7}{ઇનહેરિટન્સ વ્યાખ્યાયિત કરો. તેના પ્રકારોની યાદી બનાવો. multilevel અને hierarchical ઇનહેરિટન્સને યોગ્ય ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Inheritance}: mechanism જેમાં child class parent class ના properties અને methods મેળવે છે.
+
+\begin{center}
+\captionof{table}{Inheritance ના પ્રકારો}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પ્રકાર} & \textbf{વર્ણન} & \textbf{સ્ટ્રક્ચર} \\ \hline
+Single & એક parent, એક child & A $\to$ B \\ \hline
+Multilevel & inheritance ની chain & A $\to$ B $\to$ C \\ \hline
+Hierarchical & એક parent, અનેક children & A $\to$ B, A $\to$ C \\ \hline
+Multiple & અનેક parents (interfaces) & B,C $\to$ A \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm]
+    \node (A) {Animal};
+    \node [right=1cm of A] (B) {Mammal};
+    \node [right=1cm of B] (C) {Dog};
+    \draw [->] (A) -- (B);
+    \draw [->] (B) -- (C);
+\end{tikzpicture}
+\captionof{figure}{Multilevel Inheritance}
+\end{center}
+
+\begin{lstlisting}[language=Java,caption={Multilevel Inheritance ઉદાહરણ}]
+class Animal {
+    void eat() { System.out.println("Animal eats"); }
+}
+
+class Mammal extends Animal {
+    void breathe() { System.out.println("Mammal breathes"); }
+}
+
+class Dog extends Mammal {
+    void bark() { System.out.println("Dog barks"); }
+}
+\end{lstlisting}
+
+\begin{center}
+\begin{tikzpicture}[level distance=1.5cm, sibling distance=2.5cm]
+  \node {Shape}
+    child { node {Circle} }
+    child { node {Rectangle} }
+    child { node {Triangle} };
+\end{tikzpicture}
+\captionof{figure}{Hierarchical Inheritance}
+\end{center}
+
+\begin{lstlisting}[language=Java,caption={Hierarchical Inheritance ઉદાહરણ}]
+class Shape {
+    void draw() { System.out.println("Drawing shape"); }
+}
+
+class Circle extends Shape {
+    void drawCircle() { System.out.println("Drawing circle"); }
+}
+
+class Rectangle extends Shape {
+    void drawRectangle() { System.out.println("Drawing rectangle"); }
+}
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Inheritance Properties Shares}
+\end{mnemonicbox}
+
+\questionmarks{3(a)}{3}{જાવામાં ટાઇપ કન્વર્ઝન અને કાસ્ટિંગ સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Type Conversion}: એક data type ને બીજામાં બદલવું.
+\textbf{Casting}: programmer દ્વારા explicit type conversion.
+
+\begin{center}
+\captionof{table}{Type Conversion}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Type} & \textbf{Description} & \textbf{Example} \\ \hline
+Implicit (Widening) & Automatic, smaller to larger & int to double \\ \hline
+Explicit (Narrowing) & Manual, larger to smaller & double to int \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{lstlisting}[language=Java,caption={Conversion vs Casting}]
+// Implicit conversion
+int i = 10;
+double d = i;        // int થી double (automatic)
+
+// Explicit casting
+double x = 10.5;
+int y = (int) x;     // double થી int (manual)
+
+// String conversion
+String s = String.valueOf(i);    // int થી String
+int z = Integer.parseInt("123"); // String થી int
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Implicit Auto, Explicit Manual}
+\end{mnemonicbox}
+
+\questionmarks{3(b)}{4}{Java માં ઉપયોગમાં લેવાતા વિવિધ visibility controls સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Visibility Controls (Access Modifiers)}: classes, methods અને variables ના access ને control કરે છે.
+
+\begin{center}
+\captionof{table}{Access Modifiers}
+\begin{tabulary}{\linewidth}{|L|C|C|C|C|}
+\hline
+\textbf{Modifier} & \textbf{Class} & \textbf{Pkg} & \textbf{Sub} & \textbf{Diff Pkg} \\ \hline
+private & \checkmark & \times & \times & \times \\ \hline
+default & \checkmark & \checkmark & \times & \times \\ \hline
+protected & \checkmark & \checkmark & \checkmark & \times \\ \hline
+public & \checkmark & \checkmark & \checkmark & \checkmark \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{lstlisting}[language=Java,caption={Access Modifiers ઉદાહરણ}]
+class Example {
+    private int x = 10;      // માત્ર class અંદર
+    int y = 20;              // Package level
+    protected int z = 30;    // Package + subclass
+    public int w = 40;       // દરેક જગ્યાએ
+    
+    private void method1() { }    // Private method
+    public void method2() { }     // Public method
+}
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Private Package Protected Public}
+\end{mnemonicbox}
+
+\questionmarks{3(c)}{7}{વ્યાખ્યાયિત કરો: થ્રેડ. થ્રેડ બનાવવા માટે ઉપયોગમાં લેવાતી વિવિધ પદ્ધતિઓની સૂચિ બનાવો. થ્રેડની લાઇફ સાઇકલ વિગતવાર સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Thread}: lightweight subprocess જે program ના અનેક ભાગોને concurrent execution ની મંજૂરી આપે છે.
+
+\begin{center}
+\captionof{table}{Thread બનાવવા પદ્ધતિઓ}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પદ્ધતિ} & \textbf{વર્ણન} & \textbf{ઉદાહરણ} \\ \hline
+Extending & Thread class inherit & \code{class MyThread extends Thread} \\ \hline
+Boolean & Runnable implement & \code{class MyTask implements Runnable} \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[node distance=1.8cm, auto]
+    \node [gtu state] (new) {NEW};
+    \node [gtu state, right=of new] (runnable) {RUNNABLE};
+    \node [gtu state, right=of runnable] (running) {RUNNING};
+    \node [gtu state, below=of running] (blocked) {BLOCKED};
+    \node [gtu state, right=of running] (terminated) {TERMINATED};
+
+    \path [gtu arrow] (new) -- (runnable);
+    \path [gtu arrow] (runnable) -- node[font=\small] {CPU} (running);
+    \path [gtu arrow] (running) edge [bend left] node[font=\small] {yield()} (runnable);
+    \path [gtu arrow] (running) -- node[font=\small] {wait()} (blocked);
+    \path [gtu arrow] (blocked) edge [bend left] node[font=\small] {notify()} (runnable);
+    \path [gtu arrow] (running) -- (terminated);
+\end{tikzpicture}
+\captionof{figure}{Thread Life Cycle}
+\end{center}
+
+\begin{center}
+\captionof{table}{Thread States}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{સ્થિતિ} & \textbf{વર્ણન} \\ \hline
+NEW & Thread બન્યું પણ શરૂ નથી થયું \\ \hline
+RUNNABLE & ચાલવા તૈયાર, CPU ની રાહમાં \\ \hline
+RUNNING & હાલમાં execute થઈ રહ્યું છે \\ \hline
+BLOCKED & resource અથવા sleep ની રાહમાં \\ \hline
+TERMINATED & execution પૂર્ણ થયું \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{lstlisting}[language=Java,caption={Thread Creation Example}]
+// પદ્ધતિ 1: Thread વિસ્તરવું
+class MyThread extends Thread {
+    public void run() {
+        System.out.println("Thread running");
+    }
+}
+
+// પદ્ધતિ 2: Runnable implement કરવું
+class MyTask implements Runnable {
+    public void run() {
+        System.out.println("Task running");
+    }
+}
+
+class Main {
+    public static void main(String[] args) {
+        MyThread t1 = new MyThread();
+        Thread t2 = new Thread(new MyTask());
+        t1.start();
+        t2.start();
+    }
+}
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Thread Concurrent Execution}
+\end{mnemonicbox}
+
+\questionmarks{3(a OR)}{3}{java માં JVM નો હેતુ સમજાવો.}
+
+\begin{solutionbox}
+\textbf{JVM (Java Virtual Machine)}: runtime environment જે Java bytecode execute કરે છે અને platform independence પ્રદાન કરે છે.
+
+\begin{center}
+\captionof{table}{JVM Components}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{Component} & \textbf{હેતુ} \\ \hline
+Class Loader & .class files ને memory માં લોડ કરે \\ \hline
+Execution Engine & bytecode execute કરે \\ \hline
+Memory Area & heap અને stack memory ને manage કરે \\ \hline
+Garbage Collector & automatic memory management \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm]
+    \node [gtu block] (java) {Java Source (.java)};
+    \node [gtu block, below=0.8cm of java] (compiler) {Compiler (javac)};
+    \node [gtu block, below=0.8cm of compiler] (bytecode) {Bytecode (.class)};
+    \node [gtu block, below=0.8cm of bytecode] (jvm) {JVM (Platform Specific)};
+    
+    \path [gtu arrow] (java) -- (compiler);
+    \path [gtu arrow] (compiler) -- (bytecode);
+    \path [gtu arrow] (bytecode) -- (jvm);
+\end{tikzpicture}
+\captionof{figure}{JVM Workflow}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{Platform Independence}: "એકવાર લખો, દરેક જગ્યાએ ચલાવો"
+    \item \keyword{Memory Management}: automatic garbage collection
+    \item \keyword{Security}: Bytecode verification
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{JVM Java Virtual Machine}
+\end{mnemonicbox}
+
+\questionmarks{3(b OR)}{4}{વ્યાખ્યાયિત કરો: પેકેજ. યોગ્ય ઉદાહરણ સાથે પેકેજ બનાવવા માટેના પગલાંઓ લખો.}
+
+\begin{solutionbox}
+\textbf{Package}: સંબંધિત classes અને interfaces નો સંગ્રહ, namespace અને access control પ્રદાન કરે છે.
+
+\begin{center}
+\captionof{table}{Package ના ફાયદા}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{ફાયદો} & \textbf{વર્ણન} \\ \hline
+Namespace & નામની ટકરાર ટાળે \\ \hline
+Access Control & બહેતર encapsulation \\ \hline
+Organization & logical grouping \\ \hline
+Reusability & maintain કરવું સરળ \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{Package બનાવવાના પગલાં:}
+\begin{enumerate}
+    \item \textbf{Package declare કરો} file ની ટોચે
+    \item \textbf{Directory structure બનાવો} package name મુજબ
+    \item \textbf{Compile કરો} package structure સાથે
+    \item \textbf{Import કરો} અન્ય classes માં
+\end{enumerate}
+
+\begin{lstlisting}[language=Java,caption={Package Example}]
+// File: com/company/utilities/Calculator.java
+package com.company.utilities;
+
+public class Calculator {
+    public int add(int a, int b) {
+        return a + b;
+    }
+}
+
+// File: Main.java
+import com.company.utilities.Calculator;
+
+class Main {
+    public static void main(String[] args) {
+        Calculator calc = new Calculator();
+        System.out.println(calc.add(5, 3));
+    }
+}
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Package Class Group}
+\end{mnemonicbox}
+
+\questionmarks{3(c OR)}{7}{થ્રેડમાં Synchronization ને યોગ્ય ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Synchronization}: shared resources ના access ને multiple threads દ્વારા control કરવાની mechanism, data inconsistency ટાળવા માટે.
+
+\begin{center}
+\captionof{table}{Synchronization ના પ્રકારો}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પ્રકાર} & \textbf{વર્ણન} & \textbf{ઉપયોગ} \\ \hline
+Synchronized method & આખી method lock થાય & \code{synchronized void} \\ \hline
+Synchronized block & specific block lock થાય & \code{synchronized(obj)} \\ \hline
+Static synchronization & Class level locking & \code{static synchronized} \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm, auto]
+    \node [gtu state] (t1) {Thread 1};
+    \node [gtu state, right=2cm of t1] (t2) {Thread 2};
+    \node [gtu decision, below=1.5cm of t1] (lock) {Lock};
+    \node [gtu block, below=1.5cm of lock] (res) {Shared Resource};
+    
+    \path [gtu arrow] (t1) -- (lock);
+    \path [gtu arrow] (t2) -- node {Wait} (lock);
+    \path [gtu arrow] (lock) -- (res);
+\end{tikzpicture}
+\captionof{figure}{Synchronization Mechanism}
+\end{center}
+
+\begin{lstlisting}[language=Java,caption={Synchronization Example}]
+class Counter {
+    private int count = 0;
+    
+    public synchronized void increment() {
+        count++;
+    }
+    
+    public void decrement() {
+        synchronized(this) {
+            count--;
+        }
+    }
+}
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Synchronization Prevents Race Conditions}
+\end{mnemonicbox}
+
+\questionmarks{4(a)}{3}{સ્ટ્રિંગ ક્લાસ અને સ્ટ્રિંગબફર ક્લાસ વચ્ચે તફાવત કરો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{String vs StringBuffer}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પાસું} & \textbf{String} & \textbf{StringBuffer} \\ \hline
+Mutability & Immutable (બદલાતું નથી) & Mutable (બદલાય છે) \\ \hline
+Performance & concatenation માટે ધીમું & concatenation માટે ઝડપું \\ \hline
+Memory & દર વખતે નવું object બનાવે & હાલનું object modify કરે \\ \hline
+Thread Safety & Thread safe & Thread safe \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{lstlisting}[language=Java,caption={String vs StringBuffer}]
+// String - Immutable
+String s1 = "Hello";
+s1 = s1 + " World";  // નવું String object બનાવે છે
+
+// StringBuffer - Mutable
+StringBuffer sb = new StringBuffer("Hello");
+sb.append(" World");  // હાલનું object modify કરે છે
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{String Immutable, StringBuffer Mutable}
+\end{mnemonicbox}
+
+\questionmarks{4(b)}{4}{એરેની 10 સંખ્યાઓનો સરવાળો અને સરેરાશ મેળવવા માટે જાવા પ્રોગ્રામ લખો.}
+
+\begin{solutionbox}
+\begin{lstlisting}[language=Java,caption={Array Sum and Average}]
+class ArraySum {
+    public static void main(String[] args) {
+        int[] numbers = {10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
+        int sum = 0;
+        
+        // સરવાળો Calculate
+        for(int i = 0; i < numbers.length; i++) {
+            sum += numbers[i];
+        }
+        
+        // સરેરાશ Calculate
+        double average = (double) sum / numbers.length;
+        
+        System.out.println("Sum: " + sum);
+        System.out.println("Average: " + average);
+    }
+}
+\end{lstlisting}
+
+\begin{center}
+\textbf{આઉટપુટ:}
+\begin{verbatim}
+Sum: 550
+Average: 55.0
+\end{verbatim}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Loop Sum Divide Average}
+\end{mnemonicbox}
+
+\questionmarks{4(c)}{7}{I) યોગ્ય ઉદાહરણ સાથે abstract class સમજાવો. II) યોગ્ય ઉદાહરણ સાથે final class સમજાવો.}
+
+\begin{solutionbox}
+\textbf{I) Abstract Class}: class જેનું instantiation થઈ શકતું નથી, abstract methods હોય છે.
+
+\begin{center}
+\captionof{table}{Abstract Class ની વિશેષતાઓ}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{વિશેષતા} & \textbf{વર્ણન} \\ \hline
+Cannot instantiate & object બનાવી શકાતું નથી \\ \hline
+Abstract methods & implementation વિનાની methods \\ \hline
+Inheritance & Subclasses implement methods \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{lstlisting}[language=Java,caption={Abstract Class Example}]
+abstract class Shape {
+    abstract void draw();
+}
+
+class Circle extends Shape {
+    void draw() {
+        System.out.println("Drawing Circle");
+    }
+}
+\end{lstlisting}
+
+\textbf{II) Final Class}: class જેનું extension થઈ શકતું નથી.
+
+\begin{center}
+\captionof{table}{Final Class ની વિશેષતાઓ}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{વિશેષતા} & \textbf{વર્ણન} \\ \hline
+No inheritance & extend કરી શકાતું નથી \\ \hline
+Security & modification અટકાવે છે \\ \hline
+ઉદાહરણો & String, Integer, System \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{lstlisting}[language=Java,caption={Final Class Example}]
+final class FinalClass {
+    void display() {
+        System.out.println("This is final class");
+    }
+}
+// class Sub extends FinalClass { } // ભૂલ
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Abstract Incomplete, Final Complete}
+\end{mnemonicbox}
+
+\questionmarks{4(a OR)}{3}{જાવામાં Garbage Collection સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Garbage Collection}: automatic memory management process જે heap memory માંથી unused objects ને remove કરે છે.
+
+\begin{center}
+\captionof{table}{GC ના ફાયદા}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{ફાયદો} & \textbf{વર્ણન} \\ \hline
+Automatic & manual memory management નથી \\ \hline
+Memory leak prevention & unreferenced objects દૂર કરે \\ \hline
+Performance & memory usage optimize કરે \\ \hline
+Safety & memory errors અટકાવે \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm]
+    \node [gtu block] (new) {Object created (new)};
+    \node [gtu block, below=0.8cm of new] (use) {Object in use};
+    \node [gtu block, below=0.8cm of use] (noref) {No references (Unreachable)};
+    \node [gtu block, below=0.8cm of noref] (gc) {Garbage Collector removes};
+    
+    \path [gtu arrow] (new) -- (use);
+    \path [gtu arrow] (use) -- (noref);
+    \path [gtu arrow] (noref) -- (gc);
+\end{tikzpicture}
+\captionof{figure}{Garbage Collection Process}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{GC Automatic Memory Cleanup}
+\end{mnemonicbox}
+
+\questionmarks{4(b OR)}{4}{'Divide by Zero' એરર માટે યુઝર ડિફાઇન્ડ એક્સેપ્શન હેન્ડલ કરવા માટે જાવા પ્રોગ્રામ લખો.}
+
+\begin{solutionbox}
+\begin{lstlisting}[language=Java,caption={User Defined Exception}]
+class DivideByZeroException extends Exception {
+    public DivideByZeroException(String message) {
+        super(message);
+    }
+}
+
+class Calculator {
+    public static double divide(int a, int b) throws DivideByZeroException {
+        if(b == 0) {
+            throw new DivideByZeroException("શૂન્ય થી ભાગ ન આપી શકાય!");
+        }
+        return (double) a / b;
+    }
+}
+
+class Main {
+    public static void main(String[] args) {
+        try {
+            Calculator.divide(10, 0);
+        } catch(DivideByZeroException e) {
+            System.out.println("ભૂલ: " + e.getMessage());
+        }
+    }
+}
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Custom Exception Handle Error}
+\end{mnemonicbox}
+
+\questionmarks{4(c OR)}{7}{Multiple try block અને multiple catch block exception દર્શાવવા માટે જાવા પ્રોગ્રામ લખો.}
+
+\begin{solutionbox}
+\begin{lstlisting}[language=Java,caption={Multiple Try-Catch Blocks}]
+class MultipleExceptionDemo {
+    public static void main(String[] args) {
+        // પહેલો try block
+        try {
+            int[] arr = {1, 2, 3};
+            System.out.println(arr[5]); // IndexOutOfBounds
+        } 
+        catch(ArrayIndexOutOfBoundsException e) {
+            System.out.println("Index ભૂલ: " + e.getMessage());
+        }
+        
+        // બીજો try block
+        try {
+            String str = null;
+            System.out.println(str.length()); // NullPointer
+        }
+        catch(NullPointerException e) {
+            System.out.println("Null ભૂલ: " + e.getMessage());
+        }
+        
+        // Multiple catch
+        try {
+            int result = 10 / 0;  // Arithmetic
+        }
+        catch(ArithmeticException e) {
+            System.out.println("Math ભૂલ: " + e.getMessage());
+        }
+        catch(Exception e) {
+            System.out.println("અન્ય ભૂલ: " + e.getMessage());
+        }
+        finally {
+            System.out.println("પ્રોગ્રામ પૂર્ણ થયું");
+        }
+    }
+}
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Multiple Try Multiple Catch}
+\end{mnemonicbox}
+
+\questionmarks{5(a)}{3}{ફાઇલ બનાવવા અને આ ફાઇલ પર write operation કરવા માટે જાવામાં પ્રોગ્રામ લખો.}
+
+\begin{solutionbox}
+\begin{lstlisting}[language=Java,caption={File Write Example}]
+import java.io.*;
+
+class FileWriteDemo {
+    public static void main(String[] args) {
+        try {
+            // ફાઇલ બનાવો
+            File file = new File("demo.txt");
+            
+            // FileWriter object બનાવો
+            FileWriter writer = new FileWriter(file);
+            
+            // ફાઇલમાં ડેટા લખો
+            writer.write("નમસ્તે દુનિયા!\n");
+            writer.write("આ Java ફાઇલ લેખન ડેમો છે.\n");
+            
+            writer.close();
+            System.out.println("ફાઇલ સફળતાપૂર્વક બનાવવામાં આવી!");
+            
+        } catch(IOException e) {
+            System.out.println("ભૂલ: " + e.getMessage());
+        }
+    }
+}
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{File Writer Write Close}
+\end{mnemonicbox}
+
+\questionmarks{5(b)}{4}{Throw અને finally ને Exception Handling માં ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Throw}: keyword જેનો ઉપયોગ explicitly exception throw કરવા માટે થાય.
+\textbf{Finally}: block જે exception આવે કે ન આવે હંમેશા execute થાય છે.
+
+\begin{center}
+\captionof{table}{Throw vs Finally}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{કીવર્ડ} & \textbf{હેતુ} & \textbf{ઉપયોગ} \\ \hline
+throw & Explicitly exception throw કરે & \code{throw new Ex()} \\ \hline
+finally & હંમેશા cleanup code execute કરે & \code{finally \{ \}} \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{lstlisting}[language=Java,caption={Throw and Finally}]
+class ThrowFinallyDemo {
+    public static void checkAge(int age) throws Exception {
+        if(age < 18) throw new Exception("અમાન્ય ઉંમર");
+    }
+    
+    public static void main(String[] args) {
+        try {
+            checkAge(15);
+        } catch(Exception e) {
+            System.out.println("ભૂલ: " + e.getMessage());
+        } finally {
+            System.out.println("હંમેશા execute થાય છે");
+        }
+    }
+}
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Throw Exception, Finally Always}
+\end{mnemonicbox}
+
+\questionmarks{5(c)}{7}{વર્ણવો: પોલીમોર્ફિઝમ. જાવામાં યોગ્ય ઉદાહરણ સાથે રન ટાઇમ પોલીમોર્ફિઝમ સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Polymorphism}: એક interface, અનેક implementations. Object તેના actual type પર આધાર રાખીને અલગ રીતે વર્તે છે.
+
+\begin{center}
+\captionof{table}{Polymorphism ના પ્રકારો}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પ્રકાર} & \textbf{વર્ણન} & \textbf{ક્યારે નક્કી થાય} \\ \hline
+Compile-time & Method overloading & Compilation વખતે \\ \hline
+Run-time & Method overriding & Execution વખતે \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm, auto]
+    \node (A) {Animal Reference};
+    \node [right=2cm of A, yshift=1cm] (B) {Dog Object -- Dog Sound};
+    \node [right=2cm of A, yshift=-1cm] (C) {Cat Object -- Cat Sound};
+    
+    \draw [->] (A) -- (B);
+    \draw [->] (A) -- (C);
+\end{tikzpicture}
+\captionof{figure}{Runtime Polymorphism}
+\end{center}
+
+\begin{lstlisting}[language=Java,caption={Runtime Polymorphism}]
+class Animal {
+    void makeSound() { System.out.println("પ્રાણી અવાજ કરે છે"); }
+}
+
+class Dog extends Animal {
+    void makeSound() { System.out.println("કૂતરો ભસે છે"); }
+}
+
+class Cat extends Animal {
+    void makeSound() { System.out.println("બિલાડી મ્યાં કરે છે"); }
+}
+
+class Main {
+    public static void main(String[] args) {
+        Animal a;
+        
+        a = new Dog();
+        a.makeSound(); // કૂતરો ભસે છે
+        
+        a = new Cat();
+        a.makeSound(); // બિલાડી મ્યાં કરે છે
+    }
+}
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Polymorphism Many Forms Runtime}
+\end{mnemonicbox}
+
+\questionmarks{5(a OR)}{3}{જાવામાં એક પ્રોગ્રામ લખો જે બાઇટ બાય બાઇટ ફાઇલના કન્ટેન્ટ વાંચે અને તેને બીજી ફાઇલમાં કોપી કરે.}
+
+\begin{solutionbox}
+\begin{lstlisting}[language=Java,caption={Byte Stream File Copy}]
+import java.io.*;
+
+class FileCopyDemo {
+    public static void main(String[] args) {
+        try {
+            FileInputStream input = new FileInputStream("in.txt");
+            FileOutputStream output = new FileOutputStream("out.txt");
+            
+            int byteData;
+            while((byteData = input.read()) != -1) {
+                output.write(byteData);
+            }
+            
+            input.close();
+            output.close();
+        } catch(IOException e) {
+            System.out.println("ભૂલ: " + e.getMessage());
+        }
+    }
+}
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Read Byte Write Byte}
+\end{mnemonicbox}
+
+\questionmarks{5(b OR)}{4}{Java સાથે ઉપલબ્ધ વિવિધ I/O વર્ગો સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{Java I/O Classes}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Class Type} & \textbf{Class Name} & \textbf{હેતુ} \\ \hline
+Byte Stream & FileInputStream & ફાઇલથી bytes વાંચે \\ \hline
+Byte Stream & FileOutputStream & ફાઇલમાં bytes લખે \\ \hline
+Char Stream & FileReader & ફાઇલથી chars વાંચે \\ \hline
+Char Stream & FileWriter & ફાઇલમાં chars લખે \\ \hline
+Buffered & BufferedReader & કાર્યક્ષમ વાંચન \\ \hline
+Buffered & BufferedWriter & કાર્યક્ષમ લખવુ \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[node distance=1.2cm]
+    \node [gtu block] (io) {Java I/O};
+    \node [gtu block, below left=1cm of io] (byte) {Byte Stream};
+    \node [gtu block, below right=1cm of io] (char) {Character Stream};
+    
+    \node [gtu block, below=0.5cm of byte] (fis) {FileInputStream};
+    \node [gtu block, below=0.5cm of fis] (fos) {FileOutputStream};
+    
+    \node [gtu block, below=0.5cm of char] (fr) {FileReader};
+    \node [gtu block, below=0.5cm of fr] (fw) {FileWriter};
+    
+    \path [gtu arrow] (io) -- (byte);
+    \path [gtu arrow] (io) -- (char);
+    \path [gtu arrow] (byte) -- (fis);
+    \path [gtu arrow] (byte) -- (fos);
+    \path [gtu arrow] (char) -- (fr);
+    \path [gtu arrow] (char) -- (fw);
+\end{tikzpicture}
+\captionof{figure}{I/O Class Hierarchy}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Byte Character Buffered Streams}
+\end{mnemonicbox}
+
+\questionmarks{5(c OR)}{7}{જાવા પ્રોગ્રામ લખો જે બે થ્રેડોને એક્ઝિક્યુટ કરે છે. એક થ્રેડ દર 3 સેકન્ડે "Java Programming" દર્શાવે છે, અને બીજો દર 6 સેકન્ડે "Semester - 4th IT" દર્શાવે છે.}
+
+\begin{solutionbox}
+\begin{lstlisting}[language=Java,caption={Thread Timing Example}]
+class JavaThread extends Thread {
+    public void run() {
+        try {
+            while(true) {
+                System.out.println("Java Programming");
+                Thread.sleep(3000);
+            }
+        } catch(InterruptedException e) {}
+    }
+}
+
+class SemThread extends Thread {
+    public void run() {
+        try {
+            while(true) {
+                System.out.println("Semester - 4th IT");
+                Thread.sleep(6000);
+            }
+        } catch(InterruptedException e) {}
+    }
+}
+
+class Main {
+    public static void main(String[] args) {
+        new JavaThread().start();
+        new SemThread().start();
+    }
+}
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Two Threads Different Timing}
+\end{mnemonicbox}
+
+\end{document}
