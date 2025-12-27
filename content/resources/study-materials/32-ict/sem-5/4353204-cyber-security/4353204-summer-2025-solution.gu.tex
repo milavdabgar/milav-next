@@ -1,0 +1,1243 @@
+\documentclass{article}
+\input{../../../../../../latex-templates/gtu-solutions/preamble.tex}
+\input{../../../../../../latex-templates/gtu-solutions/commands.tex}
+\input{../../../../../../latex-templates/gtu-solutions/gujarati-boxes.tex}
+
+% Redefine environments to be non-floating for tcolorbox compatibility
+\renewenvironment{answertable}[1]{%
+  \begin{center}
+  \captionof{table}{#1}
+}{%
+  \end{center}
+}
+
+\renewenvironment{answerdiagram}[1]{%
+  \begin{center}
+  \captionof{figure}{#1}
+}{%
+  \end{center}
+}
+
+\title{Cyber Security (4353204) - Summer 2025 Solution}
+\date{May 16, 2025}
+
+\begin{document}
+\maketitle
+
+% Question 1
+\questionmarks{1(a)}{3}{Example with CIA triad description.}
+
+\begin{solutionbox}
+\textbf{CIA ત્રિપુટીના ઘટકો:}
+
+\begin{answerdiagram}{CIA Triad}
+\begin{tikzpicture}[node distance=2.5cm, auto, >=latex, thick]
+    % Nodes
+    \node [draw, circle, minimum size=3cm, align=center, fill=blue!10] (conf) {Confidentiality};
+    \node [draw, circle, minimum size=3cm, align=center, fill=green!10] (int) at (4,0) {Integrity};
+    \node [draw, circle, minimum size=3cm, align=center, fill=red!10] (avail) at (2,3.5) {Availability};
+    
+    % Connections
+    \draw [<->] (conf) -- (int);
+    \draw [<->] (int) -- (avail);
+    \draw [<->] (avail) -- (conf);
+    
+    % Center label
+    \node at (2,1.2) {\textbf{CIA}};
+\end{tikzpicture}
+\end{answerdiagram}
+
+\begin{answertable}{CIA Triad Elements}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{ઘટક} & \textbf{વ્યાખ્યા} & \textbf{ઉદાહરણ} \\ \hline
+\keyword{કન્ફિડેન્શિયાલિટી} & અનધિકૃત એક્સેસથી ડેટાનું રક્ષણ & બેંક એકાઉન્ટ પર પાસવર્ડ પ્રોટેક્શન \\ \hline
+\keyword{ઇન્ટેગ્રિટી} & ડેટાની ચોકસાઈ અને સંપૂર્ણતા & ડોક્યુમેન્ટ પર ડિજિટલ સહી \\ \hline
+\keyword{એવેઇલેબિલિટી} & જરૂરિયાત મુજબ સિસ્ટમની ઉપલબ્ધતા & 24/7 ઓનલાઇન બેંકિંગ સેવાઓ \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\begin{itemize}
+    \item \keyword{કન્ફિડેન્શિયાલિટી}: માત્ર અધિકૃત વપરાશકર્તાઓ જ સંવેદનશીલ માહિતી એક્સેસ કરી શકે
+    \item \keyword{ઇન્ટેગ્રિટી}: ટ્રાન્સમિશન દરમિયાન ડેટા ચોક્કસ અને અપરિવર્તિત રહે
+    \item \keyword{એવેઇલેબિલિટી}: સિસ્ટમો કાયદેસર વપરાશકર્તાઓ માટે કાર્યરત અને સુલભ રહે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{CIA માહિતી ને સુરક્ષિત રાખે}
+\end{mnemonicbox}
+
+\questionmarks{1(b)}{4}{Explain Public key and Private Key cryptography.}
+
+\begin{solutionbox}
+\textbf{પબ્લિક કી ક્રિપ્ટોગ્રાફી (એસિમેટ્રિક):}
+
+\begin{answerdiagram}{Public Key Cryptography Flow}
+\begin{tikzpicture}[auto, >=latex, thick, node distance=2cm]
+    \node [gtu state] (sender) {મોકલનાર};
+    \node [gtu block, right=of sender] (encrypt) {એન્ક્રિપ્ટ};
+    \node [right=of encrypt] (network) {નેટવર્ક};
+    \node [gtu block, right=of network] (decrypt) {ડિક્રિપ્ટ};
+    \node [gtu state, right=of decrypt] (receiver) {પ્રાપ્તકર્તા};
+    
+    % Keys
+    \node [above=0.5cm of encrypt, draw, rectangle, fill=yellow!20] (pubkey) {પબ્લિક કી};
+    \node [above=0.5cm of decrypt, draw, rectangle, fill=red!20] (privkey) {પ્રાઇવેટ કી};
+    
+    % Connections
+    \draw [gtu arrow] (sender) -- node {પ્લેઇનટેક્સ્ટ} (encrypt);
+    \draw [gtu arrow] (pubkey) -- (encrypt);
+    \draw [gtu arrow] (encrypt) -- node {Ciphertext} (decrypt);
+    \draw [gtu arrow] (privkey) -- (decrypt);
+    \draw [gtu arrow] (decrypt) -- node {પ્લેઇનટેક્સ્ટ} (receiver);
+\end{tikzpicture}
+\end{answerdiagram}
+
+\textbf{મુખ્ય લક્ષણો:}
+
+\begin{answertable}{Public vs Private Key}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{વિશેષતા} & \textbf{પબ્લિક કી} & \textbf{પ્રાઇવેટ કી} \\ \hline
+\textbf{વિતરણ} & મુક્તપણે શેર કરાય & ગુપ્ત રાખાય \\ \hline
+\textbf{ઉપયોગ} & એન્ક્રિપ્શન/વેરિફિકેશન & ડિક્રિપ્શન/સાઇનિંગ \\ \hline
+\textbf{સુરક્ષા} & જાહેર હોઈ શકે & સુરક્ષિત રાખવી જરૂરી \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\begin{itemize}
+    \item \keyword{પબ્લિક કી}: એન્ક્રિપ્શન અને સિગ્નેચર વેરિફિકેશન માટે
+    \item \keyword{પ્રાઇવેટ કી}: ડિક્રિપ્શન અને ડિજિટલ સાઇનિંગ માટે
+    \item \keyword{સુરક્ષા}: ગાણિતિક જટિલતા પર આધારિત (RSA, ECC અલ્ગોરિધમ)
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{પબ્લિક એન્ક્રિપ્ટ કરે, પ્રાઇવેટ ડિક્રિપ્ટ કરે}
+\end{mnemonicbox}
+
+\questionmarks{1(c)}{7}{Explain various security attacks, mechanisms, and services associated with each layer of the OSI model.}
+
+\begin{solutionbox}
+\textbf{OSI સુરક્ષા ફ્રેમવર્ક:}
+
+\begin{answerdiagram}{OSI Security Framework}
+\begin{tikzpicture}[
+    layer/.style={draw, rectangle, minimum width=4cm, minimum height=0.8cm, fill=blue!5, align=center},
+    attack/.style={draw, rectangle, minimum width=4cm, minimum height=0.8cm, fill=red!5, align=center, font=\footnotesize},
+    mech/.style={draw, rectangle, minimum width=4cm, minimum height=0.8cm, fill=green!5, align=center, font=\footnotesize}
+]
+    % OSI Layers
+    \node[layer] (app) {એપ્લિકેશન};
+    \node[layer, below=0.1cm of app] (pres) {પ્રેઝન્ટેશન};
+    \node[layer, below=0.1cm of pres] (sess) {સેશન};
+    \node[layer, below=0.1cm of sess] (trans) {ટ્રાન્સપોર્ટ};
+    \node[layer, below=0.1cm of trans] (net) {નેટવર્ક};
+    \node[layer, below=0.1cm of net] (link) {ડેટા લિંક};
+    \node[layer, below=0.1cm of link] (phy) {ફિઝિકલ};
+    
+    % Attacks (Left)
+    \node[attack, left=1cm of app] {મેલવેર, સોશિયલ એન્જિનિયરિંગ};
+    \node[attack, left=1cm of pres] {ફોર્મેટ એટેક};
+    \node[attack, left=1cm of sess] {હાઇજેકિંગ};
+    \node[attack, left=1cm of trans] {SYN ફ્લડિંગ};
+    \node[attack, left=1cm of net] {IP સ્પૂફિંગ};
+    \node[attack, left=1cm of link] {MAC ફ્લડિંગ};
+    \node[attack, left=1cm of phy] {વાયરટેપિંગ};
+    
+    % Mechanisms (Right)
+    \node[mech, right=1cm of app] {એન્ટિવાયરસ};
+    \node[mech, right=1cm of pres] {એન્ક્રિપ્શન};
+    \node[mech, right=1cm of sess] {ટોકન્સ};
+    \node[mech, right=1cm of trans] {SSL/TLS};
+    \node[mech, right=1cm of net] {IPSec/ફાયરવોલ};
+    \node[mech, right=1cm of link] {Auth/એન્ક્રિપ્શન};
+    \node[mech, right=1cm of phy] {શિલ્ડિંગ};
+\end{tikzpicture}
+\end{answerdiagram}
+
+\begin{answertable}{OSI Layers Security Details}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{સ્તર} & \textbf{હુમલાઓ} & \textbf{પદ્ધતિઓ} & \textbf{સેવાઓ} \\ \hline
+\keyword{ફિઝિકલ} & વાયરટેપિંગ, જેમિંગ & ફિઝિકલ સિક્યોરિટી, શિલ્ડિંગ & એક્સેસ કંટ્રોલ \\ \hline
+\keyword{ડેટા લિંક} & MAC ફ્લડિંગ, ARP પોઇઝનિંગ & એન્ક્રિપ્શન, ઓથેન્ટિકેશન & ફ્રેમ ઇન્ટેગ્રિટી \\ \hline
+\keyword{નેટવર્ક} & IP સ્પૂફિંગ, રાઉટિંગ એટેક & IPSec, ફાયરવોલ & પેકેટ ફિલ્ટરિંગ \\ \hline
+\keyword{ટ્રાન્સપોર્ટ} & સેશન હાઇજેકિંગ, SYN ફ્લડિંગ & SSL/TLS, પોર્ટ સિક્યોરિટી & એન્ડ-ટુ-એન્ડ સિક્યોરિટી \\ \hline
+\keyword{સેશન} & સેશન રિપ્લે, હાઇજેકિંગ & સેશન ટોકન, ટાઇમઆઉટ & સેશન મેનેજમેન્ટ \\ \hline
+\keyword{પ્રેઝન્ટેશન} & ડેટા કરપ્શન, ફોર્મેટ એટેક & એન્ક્રિપ્શન, કમ્પ્રેશન & ડેટા ટ્રાન્સફોર્મેશન \\ \hline
+\keyword{એપ્લિકેશન} & મેલવેર, સોશિયલ એન્જિનિયરિંગ & એન્ટિવાયરસ, યુઝર ટ્રેનિંગ & એપ્લિકેશન સિક્યોરિટી \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\textbf{મુખ્ય સુરક્ષા સેવાઓ:}
+\begin{itemize}
+    \item \keyword{ઓથેન્ટિકેશન}: યુઝર આઇડેન્ટિટી વેરિફિકેશન
+    \item \keyword{ઓથોરાઇઝેશન}: એક્સેસ પરમિશન કંટ્રોલ
+    \item \keyword{નોન-રિપ્યુડિએશન}: ક્રિયાઓનો ઇનકાર અટકાવવો
+    \item \keyword{ડેટા ઇન્ટેગ્રિટી}: ડેટાની ચોકસાઈ સુનિશ્ચિત કરવી
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{બધા લોકોને ડેટા પ્રોટેક્શનની જરૂર છે}
+\end{mnemonicbox}
+
+\questionmarks{1(c OR)}{7}{Explain MD5 hashing and Secure Hash Function (SHA) algorithms.}
+
+\begin{solutionbox}
+\textbf{હેશ ફંક્શન સરખામણી:}
+
+\begin{answerdiagram}{Hash Function Process}
+\begin{tikzpicture}[auto, >=latex, thick, node distance=1.5cm]
+    \node [gtu block, minimum width=2.5cm] (input) {ઇનપુટ મેસેજ};
+    \node [gtu block, right=1cm of input, minimum width=2.5cm, fill=orange!10] (hash) {હેશ ફંક્શન};
+    \node [gtu block, right=1cm of hash, minimum width=2.5cm, fill=green!10] (digest) {ફિક્સ્ડ-સાઇઝ હેશ};
+    
+    \draw [gtu arrow] (input) -- (hash);
+    \draw [gtu arrow] (hash) -- (digest);
+\end{tikzpicture}
+\end{answerdiagram}
+
+\begin{answertable}{MD5 vs SHA Comparison}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{વિશેષતા} & \textbf{MD5} & \textbf{SHA-1} & \textbf{SHA-256} \\ \hline
+\textbf{આઉટપુટ સાઇઝ} & 128 બિટ્સ & 160 બિટ્સ & 256 બિટ્સ \\ \hline
+\textbf{સુરક્ષા સ્તર} & નબળું & નબળું & મજબૂત \\ \hline
+\textbf{ઝડપ} & ઝડપી & મધ્યમ & ધીમું \\ \hline
+\textbf{વર્તમાન સ્થિતિ} & અપ્રચલિત & અપ્રચલિત & ભલામણ કરેલ \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\textbf{હેશ ગુણધર્મો:}
+\begin{itemize}
+    \item \keyword{ડિટર્મિનિસ્ટિક}: સમાન ઇનપુટ સમાન હેશ આપે
+    \item \keyword{એવેલાન્ચ ઇફેક્ટ}: નાનો ઇનપુટ ફેરફાર મોટો હેશ ફેરફાર લાવે
+    \item \keyword{વન-વે ફંક્શન}: હેશથી મૂળ ડેટા મેળવી શકાતો નથી
+    \item \keyword{કોલિઝન રેઝિસ્ટન્ટ}: બે અલગ ઇનપુટ માટે સમાન હેશ મળવો મુશ્કેલ
+\end{itemize}
+
+\textbf{એપ્લિકેશન:}
+\begin{itemize}
+    \item પાસવર્ડ સ્ટોરેજ અને વેરિફિકેશન
+    \item ડિજિટલ સિગ્નેચર અને સર્ટિફિકેટ
+    \item ડેટા ઇન્ટેગ્રિટી ચેકિંગ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{હેશ હંમેશા સમાન આઉટપુટ આપે}
+\end{mnemonicbox}
+
+% Question 2
+\questionmarks{2(a)}{3}{What is firewall? List out types of firewall.}
+
+\begin{solutionbox}
+\textbf{ફાયરવોલ વ્યાખ્યા:}
+નેટવર્ક સિક્યોરિટી ડિવાઇસ જે સુરક્ષા નિયમોના આધારે આવતા-જતા ટ્રાફિકને મોનિટર અને કંટ્રોલ કરે છે.
+
+\begin{answerdiagram}{Firewall Architecture}
+\begin{tikzpicture}[auto, >=latex, thick]
+    \node [draw, cloud, cloud puffs=10, minimum width=2.5cm, fill=blue!10] (internet) {ઇન્ટરનેટ};
+    \node [draw, rectangle, fill=red!20, minimum height=2cm, right=1.5cm of internet] (firewall) {ફાયરવોલ};
+    \node [draw, rectangle, fill=green!10, right=1.5cm of firewall] (lan) {પ્રાઇવેટ નેટવર્ક};
+    
+    \draw [->, double] (internet) -- node[above, font=\small] {ટ્રાફિક} (firewall);
+    \draw [->, double] (firewall) -- node[above, font=\small] {ફિલ્ટર કરેલ} (lan);
+\end{tikzpicture}
+\end{answerdiagram}
+
+\textbf{ફાયરવોલના પ્રકારો:}
+\begin{answertable}{Firewall Types}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પ્રકાર} & \textbf{ફંક્શન} & \textbf{સ્તર} \\ \hline
+\keyword{પેકેટ ફિલ્ટર} & પેકેટ હેડર તપાસે & નેટવર્ક લેયર \\ \hline
+\keyword{સ્ટેટફુલ} & કનેક્શન સ્ટેટ ટ્રેક કરે & ટ્રાન્સપોર્ટ લેયર \\ \hline
+\keyword{એપ્લિકેશન પ્રોક્સી} & એપ્લિકેશન ડેટા તપાસે & એપ્લિકેશન લેયર \\ \hline
+\keyword{પર્સનલ ફાયરવોલ} & વ્યક્તિગત ડિવાઇસ સુરક્ષા & હોસ્ટ-બેસ્ડ \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\begin{itemize}
+    \item \keyword{હાર્ડવેર ફાયરવોલ}: સમર્પિત નેટવર્ક ઉપકરણ
+    \item \keyword{સોફ્ટવેર ફાયરવોલ}: વ્યક્તિગત કમ્પ્યુટર પર ઇન્સ્ટોલ
+    \item \keyword{ક્લાઉડ ફાયરવોલ}: સેવા તરીકે પૂરો પાડવામાં આવે (FWaaS)
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{ફાયરવોલ હંમેશા નેટવર્કનું રક્ષણ કરે}
+\end{mnemonicbox}
+
+\questionmarks{2(b)}{4}{Define: HTTPS and describe working of HTTPS.}
+
+\begin{solutionbox}
+\textbf{HTTPS વ્યાખ્યા:}
+Hypertext Transfer Protocol Secure - SSL/TLS એન્ક્રિપ્શન પર HTTP.
+
+\textbf{HTTPS કાર્ય પ્રક્રિયા:}
+
+\begin{answerdiagram}{HTTPS Process}
+\begin{tikzpicture}[auto, >=latex, thick]
+    \node [gtu state] (client) {ક્લાઇન્ટ};
+    \node [gtu state, right=4cm of client] (server) {સર્વર};
+    
+    \draw [->] (client) to[bend left=20] node[above, font=\small] {1. HTTPS વિનંતી} (server);
+    \draw [->] (server) to[bend left=20] node[above, font=\small] {2. SSL સર્ટિફિકેટ} (client);
+    \draw [->] (client) to[bend left=40] node[above, font=\small] {3. એન્ક્રિપ્ટેડ સેશન કી} (server);
+    \draw [->] (server) to[bend left=40] node[above, font=\small] {4. એન્ક્રિપ્ટેડ રિસ્પોન્સ} (client);
+    
+    \node [below=2cm of client, xshift=2cm, draw, rectangle, fill=green!10] {સુરક્ષિત કમ્યુનિકેશન સ્થાપિત};
+\end{tikzpicture}
+\end{answerdiagram}
+
+\textbf{HTTPS ઘટકો:}
+\begin{itemize}
+    \item \keyword{પોર્ટ 443}: સ્ટાન્ડર્ડ HTTPS પોર્ટ
+    \item \keyword{SSL/TLS}: એન્ક્રિપ્શન પ્રોટોકોલ
+    \item \keyword{ડિજિટલ સર્ટિફિકેટ}: સર્વર ઓથેન્ટિકેશન
+    \item \keyword{સિમેટ્રિક એન્ક્રિપ્શન}: ડેટા ટ્રાન્સમિશન
+\end{itemize}
+
+\textbf{ફાયદાઓ:}
+\begin{itemize}
+    \item ટ્રાન્સમિશન દરમિયાન ડેટા એન્ક્રિપ્શન
+    \item સર્વર ઓથેન્ટિકેશન વેરિફિકેશન
+    \item ડેટા ઇન્ટેગ્રિટી પ્રોટેક્શન
+    \item SEO રેંકિંગ સુધારો
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{HTTPS વેબ ટ્રાફિકને સુરક્ષિત કરે}
+\end{mnemonicbox}
+
+\questionmarks{2(c)}{7}{Explain different types of malicious software and their effect.}
+
+\begin{solutionbox}
+\textbf{મેલવેર વર્કિંગ્રેડ:}
+
+\begin{answerdiagram}{Malware Classification}
+\begin{tikzpicture}[
+    type/.style={draw, rectangle, rounded corners, fill=red!10, minimum width=2cm, align=center}
+]
+    \node [draw, ellipse, fill=black!80, text=white, minimum width=3cm] (center) {મેલવેર};
+    
+    \node [type, above=of center] (virus) {વાયરસ};
+    \node [type, above right=of center] (worm) {વોર્મ};
+    \node [type, right=of center] (trojan) {ટ્રોજન};
+    \node [type, below right=of center] (ransom) {રેન્સમવેર};
+    \node [type, below=of center] (spy) {સ્પાયવેર};
+    \node [type, below left=of center] (ad) {એડવેર};
+    \node [type, left=of center] (root) {રૂટકિટ};
+    
+    \draw [thick] (center) -- (virus);
+    \draw [thick] (center) -- (worm);
+    \draw [thick] (center) -- (trojan);
+    \draw [thick] (center) -- (ransom);
+    \draw [thick] (center) -- (spy);
+    \draw [thick] (center) -- (ad);
+    \draw [thick] (center) -- (root);
+\end{tikzpicture}
+\end{answerdiagram}
+
+\begin{answertable}{Malware Types and Effects}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{પ્રકાર} & \textbf{વર્તન} & \textbf{અસર} & \textbf{ઉદાહરણ} \\ \hline
+\keyword{વાયરસ} & ફાઇલો સાથે જોડાય & ફાઇલ કરપ્શન & બૂટ સેક્ટર વાયરસ \\ \hline
+\keyword{વોર્મ} & સ્વ-પ્રતિકૃતિ & નેટવર્ક ભીડ & કન્ફિકર વોર્મ \\ \hline
+\keyword{ટ્રોજન} & છદ્મવેશી મેલવેર & ડેટા ચોરી & બેંકિંગ ટ્રોજન \\ \hline
+\keyword{રેન્સમવેર} & ફાઇલો એન્ક્રિપ્ટ કરે & ડેટા બંધક & WannaCry \\ \hline
+\keyword{સ્પાયવેર} & પ્રવૃત્તિ મોનિટર કરે & ગોપનીયતા ભંગ & કીલોગર \\ \hline
+\keyword{એડવેર} & અનચાહેલી જાહેરાતો & પ્રદર્શન ઘટાડો & પોપ-અપ જાહેરાતો \\ \hline
+\keyword{રૂટકિટ} & હાજરી છુપાવે & સિસ્ટમ સમાધાન & કર્નલ રૂટકિટ \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\textbf{સિસ્ટમ પર અસરો:}
+\begin{itemize}
+    \item \keyword{પ્રદર્શન}: ધીમી સિસ્ટમ પ્રતિક્રિયા
+    \item \keyword{ડેટા}: નુકસાન, કરપ્શન અથવા ચોરી
+    \item \keyword{ગોપનીયતા}: અનધિકૃત મોનિટરિંગ
+    \item \keyword{નાણાકીય}: પ્રત્યક્ષ નાણાકીય નુકસાન
+\end{itemize}
+
+\textbf{રોકથામના પદ્ધતિઓ:}
+\begin{itemize}
+    \item નિયમિત એન્ટિવાયરસ અપડેટ
+    \item સુરક્ષિત બ્રાઉઝિંગ પ્રેક્ટિસ
+    \item ઇમેઇલ એટેચમેન્ટમાં સાવધાની
+    \item સિસ્ટમ સિક્યોરિટી પેચ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{વાયરસ વોર્મ ટ્રોજન ખરેખર બધા સંસાધનો ચોરે}
+\end{mnemonicbox}
+
+\questionmarks{2(a OR)}{3}{What is authentication? Explain different methods of authentication.}
+
+\begin{solutionbox}
+\textbf{ઓથેન્ટિકેશન વ્યાખ્યા:}
+સિસ્ટમ એક્સેસ આપતા પહેલા યુઝર આઇડેન્ટિટી વેરિફાઇ કરવાની પ્રક્રિયા.
+
+\begin{answerdiagram}{Authentication Methods}
+\begin{tikzpicture}[node distance=0.5cm, auto]
+    \node [gtu block, fill=blue!10] (kn) {તમે જે જાણો છો\\(પાસવર્ડ)};
+    \node [gtu block, fill=green!10, right=of kn] (have) {તમારી પાસે જે છે\\(ટોકન)};
+    \node [gtu block, fill=orange!10, right=of have] (are) {તમે જે છો\\(બાયોમેટ્રિક)};
+    
+    \node [below=0.5cm of have] {\textbf{Multi-Factor Authentication (MFA)}};
+\end{tikzpicture}
+\end{answerdiagram}
+
+\textbf{ઓથેન્ટિકેશન પદ્ધતિઓ:}
+\begin{answertable}{Authentication Factors}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પદ્ધતિ} & \textbf{વર્ણન} & \textbf{ઉદાહરણ} \\ \hline
+\keyword{પાસવર્ડ} & તમે જે જાણો છો & PIN, પાસફ્રેઝ \\ \hline
+\keyword{બાયોમેટ્રિક} & તમે જે છો & ફિંગરપ્રિન્ટ, આઇરિસ \\ \hline
+\keyword{ટોકન} & તમારી પાસે જે છે & સ્માર્ટ કાર્ડ, USB કી \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\begin{itemize}
+    \item \keyword{સિંગલ-ફેક્ટર}: એક ઓથેન્ટિકેશન પદ્ધતિ વાપરે
+    \item \keyword{મલ્ટિ-ફેક્ટર}: અનેક પદ્ધતિઓ જોડે
+    \item \keyword{ટુ-ફેક્ટર (2FA)}: બરાબર બે ફેક્ટર વાપરે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{પાસવર્ડ બાયોમેટ્રિક ટોકન ઓથેન્ટિકેશન}
+\end{mnemonicbox}
+
+\questionmarks{2(b OR)}{4}{Define: Trojans, Rootkit, Backdoors, Keylogger}
+
+\begin{solutionbox}
+\textbf{મેલવેર વ્યાખ્યાઓ:}
+
+\begin{answertable}{Malware Definitions}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{શબ્દ} & \textbf{વ્યાખ્યા} & \textbf{લક્ષણો} \\ \hline
+\keyword{ટ્રોજન્સ} & કાયદેસર સોફ્ટવેરના છદ્મવેશમાં મેલવેર & હાનિકારક દેખાય, છુપાયેલ પેલોડ \\ \hline
+\keyword{રૂટકિટ} & મેલવેરની હાજરી છુપાવતો સોફ્ટવેર & ઊંડી સિસ્ટમ એક્સેસ, સ્ટેલ્થ ઓપરેશન \\ \hline
+\keyword{બેકડોર્સ} & અનધિકૃત એક્સેસ પદ્ધતિ & સામાન્ય ઓથેન્ટિકેશન બાયપાસ કરે \\ \hline
+\keyword{કીલોગર} & કીબોર્ડ ઇનપુટ રેકોર્ડ કરે & પાસવર્ડ, સંવેદનશીલ ડેટા કેપ્ચર કરે \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\begin{itemize}
+    \item \keyword{ટ્રોજન્સ}: ગ્રીક ટ્રોજન હોર્સ પરથી નામ
+    \item \keyword{રૂટકિટ}: કર્નલ લેવલ પર કામ કરે
+    \item \keyword{બેકડોર્સ}: હાર્ડવેર અથવા સોફ્ટવેર આધારિત હોઈ શકે
+    \item \keyword{કીલોગર}: સોફ્ટવેર અથવા હાર્ડવેર ડિવાઇસ હોઈ શકે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{ટ્રોજન રૂટ બેકડોર કીલોગ}
+\end{mnemonicbox}
+
+% Question 2(c OR) ... (continue in next chunk)
+
+
+% Question 2(c OR)
+\questionmarks{2(c OR)}{7}{SSL and TLS protocols.}
+
+\begin{solutionbox}
+\textbf{SSL/TLS પ્રોટોકોલ ઉત્ક્રાંતિ:}
+
+\begin{answerdiagram}{SSL/TLS Handshake}
+\begin{tikzpicture}[auto, >=latex, thick]
+    \node [gtu state] (client) {ક્લાઇન્ટ};
+    \node [gtu state, right=5cm of client] (server) {સર્વર};
+    
+    % Sequence Diagram like flow
+    \draw [->] (client.east) -- ++(0.5, -0.5) -- node [above, sloped, font=\footnotesize] {1. ClientHello} ($(server.west)+(0,-1)$);
+    \draw [->] ($(server.west)+(0,-1.5)$) -- node [above, sloped, font=\footnotesize] {2. ServerHello + સર્ટિફિકેટ} ($(client.east)+(0,-2)$);
+    \draw [->] ($(client.east)+(0,-2.5)$) -- node [above, sloped, font=\footnotesize] {3. કી એક્સચેન્જ} ($(server.west)+(0,-3)$);
+    \draw [->] ($(server.west)+(0,-3.5)$) -- node [above, sloped, font=\footnotesize] {4. પૂર્ણ} ($(client.east)+(0,-4)$);
+    
+    \node [below=4.5cm of client, xshift=2.5cm, draw, dashed, fill=green!5] {સુરક્ષિત ચેનલ સ્થાપિત};
+\end{tikzpicture}
+\end{answerdiagram}
+
+\begin{answertable}{SSL/TLS Comparison}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{વર્ઝન} & \textbf{વર્ષ} & \textbf{સ્થિતિ} & \textbf{સુરક્ષા સ્તર} \\ \hline
+\keyword{SSL 2.0} & 1995 & અપ્રચલિત & નબળું \\ \hline
+\keyword{SSL 3.0} & 1996 & અપ્રચલિત & સંવેદનશીલ \\ \hline
+\keyword{TLS 1.0} & 1999 & લેગસી & મર્યાદિત \\ \hline
+\keyword{TLS 1.2} & 2008 & વ્યાપક ઉપયોગ & સારું \\ \hline
+\keyword{TLS 1.3} & 2018 & વર્તમાન & મજબૂત \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\textbf{મુખ્ય વિશેષતાઓ:}
+\begin{itemize}
+    \item \keyword{એન્ક્રિપ્શન}: સિમેટ્રિક અને એસિમેટ્રિક અલ્ગોરિધમ
+    \item \keyword{ઓથેન્ટિકેશન}: સર્વર અને ક્લાયન્ટ વેરિફિકેશન
+    \item \keyword{ઇન્ટેગ્રિટી}: મેસેજ ઓથેન્ટિકેશન કોડ
+    \item \keyword{ફોરવર્ડ સિક્રેસી}: સેશન કી પ્રોટેક્શન
+\end{itemize}
+
+\textbf{એપ્લિકેશન:}
+\begin{itemize}
+    \item HTTPS વેબ બ્રાઉઝિંગ
+    \item ઇમેઇલ સિક્યોરિટી (SMTPS)
+    \item VPN કનેક્શન
+    \item સુરક્ષિત ફાઇલ ટ્રાન્સફર
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{TLS બધા નેટવર્ક ટ્રાફિકને એન્ક્રિપ્ટ કરે}
+\end{mnemonicbox}
+
+% Question 3
+\questionmarks{3(a)}{3}{Explain in detail cybercrime and cybercriminal.}
+
+\begin{solutionbox}
+\textbf{સાયબર ક્રાઇમ વ્યાખ્યા:}
+કમ્પ્યુટર અથવા ઇન્ટરનેટ નેટવર્ક દ્વારા કરવામાં આવતી ગુનાહિત પ્રવૃત્તિઓ.
+
+\begin{answerdiagram}{Cybercrime Overview}
+\begin{tikzpicture}[auto, >=latex, thick]
+    \node [draw, circle, fill=red!10, align=center] (crime) {સાયબર\\ક્રાઇમ};
+    \node [draw, rectangle, right=of crime, fill=gray!10] (tech) {ટેકનોલોજી};
+    \node [draw, rectangle, below=of crime, fill=gray!10] (illeg) {ગેરકાયદેસર કૃત્ય};
+    \node [draw, rectangle, left=of crime, fill=gray!10] (vic) {ભોગ બનનાર};
+    
+    \draw [->] (crime) -- (tech);
+    \draw [->] (crime) -- (illeg);
+    \draw [->] (crime) -- (vic);
+\end{tikzpicture}
+\end{answerdiagram}
+
+\textbf{સાયબરક્રિમિનલ પ્રકારો:}
+\begin{answertable}{Types of Cybercriminals}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{પ્રકાર} & \textbf{પ્રેરણા} & \textbf{કુશળતા} & \textbf{લક્ષ્ય} \\ \hline
+\keyword{સ્ક્રિપ્ટ કિડીઝ} & મજા/પ્રસિદ્ધિ & ઓછી & અવ્યવસ્થિત \\ \hline
+\keyword{હેક્ટિવિસ્ટ} & રાજકીય/સામાજિક & મધ્યમ & સંસ્થાઓ \\ \hline
+\keyword{સાયબરક્રિમિનલ} & નાણાકીય લાભ & ઉચ્ચ & વ્યક્તિઓ/બેંકો \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\begin{itemize}
+    \item \keyword{સાયબર ક્રાઇમ}: ડિજિટલ ટેકનોલોજીનો ઉપયોગ કરીને ગેરકાયદેસર પ્રવૃત્તિઓ
+    \item \keyword{સાયબરક્રિમિનલ}: સાયબર ક્રાઇમ કરનાર વ્યક્તિ
+    \item \keyword{અસર}: નાણાકીય નુકસાન, ગોપનીયતા ભંગ, સિસ્ટમ નુકસાન
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{સાયબર ક્રિમિનલો અરાજકતા સર્જે છે}
+\end{mnemonicbox}
+
+\questionmarks{3(b)}{4}{Describe cyber stalking and cyber bullying in detail.}
+
+\begin{solutionbox}
+\textbf{ડિજિટલ પજવણી સરખામણી:}
+
+\begin{answerdiagram}{Stalking vs Bullying}
+\begin{tikzpicture}[auto, >=latex, thick]
+    \node [gtu block, fill=orange!10, text width=3cm] (stalk) {સાયબર સ્ટોકિંગ\\(લક્ષિત/પુખ્ત)};
+    \node [gtu block, fill=purple!10, text width=3cm, right=of stalk] (bully) {સાયબર બુલીંગ\\(વ્યાપક/નાબાલિગ)};
+    
+    \draw [<->] (stalk) -- node {બંને પજવણી} (bully);
+\end{tikzpicture}
+\end{answerdiagram}
+
+\begin{answertable}{Stalking vs Bullying}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પાસું} & \textbf{સાયબર સ્ટોકિંગ} & \textbf{સાયબર બુલીંગ} \\ \hline
+\keyword{લક્ષ્ય} & વિશિષ્ટ વ્યક્તિ & મોટેભાગે નાબાલિગો \\ \hline
+\keyword{અવધિ} & સતત, લાંબા ગાળાની & એપિસોડિક હોઈ શકે \\ \hline
+\keyword{હેતુ} & ભીતિ, નિયંત્રણ & પજવણી, અપમાન \\ \hline
+\keyword{પ્લેટફોર્મ} & સોશિયલ મીડિયા, ઇમેઇલ & શાળાઓ, ગેમિંગ પ્લેટફોર્મ \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\textbf{સાયબર સ્ટોકિંગ લક્ષણો:}
+\begin{itemize}
+    \item સતત અનચાહેલ સંપર્ક
+    \item પીડિતની ઓનલાઇન પ્રવૃત્તિનું મોનિટરિંગ
+    \item ધમકીભર્યા સંદેશાઓ અથવા વર્તન
+    \item ઓળખની ચોરી અથવા ઢોંગ
+\end{itemize}
+
+\textbf{સાયબર બુલીંગ સ્વરૂપો:}
+\begin{itemize}
+    \item ઓનલાઇન જાહેર અપમાન
+    \item ડિજિટલ જૂથોમાંથી બાકાત
+    \item ખોટી માહિતી ફેલાવવી
+    \item સંમતિ વિના ખાનગી સામગ્રી શેર કરવી
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{બુલીંગ બંધ કરો, સ્ટોકિંગની જાણ કરો}
+\end{mnemonicbox}
+
+\questionmarks{3(c)}{7}{Explain Property based classification in cybercrime.}
+
+\begin{solutionbox}
+\textbf{પ્રોપર્ટી-આધારિત સાયબર ક્રાઇમ શ્રેણીઓ:}
+
+\begin{answerdiagram}{Property-Based Cybercrime}
+\begin{tikzpicture}[
+    prop/.style={draw, rectangle, fill=blue!10, minimum width=2.5cm, minimum height=1cm, align=center}
+]
+    \node [draw, ellipse, fill=yellow!20] (center) {પ્રોપર્ટી ક્રાઇમ};
+    
+    \node [prop, above left=of center] (ip) {બૌદ્ધિક\\સંપત્તિ};
+    \node [prop, above right=of center] (fin) {નાણાકીય\\સંપત્તિ};
+    \node [prop, below left=of center] (dig) {ડિજિટલ\\સંપત્તિ};
+    \node [prop, below right=of center] (virt) {વર્ચ્યુઅલ\\સંપત્તિ};
+    
+    \draw [thick] (center) -- (ip);
+    \draw [thick] (center) -- (fin);
+    \draw [thick] (center) -- (dig);
+    \draw [thick] (center) -- (virt);
+\end{tikzpicture}
+\end{answerdiagram}
+
+\begin{answertable}{Property Crime Classification}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{શ્રેણી} & \textbf{ક્રાઇમ પ્રકાર} & \textbf{વર્ણન} & \textbf{ઉદાહરણ} \\ \hline
+\keyword{બૌદ્ધિક સંપત્તિ} & કોપીરાઇટ ઉલ્લંઘન & કોપીરાઇટ સામગ્રીનો અનધિકૃત ઉપયોગ & સોફ્ટવેર પાયરેસી \\ \hline
+\keyword{નાણાકીય સંપત્તિ} & ક્રેડિટ કાર્ડ ફ્રોડ & નાણાકીય માહિતીનો અનધિકૃત ઉપયોગ & ઓનલાઇન શોપિંગ ફ્રોડ \\ \hline
+\keyword{ડિજિટલ સંપત્તિ} & ડેટા ચોરી & ડિજિટલ માહિતીની ચોરી & ડેટાબેસ બ્રીચ \\ \hline
+\keyword{વર્ચ્યુઅલ સંપત્તિ} & ગેમિંગ એસેટ ચોરી & વર્ચ્યુઅલ વસ્તુઓની ચોરી & ઓનલાઇન ગેમ કરન્સી ચોરી \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\textbf{કાયદેસરના પાસાઓ:}
+\begin{itemize}
+    \item \keyword{કોપીરાઇટ કાયદાઓ}: સર્જનાત્મક કાર્યોનું રક્ષણ
+    \item \keyword{ટ્રેડમાર્ક કાયદાઓ}: બ્રાન્ડ ઓળખનું રક્ષણ
+    \item \keyword{પેટન્ટ કાયદાઓ}: આવિષ્કારોનું રક્ષણ
+    \item \keyword{ટ્રેડ સિક્રેટ કાયદાઓ}: ગોપનીય માહિતીનું રક્ષણ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{પ્રોપર્ટી પ્રોટેક્શન પાયરેસી અટકાવે}
+\end{mnemonicbox}
+
+\questionmarks{3(a OR)}{3}{Explain Data diddling.}
+
+\begin{solutionbox}
+\textbf{ડેટા ડિડલિંગ વ્યાખ્યા:}
+કમ્પ્યુટર સિસ્ટમમાં ડેટા દાખલ કરતા પહેલા અથવા દરમિયાન અનધિકૃત ફેરફાર.
+
+\begin{answerdiagram}{Data Diddling Process}
+\begin{tikzpicture}[auto, >=latex, thick]
+    \node [gtu block] (source) {સ્રોત દસ્તાવેજ};
+    \node [gtu block, right=of source, fill=red!20] (diddle) {ફેરફાર\\(ડિડલિંગ)};
+    \node [gtu block, right=of diddle] (input) {સિસ્ટમ ઇનપુટ};
+    \node [gtu block, right=of input] (db) {ડેટાબેસ};
+    
+    \draw [gtu arrow] (source) -- (diddle);
+    \draw [gtu arrow] (diddle) -- (input);
+    \draw [gtu arrow] (input) -- (db);
+    
+    \node [below=of diddle, font=\small] {અહીં ફેરફારો થાય છે};
+\end{tikzpicture}
+\end{answerdiagram}
+
+\begin{answertable}{Data Diddling Characteristics}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{પાસું} & \textbf{વર્ણન} \\ \hline
+\keyword{પદ્ધતિ} & ડેટા વેલ્યુમાં ફેરફાર \\ \hline
+\keyword{સમય} & સિસ્ટમ પ્રોસેસિંગ પહેલા \\ \hline
+\keyword{શોધ} & ઘણીવાર ઓળખવું મુશ્કેલ \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\begin{itemize}
+    \item \keyword{ઉદાહરણો}: સેલેરી આંકડાઓમાં ફેરફાર, પરીક્ષાના સ્કોરમાં ફેરફાર
+    \item \keyword{લક્ષ્ય}: એન્ટ્રી પ્રક્રિયા દરમિયાન ઇનપુટ ડેટા
+    \item \keyword{અસર}: નાણાકીય નુકસાન, ખોટા રેકોર્ડ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{ડેટા ડિડલિંગ ડેટાબેસને નુકસાન પહોંચાડે}
+\end{mnemonicbox}
+
+\questionmarks{3(b OR)}{4}{Explain cyber spying and cyber terrorism.}
+
+\begin{solutionbox}
+\textbf{સાયબર ધમકીઓની સરખામણી:}
+
+\begin{answertable}{Spying vs Terrorism}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પાસું} & \textbf{સાયબર સ્પાઇંગ} & \textbf{સાયબર ટેરરીઝમ} \\ \hline
+\keyword{હેતુ} & માહિતી એકત્રીકરણ & ભય/વિક્ષેપ સર્જવો \\ \hline
+\keyword{લક્ષ્ય} & સરકાર, કોર્પોરેશન & નિર્ધારક ઇન્ફ્રાસ્ટ્રક્ચર \\ \hline
+\keyword{પદ્ધતિઓ} & છુપી ઘૂસણખોરી & વિનાશક હુમલાઓ \\ \hline
+\keyword{અસર} & ગુપ્ત માહિતીનું નુકસાન & જાહેર સુરક્ષા જોખમ \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\textbf{સાયબર સ્પાઇંગ પ્રવૃત્તિઓ:}
+\begin{itemize}
+    \item કોર્પોરેટ જાસૂસી
+    \item સરકારી દેખરેખ
+    \item ટ્રેડ સિક્રેટ ચોરી
+\end{itemize}
+
+\textbf{સાયબર ટેરરીઝમ પદ્ધતિઓ:}
+\begin{itemize}
+    \item ઇન્ફ્રાસ્ટ્રક્ચર હુમલાઓ
+    \item મોટા પાયે વિક્ષેપ ઝુંબેશ
+    \item મનોવૈજ્ઞાનિક યુદ્ધ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{જાસૂસો ચોરે, આતંકવાદીઓ આતંક}
+\end{mnemonicbox}
+
+\questionmarks{3(c OR)}{7}{Explain the role of digital signatures and digital certificates in cybersecurity.}
+
+\begin{solutionbox}
+\textbf{ડિજિટલ સુરક્ષા ઘટકો:}
+
+\begin{answerdiagram}{Digital Signature Process}
+\begin{tikzpicture}[auto, >=latex, thick, node distance=1.5cm]
+    \node [gtu block, fill=white] (doc) {દસ્તાવેજ};
+    \node [gtu block, right=of doc, fill=orange!10] (hash) {હેશ ફંક્શન};
+    \node [gtu block, right=of hash, fill=yellow!10] (digest) {ડાઇજેસ્ટ};
+    \node [gtu block, right=of digest, fill=red!10] (encrypt) {એન્ક્રિપ્ટ w/\\પ્રાઇવેટ કી};
+    \node [gtu block, right=of encrypt, fill=green!10] (sig) {ડિજિટલ\\સિગ્નેચર};
+    
+    \draw [gtu arrow] (doc) -- (hash);
+    \draw [gtu arrow] (hash) -- (digest);
+    \draw [gtu arrow] (digest) -- (encrypt);
+    \draw [gtu arrow] (encrypt) -- (sig);
+\end{tikzpicture}
+\end{answerdiagram}
+
+\begin{answertable}{Digital Security Components}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{ઘટક} & \textbf{હેતુ} & \textbf{ફંક્શન} & \textbf{ફાયદો} \\ \hline
+\keyword{ડિજિટલ સિગ્નેચર} & ઓથેન્ટિકેશન & મોકલનારની ઓળખ સાબિત કરે & નોન-રિપ્યુડિએશન \\ \hline
+\keyword{ડિજિટલ સર્ટિફિકેટ} & વેરિફિકેશન & પબ્લિક કીની માન્યતા & વિશ્વાસ સ્થાપના \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\textbf{ડિજિટલ સર્ટિફિકેટ ઘટકો:}
+\begin{itemize}
+    \item \keyword{વિષય માહિતી}: સર્ટિફિકેટ માલિકની વિગતો
+    \item \keyword{પબ્લિક કી}: એન્ક્રિપ્શન/વેરિફિકેશન માટે
+    \item \keyword{ડિજિટલ સિગ્નેચર}: CA ની સહી
+    \item \keyword{માન્યતા અવધિ}: સર્ટિફિકેટની સમાપ્તિ તારીખ
+\end{itemize}
+
+\textbf{સર્ટિફિકેટ ઓથોરિટી (CA) ભૂમિકા:}
+\begin{itemize}
+    \item ડિજિટલ સર્ટિફિકેટ જારી કરે
+    \item જારી કરતા પહેલા ઓળખ ચકાસે
+    \item વિશ્વાસ ઇન્ફ્રાસ્ટ્રક્ચર પૂરું પાડે
+\end{itemize}
+
+\textbf{સુરક્ષા ફાયદાઓ:}
+\begin{itemize}
+    \item \keyword{ઓથેન્ટિકેશન}: મોકલનારની ઓળખ ચકાસે
+    \item \keyword{ઇન્ટેગ્રિટી}: ડેટામાં ફેરફાર થયો નથી તેની ખાતરી
+    \item \keyword{નોન-રિપ્યુડિએશન}: ક્રિયાઓનો ઇનકાર અટકાવે
+    \item \keyword{ગોપનીયતા}: સુરક્ષિત કમ્યુનિકેશન સક્ષમ કરે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{ડિજિટલ સિગ્નેચર ડોક્યુમેન્ટને સુરક્ષિત રીતે પ્રમાણિત કરે}
+\end{mnemonicbox}
+
+% Question 4
+\questionmarks{4(a)}{3}{What is Hacking? List out types of Hackers.}
+
+\begin{solutionbox}
+\textbf{હેકિંગ વ્યાખ્યા:}
+નબળાઈઓનો ફાયદો ઉઠાવવા માટે કમ્પ્યુટર સિસ્ટમ અથવા નેટવર્કમાં અનધિકૃત એક્સેસ.
+
+\begin{answerdiagram}{Hacker Types}
+\begin{tikzpicture}[
+    hat/.style={draw, rectangle, minimum width=2cm, minimum height=1cm, align=center}
+]
+    \node [hat, fill=white] (white) {વ્હાઇટ હેટ\\(નૈતિક)};
+    \node [hat, right=of white, fill=gray!30] (gray) {ગ્રે હેટ\\(મિશ્ર)};
+    \node [hat, right=of gray, fill=black!80, text=white] (black) {બ્લેક હેટ\\(દુર્ભાવનાપૂર્ણ)};
+\end{tikzpicture}
+\end{answerdiagram}
+
+\textbf{હેકર વર્ગીકરણ:}
+\begin{answertable}{Types of Hackers}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પ્રકાર} & \textbf{હેતુ} & \textbf{કાયદેસર સ્થિતિ} \\ \hline
+\keyword{વ્હાઇટ હેટ} & સુરક્ષા સુધારણા & કાયદેસર \\ \hline
+\keyword{બ્લેક હેટ} & દુર્ભાવનાપૂર્ણ પ્રવૃત્તિઓ & ગેરકાયદેસર \\ \hline
+\keyword{ગ્રે હેટ} & મિશ્ર પ્રેરણા & શંકાસ્પદ \\ \hline
+\end{tabulary}
+\end{answertable}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{સફેદ સારું, કાળું ખરાબ, ગ્રે શંકાસ્પદ}
+\end{mnemonicbox}
+
+\questionmarks{4(b)}{4}{Explain Vulnerability and 0-Day terminology of Hacking.}
+
+\begin{solutionbox}
+\textbf{સુરક્ષા પરિભાષા:}
+
+\begin{answertable}{Vulnerability vs 0-Day}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{શબ્દ} & \textbf{વ્યાખ્યા} & \textbf{જોખમ સ્તર} & \textbf{ઉદાહરણ} \\ \hline
+\keyword{વલ્નરેબિલિટી} & સિસ્ટમની નબળાઈ & વિવિધ & અનપેચ્ડ સોફ્ટવેર \\ \hline
+\keyword{0-દિવસ} & અજાણી નબળાઈ & ગંભીર & અશોધાયેલી ખામી \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\textbf{વલ્નરેબિલિટી લક્ષણો:}
+\begin{itemize}
+    \item સુરક્ષા પરીક્ષણ દ્વારા શોધ
+    \item વેન્ડરને જવાબદાર રિપોર્ટિંગ
+    \item વેન્ડર સુરક્ષા અપડેટ પૂરું પાડે
+\end{itemize}
+
+\textbf{0-દિવસ હુમલો પ્રક્રિયા:}
+\begin{enumerate}
+    \item હેકર અજાણી નબળાઈ શોધે
+    \item વેન્ડરની જાણકારી પહેલા ખામીનો ફાયદો ઉઠાવે
+    \item કોઈ ઉપલબ્ધ પેચ અથવા સંરક્ષણ નથી
+    \item આશ્ચર્યના કારણે ઉચ્ચ સફળતા દર
+\end{enumerate}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{નબળાઈઓને પેચની જરૂર, ઝીરો-ડેને સાવચેતીની જરૂર}
+\end{mnemonicbox}
+
+
+\questionmarks{4(c)}{7}{Explain Five Steps of Hacking.}
+
+\begin{solutionbox}
+\textbf{હેકિંગ પદ્ધતિ:}
+
+\begin{answerdiagram}{Hacking Steps}
+\begin{tikzpicture}[
+    hackstep/.style={gtu block, minimum width=2.5cm}
+]
+    \node [hackstep, fill=blue!10] (recon) {1. રિકોનેસન્સ};
+    \node [hackstep, right=0.5cm of recon, fill=green!10] (scan) {2. સ્કેનિંગ};
+    \node [hackstep, right=0.5cm of scan, fill=orange!10] (gain) {3. એક્સેસ પ્રાપ્તિ};
+    
+    \node [hackstep, below=of recon, xshift=1.5cm, fill=red!10] (maint) {4. એક્સેસ જાળવણી};
+    \node [hackstep, right=0.5cm of maint, fill=gray!10] (cover) {5. ટ્રેક્સ કવરિંગ};
+    
+    \draw [gtu arrow] (recon) -- (scan);
+    \draw [gtu arrow] (scan) -- (gain);
+    \draw [gtu arrow] (gain) -- (maint);
+    \draw [gtu arrow] (maint) -- (cover);
+\end{tikzpicture}
+\end{answerdiagram}
+
+\textbf{વિગતવાર પગલાંઓ:}
+\begin{answertable}{Hacking Phases}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{પગલું} & \textbf{વર્ણન} & \textbf{સાધનો/પદ્ધતિઓ} & \textbf{ઉદ્દેશ્ય} \\ \hline
+\keyword{રિકોનેસન્સ} & માહિતી એકત્રીકરણ & Google dorking & લક્ષ્ય પ્રોફાઇલિંગ \\ \hline
+\keyword{સ્કેનિંગ} & સિસ્ટમ ગણતરી & Nmap, Nessus & નબળાઈ ઓળખ \\ \hline
+\keyword{એક્સેસ પ્રાપ્તિ} & નબળાઈઓનો ફાયદો & Metasploit & સિસ્ટમ સમાધાન \\ \hline
+\keyword{એક્સેસ જાળવણી} & સતત હાજરી & બેકડોર, રૂટકિટ & લાંબા ગાળાનું નિયંત્રણ \\ \hline
+\keyword{ટ્રેક્સ કવરિંગ} & પુરાવા દૂર કરવા & લોગ સફાઇ & શોધ ટાળવી \\ \hline
+\end{tabulary}
+\end{answertable}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{રિકોનેસન્સ સ્કેન્સ એક્સેસ જનરેટ કરે, કવરેજ જાળવે}
+\end{mnemonicbox}
+
+\questionmarks{4(a OR)}{3}{Explain any three basic commands of Kali Linux with suitable example.}
+
+\begin{solutionbox}
+\textbf{અત્યાવશ્યક કાલી લિનક્સ કમાન્ડ્સ:}
+
+\begin{answertable}{Kali Commands}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{કમાન્ડ} & \textbf{ફંક્શન} & \textbf{ઉદાહરણ} \\ \hline
+\keyword{nmap} & નેટવર્ક સ્કેનિંગ & \code{nmap -sS 192.168.1.1} \\ \hline
+\keyword{netcat} & નેટવર્ક કમ્યુનિકેશન & \code{nc -l -p 1234} \\ \hline
+\keyword{hydra} & પાસવર્ડ ક્રેકિંગ & \code{hydra -l admin ...} \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\begin{itemize}
+    \item \keyword{Nmap}: નેટવર્ક પર હોસ્ટ અને સેવાઓ શોધે છે
+    \item \keyword{Netcat}: ડેટા ટ્રાન્સફર માટે નેટવર્ક કનેક્શન બનાવે છે
+    \item \keyword{Hydra}: બ્રુટ-ફોર્સ પાસવર્ડ હુમલાઓ કરે છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{નેટવર્ક મેપ, કનેક્ટ, ક્રેક}
+\end{mnemonicbox}
+
+\questionmarks{4(b OR)}{4}{Describe Session Hijacking in detail.}
+
+\begin{solutionbox}
+\textbf{સેશન હાઇજેકિંગ ઓવરવ્યુ:}
+હુમલાખોર કાયદેસર યુઝરના સેશનને કબજે કરે છે તે હુમલો.
+
+\begin{answerdiagram}{Session Hijacking}
+\begin{tikzpicture}[auto, >=latex, thick]
+    \node [gtu state] (client) {યુઝર};
+    \node [gtu state, right=4cm of client] (server) {સર્વર};
+    \node [gtu state, below=2cm of client, fill=red!20] (attacker) {હુમલાખોર};
+    
+    \draw [thick, blue] (client) -- node[above] {માન્ય સેશન} (server);
+    \draw [dashed, red, ->] (attacker) -- node[right, font=\footnotesize] {સેશન ID ચોરે} (client);
+    \draw [thick, red, ->] (attacker) to[bend right=20] node[below, font=\footnotesize] {યુઝર ઢોંગ} (server);
+\end{tikzpicture}
+\end{answerdiagram}
+
+\begin{answertable}{Hijacking Types}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પ્રકાર} & \textbf{પદ્ધતિ} & \textbf{રોકથામ} \\ \hline
+\keyword{એક્ટિવ} & સેશન કબજે કરે & મજબૂત સેશન મેનેજમેન્ટ \\ \hline
+\keyword{પેસિવ} & સેશન મોનિટર કરે & એન્ક્રિપ્શન (HTTPS) \\ \hline
+\keyword{નેટવર્ક-લેવલ} & TCP હાઇજેકિંગ & સુરક્ષિત પ્રોટોકોલ \\ \hline
+\keyword{એપ્લિકેશન-લેવલ} & કુકી ચોરી & સુરક્ષિત કુકી એટ્રિબ્યુટ \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\textbf{રોકથામના પગલાં:}
+\begin{itemize}
+    \item બધા કમ્યુનિકેશન માટે HTTPS નો ઉપયોગ
+    \item સુરક્ષિત સેશન મેનેજમેન્ટ અમલીકરણ
+    \item શંકાસ્પદ પ્રવૃત્તિ માટે મોનિટરિંગ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{સેશન હાઇજેકને સુરક્ષિત હેન્ડલિંગની જરૂર}
+\end{mnemonicbox}
+
+\questionmarks{4(c OR)}{7}{Explain how Virtual Private Networks (VPNs) create secure, encrypted connections over public networks.}
+
+\begin{solutionbox}
+\textbf{VPN આર્કિટેક્ચર:}
+
+\begin{answerdiagram}{VPN Architecture}
+\begin{tikzpicture}[auto, >=latex, thick]
+    \node [gtu block] (user) {યુઝર ડિવાઇસ};
+    \node [draw, cloud, cloud puffs=10, right=1.5cm of user, minimum width=3cm] (internet) {ઇન્ટરનેટ};
+    \node [gtu block, right=1.5cm of internet] (server) {VPN સર્વર};
+    
+    % Tunnel
+    \draw [double, double distance=2pt, dashed, blue] (user) -- (server);
+    \node [above=0.2cm of internet, text=blue] {એન્ક્રિપ્ટેડ ટનલ};
+    
+    % Connections
+    \node [right=1cm of server] (dest) {ડેસ્ટિનેશન};
+    \draw [->] (server) -- (dest);
+\end{tikzpicture}
+\end{answerdiagram}
+
+\begin{answertable}{VPN Protocols}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{પ્રોટોકોલ} & \textbf{સુરક્ષા} & \textbf{ઝડપ} & \textbf{ઉપયોગ કેસ} \\ \hline
+\keyword{OpenVPN} & ઉચ્ચ & સારી & સામાન્ય હેતુ \\ \hline
+\keyword{IPSec} & અત્યંત ઉચ્ચ & મધ્યમ & એન્ટરપ્રાઇઝ \\ \hline
+\keyword{WireGuard} & ઉચ્ચ & ઉત્કૃષ્ટ & આધુનિક સોલ્યુશન \\ \hline
+\keyword{PPTP} & ઓછું & ઝડપી & લેગસી (અપ્રચલિત) \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\textbf{VPN કાર્ય પ્રક્રિયા:}
+\begin{itemize}
+    \item \keyword{કનેક્શન}: ક્લાઇન્ટ VPN સર્વર સાથે જોડાય
+    \item \keyword{ઓથેન્ટિકેશન}: યુઝર ક્રેડેન્શિયલ ચકાસાય
+    \item \keyword{ટનલ ક્રિએશન}: એન્ક્રિપ્ટેડ પાથવે સ્થાપિત થાય
+    \item \keyword{ડેટા એન્ક્રિપ્શન}: બધો ટ્રાફિક એન્ક્રિપ્ટ થાય
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{VPN નેટવર્ક પ્રાઇવસી પ્રદાન કરે}
+\end{mnemonicbox}
+
+% Question 5
+\questionmarks{5(a)}{3}{Explain Network forensics.}
+
+\begin{solutionbox}
+\textbf{નેટવર્ક ફોરેન્સિક્સ વ્યાખ્યા:}
+સુરક્ષા ઘટનાઓ શોધવા અને વિશ્લેષણ કરવા માટે નેટવર્ક ટ્રાફિકની તપાસ.
+
+\begin{answerdiagram}{Network Forensics Process}
+\begin{tikzpicture}[auto, >=latex, thick]
+    \node [gtu block, fill=blue!10] (cap) {ટ્રાફિક કેપ્ચર};
+    \node [gtu block, right=of cap, fill=yellow!10] (ana) {વિશ્લેષણ};
+    \node [gtu block, right=of ana, fill=green!10] (evi) {પુરાવા};
+    
+    \draw [gtu arrow] (cap) -- (ana);
+    \draw [gtu arrow] (ana) -- (evi);
+    
+    \node [below=0.5cm of ana, font=\small] {Wireshark, tcpdump};
+\end{tikzpicture}
+\end{answerdiagram}
+
+\textbf{મુખ્ય ઘટકો:}
+\begin{answertable}{Network Forensics Components}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{ઘટક} & \textbf{હેતુ} & \textbf{સાધનો} \\ \hline
+\keyword{ટ્રાફિક કેપ્ચર} & નેટવર્ક ડેટા રેકોર્ડ કરવો & Wireshark, tcpdump \\ \hline
+\keyword{વિશ્લેષણ} & પેટર્ન તપાસવા & NetworkMiner, Snort \\ \hline
+\keyword{પુરાવા} & શોધોનો દસ્તાવેજ & ફોરેન્સિક રિપોર્ટ \\ \hline
+\end{tabulary}
+\end{answertable}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{નેટવર્ક ફોરેન્સિક્સ તથ્યો શોધે}
+\end{mnemonicbox}
+
+\questionmarks{5(b)}{4}{Explain why CCTV plays an important role as evidence in digital forensics investigations.}
+
+\begin{solutionbox}
+\textbf{ડિજિટલ ફોરેન્સિક્સમાં CCTV:}
+
+\begin{answerdiagram}{CCTV Evidence}
+\begin{tikzpicture}[auto, >=latex, thick]
+    \node [gtu block] (cam) {CCTV કેમેરા};
+    \node [gtu block, right=of cam] (dvr) {DVR/NVR};
+    \node [gtu block, right=of dvr] (forensic) {ફોરેન્સિક\\વિશ્લેષણ};
+    \node [gtu block, right=of forensic, fill=green!10] (court) {કોર્ટ\\પુરાવા};
+    
+    \draw [gtu arrow] (cam) -- (dvr);
+    \draw [gtu arrow] (dvr) -- (forensic);
+    \draw [gtu arrow] (forensic) -- (court);
+\end{tikzpicture}
+\end{answerdiagram}
+
+\begin{answertable}{CCTV Evidence Value}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પાસું} & \textbf{મહત્વ} & \textbf{મૂલ્ય} \\ \hline
+\keyword{વિઝ્યુઅલ પુરાવા} & સીધું અવલોકન & ઉચ્ચ વિશ્વસનીયતા \\ \hline
+\keyword{ટાઇમલાઇન} & સમય-સ્ટેમ્પ રેકોર્ડ & ઘટના સહસંબંધ \\ \hline
+\keyword{ડિજિટલ ફોર્મેટ} & વિશ્લેષણ કરવામાં સરળ & મેટાડેટા એક્સટ્રેક્શન \\ \hline
+\keyword{બેકઅપ} & બહુવિધ કોપીઓ & પુરાવા સંરક્ષણ \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\textbf{પુરાવાનું મૂલ્ય:}
+\begin{itemize}
+    \item \keyword{સમર્થન}: અન્ય ડિજિટલ પુરાવાઓને સમર્થન આપે
+    \item \keyword{ટાઇમલાઇન}: ઘટનાઓનો ક્રમ સ્થાપિત કરે
+    \item \keyword{ઓળખ}: ગુનેગારની ઓળખ પ્રગટ કરી શકે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{CCTV ગુનાહિત વર્તણૂકને સ્પષ્ટ રીતે કેપ્ચર કરે}
+\end{mnemonicbox}
+
+\questionmarks{5(c)}{7}{Explain phases of Digital forensic investigation.}
+
+\begin{solutionbox}
+\textbf{ડિજિટલ ફોરેન્સિક્સ તપાસના તબક્કાઓ:}
+
+\begin{answerdiagram}{Digital Forensics Phases}
+\begin{tikzpicture}[
+    phase/.style={gtu block, minimum width=3cm}
+]
+    \node [phase, fill=blue!10] (id) {1. ઓળખ};
+    \node [phase, right=of id, fill=cyan!10] (pres) {2. સંરક્ષણ};
+    \node [phase, right=of pres, fill=green!10] (col) {3. સંગ્રહ};
+    
+    \node [phase, below=of id, fill=yellow!10] (exam) {4. પરીક્ષા};
+    \node [phase, right=of exam, fill=orange!10] (ana) {5. વિશ્લેષણ};
+    \node [phase, right=of ana, fill=red!10] (present) {6. પ્રસ્તુતિ};
+    
+    \draw [gtu arrow] (id) -- (pres);
+    \draw [gtu arrow] (pres) -- (col);
+    \draw [gtu arrow] (col) -- (exam); 
+    \draw [gtu arrow] (exam) -- (ana);
+    \draw [gtu arrow] (ana) -- (present);
+\end{tikzpicture}
+\end{answerdiagram}
+
+\textbf{વિગતવાર તબક્કાનું વિભાજન:}
+\begin{answertable}{Investigation Phases}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{તબક્કો} & \textbf{પ્રવૃત્તિઓ} & \textbf{સાધનો} & \textbf{ઉદ્દેશ્ય} \\ \hline
+\keyword{ઓળખ} & સંભવિત પુરાવાઓ ઓળખવા & વિઝ્યુઅલ નિરીક્ષણ & અવકાશ વ્યાખ્યા \\ \hline
+\keyword{સંરક્ષણ} & પુરાવા દૂષણ અટકાવવું & રાઇટ બ્લોકર & પુરાવા અખંડતા \\ \hline
+\keyword{સંગ્રહ} & ડિજિટલ પુરાવા મેળવવા & ફોરેન્સિક ઇમેજિંગ & સંપૂર્ણ ડેટા કેપ્ચર \\ \hline
+\keyword{પરીક્ષા} & સંબંધિત ડેટા એક્સટ્રેક્ટ કરવો & Autopsy, FTK & ડેટા રિકવરી \\ \hline
+\keyword{વિશ્લેષણ} & શોધોનું અર્થઘટન & ટાઇમલાઇન સાધનો & પેટર્ન ઓળખ \\ \hline
+\keyword{પ્રસ્તુતિ} & પરિણામોનો દસ્તાવેજ & રિપોર્ટ જનરેટર & કાયદેસર પ્રસ્તુતિ \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\textbf{તબક્કો 1 - ઓળખ:} સંભવિત પુરાવા સ્ત્રોતોની ઓળખ
+\textbf{તબક્કો 2 - સંરક્ષણ:} અપરાધ સ્થળ સુરક્ષિત કરવું
+\textbf{તબક્કો 3 - સંગ્રહ:} ફોરેન્સિક ઇમેજ બનાવવી
+\textbf{તબક્કો 4 - પરીક્ષા:} ડેટા એક્સટ્રેક્ટ કરવો
+\textbf{તબક્કો 5 - વિશ્લેષણ:} ઘટનાઓનું પુનઃનિર્માણ
+\textbf{તબક્કો 6 - પ્રસ્તુતિ:} વિગતવાર રિપોર્ટ તૈયાર કરવો
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{તપાસકર્તાઓ સંરક્ષિત કરે, એકત્ર કરે, તપાસે, વિશ્લેષણ કરે, પ્રસ્તુત કરે}
+\end{mnemonicbox}
+
+\questionmarks{5(a OR)}{3}{List applications of microcontrollers in various fields related to cybersecurity.}
+
+\begin{solutionbox}
+\textbf{માઇક્રોકન્ટ્રોલર સુરક્ષા એપ્લિકેશન:}
+
+\begin{answerdiagram}{Microcontroller Security}
+\begin{tikzpicture}[auto, >=latex, thick]
+    \node [gtu block] (mcu) {માઇક્રોકન્ટ્રોલર};
+    \node [gtu block, above right=of mcu] (iot) {IoT સુરક્ષા};
+    \node [gtu block, right=of mcu] (access) {એક્સેસ કંટ્રોલ};
+    \node [gtu block, below right=of mcu] (net) {નેટવર્ક સુરક્ષા};
+    
+    \draw [gtu arrow] (mcu) -- (iot);
+    \draw [gtu arrow] (mcu) -- (access);
+    \draw [gtu arrow] (mcu) -- (net);
+\end{tikzpicture}
+\end{answerdiagram}
+
+\begin{answertable}{Microcontroller Applications}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{ક્ષેત્ર} & \textbf{એપ્લિકેશન} & \textbf{સુરક્ષા ફંક્શન} \\ \hline
+\keyword{IoT સુરક્ષા} & સ્માર્ટ હોમ ડિવાઇસ & ઓથેન્ટિકેશન, એન્ક્રિપ્શન \\ \hline
+\keyword{એક્સેસ કંટ્રોલ} & કી કાર્ડ, બાયોમેટ્રિક & ઓળખ ચકાસણી \\ \hline
+\keyword{નેટવર્ક સુરક્ષા} & હાર્ડવેર ફાયરવોલ & પેકેટ ફિલ્ટરિંગ \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\begin{itemize}
+    \item \keyword{સ્માર્ટ કાર્ડ}: સુરક્ષિત ઓથેન્ટિકેશન ટોકન
+    \item \keyword{HSM}: ક્રિપ્ટોગ્રાફિક પ્રોસેસિંગ મોડ્યુલ
+    \item \keyword{એમ્બેડેડ સિસ્ટમ}: સિક્યોર બૂટ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{માઇક્રોકન્ટ્રોલર બહુવિધ સુરક્ષા ફંક્શન મેનેજ કરે}
+\end{mnemonicbox}
+
+\questionmarks{5(b OR)}{4}{Explain the importance of port scanning in ethical hacking.}
+
+\begin{solutionbox}
+\textbf{એથિકલ હેકિંગમાં પોર્ટ સ્કેનિંગ:}
+
+\begin{answerdiagram}{Port Scanning Benefits}
+\begin{tikzpicture}[auto, >=latex, thick]
+    \node [gtu block, fill=gray!10] (scan) {પોર્ટ સ્કેનિંગ};
+    
+    \node [gtu block, above right=of scan] (vuln) {નબળાઈઓ\\શોધો};
+    \node [gtu block, below right=of scan] (serv) {સેવાઓ\\શોધો};
+    \node [gtu block, right=of scan] (map) {નેટવર્ક\\મેપિંગ};
+    
+    \draw [gtu arrow] (scan) -- (vuln);
+    \draw [gtu arrow] (scan) -- (serv);
+    \draw [gtu arrow] (scan) -- (map);
+\end{tikzpicture}
+\end{answerdiagram}
+
+\begin{answertable}{Port Scanning Importance}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પાસું} & \textbf{મહત્વ} & \textbf{ફાયદો} \\ \hline
+\keyword{સેવા શોધ} & ચાલતી સેવાઓ ઓળખવી & હુમલા સપાટીનું મેપિંગ \\ \hline
+\keyword{વલ્નરેબિલિટી} & ખુલ્લા પોર્ટ શોધવા & સુરક્ષા ગેપ ઓળખ \\ \hline
+\keyword{નેટવર્ક મેપિંગ} & ટોપોલોજી સમજવી & ઇન્ફ્રાસ્ટ્રક્ચર વિશ્લેષણ \\ \hline
+\keyword{સુરક્ષા પરીક્ષણ} & કોન્ફિગરેશન માન્ય કરવી & અનુપાલન ચકાસણી \\ \hline
+\end{tabulary}
+\end{answertable}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{પોર્ટ સ્કેનિંગ સુરક્ષા આંતરદૃષ્ટિ પ્રદાન કરે}
+\end{mnemonicbox}
+
+\questionmarks{5(c OR)}{7}{Describe the process of conducting a vulnerability assessment using Kali Linux tools.}
+
+\begin{solutionbox}
+\textbf{વલ્નરેબિલિટી એસેસમેન્ટ પ્રક્રિયા:}
+
+\begin{answerdiagram}{Assessment Process}
+\begin{tikzpicture}[auto, >=latex, thick]
+    \node [gtu block] (recon) {રિકોનેસન્સ};
+    \node [gtu block, right=of recon] (port) {પોર્ટ સ્કેન};
+    \node [gtu block, right=of port] (vuln) {વલ્નરેબિલિટી};
+    \node [gtu block, right=of vuln] (man) {મેન્યુઅલ};
+    \node [gtu block, right=of man] (report) {રિપોર્ટ};
+    
+    \draw [gtu arrow] (recon) -- (port);
+    \draw [gtu arrow] (port) -- (vuln);
+    \draw [gtu arrow] (vuln) -- (man);
+    \draw [gtu arrow] (man) -- (report);
+\end{tikzpicture}
+\end{answerdiagram}
+
+\textbf{પગલું-દર-પગલું પ્રક્રિયા:}
+\begin{answertable}{Assessment Steps}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{પગલું} & \textbf{કાલી ટૂલ} & \textbf{હેતુ} \\ \hline
+\keyword{રિકોનેસન્સ} & Nmap & હોસ્ટ શોધ \\ \hline
+\keyword{પોર્ટ સ્કેનિંગ} & Nmap & ખુલ્લા પોર્ટની ઓળખ \\ \hline
+\keyword{સેવા ગણતરી} & Nmap & સેવા વર્ઝન ડિટેક્શન \\ \hline
+\keyword{વલ્નરેબિલિટી} & OpenVAS & ઓટોમેટેડ ડિટેક્શન \\ \hline
+\keyword{વેબ પરીક્ષણ} & Nikto & વેબ વલ્નરેબિલિટી \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\textbf{ટૂલ્સ:}
+\begin{itemize}
+    \item \keyword{Nmap}: નેટવર્ક સ્કેનિંગ
+    \item \keyword{OpenVAS}: વલ્નરેબિલિટી સ્કેનિંગ
+    \item \keyword{Metasploit}: એક્સપ્લોઇટેશન
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{વલ્નરેબિલિટી એસેસમેન્ટ એપ્લિકેશન સિક્યોરિટીને માન્ય કરે}
+\end{mnemonicbox}
+
+\end{document}
+
