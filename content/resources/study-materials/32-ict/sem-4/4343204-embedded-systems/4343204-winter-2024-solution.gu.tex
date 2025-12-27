@@ -1,0 +1,1198 @@
+\documentclass[a4paper]{article}
+\input{../../../../../../latex-templates/gtu-solutions/preamble.tex}
+\input{../../../../../../latex-templates/gtu-solutions/commands.tex}
+\input{../../../../../../latex-templates/gtu-solutions/gujarati-boxes.tex}
+
+% Redefine environments to avoid float-in-box errors
+
+
+
+
+\title{Embedded System (4343204) - Winter 2024 Solution}
+\date{December 03, 2024}
+
+\begin{document}
+\maketitle
+% Content will be added here
+
+\questionmarks{1(અ)}{3}{ATmega32 માં RAM, Flash અને EEPROM મેમરી કેટલી છે? માઇક્રોકન્ટ્રોલરમાં તેની જરૂરિયાત સમજાવો.}
+
+\begin{solutionbox}
+\textbf{ATmega32 મેમરી સ્પેસિફિકેશન અને માઇક્રોકન્ટ્રોલર ઓપરેશનમાં તેનું મહત્વ:}
+
+\begin{answertable}{ATmega32માં મેમરી સાઇઝ}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{મેમરી પ્રકાર} & \textbf{સાઇઝ} & \textbf{હેતુ} \\ \hline
+SRAM (RAM) & 2 KB & વેરિએબલ્સ અને સ્ટેક સ્ટોરેજ \\ \hline
+Flash & 32 KB & પ્રોગ્રામ સ્ટોરેજ \\ \hline
+EEPROM & 1 KB & નોન-વોલેટાઇલ ડેટા સ્ટોરેજ \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\begin{itemize}
+    \item \keyword{RAM}: પ્રોગ્રામ એક્ઝિક્યુશન દરમિયાન વેરિએબલ્સ માટે ટેમ્પરરી સ્ટોરેજ
+    \item \keyword{Flash}: પ્રોગ્રામ ઇન્સ્ટ્રક્શન્સ અને કોન્સ્ટન્ટ્સ માટે પરમેનન્ટ સ્ટોરેજ
+    \item \keyword{EEPROM}: પાવર સાયકલ્સ પછી પણ જાળવી રાખવા જરૂરી એવા ડેટા માટે લાંબા ગાળાનું સ્ટોરેજ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{રન માટે RAM, ફંક્શન માટે Flash, હંમેશા માટે EEPROM}
+\end{mnemonicbox}
+
+\questionmarks{1(બ)}{4}{ATmega32 ની RAM મેમરીની ચર્ચા કરો.}
+
+\begin{solutionbox}
+\textbf{ATmega32ની RAM (SRAM) ચોક્કસ હેતુઓ માટે જુદા જુદા વિભાગોમાં ગોઠવાયેલી છે.}
+
+\begin{answerdiagram}{ATmega32 RAM Organization}
+\begin{tikzpicture}[node distance=0cm, outer sep=0pt]
+    \node [draw, rectangle, minimum width=4cm, minimum height=1cm, fill=gray!20] (regs) {32 General Registers\\(0x0000 - 0x001F)};
+    \node [draw, rectangle, minimum width=4cm, minimum height=1cm, below=of regs, fill=gray!10] (io) {64 I/O Registers\\(0x0020 - 0x005F)};
+    \node [draw, rectangle, minimum width=4cm, minimum height=1cm, below=of io, fill=gray!5] (ext) {160 Ext I/O Regs\\(0x0060 - 0x00FF)};
+    \node [draw, rectangle, minimum width=4cm, minimum height=2cm, below=of ext, fill=white] (sram) {Internal SRAM\\(0x0100 - 0x085F)\\Size: 2KB};
+    
+    \draw [->] (regs.east) -- ++(0.5,0) node[right, font=\small] {ઝડપી એક્સેસ};
+    \draw [->] (io.east) -- ++(0.5,0) node[right, font=\small] {કંટ્રોલ રજિસ્ટર્સ};
+    \draw [->] (sram.east) -- ++(0.5,0) node[right, font=\small] {ડેટા સ્ટોરેજ};
+\end{tikzpicture}
+\end{answerdiagram}
+
+\begin{itemize}
+    \item \keyword{રજિસ્ટર ફાઇલ}: પ્રથમ 32 લોકેશન્સ (0x0000-0x001F)
+    \item \keyword{I/O રજિસ્ટર્સ}: સ્ટાન્ડર્ડ I/O સ્પેસ (0x0020-0x005F)
+    \item \keyword{એક્સટેન્ડેડ I/O}: વધારાના પેરિફેરલ રજિસ્ટર્સ (0x0060-0x00FF)
+    \item \keyword{ડેટા મેમરી}: જનરલ પરપઝ SRAM (0x0100-0x085F)
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{રજિસ્ટર્સ, I/O, એક્સટેન્ડેડ, ડેટા - RAM ની કાર્યક્ષમ ડિઝાઇન}
+\end{mnemonicbox}
+
+\questionmarks{1(ક)}{7}{રિયલ ટાઈમ ઓપરેટિંગ સિસ્ટમની વ્યાખ્યાયિત કરો અને તેની લાક્ષણિકતાઓ સમજાવો.}
+
+\begin{solutionbox}
+\textbf{રિયલ-ટાઇમ ઓપરેટિંગ સિસ્ટમ (RTOS) એ ચુસ્ત ટાઇમિંગ જરૂરિયાતો સાથે ડેટા અને ઇવેન્ટ્સ પ્રોસેસ કરવા માટે ડિઝાઇન કરાયેલ સ્પેશિયલાઇઝ્ડ ઓપરેટિંગ સિસ્ટમ છે.}
+
+\begin{answertable}{RTOS ની મુખ્ય લાક્ષણિકતાઓ}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{લાક્ષણિકતા} & \textbf{વર્ણન} \\ \hline
+ડિટર્મિનિઝમ & ટાસ્ક્સ માટે ગેરંટેડ રિસ્પોન્સ ટાઇમ \\ \hline
+પ્રિએમ્પ્ટિવ શેડ્યુલિંગ & ઉચ્ચ પ્રાધાન્યવાળા ટાસ્ક્સ નીચા પ્રાધાન્યવાળા ટાસ્ક્સને ઇન્ટરપ્ટ કરી શકે છે \\ \hline
+લો લેટન્સી & ઇવેન્ટ અને રિસ્પોન્સ વચ્ચે ન્યૂનતમ વિલંબ \\ \hline
+પ્રાયોરિટી-બેઝ્ડ & એક્ઝિક્યુશન માટે ટાસ્ક્સને પ્રાધાન્ય આપવામાં આવે છે \\ \hline
+ટાસ્ક મેનેજમેન્ટ & ટાસ્ક ક્રિએશન, ડિલીશન અને સિંક્રનાઇઝેશન માટે મેકેનિઝમ્સ પૂરા પાડે છે \\ \hline
+રિસોર્સ મેનેજમેન્ટ & રિસોર્સ કોન્ફ્લિક્ટ્સ અને ડેડલોક્સ અટકાવે છે \\ \hline
+વિશ્વસનીયતા & પીક લોડ હેઠળ પણ મજબૂત ઓપરેશન \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\begin{itemize}
+    \item \keyword{મલ્ટીટાસ્કિંગ}: અનેક ટાસ્ક્સના કન્કરન્ટ એક્ઝિક્યુશનને સપોર્ટ કરે છે
+    \item \keyword{સ્મોલ ફૂટપ્રિન્ટ}: મર્યાદિત રિસોર્સવાળા એમ્બેડેડ સિસ્ટમ્સ માટે ઓપ્ટિમાઇઝ્ડ
+    \item \keyword{ટાઇમ મેનેજમેન્ટ}: માઇક્રોસેકન્ડ રેઝોલ્યુશન સાથે પ્રિસાઇઝ ટાઇમિંગ સર્વિસીસ
+    \item \keyword{કર્નલ સર્વિસીસ}: ટાસ્ક કોઓર્ડિનેશન માટે IPC, મ્યુટેક્સ, સેમાફોર
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{ડિટર્મિનિસ્ટિક પ્રિએમ્પ્ટિવ ટાસ્ક્સ રન ઓન સ્ટ્રિક્ટ ટાઇમલાઇન્સ}
+\end{mnemonicbox}
+
+\questionmarks{1(ક OR)}{7}{એમ્બેડેડ સિસ્ટમ શું છે? એમ્બેડેડ સિસ્ટમનો સામાન્ય બ્લોક ડાયાગ્રામ દોરો અને સમજાવો.}
+
+\begin{solutionbox}
+\textbf{એમ્બેડેડ સિસ્ટમ એ એક ડેડિકેટેડ કમ્પ્યુટર સિસ્ટમ છે જે મોટી મિકેનિકલ અથવા ઇલેક્ટ્રિકલ સિસ્ટમની અંદર ચોક્કસ કાર્યો કરવા માટે ડિઝાઇન કરવામાં આવે છે, ઘણીવાર રિયલ-ટાઇમ કન્સ્ટ્રેઇન્ટ્સ સાથે.}
+
+\begin{answerdiagram}{Embedded System Block Diagram}
+\begin{tikzpicture}[node distance=1cm, auto, >=latex, thick]
+    % Nodes
+    \node [gtu block, minimum width=3cm, minimum height=1.5cm] (cpu) {Processing Unit\\(Microcontroller)};
+    \node [gtu block, left=of cpu] (input) {Input Devices\\(Sensors/Switches)};
+    \node [gtu block, right=of cpu] (output) {Output Devices\\(Actuators/Displays)};
+    \node [gtu block, above=of cpu] (mem) {Memory\\(RAM/ROM)};
+    \node [gtu block, below=of cpu] (comm) {Communication\\Ports};
+    \node [dashed, draw, fit=(input) (cpu) (output) (mem) (comm), inner sep=0.5cm, label={above:એમ્બેડેડ સિસ્ટમ}] (system) {};
+    \node [gtu block, above=of system, minimum width=4cm] (power) {Power Supply};
+    
+    % Connections
+    \draw [->] (input) -- (cpu);
+    \draw [->] (cpu) -- (output);
+    \draw [<->] (cpu) -- (mem);
+    \draw [<->] (cpu) -- (comm);
+    \draw [->] (power) -- (system);
+\end{tikzpicture}
+\end{answerdiagram}
+
+\begin{answertable}{એમ્બેડેડ સિસ્ટમ કોમ્પોનન્ટ્સ}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{કોમ્પોનન્ટ} & \textbf{ફંક્શન} \\ \hline
+પ્રોસેસિંગ યુનિટ & પ્રોગ્રામ ઇન્સ્ટ્રક્શન્સ એક્ઝિક્યુટ કરે છે (માઇક્રોકન્ટ્રોલર/માઇક્રોપ્રોસેસર) \\ \hline
+મેમરી & પ્રોગ્રામ અને ડેટા સ્ટોર કરે છે (RAM, ROM, Flash) \\ \hline
+ઇનપુટ/આઉટપુટ & બાહ્ય ડિવાઇસ સાથે ઇન્ટરફેસ કરે છે \\ \hline
+કમ્યુનિકેશન & અન્ય સિસ્ટમ્સ અથવા નેટવર્ક્સ સાથે જોડાય છે \\ \hline
+પાવર સપ્લાય & રેગ્યુલેટેડ પાવર પ્રદાન કરે છે \\ \hline
+સેન્સર્સ & પર્યાવરણીય ડેટા એકત્રિત કરે છે \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\begin{itemize}
+    \item \keyword{એપ્લિકેશન-સ્પેસિફિક}: ડેડિકેટેડ ટાસ્ક્સ માટે ડિઝાઇન કરાયેલ
+    \item \keyword{રિસોર્સ-કન્સ્ટ્રેઇન્ડ}: મર્યાદિત પ્રોસેસિંગ પાવર અને મેમરી
+    \item \keyword{રિયલ-ટાઇમ}: ટાઇમિંગ કન્સ્ટ્રેઇન્ટ્સની અંદર ઇવેન્ટ્સને પ્રતિસાદ આપે છે
+    \item \keyword{હાઇ રિલાયબિલિટી}: નિષ્ફળતા વિના સતત ઓપરેટ કરવું જોઈએ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{પ્રોસેસ, મેમરી, I/O - દરેક સિસ્ટમમાં હોવું જોઈએ}
+\end{mnemonicbox}
+
+\questionmarks{2(અ)}{3}{એમ્બેડેડ સિસ્ટમમાં કોઈપણ એપ્લિકેશન ડિઝાઇન માટે માઇક્રોકન્ટ્રોલર પસંદ કરવા માટે વિવિધ માપદંડો લખો.}
+
+\begin{solutionbox}
+\textbf{યોગ્ય માઇક્રોકન્ટ્રોલર પસંદ કરવા માટે એપ્લિકેશન જરૂરિયાતો આધારિત અનેક માપદંડોનું મૂલ્યાંકન કરવું જરૂરી છે.}
+
+\begin{answertable}{માઇક્રોકન્ટ્રોલર પસંદગી માપદંડ}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{માપદંડ} & \textbf{વિચારણાઓ} \\ \hline
+પરફોર્મન્સ & CPU સ્પીડ, MIPS, બિટ વિડ્થ (8/16/32) \\ \hline
+મેમરી & Flash, RAM, EEPROM કેપેસિટી \\ \hline
+પાવર કન્ઝમ્પશન & ઓપરેટિંગ વોલ્ટેજ, સ્લીપ મોડ \\ \hline
+I/O કેપેબિલિટીઝ & પોર્ટ્સની સંખ્યા, સ્પેશિયલ ફંક્શન્સ \\ \hline
+પેરિફેરલ્સ & ADC, ટાઇમર્સ, કમ્યુનિકેશન ઇન્ટરફેસીસ \\ \hline
+કોસ્ટ & યુનિટ પ્રાઇસ, ડેવલપમેન્ટ ટૂલ્સ \\ \hline
+ફોર્મ ફેક્ટર & સાઇઝ, પેકેજ ટાઇપ, પિન કાઉન્ટ \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\begin{itemize}
+    \item \keyword{એપ્લિકેશન રિક્વાયરમેન્ટ્સ}: એપ્લિકેશન માટે જરૂરી સ્પેસિફિક ફીચર્સ
+    \item \keyword{ડેવલપમેન્ટ એન્વાયરન્મેન્ટ}: ઉપલબ્ધ કમ્પાઇલર્સ, ડિબગર્સ, લાઇબ્રેરીઝ
+    \item \keyword{ફ્યુચર એક્સપાન્શન}: ભવિષ્યના એન્હાન્સમેન્ટ્સ માટે સ્કેલેબિલિટી
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{પરફોર્મન્સ મેમરી પાવર I/O કોસ્ટ}
+\end{mnemonicbox}
+
+\questionmarks{2(બ)}{4}{TCCR0 રજિસ્ટર દોરો અને સમજાવો.}
+
+\begin{solutionbox}
+\textbf{ટાઇમર/કાઉન્ટર કંટ્રોલ રજિસ્ટર 0 (TCCR0) ATmega32માં ટાઇમર/કાઉન્ટર0ના ઓપરેશનને કંટ્રોલ કરે છે.}
+
+\begin{answerdiagram}{TCCR0 Register}
+\begin{tikzpicture}[
+    node distance=0cm,
+    outer sep=0pt,
+    bit/.style={draw, rectangle, minimum width=1.5cm, minimum height=1cm, align=center, font=\small}
+]
+    \node [bit, fill=blue!10] (b7) {FOC0\\7};
+    \node [bit, fill=green!10, right=of b7] (b6) {WGM00\\6};
+    \node [bit, fill=orange!10, right=of b6] (b5) {COM01\\5};
+    \node [bit, fill=orange!10, right=of b5] (b4) {COM00\\4};
+    \node [bit, fill=green!10, right=of b4] (b3) {WGM01\\3};
+    \node [bit, fill=yellow!10, right=of b3] (b2) {CS02\\2};
+    \node [bit, fill=yellow!10, right=of b2] (b1) {CS01\\1};
+    \node [bit, fill=yellow!10, right=of b1] (b0) {CS00\\0};
+\end{tikzpicture}
+\end{answerdiagram}
+
+\begin{answertable}{TCCR0 બિટ ફંક્શન્સ}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{બિટ્સ} & \textbf{નામ} & \textbf{ફંક્શન} \\ \hline
+7 & FOC0 & ફોર્સ આઉટપુટ કમ્પેર \\ \hline
+6,3 & WGM01:0 & વેવફોર્મ જનરેશન મોડ \\ \hline
+5,4 & COM01:0 & કમ્પેર મેચ આઉટપુટ મોડ \\ \hline
+2,1,0 & CS02:0 & ક્લોક સિલેક્ટ (પ્રીસ્કેલર) \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\begin{itemize}
+    \item \keyword{WGM01:0}: ટાઇમર ઓપરેટિંગ મોડ નક્કી કરે છે (નોર્મલ, CTC, PWM)
+    \item \keyword{COM01:0}: OC0 પિન આઉટપુટ બિહેવિયર કંટ્રોલ કરે છે
+    \item \keyword{CS02:0}: ક્લોક સોર્સ અને પ્રીસ્કેલર વેલ્યુ પસંદ કરે છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{ફોર્સ વેવફોર્મ કમ્પેર ક્લોક સિલેક્ટ}
+\end{mnemonicbox}
+
+\questionmarks{2(ક)}{7}{ATmega32 ના ટાઈમરોની યાદી બનાવો અને કોઈપણ એક ટાઈમરના Modes ને વિગતવાર સમજાવો.}
+
+\begin{solutionbox}
+\textbf{ATmega32માં વિવિધ ક્ષમતાઓ અને ઓપરેટિંગ મોડ્સ સાથે અનેક ટાઇમર્સ છે.}
+
+\begin{answertable}{ATmega32માં ટાઇમર્સ}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{ટાઇમર} & \textbf{પ્રકાર} & \textbf{સાઇઝ} & \textbf{ફીચર્સ} \\ \hline
+ટાઇમર0 & જનરલ પરપઝ & 8-બિટ & સિમ્પલ ટાઇમિંગ, PWM \\ \hline
+ટાઇમર1 & એડવાન્સ્ડ & 16-બિટ & ઇનપુટ કેપ્ચર, ડ્યુઅલ PWM \\ \hline
+ટાઇમર2 & જનરલ પરપઝ & 8-બિટ & એસિંક્રોનસ ઓપરેશન \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\textbf{ટાઇમર0 ઓપરેટિંગ મોડ્સ:}
+\begin{itemize}
+    \item \textbf{નોર્મલ મોડ}:
+    \begin{itemize}
+        \item કાઉન્ટર 0 થી 255 સુધી વધે છે પછી 0 પર ઓવરફ્લો થાય છે
+        \item ઓવરફ્લો ઇન્ટરપ્ટ જનરેટ થઈ શકે છે
+        \item સરળ ટાઇમિંગ અને ડિલે જનરેશન માટે વપરાય છે
+    \end{itemize}
+    
+    \item \textbf{CTC (ક્લિયર ટાઇમર ઓન કમ્પેર) મોડ}:
+    \begin{itemize}
+        \item કાઉન્ટર OCR0 વેલ્યુ પર પહોંચે ત્યારે રીસેટ થાય છે
+        \item પ્રિસાઇઝ ફ્રિક્વન્સી જનરેશન માટે ઉપયોગી
+        \item કમ્પેર મેચ ઇન્ટરપ્ટ જનરેટ થઈ શકે છે
+    \end{itemize}
+    
+    \item \textbf{ફાસ્ટ PWM મોડ}:
+    \begin{itemize}
+        \item કાઉન્ટર 0 થી 255 સુધી ગણે છે
+        \item આઉટપુટ ઓવરફ્લો અને કમ્પેર મેચ પર ટોગલ થાય છે
+        \item હાઇ ફ્રિક્વન્સી PWM જનરેશન
+    \end{itemize}
+    
+    \item \textbf{ફેઝ કરેક્ટ PWM મોડ}:
+    \begin{itemize}
+        \item કાઉન્ટર ઉપર પછી નીચે (0$\to$255$\to$0) ગણે છે
+        \item સિમેટ્રિક PWM વેવફોર્મ જનરેશન
+        \item ફાસ્ટ PWM કરતાં ઓછી ફ્રિક્વન્સી પણ વધુ સારી રેઝોલ્યુશન
+    \end{itemize}
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{નોર્મલ કમ્પેર્સ ફાસ્ટ ફેઝ - ટાઇમર મોડ્સ મેટર}
+\end{mnemonicbox}
+
+\questionmarks{2(અ OR)}{3}{વિવિધ એમ્બેડેડ સિસ્ટમ એપ્લિકેશન્સની સૂચિ બનાવો. કોઈપણ એકને ટૂંકમાં સમજાવો.}
+
+\begin{solutionbox}
+\textbf{એમ્બેડેડ સિસ્ટમ્સ વિવિધ ડોમેઇન્સમાં અનેક એપ્લિકેશન્સમાં જોવા મળે છે.}
+
+\begin{answertable}{એમ્બેડેડ સિસ્ટમ એપ્લિકેશન્સ}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{ડોમેઇન} & \textbf{એપ્લિકેશન્સ} \\ \hline
+કન્ઝ્યુમર & સ્માર્ટ એપ્લાયન્સીસ, એન્ટરટેઇનમેન્ટ સિસ્ટમ્સ \\ \hline
+ઓટોમોટિવ & એન્જિન કંટ્રોલ, સેફ્ટી સિસ્ટમ્સ, ઇન્ફોટેઇનમેન્ટ \\ \hline
+ઇન્ડસ્ટ્રિયલ & પ્રોસેસ કંટ્રોલ, ઓટોમેશન, રોબોટિક્સ \\ \hline
+મેડિકલ & પેશન્ટ મોનિટરિંગ, ઇમેજિંગ, ઇમ્પ્લાન્ટેબલ ડિવાઇસીસ \\ \hline
+કમ્યુનિકેશન્સ & રાઉટર્સ, મોડેમ્સ, નેટવર્ક સ્વિચીસ \\ \hline
+એરોસ્પેસ & ફ્લાઇટ કંટ્રોલ, નેવિગેશન, લાઇફ સપોર્ટ \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\textbf{સ્માર્ટ હોમ ઓટોમેશન સિસ્ટમ:}
+સ્માર્ટ હોમ સિસ્ટમ ઘરેલું ઉપકરણોને મોનિટર અને કંટ્રોલ કરવા માટે એમ્બેડેડ કન્ટ્રોલર્સનો ઉપયોગ કરે છે. સેન્સર્સ તાપમાન અને મોશન જેવી પર્યાવરણીય સ્થિતિઓને ડિટેક્ટ કરે છે, જ્યારે માઇક્રોકન્ટ્રોલર્સ આ ડેટાને પ્રોસેસ કરે છે અને HVAC સિસ્ટમ્સ, લાઇટિંગ અને સિક્યુરિટી ડિવાઇસીસ જેવા એક્ચ્યુએટર્સને કંટ્રોલ કરે છે. સિસ્ટમને ઓટોનોમસ ઓપરેશન અથવા સ્માર્ટફોન એપ્સ દ્વારા યુઝર કંટ્રોલ માટે પ્રોગ્રામ કરી શકાય છે, જે સુવિધા, એનર્જી એફિશિયન્સી અને એન્હાન્સ્ડ સિક્યુરિટી પ્રદાન કરે છે.
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{કન્ઝ્યુમર્સ ઓટોમેટ ઇન્ડસ્ટ્રી મેડિકલ કમ્યુનિકેશન્સ એરોસ્પેસ}
+\end{mnemonicbox}
+
+\questionmarks{2(બ OR)}{4}{ATmega32 માઇક્રોકન્ટ્રોલરમાં DDRA, PINA અને PORTA રજિસ્ટરનાં કાર્ય સમજાવો.}
+
+\begin{solutionbox}
+\textbf{ત્રણ રજિસ્ટર્સ ATmega32માં પોર્ટ A ના ઓપરેશનને કંટ્રોલ કરે છે, દરેક અલગ હેતુ ધરાવે છે.}
+
+\begin{answertable}{પોર્ટ A રજિસ્ટર્સ}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{રજિસ્ટર} & \textbf{ફંક્શન} & \textbf{ઓપરેશન} \\ \hline
+DDRA & ડેટા ડિરેક્શન & પિન્સને ઇનપુટ (0) અથવા આઉટપુટ (1) તરીકે કન્ફિગર કરે છે \\ \hline
+PORTA & ડેટા રજિસ્ટર & આઉટપુટ વેલ્યુ સેટ કરે છે અથવા પુલ-અપ્સ એનેબલ કરે છે \\ \hline
+PINA & પોર્ટ ઇનપુટ પિન્સ & એક્ચ્યુઅલ પિન સ્ટેટ્સ વાંચે છે \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\textbf{કન્ફિગરેશન ઉદાહરણો:}
+\begin{codebox}
+\begin{lstlisting}[language=C]
+DDRA = 0xFF;  // All pins output
+PORTA = 0xA5; // Set alternating pattern (10100101)
+
+DDRA = 0x00;  // All pins input
+PORTA = 0xFF; // Enable pull-ups
+data = PINA;  // Read pin states
+\end{lstlisting}
+\end{codebox}
+
+\begin{itemize}
+    \item \keyword{બિટ-લેવલ કંટ્રોલ}: દરેક બિટ સંબંધિત પિનને કંટ્રોલ કરે છે
+    \item \keyword{એટોમિક ઓપરેશન્સ}: વ્યક્તિગત બિટ્સ મોડિફાય કરી શકાય છે
+    \item \keyword{રીડ-મોડિફાય-રાઇટ}: સામાન્ય ઓપરેશન પેટર્ન
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{ડિરેક્શન ડિટરમાઇન્સ, પોર્ટ પ્રોવાઇડ્સ, PIN પર્સીવ્સ}
+\end{mnemonicbox}
+
+\questionmarks{2(ક OR)}{7}{ATmega32 નું સ્ટેટસ રજીસ્ટર દોરો અને તેને વિગતવાર સમજાવો.}
+
+\begin{solutionbox}
+\textbf{ATmega32માં સ્ટેટસ રજિસ્ટર (SREG) એરિથમેટિક ઓપરેશન્સથી પ્રભાવિત પ્રોસેસર સ્ટેટસ ફ્લેગ્સ ધરાવે છે અને ઇન્ટરપ્ટ્સને કંટ્રોલ કરે છે.}
+
+\begin{answerdiagram}{Status Register (SREG)}
+\begin{tikzpicture}[
+    node distance=0cm,
+    outer sep=0pt,
+    bit/.style={draw, rectangle, minimum width=1.5cm, minimum height=1cm, align=center, font=\small}
+]
+    \node [bit, fill=yellow!10] (b7) {I\\7};
+    \node [bit, fill=yellow!10, right=of b7] (b6) {T\\6};
+    \node [bit, fill=yellow!10, right=of b6] (b5) {H\\5};
+    \node [bit, fill=yellow!10, right=of b5] (b4) {S\\4};
+    \node [bit, fill=yellow!10, right=of b4] (b3) {V\\3};
+    \node [bit, fill=yellow!10, right=of b3] (b2) {N\\2};
+    \node [bit, fill=yellow!10, right=of b2] (b1) {Z\\1};
+    \node [bit, fill=yellow!10, right=of b1] (b0) {C\\0};
+\end{tikzpicture}
+\end{answerdiagram}
+
+\begin{answertable}{SREG બિટ ફંક્શન્સ}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{બિટ} & \textbf{નામ} & \textbf{ફંક્શન} & \textbf{સેટ થાય ત્યારે} \\ \hline
+7 & I & ગ્લોબલ ઇન્ટરપ્ટ એનેબલ & પ્રોગ્રામેટિકલી એનેબલ્ડ \\ \hline
+6 & T & બિટ કોપી સ્ટોરેજ & બિટ કોપી ઇન્સ્ટ્રક્શન્સ માટે ઉપયોગમાં લેવાય છે \\ \hline
+5 & H & હાફ કેરી ફ્લેગ & BCD ઓપરેશન્સમાં હાફ-કેરી \\ \hline
+4 & S & સાઇન ફ્લેગ & N$\oplus$V (સાઇન્ડ ઓપરેશન્સ માટે ઉપયોગી) \\ \hline
+3 & V & ટુ'સ કોમ્પ્લિમેન્ટ ઓવરફ્લો & એરિથમેટિક ઓવરફ્લો થાય ત્યારે \\ \hline
+2 & N & નેગેટિવ ફ્લેગ & પરિણામ નેગેટિવ છે (MSB=1) \\ \hline
+1 & Z & ઝીરો ફ્લેગ & પરિણામ ઝીરો છે \\ \hline
+0 & C & કેરી ફ્લેગ & એરિથમેટિકમાં કેરી થાય છે \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\begin{itemize}
+    \item \keyword{એરિથમેટિક ફીડબેક}: રિઝલ્ટ સ્ટેટસ દર્શાવે છે
+    \item \keyword{કન્ડિશનલ બ્રાન્ચીસ}: બ્રાન્ચ ઇન્સ્ટ્રક્શન્સ દ્વારા ઉપયોગ કરાય છે
+    \item \keyword{ઇન્ટરપ્ટ કંટ્રોલ}: I-બિટ બધા ઇન્ટરપ્ટ્સને એનેબલ/ડિસેબલ કરે છે
+    \item \keyword{એક્સેસ મેથડ્સ}: IN/OUT ઇન્સ્ટ્રક્શન્સ દ્વારા ડાયરેક્ટલી એડ્રેસેબલ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{ઇન્ટરપ્ટ્સ ટ્રેક હાફ સાઇન ઓવરફ્લો નેગેટિવ ઝીરો કેરી}
+\end{mnemonicbox}
+% Question 3
+\questionmarks{3(અ)}{3}{AVR માઇક્રોકન્ટ્રોલરના હાર્વર્ડ આર્કિટેક્ચર પર ટૂંક નોંધ લખો.}
+
+\begin{solutionbox}
+\textbf{હાર્વર્ડ આર્કિટેક્ચર એ AVR માઇક્રોકન્ટ્રોલર્સનો મૂળભૂત ડિઝાઇન સિદ્ધાંત છે, જે પ્રોગ્રામ અને ડેટા મેમરીને અલગ કરે છે.}
+
+\begin{answerdiagram}{Harvard Architecture}
+\begin{tikzpicture}[node distance=2cm, auto, >=latex, thick]
+    \node [gtu block] (cpu) {CPU કોર};
+    \node [gtu block, right=3.5cm of cpu] (periph) {પેરિફેરલ્સ};
+    \node [gtu block, above=1cm of cpu] (flash) {પ્રોગ્રામ મેમરી\\(Flash)};
+    \node [gtu block, below=1cm of cpu] (sram) {ડેટા મેમરી\\(SRAM)};
+    
+    % Buses
+    \draw [<->, double] (cpu) -- node[right] {ઇન્સ્ટ્રક્શન બસ} (flash);
+    \draw [<->, double] (cpu) -- node[right] {ડેટા બસ} (sram);
+\end{tikzpicture}
+\end{answerdiagram}
+
+\begin{itemize}
+    \item \keyword{Separate Buses}: પ્રોગ્રામ અને ડેટા મેમરી માટે સ્વતંત્ર બસો
+    \item \keyword{Parallel Access}: એકસાથે ઇન્સ્ટ્રક્શન્સ ફેચ કરી શકે છે અને ડેટા એક્સેસ કરી શકે છે
+    \item \keyword{Performance}: મેમરી બોટલનેક્સ દૂર કરીને એક્ઝિક્યુશન સ્પીડ વધારે છે
+    \item \keyword{Different Widths}: પ્રોગ્રામ મેમરી 16-બિટ વર્ડ્સમાં, ડેટા મેમરી 8-બિટ બાઇટ્સમાં ગોઠવાય છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{પ્રોગ્રામ અને ડેટા પાથ અલગ છે}
+\end{mnemonicbox}
+
+\questionmarks{3(બ)}{4}{સીરીયલ કોમ્યુનિકેશન (RS232) સાથે સંકળાયેલા રજીસ્ટરોની યાદી બનાવો અને તેને ATmega32 સાથે ઇન્ટરફેસ કરવાના પગલાં સમજાવો.}
+
+\begin{solutionbox}
+\textbf{ATmega32 સીરિયલ કમ્યુનિકેશન માટે USART (યુનિવર્સલ સિંક્રનસ એસિંક્રોનસ રિસીવર ટ્રાન્સમીટર) નો ઉપયોગ કરે છે.}
+
+\begin{answertable}{USART રજિસ્ટર્સ}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{રજિસ્ટર} & \textbf{ફંક્શન} \\ \hline
+UDR & USART ડેટા ડજિસ્ટર (ટ્રાન્સમિટ/રિસીવ) \\ \hline
+UCSRA & USART કંટ્રોલ અને સ્ટેટસ રજિસ્ટર A \\ \hline
+UCSRB & USART કંટ્રોલ અને સ્ટેટસ રજિસ્ટર B \\ \hline
+UCSRC & USART કંટ્રોલ અને સ્ટેટસ રજિસ્ટર C \\ \hline
+UBRRH/UBRRL & USART બોડ રેટ રજિસ્ટર્સ \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\textbf{RS232 ઇન્ટરફેસ કરવાના સ્ટેપ્સ:}
+\begin{enumerate}
+    \item \textbf{હાર્ડવેર કનેક્શન}:
+    \begin{itemize}
+        \item ATmega32 ના TXD (PD1) અને RXD (PD0) ને MAX232 સાથે જોડો
+        \item MAX232 ને RS232 પોર્ટ અથવા કનેક્ટર સાથે જોડો
+    \end{itemize}
+    \item \textbf{USART ઇનિશિયલાઇઝ કરો}:
+    \begin{itemize}
+        \item બોડ રેટ સેટ કરો (UBRR)
+        \item ફ્રેમ ફોર્મેટ સેટ કરો (ડેટા બિટ્સ, પેરિટી, સ્ટોપ બિટ્સ)
+        \item ટ્રાન્સમીટર અને/અથવા રિસીવર એનેબલ કરો
+    \end{itemize}
+    \item \textbf{ડેટા ટ્રાન્સમિશન/રિસેપ્શન}:
+    \begin{itemize}
+        \item ઓપરેશન પહેલાં સ્ટેટસ ફ્લેગ્સ ચેક કરો
+        \item ટ્રાન્સમિટ કરવા માટે UDR માં રાઇટ કરો
+        \item રિસીવ કરવા માટે UDR માંથી રીડ કરો
+    \end{itemize}
+\end{enumerate}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{કનેક્ટ, કન્ફિગર બોડ, એનેબલ, ટ્રાન્સમિટ/રિસીવ}
+\end{mnemonicbox}
+
+\questionmarks{3(ક)}{7}{AVR C પ્રોગ્રામિંગમાં બીટ-વાઈઝ લોજિકલ ઓપરેશન્સ જરૂરી ઉદાહરણો સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{બિટ-વાઇઝ ઓપરેશન્સ બાઇટ અથવા વર્ડમાં વ્યક્તિગત બિટ્સને મેનિપ્યુલેટ કરે છે, જે એમ્બેડેડ પ્રોગ્રામિંગ માટે આવશ્યક છે.}
+
+\begin{answertable}{AVR C માં બિટ-વાઇઝ ઓપરેટર્સ}
+\begin{tabulary}{\linewidth}{|C|L|L|L|}
+\hline
+\textbf{ઓપરેટર} & \textbf{ઓપરેશન} & \textbf{ઉદાહરણ} & \textbf{પરિણામ} \\ \hline
+\& & AND & 0xA5 \& 0x0F & 0x05 \\ \hline
+\textbar & OR & 0x50 \textbar{} 0x0F & 0x5F \\ \hline
+\textasciicircum & XOR & 0x55 \textasciicircum{} 0xFF & 0xAA \\ \hline
+\textasciitilde & NOT & \textasciitilde{}0x55 & 0xAA \\ \hline
+\textless{}\textless & લેફ્ટ શિફ્ટ & 0x01 \textless{}\textless{} 3 & 0x08 \\ \hline
+\textgreater{}\textgreater & રાઇટ શિફ્ટ & 0x80 \textgreater{}\textgreater{} 3 & 0x10 \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\textbf{ઉદાહરણ: બિટ્સ સેટ અને ક્લિયર કરવા}
+\begin{codebox}
+\begin{lstlisting}[language=C]
+// Set bit 3 of PORTB
+PORTB |= (1 << 3);   // PORTB = PORTB | 0b00001000
+
+// Clear bit 5 of PORTB
+PORTB &= ~(1 << 5);  // PORTB = PORTB & 0b11011111
+
+// Toggle bit 2 of PORTB
+PORTB ^= (1 << 2);   // PORTB = PORTB ^ 0b00000100
+
+// Check if bit 4 is set
+if (PINB & (1 << 4)) {
+    // Bit 4 is set
+}
+\end{lstlisting}
+\end{codebox}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{AND ક્લિયર કરે, OR સેટ કરે, XOR ટોગલ કરે, શિફ્ટ મલ્ટિપ્લાય/ડિવાઇડ કરે}
+\end{mnemonicbox}
+
+\questionmarks{3(અ OR)}{3}{ATmega32 માઇક્રોકન્ટ્રોલર માટે RESET સર્કિટ સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જ્યારે પાવર આપવામાં આવે અથવા સિસ્ટમ રિસેટ દરમિયાન રિસેટ સર્કિટ ATmega32 નું યોગ્ય ઇનિશિયલાઇઝેશન સુનિશ્ચિત કરે છે.}
+
+\begin{answerdiagram}{Reset Circuit}
+\begin{tikzpicture}[auto, >=latex, thick]
+    \node (vcc) {VCC};
+    \node [below=0.5cm of vcc] (res) {}; 
+    
+    \draw (0,2) node[above]{VCC} -- (0,1.5) to[R, l=10k$\Omega$] (0,0.5) -- (0,0);
+    \draw (0,0.5) -- (2,0.5) node[right, draw] {RESET (Pin 9)};
+    \draw (0,0) to[C, l=100nF] (0,-1.5) node[ground]{};
+    \draw (0,0.5) -- (-1.5, 0.5) to[push button, l=Reset સ્વિચ] (-1.5, -1.5) node[ground]{};
+\end{tikzpicture}
+\end{answerdiagram}
+
+\begin{itemize}
+    \item \keyword{Active-Low RESET}: માઇક્રોકન્ટ્રોલરને રિસેટ કરવા માટે લો (low) રાખવામાં આવે છે
+    \item \keyword{External Reset}: મેન્યુઅલ રિસેટ બટન RESET પિનને ગ્રાઉન્ડ સાથે જોડે છે
+    \item \keyword{Power-on Reset}: જ્યારે પાવર પ્રથમ વખત આપવામાં આવે ત્યારે ઓટો-રિસેટ થાય છે
+    \item \keyword{Brown-out Detection}: વોલ્ટેજ થ્રેશોલ્ડથી નીચે જાય ત્યારે રિસેટ થાય છે
+    \item \keyword{Watchdog Timer}: સોફ્ટવેર મેલફંક્શન પર રિસેટ થાય છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{પુલ અપ, પુશ બટન, પાવર સ્ટાર્ટ્સ, વોલ્ટેજ ડ્રોપ્સ}
+\end{mnemonicbox}
+
+\questionmarks{3(બ OR)}{4}{EEPROM સાથે સંકળાયેલા રજીસ્ટરોની યાદી બનાવો અને ATmega32 ના EEPROM ને ઇન્ટરફેસ કરવાના સ્ટેપ્સ લખો.}
+
+\begin{solutionbox}
+\textbf{ATmega32 પાસે ડેડિકેટેડ રજિસ્ટર્સ સાથે ઓન-ચિપ EEPROM છે.}
+
+\begin{answertable}{EEPROM રજિસ્ટર્સ}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{રજિસ્ટર} & \textbf{ફંક્શન} \\ \hline
+EEARH/EEARL & EEPROM એડ્રેસ રજિસ્ટર્સ \\ \hline
+EEDR & EEPROM ડેટા રજિસ્ટર \\ \hline
+EECR & EEPROM કંટ્રોલ રજિસ્ટર \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\textbf{EEPROM ઇન્ટરફેસ કરવાના સ્ટેપ્સ:}
+\begin{enumerate}
+    \item \textbf{પૂર્ણ થવાની રાહ જુઓ}: અગાઉનું રાઇટ ઓપરેશન પૂર્ણ થયું છે કે કેમ તે તપાસો (EECR માં EEWE બિટ)
+    \item \textbf{એડ્રેસ સેટ કરો}: EEARH:EEARL માં એડ્રેસ લોડ કરો (16-બિટ એડ્રેસ)
+    \item \textbf{રીડ અથવા રાઇટ ઓપરેશન}:
+    \begin{itemize}
+        \item રીડ માટે: EECR માં EERE બિટ સેટ કરો, પછી EEDR વાંચો
+        \item રાઇટ માટે: EEDR માં ડેટા લખો, પછી EECR માં EEMWE અને EEWE બિટ્સ સેટ કરો
+    \end{itemize}
+    \item \textbf{પૂર્ણ થવાની રાહ જુઓ}: EEWE બિટ શૂન્ય ન થાય ત્યાં સુધી પોલ કરો
+\end{enumerate}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{રાહ જુઓ, એડ્રેસ, ડેટા, કંટ્રોલ, રાહ જુઓ}
+\end{mnemonicbox}
+
+\questionmarks{3(ક OR)}{7}{પોર્ટ C.2 પિન પર સતત 1KHz નો સ્ક્વેર વેવ જનરેટ કરવા માટે C પ્રોગ્રામ લખો. ડિલે બનાવવા માટે ટાઈમર 0, નોર્મલ મોડ અને 1:8 પ્રી-સ્કેલરનો ઉપયોગ કરો. XTAL = 8 MHz ધારો.}
+
+\begin{solutionbox}
+\textbf{કોડ ઇમ્પ્લીમેન્ટેશન:}
+
+\begin{codebox}
+\begin{lstlisting}[language=C]
+#include <avr/io.h>
+
+int main(void)
+{
+    // Configure PORTC.2 as output
+    DDRC |= (1 << 2);  // Set PC2 as output
+    
+    // Timer0 configuration - Normal mode, 1:8 prescaler
+    TCCR0 = (0 << WGM01) | (0 << WGM00) | (0 << CS02) | (1 << CS01) | (0 << CS00);
+    
+    // Calculate timer value for 1KHz (500us period, 250us half-period)
+    // 8MHz/8 = 1MHz timer clock, 250 cycles for 250us
+    // 256-250 = 6 (starting value for 250us)
+    
+    while (1)
+    {
+        // Toggle PORTC.2
+        PORTC ^= (1 << 2);
+        
+        // Reset timer
+        TCNT0 = 6;
+        
+        // Wait until timer overflows
+        while (!(TIFR & (1 << TOV0)));
+        
+        // Clear overflow flag
+        TIFR |= (1 << TOV0);
+    }
+    
+    return 0;
+}
+\end{lstlisting}
+\end{codebox}
+
+\begin{itemize}
+    \item \keyword{ફ્રિક્વન્સી ગણતરી}: 1KHz = 1000Hz = 1ms પિરિયડ = 500$\mu$s હાફ-પિરિયડ
+    \item \keyword{ટાઇમર ક્લોક}: 8MHz $\div$ 8 = 1MHz = 1$\mu$s પ્રતિ ટિક
+    \item \keyword{ટાઇમર ટિક્સ}: 250$\mu$s $\div$ 1$\mu$s = 250 ટિક્સ
+    \item \keyword{પ્રારંભિક મૂલ્ય}: 256 - 250 = 6 (250 ટિક્સ પછી ઓવરફ્લો માટે)
+\end{itemize}
+\end{solutionbox}
+
+
+% Question 4
+\questionmarks{4(અ)}{3}{ATmega32 સાથે SPI આધારિત device ઇન્ટરફેસિંગ ડાયાગ્રામ દોરો અને સમજાવો.}
+
+\begin{solutionbox}
+\textbf{SPI (સીરિયલ પેરિફેરલ ઇન્ટરફેસ) એક સિંક્રનસ સીરિયલ કમ્યુનિકેશન પ્રોટોકોલ છે જેનો ઉપયોગ ATmega32 ને પેરિફેરલ ડિવાઇસ સાથે જોડવા માટે થાય છે.}
+
+\begin{answerdiagram}{SPI Interfacing}
+\begin{tikzpicture}[node distance=2.5cm, auto, >=latex, thick]
+    \node [gtu block, minimum width=3cm, minimum height=3cm] (master) {ATmega32\\(માસ્ટર)};
+    \node [gtu block, minimum width=3cm, minimum height=3cm, right=of master] (slave) {SPI ડિવાઇસ\\(સ્લેવ)};
+    
+    % Pins
+    \node [anchor=east] at ([yshift=1cm]master.east) (m_ss) {SS (PB4)};
+    \node [anchor=east] at ([yshift=0.33cm]master.east) (m_mosi) {MOSI (PB5)};
+    \node [anchor=east] at ([yshift=-0.33cm]master.east) (m_miso) {MISO (PB6)};
+    \node [anchor=east] at ([yshift=-1cm]master.east) (m_sck) {SCK (PB7)};
+    
+    \node [anchor=west] at ([yshift=1cm]slave.west) (s_cs) {CS};
+    \node [anchor=west] at ([yshift=0.33cm]slave.west) (s_sdi) {SDI};
+    \node [anchor=west] at ([yshift=-0.33cm]slave.west) (s_sdo) {SDO};
+    \node [anchor=west] at ([yshift=-1cm]slave.west) (s_sck) {SCK};
+    
+    % Connections
+    \draw [->] (m_ss) -- (s_cs);
+    \draw [->] (m_mosi) -- (s_sdi);
+    \draw [<-] (m_miso) -- (s_sdo);
+    \draw [->] (m_sck) -- (s_sck);
+\end{tikzpicture}
+\end{answerdiagram}
+
+\begin{itemize}
+    \item \keyword{MOSI (Master Out Slave In)}: માસ્ટર થી સ્લેવ ડેટા
+    \item \keyword{MISO (Master In Slave Out)}: સ્લેવ થી માસ્ટર ડેટા
+    \item \keyword{SCK (Serial Clock)}: માસ્ટર દ્વારા પૂરી પાડવામાં આવતી સિંક્રનાઇઝેશન ક્લોક
+    \item \keyword{SS (Slave Select)}: ચોક્કસ સ્લેવ ડિવાઇસ પસંદ કરવા માટે એક્ટિવ-લો સિગ્નલ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{માસ્ટર આઉટપુટ્સ, સ્લેવ ઇનપુટ્સ, ક્લોક કીપ્સ સિંક્રનાઇઝેશન}
+\end{mnemonicbox}
+
+\questionmarks{4(બ)}{4}{ATmega32 સાથે ULN2803 નો ઉપયોગ કરીને Relay નું ઇન્ટરફેસિંગ દોરો અને સમજાવો.}
+
+\begin{solutionbox}
+\textbf{ULN2803 એ ડાર્લિંગ્ટન ટ્રાન્ઝિસ્ટર જોડીઓનો એરે છે જેનો ઉપયોગ માઇક્રોકન્ટ્રોલર પિનમાંથી રિલે જેવા હાઇ-કરંટ ડિવાઇસને ડ્રાઇવ કરવા માટે થાય છે.}
+
+\begin{answerdiagram}{Relay Interfacing using ULN2803}
+\begin{tikzpicture}[auto, >=latex, thick, node distance=2cm]
+    % Components
+    \node [gtu block] (mcu) {ATmega32};
+    \node [gtu block, right=of mcu] (uln) {ULN2803};
+    \node [right=of uln, draw, rectangle, minimum width=2cm, minimum height=1.5cm] (relay) {રિલે};
+    
+    % Connections
+    \draw [->] ([yshift=0.5cm]mcu.east) -- node[above] {PD0} ([yshift=0.5cm]uln.west) node[left, font=\tiny] {IN1};
+    \draw [->] ([yshift=0.5cm]uln.east) node[right, font=\tiny] {OUT1} -- ([yshift=0.5cm]relay.west);
+    
+    % Relay details
+    \draw ([yshift=0.5cm]relay.east) -- ++(0.5,0) node[right] {NO};
+    \draw (relay.north) -- ++(0,0.5) node[above] {VCC (12V)};
+    
+    % ULN Common and GND
+    \draw (uln.south) -- ++(0,-0.5) node[ground] {};
+    \draw (uln.north) -- ++(0,0.5) node[above] {COM (12V)};
+\end{tikzpicture}
+\end{answerdiagram}
+
+\begin{itemize}
+    \item \keyword{કરંટ એમ્પ્લિફિકેશન}: ULN2803 ચેનલ દીઠ 500mA સુધી સિંક કરી શકે છે
+    \item \keyword{વોલ્ટેજ આઇસોલેશન}: બિલ્ટ-ઇન ડાયોડ્સ ઇન્ડક્ટિવ કિકબેક સામે રક્ષણ આપે છે
+    \item \keyword{મલ્ટીપલ ચેનલો}: એક પેકેજમાં 8 ડાર્લિંગ્ટન જોડીઓ
+    \item \keyword{હાઇ વોલ્ટેજ રેટિંગ}: આઉટપુટ પર 50V સુધી હેન્ડલ કરી શકે છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{લો કરંટ કંટ્રોલ્સ હાઇ કરંટ લોડ્સ}
+\end{mnemonicbox}
+
+\questionmarks{4(ક)}{7}{ATmega32 ના ADC0 (પિન 40) પર જોડાયેલ LM35 નો ઇન્ટરફેસિંગ ડાયાગ્રામ દોરો અને પોર્ટ B પર ડિજિટલ પરિણામ દર્શાવવા માટે AVR C પ્રોગ્રામ લખો. (ADC નો 8-બીટ મોડમાં ઉપયોગ કરો).}
+
+\begin{solutionbox}
+\textbf{LM35 એ પ્રિસિઝન ટેમ્પરેચર સેન્સર છે જે તાપમાનના પ્રમાણમાં એનાલોગ વોલ્ટેજ આઉટપુટ આપે છે.}
+
+\begin{answerdiagram}{LM35 Interfacing}
+\begin{tikzpicture}[auto, >=latex, thick]
+    % LM35 Sensor
+    \node [draw, rectangle, minimum width=1.5cm, minimum height=2cm] (lm35) {LM35};
+    \node [above=0.5cm of lm35] (vcc) {+5V};
+    \node [below=0.5cm of lm35, ground] (gnd) {};
+    
+    \draw (vcc) -- (lm35.north);
+    \draw (lm35.south) -- (gnd);
+    
+    % MCU
+    \node [gtu block, right=3cm of lm35, minimum height=3cm] (mcu) {ATmega32};
+    \draw [->] (lm35.east) -- node[above] {Vout} node[below] {10mV/$^\circ$C} (mcu.west) node[right, font=\tiny] {PA0 (ADC0)};
+\end{tikzpicture}
+\end{answerdiagram}
+
+\textbf{C Program:}
+\begin{codebox}
+\begin{lstlisting}[language=C]
+#include <avr/io.h>
+#include <util/delay.h>
+
+int main(void)
+{
+    // Configure PORTB as output for displaying result
+    DDRB = 0xFF;
+    
+    // Configure ADC
+    // REFS0=1: AVCC reference
+    // ADLAR=1: Left adjust for 8-bit reading from ADCH
+    // MUX=00000: ADC0
+    ADMUX = (0 << REFS1) | (1 << REFS0) | (1 << ADLAR) | 
+            (0 << MUX4) | (0 << MUX3) | (0 << MUX2) | (0 << MUX1) | (0 << MUX0);
+    
+    // Enable ADC and set prescaler to 128
+    ADCSRA = (1 << ADEN) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
+    
+    while (1)
+    {
+        // Start conversion
+        ADCSRA |= (1 << ADSC);
+        
+        // Wait for conversion to complete
+        while (ADCSRA & (1 << ADSC));
+        
+        // Display result on PORTB (8-bit from ADCH)
+        PORTB = ADCH;
+        
+        // Wait before next reading
+        _delay_ms(500);
+    }
+    
+    return 0;
+}
+\end{lstlisting}
+\end{codebox}
+
+\begin{itemize}
+    \item \keyword{તાપમાન ગણતરી}: LM35 10mV/$^\circ$C આઉટપુટ આપે છે
+    \item \keyword{ADC કન્ફિગરેશન}: સરળ 8-બિટ રીડિંગ માટે લેફ્ટ-એડજસ્ટેડ
+    \item \keyword{રેઝોલ્યુશન}: 8-બિટ મોડનો ઉપયોગ કરીને 5V રેફરન્સ સાથે આશરે 1$^\circ$C રેઝોલ્યુશન મળે છે
+    \item \keyword{રેન્જ}: 0-255$^\circ$C રેન્જ માપી શકે છે (8-બિટ રજિસ્ટર દ્વારા મર્યાદિત)
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{કનેક્ટ, કન્ફિગર, કન્વર્ટ, કેપ્ચર, ડિસ્પ્લે}
+\end{mnemonicbox}
+
+\questionmarks{4(અ OR)}{3}{પોર્ટ A ના PA0 પિનને સતત મોનિટર કરવા માટે એક AVR C પ્રોગ્રામ લખો. જો તે HIGH હોય, તો પોર્ટ C ના PC0 પિન પર HIGH મોકલો; અન્યથા, પોર્ટ C ના PC0 પિન પર LOW મોકલો.}
+
+\begin{solutionbox}
+\textbf{કોડ ઇમ્પ્લીમેન્ટેશન:}
+
+\begin{codebox}
+\begin{lstlisting}[language=C]
+#include <avr/io.h>
+
+int main(void)
+{
+    // Configure PA0 as input
+    DDRA &= ~(1 << PA0);
+    
+    // Enable pull-up resistor on PA0
+    PORTA |= (1 << PA0);
+    
+    // Configure PC0 as output
+    DDRC |= (1 << PC0);
+    
+    while (1)
+    {
+        // Check if PA0 is HIGH
+        if (PINA & (1 << PA0))
+        {
+            // Set PC0 HIGH
+            PORTC |= (1 << PC0);
+        }
+        else
+        {
+            // Set PC0 LOW
+            PORTC &= ~(1 << PC0);
+        }
+    }
+    
+    return 0;
+}
+\end{lstlisting}
+\end{codebox}
+
+\begin{itemize}
+    \item \keyword{ઇનપુટ કન્ફિગરેશન}: પુલ-અપ રેઝિસ્ટર સાથે ઇનપુટ તરીકે સેટ કરેલ છે
+    \item \keyword{સતત મોનિટરિંગ}: ઇન્ફિનિટ લૂપ પિન સ્ટેટ ચેક કરે છે
+    \item \keyword{આઉટપુટ એક્શન}: PC0 PA0 સ્ટેટને મિરર કરે છે
+    \item \keyword{કાર્યક્ષમ કોડ}: પિન મોનિટરિંગ માટે સરળ કન્ડિશનલ સ્ટેટમેન્ટ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{કન્ફિગર, મોનિટર, મિરર}
+\end{mnemonicbox}
+
+\questionmarks{4(બ OR)}{4}{ATmega32 પિન ડાયાગ્રામ દોરો અને Vcc, AVcc અને Aref પિનના કાર્ય લખો.}
+
+\begin{solutionbox}
+\textbf{ATmega32 માં DIP પેકેજમાં 40 પિન્સ ગોઠવાયેલી છે, જેમાં પાવર સપ્લાય પિન્સ અલગ કાર્ય ધરાવે છે.}
+
+\begin{answerdiagram}{ATmega32 Pin Diagram}
+\begin{tikzpicture}[
+    pin/.style={draw, rectangle, minimum width=0.8cm, minimum height=0.5cm, font=\tiny},
+    ic/.style={draw, rectangle, minimum width=4cm, minimum height=8cm, fill=black!5}
+]
+    \node [ic] (atmega) {};
+    \node [anchor=north, font=\bfseries] at (atmega.north) {ATmega32};
+    \draw [fill=black] (atmega.north) ++(0,-0.2) arc (0:-180:0.2); % Notch
+    
+    % Left Pins (1-20)
+    \foreach \i/\label in {1/PB0, 2/PB1, 3/PB2, 4/PB3, 5/PB4, 6/PB5, 7/PB6, 8/PB7, 9/RESET, 10/VCC, 11/GND, 12/XTAL2, 13/XTAL1, 14/PD0, 15/PD1, 16/PD2, 17/PD3, 18/PD4, 19/PD5, 20/PD6} {
+         \node [left, font=\tiny] at ($(atmega.north west)!{\i/21}!(atmega.south west)$) {\i\ \label};
+         \draw ($(atmega.north west)!{\i/21}!(atmega.south west)$) -- ++(-0.2,0);
+    }
+    
+    % Right Pins (40-21)
+    \foreach \i/\label in {1/PA0, 2/PA1, 3/PA2, 4/PA3, 5/PA4, 6/PA5, 7/PA6, 8/PA7, 9/AREF, 10/GND, 11/AVCC, 12/PC7, 13/PC6, 14/PC5, 15/PC4, 16/PC3, 17/PC2, 18/PC1, 19/PC0, 20/PD7} {
+         \node [right, font=\tiny] at ($(atmega.north east)!{\i/21}!(atmega.south east)$) {\label\ \pgfmathparse{41-\i}\pgfmathprintnumber{\pgfmathresult}};
+         \draw ($(atmega.north east)!{\i/21}!(atmega.south east)$) -- ++(0.2,0);
+    }
+\end{tikzpicture}
+\end{answerdiagram}
+
+\begin{answertable}{પાવર સપ્લાય પિન્સ}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પિન} & \textbf{ફંક્શન} & \textbf{વર્ણન} \\ \hline
+VCC & ડિજિટલ પાવર & ડિજિટલ સર્કિટ્સ માટે મુખ્ય સપ્લાય વોલ્ટેજ (5V સામાન્ય) \\ \hline
+AVCC & એનાલોગ પાવર & એનાલોગ સર્કિટરી માટે સપ્લાય, ખાસ કરીને ADC (5V સામાન્ય) \\ \hline
+AREF & એનાલોગ રેફરન્સ & ADC માટે એક્સટર્નલ રેફરન્સ વોલ્ટેજ \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\begin{itemize}
+    \item \keyword{VCC}: ડિજિટલ લોજિક અને I/O પોર્ટ્સને પાવર આપે છે
+    \item \keyword{AVCC}: VCC ના $\pm$0.3V ની અંદર હોવું આવશ્યક છે, ભલે ADC બિનઉપયોગી હોય
+    \item \keyword{AREF}: ADC માટે વૈકલ્પિક એક્સટર્નલ રેફરન્સ, અન્યથા AVCC સાથે કનેક્ટ કરો
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{VCC કોર સર્કિટ માટે, AVCC એનાલોગ માટે, AREF રેફરન્સ માટે}
+\end{mnemonicbox}
+
+\questionmarks{4(ક OR)}{7}{ATmega32 સાથે MAX7221 નું ઇન્ટરફેસિંગ ડાયાગ્રામ દોરો અને સમજાવો.}
+
+\begin{solutionbox}
+\textbf{MAX7221 એ LED ડિસ્પ્લે ડ્રાઇવર IC છે જે SPI કમ્યુનિકેશનનો ઉપયોગ કરીને ATmega32 સાથે ઇન્ટરફેસ કરે છે.}
+
+\begin{answerdiagram}{MAX7221 Interfacing}
+\begin{tikzpicture}[auto, >=latex, thick, node distance=2.5cm]
+    \node [gtu block, minimum height=3cm] (mcu) {ATmega32};
+    \node [gtu block, right=of mcu, minimum height=3cm] (max) {MAX7221};
+    \node [gtu block, right=of max, minimum height=2cm] (disp) {7-Seg\\Display};
+    
+    % SPI Connections
+    \draw [->] (mcu.east |- max.north) -- node[above] {PB4 (SS)} (max.west |- max.north) node[left, font=\tiny] {CS/LOAD};
+    \draw [->] (mcu.east) -- node[above] {PB5 (MOSI)} (max.west) node[left, font=\tiny] {DIN};
+    \draw [->] (mcu.east |- max.south) -- node[above] {PB7 (SCK)} (max.west |- max.south) node[left, font=\tiny] {CLK};
+    
+    % Display connection
+    \draw [->, double] (max.east) -- (disp.west);
+\end{tikzpicture}
+\end{answerdiagram}
+
+\begin{answertable}{કનેક્શન વિગતો}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{ATmega32 પિન} & \textbf{MAX7221 પિન} & \textbf{ફંક્શન} \\ \hline
+PB4 (SS) & CS/LOAD & ચિપ સિલેક્ટ/લોડ ડેટા \\ \hline
+PB5 (MOSI) & DIN & ડેટા ઇનપુટ \\ \hline
+PB6 (MISO) & DOUT & ડેટા આઉટપુટ (ઘણીવાર બિનઉપયોગી) \\ \hline
+PB7 (SCK) & CLK & ક્લોક સિગ્નલ \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\textbf{ઇન્ટરફેસિંગ સ્ટેપ્સ:}
+\begin{itemize}
+    \item \textbf{SPI ઇનિશિયલાઇઝ કરો}: માસ્ટર મોડ, ક્લોક પોલેરિટી/ફેઝ કન્ફિગર કરો, SS હાઇ સેટ કરો.
+    \item \textbf{MAX7221 ઇનિશિયલાઇઝ કરો}: ડિકોડ મોડ, સ્કેન લિમિટ, ઇન્ટેન્સિટી સેટ કરો, ડિસ્પ્લે ચાલુ કરો.
+    \item \textbf{ડેટા મોકલો}: SS લો પુલ કરો, એડ્રેસ/ડેટા મોકલો, SS હાઇ પુલ કરો.
+\end{itemize}
+\end{solutionbox}
+
+
+% Question 5
+\questionmarks{5(અ)}{3}{L293D મોટર ડ્રાઇવર IC નો પિન ડાયાગ્રામ દોરો અને સમજાવો.}
+
+\begin{solutionbox}
+\textbf{L293D એ DC મોટર્સના બાયડાયરેક્શનલ કંટ્રોલ માટે ડિઝાઇન કરાયેલ ક્વાડ્રુપલ હાફ-H ડ્રાઇવર છે.}
+
+\begin{answerdiagram}{L293D Pin Diagram}
+\begin{tikzpicture}[
+    pin/.style={draw, rectangle, minimum width=0.6cm, minimum height=0.4cm, font=\tiny},
+    ic/.style={draw, rectangle, minimum width=3cm, minimum height=6cm, fill=black!5}
+]
+    \node [ic] (l293d) {};
+    \node [anchor=north, font=\bfseries] at (l293d.north) {L293D};
+    \draw [fill=black] (l293d.north) ++(0,-0.2) arc (0:-180:0.2); 
+    
+    % Pins
+    \foreach \i/\label in {1/EN1, 2/IN1, 3/OUT1, 4/GND, 5/GND, 6/OUT2, 7/IN2, 8/VCC2} {
+         \node [left, font=\tiny] at ($(l293d.north west)!{\i/9}!(l293d.south west)$) {\i\ \label};
+         \draw ($(l293d.north west)!{\i/9}!(l293d.south west)$) -- ++(-0.2,0);
+    }
+    \foreach \i/\label in {1/VCC1, 2/IN4, 3/OUT4, 4/GND, 5/GND, 6/OUT3, 7/IN3, 8/EN2} {
+         \node [right, font=\tiny] at ($(l293d.north east)!{\i/9}!(l293d.south east)$) {\label\ \pgfmathparse{17-\i}\pgfmathprintnumber{\pgfmathresult}};
+         \draw ($(l293d.north east)!{\i/9}!(l293d.south east)$) -- ++(0.2,0);
+    }
+\end{tikzpicture}
+\end{answerdiagram}
+
+\begin{itemize}
+    \item \keyword{Dual H-Bridges}: બે DC મોટર્સને સ્વતંત્ર રીતે કંટ્રોલ કરી શકે છે
+    \item \keyword{Heat Sink}: ગ્રાઉન્ડ પિન્સ હીટ ડિસિપેશન પ્રદાન કરે છે
+    \item \keyword{High Current}: પ્રતિ ચેનલ 600mA સુધી ડ્રાઇવ કરી શકે છે
+    \item \keyword{Protection Diodes}: ઇન્ડક્ટિવ લોડ્સ માટે ઇન્ટરનલ ફ્લાયબેક ડાયોડ્સ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{એનેબલ, ઇનપુટ, આઉટપુટ, પાવર}
+\end{mnemonicbox}
+
+\questionmarks{5(બ)}{4}{ADMUX રજિસ્ટર દોરો અને સમજાવો.}
+
+\begin{solutionbox}
+\textbf{ADMUX (ADC મલ્ટિપ્લેક્સર સિલેક્શન રજિસ્ટર) ATmega32માં એનાલોગ ચેનલ સિલેક્શન અને રિઝલ્ટ ફોર્મેટ કંટ્રોલ કરે છે.}
+
+\begin{answerdiagram}{ADMUX Register}
+\begin{tikzpicture}[
+    node distance=0cm,
+    outer sep=0pt,
+    bit/.style={draw, rectangle, minimum width=1.5cm, minimum height=1cm, align=center, font=\small}
+]
+    \node [bit, fill=pink!10] (b7) {REFS1\\7};
+    \node [bit, fill=pink!10, right=of b7] (b6) {REFS0\\6};
+    \node [bit, fill=pink!10, right=of b6] (b5) {ADLAR\\5};
+    \node [bit, fill=gray!10, right=of b5] (b4) {--\\4};
+    \node [bit, fill=pink!10, right=of b4] (b3) {MUX3\\3};
+    \node [bit, fill=pink!10, right=of b3] (b2) {MUX2\\2};
+    \node [bit, fill=pink!10, right=of b2] (b1) {MUX1\\1};
+    \node [bit, fill=pink!10, right=of b1] (b0) {MUX0\\0};
+\end{tikzpicture}
+\end{answerdiagram}
+
+\begin{answertable}{ADMUX બિટ ફંક્શન્સ}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{બિટ્સ} & \textbf{નામ} & \textbf{ફંક્શન} \\ \hline
+7:6 & REFS1:0 & રેફરન્સ વોલ્ટેજ સિલેક્શન \\ \hline
+5 & ADLAR & ADC લેફ્ટ એડજસ્ટ રિઝલ્ટ \\ \hline
+3:0 & MUX3:0 & એનાલોગ ચેનલ સિલેક્શન \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\begin{itemize}
+    \item \keyword{REFS1:0 સેટિંગ્સ}: 00=AREF, 01=AVCC, 11=ઇન્ટરનલ 2.56V
+    \item \keyword{ચેનલ સિલેક્શન}: MUX3:0 કયા ADC ઇનપુટને કનેક્ટ કરવું તે સિલેક્ટ કરે છે
+    \item \keyword{રિઝલ્ટ એલાઇનમેન્ટ}: ADLAR=1 રિઝલ્ટને લેફ્ટ શિફ્ટ કરે છે (8-બિટ રીડિંગ્સ માટે)
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{રેફરન્સ, એલાઇનમેન્ટ, મલ્ટિપ્લેક્સર}
+\end{mnemonicbox}
+
+\questionmarks{5(ક)}{7}{સ્માર્ટ સિંચાઈ પદ્ધતિ સમજાવો.}
+
+\begin{solutionbox}
+\textbf{સ્માર્ટ સિંચાઈ સિસ્ટમ પર્યાવરણીય પરિસ્થિતિઓના આધારે વનસ્પતિ ખેતી માટે પાણીનું કાર્યક્ષમ રીતે વ્યવસ્થાપન કરવા એમ્બેડેડ ટેક્નોલોજીનો ઉપયોગ કરે છે.}
+
+\begin{answerdiagram}{Smart Irrigation System Flowchart}
+\begin{tikzpicture}[node distance=2cm, auto, >=latex, thick]
+    \node [gtu block] (mcu) {માઇક્રોકન્ટ્રોલર\\(ATmega32)};
+    
+    % Inputs
+    \node [gtu block, above left=of mcu] (soil) {સોઇલ મોઇશ્ચર\\સેન્સર્સ};
+    \node [gtu block, left=of mcu] (temp) {તાપમાન/ભેજ\\સેન્સર્સ};
+    \node [gtu block, below left=of mcu] (level) {વોટર લેવલ\\સેન્સર્સ};
+    \node [gtu block, above=of mcu] (forecast) {વેધર\\ફોરકાસ્ટ};
+    
+    % Outputs
+    \node [gtu block, above right=of mcu] (pump) {વોટર પમ્પ\\કંટ્રોલ};
+    \node [gtu block, right=of mcu] (valve) {વાલ્વ\\કંટ્રોલ};
+    \node [gtu block, below right=of mcu] (ui) {યુઝર\\ઇન્ટરફેસ};
+    
+    % Connections
+    \draw [->] (soil) -- (mcu);
+    \draw [->] (temp) -- (mcu);
+    \draw [->] (level) -- (mcu);
+    \draw [->] (forecast) -- (mcu);
+    
+    \draw [->] (mcu) -- (pump);
+    \draw [->] (mcu) -- (valve);
+    \draw [->] (mcu) -- (ui);
+\end{tikzpicture}
+\end{answerdiagram}
+
+\begin{answertable}{સ્માર્ટ સિંચાઈ કોમ્પોનન્ટ્સ}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{કોમ્પોનન્ટ} & \textbf{ફંક્શન} \\ \hline
+સોઇલ મોઇશ્ચર સેન્સર્સ & જમીનમાં પાણીનું પ્રમાણ માપે છે \\ \hline
+તાપમાન/ભેજ સેન્સર્સ & પર્યાવરણીય પરિસ્થિતિઓનું મોનિટરિંગ કરે છે \\ \hline
+વાલ્વ્સ & અલગ અલગ ઝોન માટે વોટર ફ્લો કંટ્રોલ કરે છે \\ \hline
+પમ્પ કંટ્રોલ & જરૂર પડે ત્યારે વોટર પમ્પ એક્ટિવેટ કરે છે \\ \hline
+માઇક્રોકન્ટ્રોલર & સેન્સર ડેટા પ્રોસેસ કરે છે અને આઉટપુટ કંટ્રોલ કરે છે \\ \hline
+યુઝર ઇન્ટરફેસ & મોનિટરિંગ અને મેન્યુઅલ કંટ્રોલની મંજૂરી આપે છે \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\begin{itemize}
+    \item \keyword{Automated Watering}: જ્યારે સોઇલ મોઇશ્ચર થ્રેશોલ્ડથી નીચે જાય ત્યારે જ વનસ્પતિઓને પાણી આપે છે
+    \item \keyword{Weather Adaptation}: ફોરકાસ્ટના આધારે વોટરિંગ શેડ્યૂલ એડજસ્ટ કરે છે
+    \item \keyword{Zone Control}: અલગ અલગ વિસ્તારોમાં અલગ અલગ વોટરિંગ શેડ્યૂલ
+    \item \keyword{Water Conservation}: ઓપ્ટિમલ ગ્રોથ માટે મિનિમમ જરૂરી પાણીનો ઉપયોગ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{સેન્સ, ડિસાઇડ, કન્ઝર્વ, ગ્રો}
+\end{mnemonicbox}
+
+\questionmarks{5(અ OR)}{3}{L293D મોટર ડ્રાઇવરનો ઉપયોગ કરીને ATmega32 સાથે DC મોટરને ઇન્ટરફેસ કરવા માટે સર્કિટ ડાયાગ્રામ દોરો.}
+
+\begin{solutionbox}
+\textbf{સર્કિટ DC મોટરને બાયડાયરેક્શનલ કંટ્રોલ માટે L293D મારફતે ATmega32 સાથે કનેક્ટ કરે છે.}
+
+\begin{answerdiagram}{DC Motor Interfacing}
+\begin{tikzpicture}[auto, >=latex, thick, node distance=2.5cm]
+    \node [gtu block] (mcu) {ATmega32};
+    \node [gtu block, right=of mcu] (driver) {L293D};
+    \node [draw, circle, right=of driver, minimum size=1.5cm] (motor) {M};
+    
+    % Connections
+    \draw [->] ([yshift=0.5cm]mcu.east) -- node[above, font=\tiny] {PB0} ([yshift=0.5cm]driver.west) node[left, font=\tiny] {IN1};
+    \draw [->] (mcu.east) -- node[above, font=\tiny] {PB1} (driver.west) node[left, font=\tiny] {IN2};
+    \draw [->] ([yshift=-0.5cm]mcu.east) -- node[above, font=\tiny] {PB2} ([yshift=-0.5cm]driver.west) node[left, font=\tiny] {EN1};
+    
+    \draw [->] ([yshift=0.5cm]driver.east) -- ([yshift=0.5cm]motor.west);
+    \draw [->] ([yshift=-0.5cm]driver.east) -- ([yshift=-0.5cm]motor.west);
+    
+    % Power
+    \draw (driver.north) -- ++(0,0.5) node[above] {VCC2 (12V)};
+\end{tikzpicture}
+\end{answerdiagram}
+
+\textbf{કંટ્રોલ લોજિક:}
+\begin{answertable}{મોટર કંટ્રોલ લોજિક}
+\begin{tabulary}{\linewidth}{|C|C|C|L|}
+\hline
+\textbf{IN1} & \textbf{IN2} & \textbf{EN1} & \textbf{સ્ટેટસ} \\ \hline
+0 & 0 & 1 & સ્ટોપ \\ \hline
+1 & 0 & 1 & ક્લોકવાઇઝ \\ \hline
+0 & 1 & 1 & કાઉન્ટર-ક્લોકવાઇઝ \\ \hline
+1 & 1 & 1 & સ્ટોપ \\ \hline
+\end{tabulary}
+\end{answertable}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{એનેબલ અને ડિરેક્શન કંટ્રોલ મોટર}
+\end{mnemonicbox}
+
+\questionmarks{5(બ OR)}{4}{ATmega32 સાથે I2C આધારિત device ઇન્ટરફેસિંગ ડાયાગ્રામ દોરો અને સમજાવો.}
+
+\begin{solutionbox}
+\textbf{I2C (ઇન્ટર-ઇન્ટિગ્રેટેડ સર્કિટ) એ માઇક્રોકન્ટ્રોલર સાથે મલ્ટિપલ ડિવાઇસ કનેક્ટ કરવા માટે ટુ-વાયર સીરિયલ બસ છે.}
+
+\begin{answerdiagram}{I2C Interfacing}
+\begin{tikzpicture}[auto, >=latex, thick]
+    % Bus Lines
+    \draw [thick] (0,4) node[left]{SDA} -- (10,4);
+    \draw [thick] (0,2) node[left]{SCL} -- (10,2);
+    
+    % Pull-ups
+    \draw (2,4) -- (2,5) to[R, l=4.7k] (2,6) node[above]{VCC};
+    \draw (8,2) -- (8,5) to[R, l=4.7k] (8,6) node[above]{VCC};
+    
+    % Devices
+    \node [gtu block] (mcu) at (1,0) {ATmega32\\(માસ્ટર)};
+    \node [gtu block] (dev1) at (5,0) {ડિવાઇસ 1\\(EEPROM)};
+    \node [gtu block] (dev2) at (9,0) {ડિવાઇસ 2\\(સેન્સર)};
+    
+    % Connections
+    \draw (mcu.north) ++(-0.5,0) -- ++(0,4); % SDA
+    \draw (mcu.north) ++(0.5,0) -- ++(0,2);  % SCL
+    \fill (0.5, 4) circle (2pt);
+    \fill (1.5, 2) circle (2pt);
+    
+    \draw (dev1.north) ++(-0.5,0) -- ++(0,4);
+    \draw (dev1.north) ++(0.5,0) -- ++(0,2);
+    \fill (4.5, 4) circle (2pt);
+    \fill (5.5, 2) circle (2pt);
+    
+    \draw (dev2.north) ++(-0.5,0) -- ++(0,4);
+    \draw (dev2.north) ++(0.5,0) -- ++(0,2);
+    \fill (8.5, 4) circle (2pt);
+    \fill (9.5, 2) circle (2pt);
+\end{tikzpicture}
+\end{answerdiagram}
+
+\begin{itemize}
+    \item \keyword{SDA}: સીરિયલ ડેટા લાઇન (બાયડાયરેક્શનલ)
+    \item \keyword{SCL}: સીરિયલ ક્લોક લાઇન (માસ્ટર દ્વારા જનરેટ)
+    \item \keyword{Pull-up Resistors}: બંને લાઇન્સ પર જરૂરી
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{સ્ટાર્ટ, એડ્રેસ, એક્નોલેજ, ડેટા, સ્ટોપ}
+\end{mnemonicbox}
+
+\questionmarks{5(ક OR)}{7}{IoT આધારિત હોમ ઓટોમેશન સિસ્ટમ સમજાવો.}
+
+\begin{solutionbox}
+\textbf{IoT-આધારિત હોમ ઓટોમેશન સિસ્ટમ ઘરના ઉપકરણોને રિમોટ મોનિટરિંગ અને કંટ્રોલ માટે ઇન્ટરનેટ સાથે કનેક્ટ કરે છે.}
+
+\begin{answerdiagram}{IoT Home Automation Architecture}
+\begin{tikzpicture}[node distance=2cm, auto, >=latex, thick]
+    \node [gtu block] (cloud) {ક્લાઉડ સર્વિસીસ};
+    \node [gtu block, below=of cloud] (gateway) {ઇન્ટરનેટ ગેટવે};
+    \node [gtu block, below=of gateway] (controller) {હોમ કન્ટ્રોલર\\(ATmega32/ESP32)};
+    
+    % End devices
+    \node [gtu block, below left=of controller] (lights) {લાઇટ/HVAC};
+    \node [gtu block, below right=of controller] (security) {સિક્યુરિટી};
+    \node [gtu block, right=of controller] (sensors) {સેન્સર્સ};
+    
+    % User Interfaces
+    \node [gtu block, left=of gateway] (app) {મોબાઇલ એપ};
+    
+    % Connections
+    \draw [<->] (cloud) -- (gateway);
+    \draw [<->] (gateway) -- (controller);
+    \draw [<->] (controller) -- (lights);
+    \draw [<->] (controller) -- (security);
+    \draw [<-] (controller) -- (sensors);
+    \draw [<->] (gateway) -- (app);
+\end{tikzpicture}
+\end{answerdiagram}
+
+\begin{answertable}{હોમ ઓટોમેશન કોમ્પોનન્ટ્સ}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{કોમ્પોનન્ટ} & \textbf{ફંક્શન} \\ \hline
+કન્ટ્રોલર & સેન્ટ્રલ પ્રોસેસિંગ યુનિટ \\ \hline
+સેન્સર્સ & પર્યાવરણીય સ્થિતિઓનું મોનિટરિંગ કરે છે \\ \hline
+એક્ચ્યુએટર્સ & લાઇટ્સ, ઉપકરણો, લોક્સ કંટ્રોલ કરે છે \\ \hline
+ગેટવે & ઇન્ટરનેટ અને લોકલ ડિવાઇસ સાથે કનેક્ટ થાય છે \\ \hline
+યુઝર ઇન્ટરફેસ & એપ, વોઇસ કંટ્રોલ, ડેશબોર્ડ \\ \hline
+ક્લાઉડ સર્વિસીસ & ડેટા સ્ટોરેજ, પ્રોસેસિંગ અને રિમોટ એક્સેસ \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\begin{itemize}
+    \item \keyword{Remote Access}: ગમે ત્યાંથી કંટ્રોલ
+    \item \keyword{Voice Control}: આસિસ્ટન્ટ્સ સાથે ઇન્ટિગ્રેશન
+    \item \keyword{Energy Management}: કન્ઝમ્પશન ઓપ્ટિમાઇઝેશન
+    \item \keyword{Automation}: શેડ્યુલિંગ અને સીન સેટિંગ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{કનેક્ટ, કંટ્રોલ, મોનિટર, ઓટોમેટ, લર્ન}
+\end{mnemonicbox}
+\end{document}
