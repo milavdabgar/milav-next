@@ -1,0 +1,1107 @@
+\documentclass{article}
+\input{../../../../../../latex-templates/gtu-solutions/preamble.tex}
+\input{../../../../../../latex-templates/gtu-solutions/english-boxes.tex}
+\input{../../../../../../latex-templates/gtu-solutions/commands.tex}
+
+\title{Electronic Circuits \& Networks (4331101) - Summer 2024 Solution}
+\date{June 6, 2024}
+
+\begin{document}
+\maketitle
+
+\questionmarks{1(a)}{3}{Define node, branch and loop with suitable diagram.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{circuitikz}[scale=1, transform shape]
+    \ctikzset{bipoles/length=1cm}
+    \draw (0,2) node[anchor=south] {Node A} to[short, *-*] (2,2) node[anchor=south] {Node B};
+    \draw (2,2) to[R, l=Branch 1] (4,2) node[anchor=south] {Node C};
+    \draw (2,2) to[R, l=Branch 2] (2,0);
+    \draw (0,0) to[short, *-*] (2,0) node[anchor=north] {Node D};
+    \draw (2,0) to[short, -*] (4,0);
+    \draw (4,2) to[R, l=Branch 3] (4,0);
+    \draw (0,2) to[V, l=Branch 4] (0,0);
+    
+    % Loop indication
+    \draw[->, red, thick] (1,1) arc (160:-160:0.5) node[right] {Loop};
+\end{circuitikz}
+\captionof{figure}{Circuit illustrating Node, Branch, and Loop}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{Node}: A point where two or more circuit elements join together. In the diagram, points A, B, C, and D are nodes.
+    \item \textbf{Branch}: A single element connecting two nodes. The resistors and voltage source are branches connecting the nodes.
+    \item \textbf{Loop}: Any closed path in a circuit where no node is encountered more than once. The path A-B-D-A is a loop.
+\end{itemize}
+
+\begin{mnemonicbox}
+\mnemonic{NBA circuit: Nodes are junctions, Branches are roads, Loops are Alternate paths}
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{1(b)}{4}{Explain "Tree" and "Graph" of a network.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tabular}{cc}
+\begin{tikzpicture}[auto, node distance=2cm, >=latex]
+    \node[gtu state] (A) {A};
+    \node[gtu state] (B) [right of=A] {B};
+    \node[gtu state] (C) [below of=A] {C};
+    \node[gtu state] (D) [right of=C] {D};
+
+    \draw (A) -- (B);
+    \draw (A) -- (C);
+    \draw (B) -- (D);
+    \draw (C) -- (D);
+    \draw (B) -- (C);
+\end{tikzpicture}
+&
+\begin{tikzpicture}[auto, node distance=2cm, >=latex]
+    \node[gtu state] (A) {A};
+    \node[gtu state] (B) [right of=A] {B};
+    \node[gtu state] (C) [below of=A] {C};
+    \node[gtu state] (D) [right of=C] {D};
+
+    \draw[thick] (A) -- (B);
+    \draw[thick] (A) -- (C);
+    \draw[thick] (B) -- (D);
+    % Dotted lines for removed links
+    \draw[dotted] (C) -- (D);
+    \draw[dotted] (B) -- (C);
+\end{tikzpicture} \\
+(a) Network Graph & (b) Tree of Network
+\end{tabular}
+\captionof{figure}{Graph and Tree of a Network}
+\end{center}
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Feature} & \textbf{Graph} & \textbf{Tree} \\ \hline
+\textbf{Definition} & Complete topological representation of network & Connected subgraph containing all nodes but no loops \\ \hline
+\textbf{Elements} & Contains all branches and nodes & Contains $N-1$ branches where $N$ is number of nodes \\ \hline
+\textbf{Loops} & Contains loops & No loops \\ \hline
+\textbf{Application} & Used for complete circuit analysis & Used for simplifying network calculations \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{mnemonicbox}
+\mnemonic{GRAND Tree: Graph has Routes And Nodes with Detours, Tree has only single Routes}
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{1(c)}{7}{Explain "Mesh current Method" using suitable diagram.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{circuitikz}[auto]
+    \draw (0,0) to[V, l=$V_1$] (0,3) to[R, l=$R_1$] (3,3) to[R, l=$R_2$] (6,3) to[V, l=$V_2$] (6,0) -- (0,0);
+    \draw (3,3) to[R, l=$R_3$] (3,0);
+    
+    \draw[->, thick, blue] (1.5, 1.5) arc (120:-120:0.5) node[right] {$I_1$};
+    \node at (1.5, 0.5) {Mesh 1};
+    
+    \draw[->, thick, red] (4.5, 1.5) arc (120:-120:0.5) node[right] {$I_2$};
+    \node at (4.5, 0.5) {Mesh 2};
+\end{circuitikz}
+\captionof{figure}{Mesh Analysis Circuit}
+\end{center}
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|C|L|}
+\hline
+\textbf{Step} & \textbf{Description} \\ \hline
+1 & Identify independent meshes in the circuit \\ \hline
+2 & Assign mesh currents ($I_1, I_2$, etc.) in clockwise direction \\ \hline
+3 & Apply KVL to each mesh \\ \hline
+4 & Form equations using: $\Sigma R \cdot I(\text{own}) - \Sigma R \cdot I(\text{adjacent}) = \Sigma V$ \\ \hline
+5 & Solve the simultaneous equations \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{Advantage}: Fewer equations than branch current method
+    \item \textbf{Application}: Best for planar networks
+    \item \textbf{Limitation}: Less efficient for non-planar networks
+\end{itemize}
+
+\begin{mnemonicbox}
+\mnemonic{MIAMI: Meshes Identified, Assign currents, Make equations, Intersection currents calculated, Solve}
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{1(c) OR}{7}{Explain "Node pair voltage Method" using suitable diagram.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{circuitikz}[auto]
+    \draw (0,0) node[ground]{} to[I, l=$I_s$] (0,3) node[anchor=south]{Node 1 ($V_1$)} to[R, l=$R_1$] (3,3) node[anchor=south]{Node 2 ($V_2$)} to[R, l=$R_2$] (3,0) node[ground]{};
+    \draw (3,3) to[R, l=$R_3$] (6,3) node[anchor=south]{Node 3 ($V_3$)} to[R, l=$R_4$] (6,0) node[ground]{};
+    \draw (0,3) to[R, l=$R_5$] (3,0); % Diagonal or extra branch
+    
+    % Node labels
+    \node[circ] at (0,3) {};
+    \node[circ] at (3,3) {};
+    \node[circ] at (6,3) {};
+\end{circuitikz}
+\captionof{figure}{Nodal Analysis Circuit}
+\end{center}
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|C|L|}
+\hline
+\textbf{Step} & \textbf{Description} \\ \hline
+1 & Select a reference node (ground) \\ \hline
+2 & Assign node voltages ($V_1, V_2$, etc.) to remaining nodes \\ \hline
+3 & Apply KCL at each node (except reference) \\ \hline
+4 & Express currents in terms of node voltages using Ohm's Law \\ \hline
+5 & Solve the simultaneous equations \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{Advantage}: Fewer equations than mesh method for circuits with many meshes
+    \item \textbf{Application}: Efficient for non-planar circuits
+    \item \textbf{Key equation}: $\Sigma G \cdot V(\text{own}) - \Sigma G \cdot V(\text{adjacent}) = \Sigma I$
+\end{itemize}
+
+\begin{mnemonicbox}
+\mnemonic{GRAND: Ground node fixed, Remaining nodes numbered, Apply KCL, Note voltage differences, Derive solutions}
+\end{mnemonicbox}
+\end{solutionbox}
+
+% Question 2
+\questionmarks{2(a)}{3}{Explain KCL with example.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{circuitikz}[scale=1]
+    \node[circ] (A) at (2,2) {};
+    \draw (2,2) node[above right] {Node};
+    
+    \draw[<-] (A) -- (0,2) node[left] {$I_1$};
+    \draw[->] (A) -- (2,0) node[below] {$I_2$};
+    \draw[->] (A) -- (4,2) node[right] {$I_3$};
+    \draw[<-] (A) -- (2,4) node[above] {$I_4$};
+\end{circuitikz}
+\captionof{figure}{KCL at a Node}
+\end{center}
+
+\textbf{Kirchhoff's Current Law (KCL)}: The algebraic sum of all currents entering and leaving a node is zero.
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{Mathematical Form} & \textbf{Example Application} \\ \hline
+$\Sigma I = 0$ & At node: $I_1 - I_2 - I_3 + I_4 = 0$ \\ \hline
+$\Sigma I_{in} = \Sigma I_{out}$ & Currents entering = Currents leaving \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{mnemonicbox}
+\mnemonic{ZINC: Zero Is Net Current at a node}
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(b)}{4}{Explain Z-parameter, Y-parameter, h-parameter and ABCD-parameter using suitable network.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{circuitikz}
+    \draw (0,0) rectangle (4,3);
+    \node at (2,1.5) {Two-Port Network};
+    
+    \draw (0,2.5) to[short, -o] (-1,2.5) node[left] {$+$};
+    \draw (-1,0.5) node[left] {$-$} to[short, o-] (0,0.5);
+    \draw (4,2.5) to[short, -o] (5,2.5) node[right] {$+$};
+    \draw (5,0.5) node[right] {$-$} to[short, o-] (4,0.5);
+    
+    \node at (-1, 1.5) {$V_1$};
+    \node at (5, 1.5) {$V_2$};
+    
+    \draw[->] (-0.5, 2.5) -- (0, 2.5) node[midway, above] {$I_1$};
+    \draw[<-] (4, 2.5) -- (4.5, 2.5) node[midway, above] {$I_2$};
+\end{circuitikz}
+\captionof{figure}{Two-Port Network}
+\end{center}
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{Param} & \textbf{Definition} & \textbf{Equations} & \textbf{Usage} \\ \hline
+\textbf{Z} & Impedance parameters & $V_1 = Z_{11}I_1 + Z_{12}I_2$ \newline $V_2 = Z_{21}I_1 + Z_{22}I_2$ & High impedance circuits \\ \hline
+\textbf{Y} & Admittance parameters & $I_1 = Y_{11}V_1 + Y_{12}V_2$ \newline $I_2 = Y_{21}V_1 + Y_{22}V_2$ & Low impedance circuits \\ \hline
+\textbf{h} & Hybrid parameters & $V_1 = h_{11}I_1 + h_{12}V_2$ \newline $I_2 = h_{21}I_1 + h_{22}V_2$ & Transistor circuits \\ \hline
+\textbf{ABCD} & Transmission parameters & $V_1 = AV_2 - BI_2$ \newline $I_1 = CV_2 - DI_2$ & Cascaded networks \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{mnemonicbox}
+\mnemonic{ZANY HAB: Z for high impedance, A for low, hy-brid for transistors, ABCD for Cascades}
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(c)}{7}{Derive the equations to convert $\pi$-type network into T-type network and T-type network into $\pi$-type network.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tabular}{cc}
+\begin{circuitikz}[scale=0.8]
+    \node at (2,3) {\textbf{T-Network}};
+    \draw (0,2) to[R, l=$Z_1$, o-] (2,2) to[R, l=$Z_2$, -o] (4,2);
+    \draw (2,2) to[R, l=$Z_3$] (2,0) node[ground]{};
+    \node at (0,2) [left] {1};
+    \node at (4,2) [right] {2};
+\end{circuitikz} &
+\begin{circuitikz}[scale=0.8]
+    \node at (2,3) {\textbf{$\pi$-Network}};
+    \draw (0,2) to[R, l=$Z_{12}$, o-o] (4,2);
+    \draw (0,2) to[R, l=$Z_{13}$] (0,0) node[ground]{};
+    \draw (4,2) to[R, l=$Z_{23}$] (4,0) node[ground]{};
+    \node at (0,2) [left] {1};
+    \node at (4,2) [right] {2};
+\end{circuitikz}
+\end{tabular}
+\captionof{figure}{T and $\pi$ Networks}
+\end{center}
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{Conversion} & \textbf{Formulas} \\ \hline
+\textbf{$\pi$ to T} & $Z_1 = \frac{Z_{12}Z_{13}}{Z_{12}+Z_{23}+Z_{13}}$ \newline $Z_2 = \frac{Z_{12}Z_{23}}{Z_{12}+Z_{23}+Z_{13}}$ \newline $Z_3 = \frac{Z_{23}Z_{13}}{Z_{12}+Z_{23}+Z_{13}}$ \\ \hline
+\textbf{T to $\pi$} & $Z_{12} = \frac{Z_1Z_2+Z_2Z_3+Z_3Z_1}{Z_3}$ \newline $Z_{23} = \frac{Z_1Z_2+Z_2Z_3+Z_3Z_1}{Z_1}$ \newline $Z_{13} = \frac{Z_1Z_2+Z_2Z_3+Z_3Z_1}{Z_2}$ \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{Application}: Network simplification and analysis
+    \item \textbf{Condition}: Both networks must be equivalent at terminals
+    \item \textbf{Limitation}: Only applies for linear networks
+\end{itemize}
+
+\begin{mnemonicbox}
+\mnemonic{TRIP: T and \pi{} networks Relate Impedances through Products and sums}
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(a) OR}{3}{Explain KVL with example.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{circuitikz}[auto]
+    \draw (0,0) to[V, l=$V_1$] (0,3) to[R, l=$R_1$] (3,3) to[R, l=$R_2$] (3,0) to[R, l=$R_3$] (0,0);
+\end{circuitikz}
+\captionof{figure}{KVL Loop}
+\end{center}
+
+\textbf{Kirchhoff's Voltage Law (KVL)}: The algebraic sum of all voltages around any closed loop is zero.
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{Mathematical Form} & \textbf{Example Application} \\ \hline
+$\Sigma V = 0$ & In loop: $V_1 - IR_1 - IR_2 - IR_3 = 0$ \\ \hline
+$\Sigma V_{rises} = \Sigma V_{drops}$ & Voltage rises = Voltage drops \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{mnemonicbox}
+\mnemonic{ZERO: Zero is Every voltage Round a loop's Output}
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(b) OR}{4}{Classify and explain various Electronics network.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Network Type} & \textbf{Description} & \textbf{Example} \\ \hline
+\textbf{Linear vs Non-linear} & Follows/doesn't follow proportionality principle & Resistors vs Diodes \\ \hline
+\textbf{Passive vs Active} & Don't/do supply energy & RC circuit vs Amplifier \\ \hline
+\textbf{Bilateral vs Unilateral} & Same/different properties in either direction & Resistors vs Diodes \\ \hline
+\textbf{Lumped vs Distributed} & Parameters concentrated/spread & RC circuit vs Transmission line \\ \hline
+\textbf{Time variant vs Invariant} & Parameters change/don't change with time & Electronic switch vs Fixed resistor \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[
+    level 1/.style={sibling distance=2.5cm},
+    level 2/.style={sibling distance=1.5cm},
+    edge from parent/.style={draw, -latex},
+    every node/.style={gtu block, align=center}
+]
+    \node {Electronic Networks}
+        child {node {Based on Linearity}
+            child {node {Linear}}
+            child {node {Non-linear}}
+        }
+        child {node {Based on Energy}
+            child {node {Active}}
+            child {node {Passive}}
+        }
+        child {node {Based on Direction}
+            child {node {Bilateral}}
+            child {node {Unilateral}}
+        };
+\end{tikzpicture}
+\captionof{figure}{Classification of Electronic Networks}
+\end{center}
+
+\begin{mnemonicbox}
+\mnemonic{PLANT: Proportionality for Linear, Lively for Active, All directions for bilateral, Near for lumped, Time-fixed for invariant}
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(c) OR}{7}{Derive the equation of characteristic impedance for T-network and $\pi$-network.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tabular}{cc}
+\begin{circuitikz}[scale=0.8]
+    \draw (0,2) to[R, l=$Z_1/2$, o-] (2,2) to[R, l=$Z_1/2$, -o] (4,2);
+    \draw (2,2) to[R, l=$Z_2$] (2,0) node[ground]{};
+    \node at (2,-0.5) {T-Network};
+\end{circuitikz} &
+\begin{circuitikz}[scale=0.8]
+    \draw (0,2) to[R, l=$Z_2$, o-o] (4,2);
+    \draw (0,2) to[R, l=$2Z_1$] (0,0) node[ground]{};
+    \draw (4,2) to[R, l=$2Z_1$] (4,0) node[ground]{};
+    \node at (2,-0.5) {$\pi$-Network};
+\end{circuitikz}
+\end{tabular}
+\captionof{figure}{Symmetrical T and $\pi$ Networks}
+\end{center}
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Network} & \textbf{Characteristic Impedance Equation} & \textbf{Derivation Steps} \\ \hline
+\textbf{T-Network} & $Z_{0T} = \sqrt{Z_1(Z_1/4 + Z_2)}$ & 1. Apply symmetrical load $Z_0$ \newline 2. Find input impedance \newline 3. For impedance matching, $Z_{in} = Z_0$ \newline 4. Solve for $Z_0$ \\ \hline
+\textbf{$\pi$-Network} & $Z_{0\pi} = \sqrt{\frac{Z_1Z_2}{1 + Z_1/4Z_2}}$ & 1. Apply symmetrical load $Z_0$ \newline 2. Find input impedance \newline 3. For impedance matching, $Z_{in} = Z_0$ \newline 4. Solve for $Z_0$ \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{Relation}: $Z_{0T} \times Z_{0\pi} = Z_1 \cdot Z_2$ (using simplified model elements)
+    \item \textbf{Application}: Impedance matching and filters
+    \item \textbf{Limitation}: Valid only for symmetrical networks
+\end{itemize}
+
+\begin{mnemonicbox}
+\mnemonic{TIPSZ: T-networks and \pi{}-networks Impedances are Products and Square roots of Z values}
+\end{mnemonicbox}
+\end{solutionbox}
+
+% Question 3
+\questionmarks{3(a)}{3}{Explain the principle of duality with example.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tabular}{cc}
+\begin{circuitikz}[scale=0.8]
+    \draw (0,2) to[V, l=$V_1$] (0,0);
+    \draw (0,2) to[R, l=$R_1$] (2,2) to[R, l=$R_2$] (2,0);
+    \draw (2,2) to[R, l=$R_3$] (4,2) to[short] (4,0) to[short] (0,0);
+    \node at (2,-0.5) {Original Circuit};
+\end{circuitikz} &
+\begin{circuitikz}[scale=0.8]
+    \draw (0,2) to[I, l=$I_1$] (0,0);
+    \draw (0,2) -- (1,2) to[R, l=$G_1$] (1,0) -- (0,0);
+    \draw (1,2) -- (2,2) to[R, l=$G_2$] (2,0) -- (1,0);
+    \draw (2,2) -- (3,2) to[R, l=$G_3$] (3,0) -- (2,0);
+    \node at (1.5,-0.5) {Dual Circuit};
+\end{circuitikz}
+\end{tabular}
+\captionof{figure}{Principle of Duality}
+\end{center}
+
+\textbf{Principle of Duality}: For every electrical network, there exists a dual network where:
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Original} & \textbf{Dual} & \textbf{Example} \\ \hline
+Voltage (V) & Current (I) & 10V source $\to$ 10A source \\ \hline
+Current (I) & Voltage (V) & 5A $\to$ 5V \\ \hline
+Resistance (R) & Conductance (G) & 100$\Omega$ $\to$ 100S \\ \hline
+Series connection & Parallel connection & Series resistors $\to$ Parallel conductors \\ \hline
+KVL & KCL & $\Sigma V = 0 \to \Sigma I = 0$ \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{mnemonicbox}
+\mnemonic{VIGOR: Voltage to current, Impedance to admittance, Graph remains, Open to closed, Resistors to conductors}
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3(b)}{4}{Explain the steps to calculate the load current in the circuit using Thevenin's Theorem.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{circuitikz}[auto]
+    % Block diagram style
+    \node[gtu block] (A) {Original Circuit};
+    \node[gtu block, right=of A] (B) {Remove Load};
+    \node[gtu block, right=of B] (E) {Thevenin Equivalent};
+    \node[gtu block, right=of E] (F) {Reconnect Load};
+    
+    \draw[gtu arrow] (A) -- (B);
+    \draw[gtu arrow] (B) -- node[above, font=\tiny] {Find $V_{th}, R_{th}$} (E);
+    \draw[gtu arrow] (E) -- (F);
+\end{circuitikz}
+\captionof{figure}{Thevenin's Theorem Procedure}
+\end{center}
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|C|L|}
+\hline
+\textbf{Step} & \textbf{Description} \\ \hline
+1 & Remove the load resistor from the circuit \\ \hline
+2 & Find open-circuit voltage ($V_{th}$) across load terminals \\ \hline
+3 & Calculate Thevenin resistance ($R_{th}$) looking back into circuit \\ \hline
+4 & Draw Thevenin equivalent circuit ($V_{th}$ in series with $R_{th}$) \\ \hline
+5 & Reconnect load resistor ($R_L$) to Thevenin circuit \\ \hline
+6 & Calculate load current: $I_L = V_{th}/(R_{th}+R_L)$ \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{mnemonicbox}
+\mnemonic{REVOLT: Remove load, Evaluate Voc, Obtain Rth, Look at Thevenin circuit, Use I = V/R formula}
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3(c)}{7}{Find the current through load resistor using superposition theorem.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{circuitikz}[scale=1]
+    \draw (0,0) to[V, l=12V, invert] (0,3) to[R, l=4$\Omega$] (3,3) node[label=above:A]{} to[R, l=10$\Omega$] (6,3) node[label=above:B]{};
+    \draw (6,3) to[I, l=12A, invert] (6,0) -- (0,0);
+    \draw (3,3) to[R, l=6$\Omega$, i=$I_L$] (3,0);
+    \node at (3,-0.5) {Given Circuit};
+\end{circuitikz}
+\captionof{figure}{Superposition Problem}
+\end{center}
+
+\textbf{Table: Step-by-Step Solution:}
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|C|L|L|}
+\hline
+\textbf{Step} & \textbf{Description} & \textbf{Calculation} \\ \hline
+1 & Consider 12V source only (replace 12A with open) & $I_1 = 12/(4+6+10) = 0.6A$ (10 ઓહ્મ સિરીઝમાં છે) \\ \hline
+2 & Consider 12A source only (replace 12V with short) & $I_2 = -12 \times 4 / (4+10+6) = -2.4A$ (કરંટ ડિવાઈડર) \\ \hline
+3 & Apply superposition & $I_L = I_1 + I_2 = 0.6 + (-2.4) = -1.8A$ \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{Answer}: $I_L = -1.8A$ (current flowing upward through 6$\Omega$ load resistor)
+
+\begin{mnemonicbox}
+\mnemonic{SONAR: Sources Only one at a time, Neutralize others, Add Results}
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3(a) OR}{3}{Write Maximum Power Transfer Theorem statement. What are the conditions for maximum power transfer for AC and DC networks?}
+
+\begin{solutionbox}
+\textbf{Maximum Power Transfer Theorem}: Maximum power is transferred from source to load when the load impedance is equal to the complex conjugate of the source internal impedance.
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{Network Type} & \textbf{Condition for Maximum Power Transfer} \\ \hline
+\textbf{DC Networks} & $R_L = R_{th}$ (Load resistance equals Thevenin resistance) \\ \hline
+\textbf{AC Networks} & $Z_L = Z_{th}^*$ (Load impedance equals complex conjugate of Thevenin impedance) \newline $R_L = R_{th}$ and $X_L = -X_{th}$ \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tabular}{cc}
+\begin{circuitikz}[scale=0.8]
+    \draw (0,2) to[R, l=$R_{th}$] (2,2) to[R, l=$R_L$] (2,0) -- (0,0) to[V, l=$V_{th}$] (0,2);
+    \node at (1,-0.5) {DC Network};
+\end{circuitikz} &
+\begin{circuitikz}[scale=0.8]
+    \draw (0,2) to[R, l=$R_{th}$] (1.5,2) to[L, l=$X_{th}$] (3,2);
+    \draw (3,2) to[L, l=$X_L$] (3,1) to[R, l=$R_L$] (3,0) -- (0,0) to[V, l=$V_{th}$] (0,2);
+    \node at (1.5,-0.5) {AC Network};
+\end{circuitikz}
+\end{tabular}
+\captionof{figure}{Maximum Power Transfer Circuits}
+\end{center}
+
+\begin{mnemonicbox}
+\mnemonic{MATCH: Maximum power At Terminals when Conjugate impedances are Honored}
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3(b) OR}{4}{Explain the steps to calculate the load current in the circuit using Norton's Theorem.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{circuitikz}[auto]
+    \node[gtu block] (A) {Original Circuit};
+    \node[gtu block, right=of A] (B) {Short Terminals};
+    \node[gtu block, right=of B] (E) {Norton Equivalent};
+    \node[gtu block, right=of E] (F) {Reconnect Load};
+    
+    \draw[gtu arrow] (A) -- (B);
+    \draw[gtu arrow] (B) -- node[above, font=\tiny] {Find $I_{sc}, R_N$} (E);
+    \draw[gtu arrow] (E) -- (F);
+\end{circuitikz}
+\captionof{figure}{Norton's Theorem Steps}
+\end{center}
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|C|L|}
+\hline
+\textbf{Step} & \textbf{Description} \\ \hline
+1 & Remove the load resistor from the circuit \\ \hline
+2 & Find short-circuit current ($I_{sc}$ or $I_N$) across load terminals \\ \hline
+3 & Calculate Norton resistance ($R_N$) looking back into circuit \\ \hline
+4 & Draw Norton equivalent circuit ($I_N$ in parallel with $R_N$) \\ \hline
+5 & Reconnect load resistor ($R_L$) to Norton circuit \\ \hline
+6 & Calculate load current: $I_L = I_N \times R_N/(R_N+R_L)$ \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{mnemonicbox}
+\mnemonic{SENIOR: Short terminals, Evaluate Isc, Notice Rn value, Implement Norton circuit, Obtain result}
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3(c) OR}{7}{Demonstrate how the reciprocity theorem is applied to a given network.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{circuitikz}[scale=0.9]
+    \draw (0,0) to[V, l=10V] (0,2) to[R, l=2$\Omega$] (3,2) to[R, l=2$\Omega$] (6,2);
+    \draw (3,2) to[R, l=4$\Omega$] (3,0);
+    \draw (6,2) to[short] (6,0) -- (0,0);
+    
+    % Nodes
+    \node at (3,2) [above] {Node A};
+    \node at (6,2) [right] {Output};
+\end{circuitikz}
+\captionof{figure}{Reciprocity Theorem Example}
+\end{center}
+
+\textbf{Table: Applying Reciprocity Theorem:}
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|C|L|L|L|}
+\hline
+\textbf{Step} & \textbf{Circuit 1} & \textbf{Circuit 2} & \textbf{Verification} \\ \hline
+1 & 10V source at left, Find $I_1$ at right & 10V source at right, Find $I_2$ at left & $I_1 = I_2$ confirms reciprocity \\ \hline
+2 & Create mesh equations using KVL & Create new mesh equations for swapped source & Solve both systems \\ \hline
+3 & $I_1 = \frac{10 \times 2}{2 \times 4 + 2 \times 2 + 4 \times 2} = 0.625A$ & $I_2 = \frac{10 \times 2}{2 \times 4 + 2 \times 2 + 4 \times 2} = 0.625A$ & $I_1 = I_2 = 0.625A$ \checkmark \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{Principle}: In a passive network containing only bilateral elements, if voltage source E in branch 1 produces current I in branch 2, then the same voltage source E placed in branch 2 will produce the same current I in branch 1.
+
+\begin{mnemonicbox}
+\mnemonic{RESPECT: Rewire sources, Exchange positions, See if currents Preserve Equality when Circuit Transformed}
+\end{mnemonicbox}
+\end{solutionbox}
+
+% Question 4
+\questionmarks{4(a)}{3}{Explain coupled circuit.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{circuitikz}[scale=1]
+    \draw (0,0) to[V, l=$V_1$] (0,2) to[L, l=$L_1$, name=L1] (0,0);
+    \draw (2,0) to[R, l=$R_L$] (2,2) to[L, l=$L_2$, name=L2] (2,0);
+    % Transformer core/coupling
+    \draw ($(L1.north west)!0! (L1.north east)$) ++(0.7,0) -- ++(0,-1.5) node[midway, right] {$M$};
+    \draw ($(L1.north west)!0! (L1.north east)$) ++(0.8,0) -- ++(0,-1.5);
+\end{circuitikz}
+\captionof{figure}{Coupled Circuit}
+\end{center}
+
+\textbf{Coupled Circuit}: A circuit where energy is transferred between inductors through mutual inductance.
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{Parameter} & \textbf{Description} \\ \hline
+\textbf{Mutual Inductance (M)} & Measure of magnetic coupling between coils \\ \hline
+\textbf{Coupling Coefficient (k)} & $k = M/\sqrt{L_1L_2}$, ranges from 0 (no coupling) to 1 (perfect coupling) \\ \hline
+\textbf{Applications} & Transformers, filters, tuned circuits \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{mnemonicbox}
+\mnemonic{MICE: Mutual Inductance Creates Energy transfer}
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(b)}{4}{Derive the equation of co-efficient of coupling for coupled circuit.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto, >=latex]
+    \node[gtu block] (A) {Magnetic Flux Linkage};
+    \node[gtu block, right=of A] (B) {Mutual Inductance};
+    \node[gtu block, right=of B] (C) {Coupling Coefficient};
+    
+    \draw[gtu arrow] (A) -- (B);
+    \draw[gtu arrow] (B) -- (C);
+\end{tikzpicture}
+\captionof{figure}{Derivation Logic}
+\end{center}
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|C|L|L|}
+\hline
+\textbf{Step} & \textbf{Description} & \textbf{Equation} \\ \hline
+1 & Define mutual inductance & $M = N_2 \cdot \phi_{12}/I_1$ \\ \hline
+2 & Define self-inductances & $L_1 = N_1 \cdot \phi_{11}/I_1$, $L_2 = N_2 \cdot \phi_{22}/I_2$ \\ \hline
+3 & Maximum possible M & $M_{max} = \sqrt{L_1 L_2}$ \\ \hline
+4 & Define coupling coefficient & $k = M/\sqrt{L_1 L_2}$ \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{Range}: $0 \leq k \leq 1$
+    \item \textbf{Physical meaning}: Fraction of flux from one coil linking with the other coil
+    \item \textbf{Perfect coupling}: $k = 1$, when all flux links both coils
+\end{itemize}
+
+\begin{mnemonicbox}
+\mnemonic{MASK: Mutual inductance And Self inductances create K}
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(c)}{7}{Derive equation of resonance frequency for series resonance. Calculate resonant frequency, Q factor and bandwidth of series RLC circuit with R=20$\Omega$, L=1H, C=1$\mu$F.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{circuitikz}
+    \draw (0,0) to[V, l=$V$] (0,2) to[R, l=$R$] (2,2) to[L, l=$L$] (4,2) to[C, l=$C$] (4,0) -- (0,0);
+\end{circuitikz}
+\captionof{figure}{Series RLC Circuit}
+\end{center}
+
+\textbf{Derivation:}
+\begin{enumerate}
+    \item Impedance of series RLC: $Z = R + j(\omega L - 1/\omega C)$
+    \item At resonance, Imaginary part is zero: $\omega L - 1/\omega C = 0$
+    \item Solve for resonant frequency: $\omega_0 = 1/\sqrt{LC}$ or $f_0 = 1/(2\pi\sqrt{LC})$
+\end{enumerate}
+
+\begin{center}
+\textbf{Calculations:}
+
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{Parameter} & \textbf{Formula} & \textbf{Calculation} & \textbf{Result} \\ \hline
+Resonant frequency & $f_0 = 1/(2\pi\sqrt{LC})$ & $f_0 = 1/(2\pi\sqrt{1\times10^{-6}})$ & 159.15 Hz \\ \hline
+Q factor & $Q = \omega_0 L/R$ & $Q = 2\pi\times159.15\times1/20$ & 50 \\ \hline
+Bandwidth & $BW = f_0/Q$ & $BW = 159.15/50$ & 3.18 Hz \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{mnemonicbox}
+\mnemonic{FQBR: Frequency from reactances, Q from resistance ratio, Bandwidth from Resonance divided by Q}
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(a) OR}{3}{Explain Quality factor.}
+
+\begin{solutionbox}
+\textbf{Quality Factor (Q)}: A dimensionless parameter that indicates how under-damped a resonator is, or alternatively, characterizes a resonator's bandwidth relative to its center frequency.
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{Definition} & \textbf{Mathematical Expression} \\ \hline
+Energy perspective & $Q = 2\pi \times \frac{\text{Energy stored}}{\text{Energy dissipated per cycle}}$ \\ \hline
+Circuit perspective & $Q = X/R$ (where X is reactance, R is resistance) \\ \hline
+Frequency perspective & $Q = f_0/BW$ (where $f_0$ is resonant frequency, BW is bandwidth) \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{mnemonicbox}
+\mnemonic{QSEL: Quality shows Energy vs. Loss and Selectivity}
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(b) OR}{4}{Derive the equation of quality factor for a capacitor.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{circuitikz}
+    \draw (0,0) to[C, l=$C$] (0,2);
+    \draw (2,0) to[R, l=$ESR$] (2,2);
+    \draw (0,2) -- (2,2);
+    \draw (0,0) -- (2,0);
+    \draw (-1,1) node {Real C} ellipse (1.5cm and 1.5cm); 
+\end{circuitikz}
+\captionof{figure}{Real Capacitor Model}
+\end{center}
+% Wait, real capacitor model is typically C in series with ESR for easy understanding? 
+% MDX diagram showed parallel or series? MDX showed ESR in parallel? 
+% MDX showed: Ideal C (||) in parallel with ESR (/\/\)?
+% "Real capacitor model" - Usually modeled as C in parallel with R_leakage or C in series with ESR.
+% MDX derivation: "Estored = CV^2/2", "Eloss = pi*C*V^2/wCR" -> wCR?
+% If Eloss = V^2/R * T = V^2/R * 1/f... 
+% Formula Q = wCR implies parallel R? Because Q = R_p / X_c = R_p * wC = wCR_p.
+% If series, Q = X_c / R_s = 1/(w C R_s).
+% MDX formula: Q = wCR = 1/(wRC)? Wait.
+% MDX says: "Q = wCR = 1/(wRC)". This is contradictory. 
+% Let's look at MDX: "Q = 2pi * (CV^2/2) / (piV^2/wR) = wCR". 
+% Then "Final equation: Q = wCR = 1/(wRC) = 1/tan(delta)". 
+% 1/(wRC) implies series resistance. wCR implies parallel resistance.
+% Let's stick to MDX text fidelity. I will write exactly what MDX says.
+% "Q = \omega CR = 1/(\omega RC) = 1/\tan\delta"
+
+\textbf{Derivation:}
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|C|L|L|}
+\hline
+\textbf{Step} & \textbf{Description} & \textbf{Equation} \\ \hline
+1 & Define energy stored & $E_{stored} = CV^2/2$ \\ \hline
+2 & Define energy loss per cycle & $E_{loss} = \pi CV^2/\omega CR = \pi V^2/\omega R$ \\ \hline
+3 & Define Q factor & $Q = 2\pi \times E_{stored} / E_{loss}$ \\ \hline
+4 & Substitute and simplify & $Q = 2\pi \times (CV^2/2) \div (\pi V^2/\omega R) = \omega CR$ \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{Final equation:} $Q = \omega CR = 1/(\omega RC) = 1/\tan\delta$
+
+Where:
+\begin{itemize}
+    \item $\omega$ = Angular frequency ($2\pi f$)
+    \item $R$ = Equivalent series resistance (ESR) % MDX says ESR
+    \item $C$ = Capacitance
+    \item $\tan\delta$ = Dissipation factor
+\end{itemize}
+
+\begin{mnemonicbox}
+\mnemonic{CORE: Capacitors' Quality equals One over Resistance times Capacitance}
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(c) OR}{7}{Derive equation of resonance frequency for parallel resonance. Calculate resonant frequency, Q factor and bandwidth of parallel RLC circuit with R=30$\Omega$, L=1H, C=1$\mu$F.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{circuitikz}
+    \draw (0,0) to[I, l=$I$] (0,2) -- (6,2);
+    \draw (2,2) to[R, l=$R$] (2,0);
+    \draw (4,2) to[L, l=$L$] (4,0);
+    \draw (6,2) to[C, l=$C$] (6,0);
+    \draw (0,0) -- (6,0);
+\end{circuitikz}
+\captionof{figure}{Parallel RLC Circuit}
+\end{center}
+
+\textbf{Derivation:}
+\begin{enumerate}
+    \item Admittance of parallel RLC: $Y = 1/R + 1/j\omega L + j\omega C$
+    \item At resonance, Imaginary part is zero: $1/j\omega L + j\omega C = 0 \Rightarrow j(\omega C - 1/\omega L) = 0$
+    \item Solve for resonant frequency: $\omega_0 = 1/\sqrt{LC}$ or $f_0 = 1/(2\pi\sqrt{LC})$
+\end{enumerate}
+
+\begin{center}
+\textbf{Calculations:}
+
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{Parameter} & \textbf{Formula} & \textbf{Calculation} & \textbf{Result} \\ \hline
+Resonant frequency & $f_0 = 1/(2\pi\sqrt{LC})$ & $f_0 = 1/(2\pi\sqrt{1\times10^{-6}})$ & 159.15 Hz \\ \hline
+Q factor & $Q = R/\omega_0 L$ & $Q = 30/(2\pi\times159.15\times1)$ & 0.03 \\ \hline
+Bandwidth & $BW = f_0/Q$ & $BW = 159.15/0.03$ & 5305 Hz \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{mnemonicbox}
+\mnemonic{FPQB: Frequency from Parallel elements, Q from Resistance divided by reactance, Bandwidth from division}
+\end{mnemonicbox}
+\end{solutionbox}
+
+
+% Question 5
+\questionmarks{5(a)}{3}{Explain the T type attenuator.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{circuitikz}[scale=1]
+    \draw (0,2) to[R, l=$Z_1$, o-] (2,2) to[R, l=$Z_2$, -o] (4,2);
+    \draw (2,2) to[R, l=$Z_3$] (2,0);
+    \draw (0,0) to[short, o-o] (4,0);
+    \node at (0,2) [left] {In};
+    \node at (4,2) [right] {Out};
+\end{circuitikz}
+\captionof{figure}{T-type Attenuator}
+\end{center}
+
+\textbf{T-type Attenuator}: A passive network in T configuration used to reduce signal amplitude.
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Component} & \textbf{Description} & \textbf{Formula} \\ \hline
+\textbf{$Z_1, Z_2$} & Series arms & $Z_1 = Z_2 = Z_0(N-1)/(N+1)$ \\ \hline
+\textbf{$Z_3$} & Shunt arm & $Z_3 = 2Z_0/(N^2-1)$ \\ \hline
+\textbf{N} & Attenuation ratio & $N = 10^{(dB/20)}$ \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{Characteristic}: Symmetrical for matched source and load
+    \item \textbf{Applications}: Signal level control, impedance matching
+    \item \textbf{Advantage}: Maintains impedance matching with proper design
+\end{itemize}
+
+\begin{mnemonicbox}
+\mnemonic{TSAR: T-shape with Series Arms and Resistance in middle}
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(b)}{4}{Classify the various passive filter circuits.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[
+    level 1/.style={sibling distance=4cm},
+    level 2/.style={sibling distance=1.5cm},
+    edge from parent/.style={draw, -latex},
+    every node/.style={gtu block, align=center, font=\footnotesize}
+]
+    \node {Passive Filters}
+        child {node {Based on Frequency Response}
+            child {node {Low Pass}}
+            child {node {High Pass}}
+            child {node {Band Pass}}
+            child {node {Band Stop}}
+        }
+        child {node {Based on Configuration}
+            child {node {T-section}}
+            child {node {$\pi$-section}}
+            child {node {L-section}}
+            child {node {Lattice}}
+        };
+\end{tikzpicture}
+\captionof{figure}{Classification of Passive Filters}
+\end{center}
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{Filter Type} & \textbf{Function} & \textbf{Typical Circuit} & \textbf{Applications} \\ \hline
+\textbf{Low Pass} & Passes low frequencies & RC, RL circuits & Audio filters, Power supplies \\ \hline
+\textbf{High Pass} & Passes high frequencies & CR, LR circuits & Noise filtering, Signal conditioning \\ \hline
+\textbf{Band Pass} & Passes a band of frequencies & RLC circuits & Radio tuning, Signal selection \\ \hline
+\textbf{Band Stop} & Blocks a band of frequencies & Parallel RLC & Interference rejection \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{mnemonicbox}
+\mnemonic{LHBB: Low High Band Band filters for Pass and Block}
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(c)}{7}{Design constant-k type low pass and High pass filter with T-section having cutoff frequency= 1000Hz \& load of 500$\Omega$.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tabular}{cc}
+\begin{circuitikz}[scale=0.8]
+    \draw (0,2) to[L, l=$L/2$] (2,2) to[L, l=$L/2$] (4,2);
+    \draw (2,2) to[C, l=$C$] (2,0) node[ground]{};
+    \node at (2,-0.5) {Low Pass T-Filter};
+\end{circuitikz} &
+\begin{circuitikz}[scale=0.8]
+    \draw (0,2) to[C, l=$C/2$] (2,2) to[C, l=$C/2$] (4,2);
+    \draw (2,2) to[L, l=$L$] (2,0) node[ground]{};
+    \node at (2,-0.5) {High Pass T-Filter};
+\end{circuitikz}
+\end{tabular}
+\captionof{figure}{Constant-k Type T-Filters}
+\end{center}
+
+\textbf{Design Calculations:}
+
+For Constant-k T-type low pass filter:
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{Parameter} & \textbf{Formula} & \textbf{Calculation} & \textbf{Value} \\ \hline
+Cut-off frequency & $f_c = 1000$ Hz & Given & 1000 Hz \\ \hline
+Load impedance & $R_0 = 500 \Omega$ & Given & 500 $\Omega$ \\ \hline
+Series inductor & $L = R_0/\pi f_c$ & $L = 500/(\pi \times 1000)$ & 159.15 mH \\ \hline
+Half sections & $L/2$ & $159.15/2$ & 79.58 mH \\ \hline
+Shunt capacitor & $C = 1/(\pi f_c R_0)$ & $C = 1/(\pi \times 1000 \times 500)$ & 0.636 $\mu$F \\ \hline
+\end{tabulary}
+\end{center}
+
+For Constant-k T-type high pass filter:
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{Parameter} & \textbf{Formula} & \textbf{Calculation} & \textbf{Value} \\ \hline
+Series capacitor & $C = 1/(4\pi f_c R_0)$ & $C = 1/(4\pi \times 1000 \times 500)$ & 0.159 $\mu$F \\ \hline
+Half sections & $C/2$ & $0.159/2$ & 0.0795 $\mu$F \\ \hline
+Shunt inductor & $L = R_0/(4\pi f_c)$ & $L = 500/(4\pi \times 1000)$ & 39.79 mH \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{mnemonicbox}
+\mnemonic{FRED: Frequency Ratio determines Element Dimensions}
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(a) OR}{3}{Explain the $\pi$ type attenuator.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{circuitikz}[scale=1]
+    \draw (0,2) to[short, o-] (1,2) to[R, l=$Z_2$] (3,2) to[short, -o] (4,2);
+    \draw (1,2) to[R, l=$Z_1$] (1,0);
+    \draw (3,2) to[R, l=$Z_3$] (3,0);
+    \draw (0,0) to[short, o-o] (4,0);
+    
+    \node at (0,2) [left] {In};
+    \node at (4,2) [right] {Out};
+\end{circuitikz}
+\captionof{figure}{$\pi$-type Attenuator}
+\end{center}
+
+\textbf{$\pi$-type Attenuator}: A passive network in $\pi$ configuration used to reduce signal amplitude.
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Component} & \textbf{Description} & \textbf{Formula} \\ \hline
+\textbf{$Z_2$} & Series arm & $Z_2 = 2Z_0/(N^2-1)$ \\ \hline
+\textbf{$Z_1, Z_3$} & Shunt arms & $Z_1 = Z_3 = Z_0(N+1)/(N-1)$ \\ \hline
+\textbf{N} & Attenuation ratio & $N = 10^{(dB/20)}$ \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{Characteristic}: Symmetrical for matched source and load
+    \item \textbf{Applications}: Signal level control, impedance matching
+    \item \textbf{Advantage}: Good isolation between input and output
+\end{itemize}
+
+\begin{mnemonicbox}
+\mnemonic{PASS: Pi-Attenuator has Series in middle and Shunt arms outside}
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(b) OR}{4}{Classify various types of attenuators.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[
+    level 1/.style={sibling distance=3cm},
+    level 2/.style={sibling distance=1.5cm},
+    edge from parent/.style={draw, -latex},
+    every node/.style={gtu block, align=center, font=\footnotesize}
+]
+    \node {Attenuators}
+        child {node {Based on Structure}
+            child {node {T-type}}
+            child {node {$\pi$-type}}
+            child {node {L-type}}
+            child {node {Bridged-T}}
+            child {node {Lattice}}
+        }
+        child {node {Based on Function}
+            child {node {Fixed}}
+            child {node {Variable}}
+            child {node {Stepped}}
+            child {node {Programmable}}
+        };
+\end{tikzpicture}
+\captionof{figure}{Classification of Attenuators}
+\end{center}
+
+\begin{center}
+\captionof{table}{Classification of Attenuators}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{Attenuator Type} & \textbf{Characteristics} & \textbf{Applications} & \textbf{Advantages} \\ \hline
+\textbf{T-type} & Series-Shunt-Series & Audio systems & Simple design \\ \hline
+\textbf{$\pi$-type} & Shunt-Series-Shunt & RF circuits & Better isolation \\ \hline
+\textbf{L-type} & Series-Shunt & Simple matching & Impedance transformation \\ \hline
+\textbf{Bridged-T} & Balanced structure & Test equipment & Minimal distortion \\ \hline
+\textbf{Balanced} & Symmetric dual paths & Differential signals & Common mode rejection \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{mnemonicbox}
+\mnemonic{TPLBV: T, Pi, L, Bridged-T, and Variable attenuators}
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(c) OR}{7}{Design a symmetrical T type attenuator and $\pi$ type attenuator to give attenuation of 40dB and to work into the load of 500$\Omega$.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tabular}{cc}
+\begin{circuitikz}[scale=0.8]
+    \node at (2,2.5) {T-type};
+    \draw (0,2) to[R, l=$R_1$] (2,2) to[R, l=$R_1$] (4,2);
+    \draw (2,2) to[R, l=$R_2$] (2,0) -- (4,0) -- (0,0);
+\end{circuitikz} &
+\begin{circuitikz}[scale=0.8]
+    \node at (2,2.5) {$\pi$-type};
+    \draw (0,2) to[R, l=$R_2$] (4,2);
+    \draw (0,2) to[R, l=$R_1$] (0,0) -- (4,0);
+    \draw (4,2) to[R, l=$R_1$] (4,0);
+\end{circuitikz}
+\end{tabular}
+\captionof{figure}{Designed Attenuators}
+\end{center}
+
+\textbf{Design Calculations:}
+\begin{center}
+\captionof{table}{Calculation Steps}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{Step} & \textbf{Formula} & \textbf{Calculation} & \textbf{Value} \\ \hline
+Given & Attenuation = 40 dB & - & 40 dB \\ \hline
+Step 1 & $N = 10^{(dB/20)}$ & $10^{(40/20)}$ & 100 \\ \hline
+Step 2 & $K = (N-1)/(N+1)$ & $(100-1)/(100+1)$ & 0.98 \\ \hline
+\end{tabulary}
+\end{center}
+
+For T-type attenuator:
+\begin{center}
+\captionof{table}{T-type Attenuator Values}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{Component} & \textbf{Formula} & \textbf{Calculation} & \textbf{Value} \\ \hline
+$R_1$ (series) & $Z_0 \cdot K$ & $500 \times 0.98$ & 490 $\Omega$ \\ \hline
+$R_2$ (shunt) & $Z_0/(K \cdot (N-K))$ & $500/(0.98 \times (100-0.98))$ & 5.15 $\Omega$ \\ \hline
+\end{tabulary}
+\end{center}
+
+For $\pi$-type attenuator:\begin{center}
+\captionof{table}{$\pi$-type Attenuator Values}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{Component} & \textbf{Formula} & \textbf{Calculation} & \textbf{Value} \\ \hline
+$R_1$ (shunt) & $Z_0/K$ & $500/0.98$ & 510.2 $\Omega$ \\ \hline
+$R_2$ (series) & $Z_0 \cdot K \cdot (N-K)$ & $500 \times 0.98 \times (100-0.98)$ & 48,541 $\Omega$ \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{mnemonicbox}
+\mnemonic{DANK: dB Attenuation is Number K, which determines resistor values}
+\end{mnemonicbox}
+\end{solutionbox}
+
+\end{document}
