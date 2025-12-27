@@ -1,0 +1,1092 @@
+\documentclass{article}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/preamble.tex}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/gujarati-boxes.tex}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/commands.tex}
+
+\title{એમ્બેડેડ સિસ્ટમ (4343204) -- સમર 2024 સોલ્યુશન}
+\date{June 21, 2024}
+
+\begin{document}
+\maketitle
+
+\questionmarks{1(અ)}{3}{AVR સ્ટેટસ રજિસ્ટર દોરો.}
+
+\begin{solutionbox}
+AVR સ્ટેટસ રજિસ્ટર (SREG) એરિથમેટિક ઓપરેશન્સના પરિણામની માહિતી ધરાવે છે અને ઇન્ટરપ્ટ્સને નિયંત્રિત કરે છે.
+
+\textbf{ડાયાગ્રામ:}
+
+\begin{center}
+\begin{tikzpicture}[node distance=0cm]
+    \node [draw, minimum width=1cm, minimum height=0.8cm] (I) {I};
+    \node [draw, minimum width=1cm, minimum height=0.8cm, right=0cm of I] (T) {T};
+    \node [draw, minimum width=1cm, minimum height=0.8cm, right=0cm of T] (H) {H};
+    \node [draw, minimum width=1cm, minimum height=0.8cm, right=0cm of H] (S) {S};
+    \node [draw, minimum width=1cm, minimum height=0.8cm, right=0cm of S] (V) {V};
+    \node [draw, minimum width=1cm, minimum height=0.8cm, right=0cm of V] (N) {N};
+    \node [draw, minimum width=1cm, minimum height=0.8cm, right=0cm of N] (Z) {Z};
+    \node [draw, minimum width=1cm, minimum height=0.8cm, right=0cm of Z] (C) {C};
+    
+    \node [below=0.2cm of I] {7};
+    \node [below=0.2cm of T] {6};
+    \node [below=0.2cm of H] {5};
+    \node [below=0.2cm of S] {4};
+    \node [below=0.2cm of V] {3};
+    \node [below=0.2cm of N] {2};
+    \node [below=0.2cm of Z] {1};
+    \node [below=0.2cm of C] {0};
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{I (બિટ 7)}: ગ્લોબલ ઇન્ટરપ્ટ એનેબલ
+    \item \keyword{T (બિટ 6)}: બિટ કોપી સ્ટોરેજ
+    \item \keyword{H (બિટ 5)}: હાફ કેરી ફ્લેગ
+    \item \keyword{S (બિટ 4)}: સાઇન ફ્લેગ (S = N$\oplus$V)
+    \item \keyword{V (બિટ 3)}: ટુ'સ કોમ્પલિમેન્ટ ઓવરફ્લો
+    \item \keyword{N (બિટ 2)}: નેગેટિવ ફ્લેગ
+    \item \keyword{Z (બિટ 1)}: ઝીરો ફ્લેગ
+    \item \keyword{C (બિટ 0)}: કેરી ફ્લેગ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{I Take Health Seriously, Very Nice Zero Carry}
+\end{mnemonicbox}
+
+\questionmarks{1(બ)}{4}{AVR માં હાર્વર્ડ આર્કિટેક્ચર સમજાવો.}
+
+\begin{solutionbox}
+AVR માં હાર્વર્ડ આર્કિટેક્ચર પ્રોગ્રામ અને ડેટા મેમરી અલગ રાખે છે, જેનાથી બંને પર એક સાથે એક્સેસ કરી શકાય છે.
+
+\textbf{ડાયાગ્રામ:}
+
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto]
+    \node [gtu block] (CPU) {CPU};
+    \node [gtu block, above right=1cm and 2cm of CPU] (PM) {Program Memory};
+    \node [gtu block, below right=1cm and 2cm of CPU] (DM) {Data Memory};
+    
+    \path [gtu arrow] (CPU) -- node {Instruction Bus} (PM);
+    \path [gtu arrow] (CPU) -- node {Data Bus} (DM);
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{Program Memory}: Flash મેમરીમાં ઇન્સ્ટ્રક્શન્સ સ્ટોર કરે છે
+    \item \keyword{Data Memory}: SRAM, રજિસ્ટર્સ અને I/O રજિસ્ટર્સ ધરાવે છે
+    \item \keyword{અલગ બસ}: પ્રોગ્રામ અને ડેટા માટે અલગ બસ
+    \item \keyword{પેરેલલ એક્સેસ}: એક સાથે ઇન્સ્ટ્રક્શન ફેચ અને ડેટા એક્સેસ કરી શકાય છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Separate Places for Data And Programs}
+\end{mnemonicbox}
+
+\questionmarks{1(ક)}{7}{રીયલ ટાઇમ ઓપરેટિંગ સિસ્ટમ ચર્ચો.}
+
+\begin{solutionbox}
+રીયલ-ટાઇમ ઓપરેટિંગ સિસ્ટમ (RTOS) ચુસ્ત ટાઇમિંગ જરૂરિયાતો ધરાવતા ટાસ્ક્સનું મેનેજમેન્ટ કરે છે, અને નિશ્ચિત રિસ્પોન્સ ટાઇમ સુનિશ્ચિત કરે છે.
+
+\begin{center}
+\captionof{table}{RTOS ની મુખ્ય વિશેષતાઓ}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{વિશેષતા} & \textbf{વર્ણન} \\ \hline
+ટાસ્ક શેડ્યુલિંગ & તાત્કાલિકતાના આધારે ટાસ્ક્સને પ્રાધાન્ય આપે છે \\ \hline
+નિશ્ચિત & ઘટનાઓ માટે ગેરંટેડ રિસ્પોન્સ ટાઇમ \\ \hline
+પ્રિએમ્પ્ટિવ & ક્રિટિકલ ટાસ્ક ઓછા પ્રાધાન્યવાળા ટાસ્કને ઇન્ટરપ્ટ કરી શકે છે \\ \hline
+મેમરી મેનેજમેન્ટ & ફ્રેગમેન્ટેશન વગર કાર્યક્ષમ મેમરી ફાળવણી \\ \hline
+ઓછો લેટન્સી & ઘટના અને પ્રતિક્રિયા વચ્ચે ન્યૂનતમ વિલંબ \\ \hline
+મલ્ટીટાસ્કિંગ & એકસાથે અનેક ટાસ્ક હેન્ડલ કરે છે \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{ટાસ્ક-બેઝ્ડ}: પ્રોગ્રામને સ્વતંત્ર ટાસ્ક્સમાં વિભાજિત કરે છે
+    \item \keyword{ઇન્ટરપ્ટ હેન્ડલિંગ}: બાહ્ય ઘટનાઓ માટે ઝડપી પ્રતિક્રિયા
+    \item \keyword{સિંક્રોનાઇઝેશન}: ટાસ્ક કોઓર્ડિનેશન માટે સેમાફોર અને મ્યુટેક્સ પૂરા પાડે છે
+    \item \keyword{રિસોર્સ મેનેજમેન્ટ}: રિસોર્સ કોન્ફ્લિક્ટ્સ અટકાવે છે
+    \item \keyword{નાનો ફૂટપ્રિન્ટ}: મર્યાદિત હાર્ડવેર રિસોર્સ માટે ઓપ્ટિમાઇઝ કરેલ છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Tasks Run On Strict Timelines}
+\end{mnemonicbox}
+
+\questionmarks{1(ક OR)}{7}{એમ્બેડેડ સિસ્ટમ માટે માઇક્રોકન્ટ્રોલર પસંદ કરવા માટેના ક્રાઈટેરીયા ચર્ચો.}
+
+\begin{solutionbox}
+યોગ્ય માઇક્રોકન્ટ્રોલર પસંદ કરવા માટે એપ્લિકેશન જરૂરિયાતોને મેચ કરવા અનેક મુખ્ય પરિબળોનું મૂલ્યાંકન કરવું જરૂરી છે.
+
+\begin{center}
+\captionof{table}{માઇક્રોકન્ટ્રોલર પસંદગી માપદંડ}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{માપદંડ} & \textbf{વિચારણાઓ} \\ \hline
+પ્રોસેસિંગ પાવર & CPU સ્પીડ, બિટ વિડ્થ (8/16/32-બિટ) \\ \hline
+મેમરી & Flash, RAM, EEPROM સાઇઝ \\ \hline
+પાવર કન્ઝમ્પશન & સ્લીપ મોડ, ઓપરેટિંગ વોલ્ટેજ \\ \hline
+I/O કેપેબિલિટીઝ & પોર્ટ્સની સંખ્યા, સ્પેશિયલ ફંક્શન્સ \\ \hline
+પેરિફેરલ્સ & ટાઇમર, ADC, કમ્યુનિકેશન ઇન્ટરફેસ \\ \hline
+કોસ્ટ & યુનિટ પ્રાઇસ, ડેવલપમેન્ટ ટૂલ્સ કોસ્ટ \\ \hline
+ડેવલપમેન્ટ સપોર્ટ & ટૂલ્સ, ડોક્યુમેન્ટેશન, કમ્યુનિટી \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{એપ્લિકેશન નીડ્સ}: કન્ટ્રોલરને ટાસ્કની જટિલતા સાથે મેચ કરવો
+    \item \keyword{રીયલ-ટાઇમ રિક્વાયરમેન્ટ}: રિસ્પોન્સ ટાઇમની મર્યાદાઓ
+    \item \keyword{એન્વાયર્નમેન્ટલ ફેક્ટર્સ}: તાપમાન, નોઇઝ, વાઇબ્રેશન
+    \item \keyword{ફોર્મ ફેક્ટર}: ભૌતિક આકાર અને પેકેજિંગ
+    \item \keyword{ભવિષ્યની એક્સ્પાન્શન}: ફીચર ગ્રોથ માટે જગ્યા
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Power, Memory, I/O, Peripherals, Cost}
+\end{mnemonicbox}
+
+\questionmarks{2(અ)}{3}{એમ્બેડેડ સિસ્ટમ વ્યાખ્યાયીત કરો અને તેનો જનરલ બ્લોક ડાયાગ્રામ દોરો.}
+
+\begin{solutionbox}
+એમ્બેડેડ સિસ્ટમ એ એક ડેડિકેટેડ કમ્પ્યુટર સિસ્ટમ છે જે મોટી મિકેનિકલ કે ઇલેક્ટ્રિકલ સિસ્ટમમાં ચોક્કસ કાર્યો માટે ડિઝાઇન કરેલ છે.
+
+\textbf{ડાયાગ્રામ:}
+
+\begin{center}
+\begin{tikzpicture}[node distance=2.5cm, auto]
+    \node [gtu block] (input) {Input\\Devices};
+    \node [gtu block, right=of input] (proc) {Processing\\Unit};
+    \node [gtu block, right=of proc] (output) {Output\\Devices};
+    
+    \node [gtu block, below=1.5cm of input] (sensors) {Sensors};
+    \node [gtu block, below=1.5cm of proc] (memory) {Memory};
+    \node [gtu block, below=1.5cm of output] (actuators) {Actuators};
+    
+    \node [gtu block, below=1.5cm of memory] (power) {Power\\Supply};
+    
+    \path [gtu arrow] (input) -- (proc);
+    \path [gtu arrow] (proc) -- (output);
+    \path [gtu arrow, <->] (sensors) -- (input);
+    \path [gtu arrow, <->] (memory) -- (proc);
+    \path [gtu arrow, <->] (actuators) -- (output);
+    \path [gtu arrow] (power) -- (memory);
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{પ્રોસેસિંગ યુનિટ}: માઇક્રોકન્ટ્રોલર/માઇક્રોપ્રોસેસર
+    \item \keyword{મેમરી}: પ્રોગ્રામ અને ડેટા સ્ટોર કરે છે
+    \item \keyword{ઇનપુટ/આઉટપુટ}: બાહ્ય દુનિયા સાથે ઇન્ટરફેસ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Processing Memory I/O Power}
+\end{mnemonicbox}
+
+\questionmarks{2(બ)}{4}{દરેક પોર્ટ સાથે સંકળાયેલ I/O રજીસ્ટરની યાદી બનાવો.}
+
+\begin{solutionbox}
+AVR માઇક્રોકન્ટ્રોલર દરેક I/O પોર્ટ કંટ્રોલ કરવા માટે ત્રણ મુખ્ય રજિસ્ટર ધરાવે છે.
+
+\begin{center}
+\captionof{table}{I/O પોર્ટ રજિસ્ટર્સ}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{રજિસ્ટર} & \textbf{ફંક્શન} & \textbf{વર્ણન} \\ \hline
+PORTx & ડેટા રજિસ્ટર & આઉટપુટ વેલ્યુ અથવા પુલ-અપ સેટ કરે છે \\ \hline
+DDRx & ડેટા ડિરેક્શન રજિસ્ટર & પિન ડિરેક્શન સેટ કરે છે (1=આઉટપુટ, 0=ઇનપુટ) \\ \hline
+PINx & પોર્ટ ઇનપુટ પિન્સ & વાસ્તવિક પિન સ્ટેટસ વાંચે છે \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{x દર્શાવે છે}: A, B, C, D (પોર્ટનો અક્ષર)
+    \item \keyword{વધારાનાં સ્પેશિયલ}: કેટલાક પોર્ટ્સ PCMSK (પિન ચેન્જ માસ્ક) રજિસ્ટર ધરાવે છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Direction, Data, Pin reading}
+\end{mnemonicbox}
+
+\questionmarks{2(ક)}{7}{AVR માટેની ક્લોક અને રીસેટ સકીટ સમજાવો.}
+
+\begin{solutionbox}
+ક્લોક અને રીસેટ સર્કિટ્સ AVR ઓપરેશન્સના યોગ્ય ઇનિશિયલાઇઝેશન અને ટાઇમિંગ સુનિશ્ચિત કરે છે.
+
+\textbf{ક્લોક સર્કિટ ડાયાગ્રામ:}
+
+\begin{center}
+\begin{tikzpicture}[node distance=2cm]
+    \node [gtu block] (avr) {AVR};
+    \node [draw, circle, left=1.5cm of avr, minimum size=0.8cm] (xtal1) {XTAL1};
+    \node [draw, circle, right=1.5cm of avr, minimum size=0.8cm] (xtal2) {XTAL2};
+    \node [gtu block, below=2cm of avr] (crystal) {Crystal\\Oscillator};
+    \node [draw, below=0.5cm of crystal] (gnd) {GND};
+    
+    \path [gtu arrow] (xtal1) -- (avr);
+    \path [gtu arrow] (avr) -- (xtal2);
+    \path [gtu arrow] (crystal) -- (xtal1);
+    \path [gtu arrow] (crystal) -- (xtal2);
+    \path [gtu arrow] (crystal) -- (gnd);
+\end{tikzpicture}
+\end{center}
+
+\textbf{રીસેટ સર્કિટ:}
+
+\begin{center}
+\begin{tikzpicture}[node distance=1cm]
+    \node (vcc) {VCC};
+    \node [draw, rectangle, minimum width=0.8cm, minimum height=1.2cm, below=0.3cm of vcc] (res) {10k$\Omega$};
+    \coordinate [below=0.3cm of res] (junction);
+    \node [draw, rectangle, minimum width=1.2cm, minimum height=0.6cm, left=1cm of junction, align=center] (avr) {AVR\\RESET};
+    \node [draw, rectangle, minimum width=0.8cm, minimum height=0.6cm, right=1cm of junction] (cap) {C};
+    \node [below=0.5cm of cap] (gnd) {GND};
+    
+    \draw (vcc) -- (res);
+    \draw (res) -- (junction);
+    \draw (junction) -- (avr);
+    \draw (junction) -- (cap);
+    \draw (cap) -- (gnd);
+    \fill (junction) circle (2pt);
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{ક્લોક સોર્સ}: એક્સટર્નલ ક્રિસ્ટલ, RC ઓસિલેટર, અથવા ઇન્ટરનલ ઓસિલેટર
+    \item \keyword{ક્રિસ્ટલ}: ચોક્કસ ટાઇમિંગ પૂરું પાડે છે (1-16 MHz)
+    \item \keyword{રીસેટ પિન}: સિસ્ટમ રીસ્ટાર્ટ માટે એક્ટિવ-લો ઇનપુટ
+    \item \keyword{પાવર-ઓન રીસેટ}: પાવર આપતી વખતે ઓટોમેટિક રીસેટ
+    \item \keyword{બ્રાઉન-આઉટ ડિટેક્શન}: જો વોલ્ટેજ નિશ્ચિત થ્રેશોલ્ડથી નીચે જાય તો રીસેટ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Crystal Oscillates, Reset Ensures Start}
+\end{mnemonicbox}
+
+\questionmarks{2(અ OR)}{3}{એમ્બેડેડ સિસ્ટમની લાક્ષણિકતાઓ લખો.}
+
+\begin{solutionbox}
+એમ્બેડેડ સિસ્ટમની અનન્ય લાક્ષણિકતાઓ તેને જનરલ-પરપઝ કમ્પ્યુટરથી અલગ પાડે છે.
+
+\begin{center}
+\captionof{table}{એમ્બેડેડ સિસ્ટમની લાક્ષણિકતાઓ}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{લાક્ષણિકતા} & \textbf{વર્ણન} \\ \hline
+સિંગલ-ફંક્શન & ચોક્કસ ટાસ્ક માટે સમર્પિત \\ \hline
+રીયલ-ટાઇમ & અનુમાનિત પ્રતિક્રિયા સમય \\ \hline
+રિસોર્સ-કન્સ્ટ્રેઇન્ડ & મર્યાદિત મેમરી, પાવર, પ્રોસેસિંગ \\ \hline
+વિશ્વસનીયતા & નિષ્ફળતા વગર સતત ચાલવું જોઈએ \\ \hline
+રીએક્ટિવ & પર્યાવરણીય ફેરફારોને પ્રતિસાદ આપે છે \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{લાંબું આયુષ્ય}: ઘણીવાર વર્ષો સુધી હસ્તક્ષેપ વિના કામ કરે છે
+    \item \keyword{ઘણીવાર છુપાયેલ}: મોટી સિસ્ટમમાં એકીકૃત
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Single, Real-time, Resource-limited, Reliable}
+\end{mnemonicbox}
+
+\questionmarks{2(બ OR)}{4}{ડેટા આઉટપુટ અને ઇનપુટ કરવામાં DDRx રજીસ્ટરની ભૂમિકાની ચર્ચા કરો.}
+
+\begin{solutionbox}
+DDRx (ડેટા ડાઇરેક્શન રજિસ્ટર) પોર્ટ x ના દરેક પિનને ઇનપુટ કે આઉટપુટ તરીકે કન્ફિગર કરે છે.
+
+\begin{center}
+\captionof{table}{I/O ઓપરેશન્સમાં DDRx ની ભૂમિકા}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{DDRx વેલ્યુ} & \textbf{PORTx વેલ્યુ} & \textbf{મોડ} & \textbf{ફંક્શન} \\ \hline
+0 & 0 & ઇનપુટ & હાઇ-ઇમ્પીડન્સ મોડ \\ \hline
+0 & 1 & ઇનપુટ & પુલ-અપ એનેબલ્ડ \\ \hline
+1 & 0 & આઉટપુટ & આઉટપુટ લો (0V) \\ \hline
+1 & 1 & આઉટપુટ & આઉટપુટ હાઇ (VCC) \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{ડિરેક્શન કંટ્રોલ}: 1 = આઉટપુટ, 0 = ઇનપુટ
+    \item \keyword{પિન-સ્પેસિફિક}: દરેક બિટ વ્યક્તિગત પિન નિયંત્રિત કરે છે
+    \item \keyword{ઇનિશિયલ સ્ટેટ}: ડિફોલ્ટ ઇનપુટ (બધા 0s) છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Direction Determines Data flow}
+\end{mnemonicbox}
+
+\questionmarks{2(ક OR)}{7}{ATmega32નો પીન ડાયાગ્રામ દોરી સમજાવો.}
+
+\begin{solutionbox}
+ATmega32 એ 40 પિન ધરાવતો લોકપ્રિય 8-બિટ AVR માઇક્રોકન્ટ્રોલર છે જે વિવિધ કાર્યક્ષમતા પ્રદાન કરે છે.
+
+\textbf{ડાયાગ્રામ:}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.8]
+    \draw [thick] (0,0) rectangle (6,10);
+    
+    \foreach \i/\label in {1/(XCK) PB0, 2/PB1, 3/(INT2/AIN0)PB2, 4/(OC0/AIN1)PB3, 5/SS PB4, 6/MOSI PB5, 7/MISO PB6, 8/SCK PB7, 9/RESET, 10/VCC, 11/GND, 12/XTAL2, 13/XTAL1, 14/(RXD) PD0, 15/(TXD) PD1, 16/(INT0) PD2, 17/(INT1) PD3, 18/(OC1B) PD4, 19/(OC1A) PD5, 20/(ICP) PD6} {
+        \node [anchor=east, font=\tiny] at (-0.1, 10-\i*0.5+0.25) {\label};
+        \node [anchor=west] at (-0.1, 10-\i*0.5+0.25) {\i};
+    }
+    
+    \foreach \i/\label in {40/PA0 (ADC0), 39/PA1 (ADC1), 38/PA2 (ADC2), 37/PA3 (ADC3), 36/PA4 (ADC4), 35/PA5 (ADC5), 34/PA6 (ADC6), 33/PA7 (ADC7), 32/AREF, 31/GND, 30/AVCC, 29/PC7 (TOSC2), 28/PC6 (TOSC1), 27/PC5, 26/PC4, 25/PC3, 24/PC2, 23/PC1, 22/PC0, 21/PD7 (OC2)} {
+        \pgfmathsetmacro{\pos}{10-(40-\i+1)*0.5+0.25}
+        \node [anchor=west, font=\tiny] at (6.1, \pos) {\label};
+        \node [anchor=east] at (6.1, \pos) {\i};
+    }
+    
+    \node at (3,5) {ATmega32};
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{પોર્ટ A (PA0-PA7)}: 8-બિટ બાયડાયરેક્શનલ પોર્ટ ADC ઇનપુટ સાથે
+    \item \keyword{પોર્ટ B (PB0-PB7)}: 8-બિટ પોર્ટ SPI, ટાઇમર્સ, અને એક્સટર્નલ ઇન્ટરપ્ટ સાથે
+    \item \keyword{પોર્ટ C (PC0-PC7)}: 8-બિટ બાયડાયરેક્શનલ પોર્ટ TWI સપોર્ટ સાથે
+    \item \keyword{પોર્ટ D (PD0-PD7)}: 8-બિટ પોર્ટ USART, એક્સટર્નલ ઇન્ટરપ્ટ, અને PWM સાથે
+    \item \keyword{પાવર/ગ્રાઉન્ડ}: VCC, GND, AVCC, AREF
+    \item \keyword{ક્લોક}: XTAL1/XTAL2 એક્સટર્નલ ઓસિલેટર માટે
+    \item \keyword{રીસેટ}: એક્ટિવ-લો રીસેટ ઇનપુટ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{ABCD Ports Around Power Clock Reset}
+\end{mnemonicbox}
+
+\questionmarks{3(અ)}{3}{ATmega32 માટે પ્રોગ્રામ કાઉન્ટર (PC) રજિસ્ટર સમજાવો.}
+
+\begin{solutionbox}
+પ્રોગ્રામ કાઉન્ટર (PC) એ 16-બિટ રજિસ્ટર છે જે એક્ઝિક્યુટ કરવા માટેના આગામી ઇન્સ્ટ્રક્શનના એડ્રેસને ટ્રેક કરે છે.
+
+\textbf{ડાયાગ્રામ:}
+
+\begin{center}
+\begin{tikzpicture}[node distance=0cm]
+    \node [draw, minimum width=4cm, minimum height=0.8cm] (pch) {PC High};
+    \node [draw, minimum width=4cm, minimum height=0.8cm, right=0cm of pch] (pcl) {PC Low};
+    
+    \node [below=0.2cm of pch] {15:8};
+    \node [below=0.2cm of pcl] {7:0};
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{ફંક્શન}: પ્રોગ્રામ મેમરીમાં આગામી ઇન્સ્ટ્રક્શન તરફ પોઇન્ટ કરે છે
+    \item \keyword{સાઇઝ}: 16-બિટ (64K શબ્દો સુધી એડ્રેસ કરી શકાય)
+    \item \keyword{ઓટો-ઇન્ક્રિમેન્ટ}: ઇન્સ્ટ્રક્શન ફેચ પછી આપોઆપ વધે છે
+    \item \keyword{જમ્પ કંટ્રોલ}: બ્રાન્ચ અને જમ્પ ઇન્સ્ટ્રક્શન્સ દ્વારા મોડિફાય થાય છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Points to Code Execution}
+\end{mnemonicbox}
+
+\questionmarks{3(બ)}{4}{EEPROM ના 0x005F લોકેશન પરથી ડેટા રીડ કરી PORTB પર મોકલવા માટે AVR C પ્રોગ્રામ લખો.}
+
+\begin{solutionbox}
+\begin{lstlisting}[language=C,caption={Read EEPROM to PORTB}]
+#include <avr/io.h>
+#include <avr/eeprom.h>
+
+int main(void)
+{
+    // PORTB ને આઉટપુટ તરીકે સેટ કરો
+    DDRB = 0xFF;
+    
+    // EEPROM લોકેશન 0x005F પરથી વાંચો અને PORTB પર આઉટપુટ કરો
+    PORTB = eeprom_read_byte((uint8_t*)0x005F);
+    
+    while(1) {
+        // મુખ્ય લૂપ
+    }
+    return 0;
+}
+\end{lstlisting}
+
+\begin{itemize}
+    \item \keyword{DDRB = 0xFF}: બધા PORTB પિન્સને આઉટપુટ તરીકે કન્ફિગર કરે છે
+    \item \keyword{eeprom\_read\_byte()}: EEPROM વાંચવા માટે AVR લાઇબ્રેરી ફંક્શન
+    \item \keyword{while(1)}: આઉટપુટ જાળવવા માટે અનંત લૂપ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Direction, Read EEPROM, Output to Port}
+\end{mnemonicbox}
+
+\questionmarks{3(ક)}{7}{TCCR0 રજિસ્ટર દોરી વિગતવાર સમજાવો.}
+
+\begin{solutionbox}
+ટાઇમર/કાઉન્ટર કંટ્રોલ રજિસ્ટર 0 (TCCR0) ટાઇમર/કાઉન્ટર0ના ઓપરેશનને કંટ્રોલ કરે છે.
+
+\textbf{ડાયાગ્રામ:}
+
+\begin{center}
+\begin{tikzpicture}[node distance=0cm]
+    \node [draw, minimum width=1cm, minimum height=0.8cm] (foc) {FOC0};
+    \node [draw, minimum width=1cm, minimum height=0.8cm, right=0cm of foc] (wgm0) {WGM00};
+    \node [draw, minimum width=1cm, minimum height=0.8cm, right=0cm of wgm0] (com1) {COM01};
+    \node [draw, minimum width=1cm, minimum height=0.8cm, right=0cm of com1] (com0) {COM00};
+    \node [draw, minimum width=1cm, minimum height=0.8cm, right=0cm of com0] (wgm1) {WGM01};
+    \node [draw, minimum width=1cm, minimum height=0.8cm, right=0cm of wgm1] (cs2) {CS02};
+    \node [draw, minimum width=1cm, minimum height=0.8cm, right=0cm of cs2] (cs1) {CS01};
+    \node [draw, minimum width=1cm, minimum height=0.8cm, right=0cm of cs1] (cs0) {CS00};
+    
+    \node [below=0.2cm of foc] {7};
+    \node [below=0.2cm of wgm0] {6};
+    \node [below=0.2cm of com1] {5};
+    \node [below=0.2cm of com0] {4};
+    \node [below=0.2cm of wgm1] {3};
+    \node [below=0.2cm of cs2] {2};
+    \node [below=0.2cm of cs1] {1};
+    \node [below=0.2cm of cs0] {0};
+\end{tikzpicture}
+\end{center}
+
+\begin{center}
+\captionof{table}{TCCR0 બિટ્સ ફંક્શન}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{બિટ(સ)} & \textbf{નામ} & \textbf{ફંક્શન} \\ \hline
+7 & FOC0 & ફોર્સ આઉટપુટ કમ્પેર \\ \hline
+6,3 & WGM01:0 & વેવફોર્મ જનરેશન મોડ \\ \hline
+5,4 & COM01:0 & કમ્પેર મેચ આઉટપુટ મોડ \\ \hline
+2,1,0 & CS02:0 & ક્લોક સિલેક્ટ \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{WGM01:0}: નોર્મલ, CTC, અથવા PWM મોડ પસંદ કરે છે
+    \item \keyword{COM01:0}: કમ્પેર મેચ પર OC0 પિન વર્તણૂક વ્યાખ્યાયિત કરે છે
+    \item \keyword{CS02:0}: ક્લોક સોર્સ અને પ્રીસ્કેલર સેટ કરે છે (1, 8, 64, 256, 1024)
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Forcing Waveforms, Comparing, Selecting Clock}
+\end{mnemonicbox}
+
+\questionmarks{3(અ OR)}{3}{AVR ડેટા મેમરી સમજાવો.}
+
+\begin{solutionbox}
+AVR ડેટા મેમરીમાં વિવિધ પ્રકારના ડેટા સ્ટોરેજ માટે અનેક સેક્શન્સ હોય છે.
+
+\textbf{ડાયાગ્રામ:}
+
+\begin{center}
+\begin{tikzpicture}[node distance=1.2cm]
+    \node [draw, rectangle, minimum width=3cm, minimum height=0.8cm, rounded corners] (mem) {AVR ડેટા મેમરી};
+    \node [draw, rectangle, minimum width=2.5cm, minimum height=0.7cm, below=of mem] (reg) {રજિસ્ટર્સ};
+    \node [draw, rectangle, minimum width=2.5cm, minimum height=0.7cm, below=of reg] (io) {I/O રજિસ્ટર્સ};
+    \node [draw, rectangle, minimum width=2.5cm, minimum height=0.7cm, below=of io] (sram) {ઇન્ટરનલ SRAM};
+    \node [draw, rectangle, minimum width=2.5cm, minimum height=0.7cm, below=of sram] (eeprom) {EEPROM};
+    
+    \draw [gtu arrow] (mem) -- (reg);
+    \draw [gtu arrow] (mem) -- (io);
+    \draw [gtu arrow] (mem) -- (sram);
+    \draw [gtu arrow] (mem) -- (eeprom);
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{રજિસ્ટર્સ}: 32 જનરલ-પરપઝ રજિસ્ટર્સ (R0-R31)
+    \item \keyword{I/O મેમરી}: પેરિફેરલ્સ માટે સ્પેશિયલ ફંક્શન રજિસ્ટર્સ
+    \item \keyword{SRAM}: વેરિએબલ્સ માટે ઇન્ટરનલ RAM (વોલેટાઇલ)
+    \item \keyword{EEPROM}: સાતત્યપૂર્ણ ડેટા માટે નોન-વોલેટાઇલ મેમરી
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Registers I/O SRAM EEPROM}
+\end{mnemonicbox}
+
+\questionmarks{3(બ OR)}{4}{EEPROM ના 0x005F લોકેશન પર 'G' સ્ટોર કરવા માટે AVR C પ્રોગ્રામ લખો.}
+
+\begin{solutionbox}
+\begin{lstlisting}[language=C,caption={Write to EEPROM}]
+#include <avr/io.h>
+#include <avr/eeprom.h>
+
+int main(void)
+{
+    // 'G' કેરેક્ટરને EEPROM લોકેશન 0x005F પર સ્ટોર કરો
+    eeprom_write_byte((uint8_t*)0x005F, 'G');
+    
+    while(1) {
+        // મુખ્ય લૂપ
+    }
+    return 0;
+}
+\end{lstlisting}
+
+\begin{itemize}
+    \item \keyword{eeprom\_write\_byte()}: EEPROM માં લખવા માટે AVR લાઇબ્રેરી ફંક્શન
+    \item \keyword{'G'}: ASCII વેલ્યુ 71 (0x47) EEPROM માં સ્ટોર થાય છે
+    \item \keyword{0x005F}: ટાર્ગેટ EEPROM એડ્રેસ
+    \item \keyword{while(1)}: લખ્યા પછી અનંત લૂપ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Write Once, Remember Forever}
+\end{mnemonicbox}
+
+\questionmarks{3(ક OR)}{7}{TIFR રજિસ્ટર દોરી વિગતવાર સમજાવો.}
+
+\begin{solutionbox}
+ટાઇમર/કાઉન્ટર ઇન્ટરપ્ટ ફ્લેગ રજિસ્ટર (TIFR) ટાઇમર ઇવેન્ટ્સ સૂચવતા ફ્લેગ ધરાવે છે.
+
+\textbf{ડાયાગ્રામ:}
+
+\begin{center}
+\begin{tikzpicture}[node distance=0cm]
+    \node [draw, minimum width=1cm, minimum height=0.8cm] (b7) {--};
+    \node [draw, minimum width=1cm, minimum height=0.8cm, right=0cm of b7] (b6) {--};
+    \node [draw, minimum width=1cm, minimum height=0.8cm, right=0cm of b6] (b5) {--};
+    \node [draw, minimum width=1cm, minimum height=0.8cm, right=0cm of b5] (b4) {--};
+    \node [draw, minimum width=1cm, minimum height=0.8cm, right=0cm of b4] (b3) {--};
+    \node [draw, minimum width=1cm, minimum height=0.8cm, right=0cm of b3] (ocf2) {OCF2};
+    \node [draw, minimum width=1cm, minimum height=0.8cm, right=0cm of ocf2] (tov2) {TOV2};
+    \node [draw, minimum width=1cm, minimum height=0.8cm, right=0cm of tov2] (tov0) {TOV0};
+    
+    \node [below=0.2cm of b7] {7};
+    \node [below=0.2cm of b6] {6};
+    \node [below=0.2cm of b5] {5};
+    \node [below=0.2cm of b4] {4};
+    \node [below=0.2cm of b3] {3};
+    \node [below=0.2cm of ocf2] {2};
+    \node [below=0.2cm of tov2] {1};
+    \node [below=0.2cm of tov0] {0};
+\end{tikzpicture}
+\end{center}
+
+\begin{center}
+\captionof{table}{TIFR બિટ્સ ફંક્શન}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{બિટ} & \textbf{નામ} & \textbf{ફંક્શન} \\ \hline
+0 & TOV0 & ટાઇમર/કાઉન્ટર0 ઓવરફ્લો ફ્લેગ \\ \hline
+1 & TOV2 & ટાઇમર/કાઉન્ટર2 ઓવરફ્લો ફ્લેગ \\ \hline
+2 & OCF2 & આઉટપુટ કમ્પેર ફ્લેગ 2 \\ \hline
+3-7 & -- & રિઝર્વ્ડ બિટ્સ \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{TOV0}: ટાઇમર0 ઓવરફ્લો થતાં સેટ થાય છે, ISR એક્ઝિક્યુટ થતાં ક્લિયર થાય છે
+    \item \keyword{TOV2}: ટાઇમર2 ઓવરફ્લો થતાં સેટ થાય છે
+    \item \keyword{OCF2}: ટાઇમર2 કમ્પેર મેચ થતાં સેટ થાય છે
+    \item \keyword{ફ્લેગ ક્લિયરિંગ}: ફ્લેગ ક્લિયર કરવા બિટને '1' લખો
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Timers Overflow, Comparisons Flag}
+\end{mnemonicbox}
+
+\questionmarks{4(અ)}{3}{AVRમાં ટાઇમ ડીલે જનરેટ કરવાની વિવિધ રીતો લખો.}
+
+\begin{solutionbox}
+AVR માઇક્રોકન્ટ્રોલર્સ ટાઇમ ડિલે જનરેટ કરવા માટે અનેક પદ્ધતિઓ ઓફર કરે છે.
+
+\begin{center}
+\captionof{table}{ડિલે જનરેશન પદ્ધતિઓ}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પદ્ધતિ} & \textbf{વર્ણન} & \textbf{પ્રિસિઝન} \\ \hline
+સોફ્ટવેર લૂપ્સ & CPU સાયકલ્સ કાઉન્ટિંગ & ઓછી \\ \hline
+ટાઇમર ઇન્ટરપ્ટ્સ & ISR સાથે હાર્ડવેર ટાઇમર્સ & ઉચ્ચ \\ \hline
+ટાઇમર પોલિંગ & ફ્લેગ ચેકિંગ સાથે હાર્ડવેર ટાઇમર્સ & મધ્યમ \\ \hline
+ડિલે ફંક્શન્સ & લાઇબ્રેરી ફંક્શન્સ (\_delay\_ms/\_delay\_us) & મધ્યમ \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{સોફ્ટવેર}: સરળ પરંતુ ઓપ્ટિમાઇઝેશન્સથી અસર પામે
+    \item \keyword{હાર્ડવેર}: વધુ ચોક્કસ પરંતુ ટાઇમર સેટઅપની જરૂર
+    \item \keyword{લાઇબ્રેરી}: સુવિધાજનક પરંતુ કોન્સ્ટન્ટ વેલ્યુ સુધી મર્યાદિત
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Loops, Interrupts, Polling, Functions}
+\end{mnemonicbox}
+
+\questionmarks{4(બ)}{4}{LM35નુ ATmega32 સાથે ઇન્ટરફેસિંગ દોરો અને સમજાવો.}
+
+\begin{solutionbox}
+LM35 એ તાપમાનના પ્રમાણસર એનાલોગ વોલ્ટેજ આઉટપુટ આપતો તાપમાન સેન્સર છે.
+
+\textbf{સર્કિટ ડાયાગ્રામ:}
+
+\begin{center}
+\begin{tikzpicture}[node distance=2cm]
+    \node (vcc) {VCC (+5V)};
+    \node [gtu block, below=1.5cm of vcc] (lm35) {LM35};
+    \node [below=1.5cm of lm35] (gnd) {GND};
+    \node [gtu block, right=3cm of lm35] (adc) {ATmega32\\ADC0 (PA0)};
+    
+    \path [draw] (vcc) -- (lm35);
+    \path [gtu arrow] (lm35) -- node[above] {Analog Out} (adc);
+    \path [draw] (lm35) -- (gnd);
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{કનેક્શન}: LM35 આઉટપુટ ATmega32 ના ADC0 (PA0) પર
+    \item \keyword{સ્કેલિંગ}: 10mV/°C આઉટપુટ (0°C = 0V, 25°C = 250mV)
+    \item \keyword{ADC સેટઅપ}: ADC0 પસંદ કરવા ADMUX કન્ફિગર કરો
+    \item \keyword{ગણતરી}: તાપમાન = (ADC\_value $\times$ 5 $\times$ 100) / 1024
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Analog Voltage Converts Temperature}
+\end{mnemonicbox}
+
+\questionmarks{4(ક)}{7}{MAX7221નુ ATmega32 સાથે ઇન્ટરફેસિંગ વિગતવાર સમજાવો.}
+
+\begin{solutionbox}
+MAX7221 એ SPI કમ્યુનિકેશન દ્વારા AVR સાથે જોડાતી LED ડિસ્પ્લે ડ્રાઇવર IC છે.
+
+\textbf{સર્કિટ ડાયાગ્રામ:}
+
+\begin{center}
+\begin{tikzpicture}[node distance=3cm]
+    \node [draw, rectangle, minimum width=2.5cm, minimum height=2cm] (avr) {ATmega32};
+    \node [draw, rectangle, minimum width=2.5cm, minimum height=2cm, right=of avr] (max) {MAX7221};
+    \node [draw, rectangle, minimum width=2.5cm, minimum height=1.2cm, right=of max, align=center] (display) {7-Segment\\Display};
+    
+    % Three separate parallel signal connections with better spacing
+    \draw [gtu arrow] ([yshift=7mm]avr.east) -- ([yshift=7mm]max.west) node[above, font=\tiny, pos=0.5] {PB7 (SCK)} node[below, font=\tiny, pos=0.5] {CLK};
+    \draw [gtu arrow] (avr.east) -- (max.west) node[above, font=\tiny, pos=0.5] {PB5 (MOSI)} node[below, font=\tiny, pos=0.5] {DIN};
+    \draw [gtu arrow] ([yshift=-7mm]avr.east) -- ([yshift=-7mm]max.west) node[above, font=\tiny, pos=0.5] {PB4 (SS)} node[below, font=\tiny, pos=0.5] {LOAD};
+    
+    % Connection to display
+    \draw [gtu arrow] (max.east) -- (display.west);
+\end{tikzpicture}
+\end{center}
+
+\begin{center}
+\captionof{table}{કનેક્શન્સ અને ફંક્શનાલિટી}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{ATmega32 પિન} & \textbf{MAX7221 પિન} & \textbf{ફંક્શન} \\ \hline
+PB7 (SCK) & CLK & સીરિયલ ક્લોક \\ \hline
+PB5 (MOSI) & DIN & ડેટા ઇનપુટ \\ \hline
+PB4 (SS) & LOAD & ચિપ સિલેક્ટ \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{SPI મોડ}: માસ્ટર મોડ, MSB ફર્સ્ટ
+    \item \keyword{ઇનિશિયલાઇઝેશન}: ડિકોડ મોડ, ઇન્ટેન્સિટી, સ્કેન લિમિટ સેટ કરે
+    \item \keyword{ડેટા ટ્રાન્સફર}: એડ્રેસ બાય્ટ પછી ડેટા બાય્ટ મોકલે
+    \item \keyword{મલ્ટિપ્લેક્સિંગ}: 8 ડિજિટ્સ સુધી ડ્રાઇવ કરી શકે
+    \item \keyword{બ્રાઇટનેસ કંટ્રોલ}: ઇન્ટેન્સિટી રજિસ્ટર દ્વારા 16 લેવલ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Send Clock Data Load Display}
+\end{mnemonicbox}
+
+\questionmarks{4(અ OR)}{3}{MAX232 લાઈન ડ્રાઈવર સમજાવો.}
+
+\begin{solutionbox}
+MAX232 એ TTL/CMOS લોજિક લેવલ્સને RS-232 વોલ્ટેજ લેવલ્સમાં સીરિયલ કમ્યુનિકેશન માટે કન્વર્ટ કરતી IC છે.
+
+\textbf{ડાયાગ્રામ:}
+
+\begin{center}
+\begin{tikzpicture}[node distance=3cm]
+    \node [gtu block] (ttl) {TTL/CMOS\\(0/5V)};
+    \node [gtu block, right=of ttl] (max232) {MAX232};
+    \node [gtu block, right=of max232] (rs232) {RS-232\\($\pm$12V)};
+    
+    \node [above=0.5cm of max232] (c1) {C1+, C1-};
+    \node [below=0.5cm of max232] (c2) {C2+, C2-};
+    
+    \path [gtu arrow, <->] (ttl) -- node[above, font=\small] {T1IN/R1OUT} (max232);
+    \path [gtu arrow, <->] (max232) -- node[above, font=\small] {T1OUT/R1IN} (rs232);
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{વોલ્ટેજ કન્વર્ઝન}: TTL (0/5V) થી RS-232 ($\pm$12V)
+    \item \keyword{ચાર્જ પમ્પ્સ}: જરૂરી વોલ્ટેજ જનરેટ કરવા કેપેસિટર્સ વાપરે છે
+    \item \keyword{એપ્લિકેશન્સ}: PC, મોડેમ સાથે સીરિયલ કમ્યુનિકેશન
+    \item \keyword{બાયડાયરેક્શનલ}: ટ્રાન્સમિટ અને રિસીવ બંને સિગ્નલ હેન્ડલ કરે છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{TTL To RS-232 Conversion}
+\end{mnemonicbox}
+
+\questionmarks{4(બ OR)}{4}{ADMUX રજીસ્ટર સમજાવો.}
+
+\begin{solutionbox}
+ADC મલ્ટિપ્લેક્સર સિલેક્શન રજિસ્ટર (ADMUX) એનાલોગ ઇનપુટ ચેનલ સિલેક્શન અને રિઝલ્ટ ફોર્મેટ કંટ્રોલ કરે છે.
+
+\textbf{ડાયાગ્રામ:}
+
+\begin{center}
+\begin{tikzpicture}[node distance=0cm]
+    \node [draw, minimum width=1cm, minimum height=0.8cm] (refs1) {REFS1};
+    \node [draw, minimum width=1cm, minimum height=0.8cm, right=0cm of refs1] (refs0) {REFS0};
+    \node [draw, minimum width=1cm, minimum height=0.8cm, right=0cm of refs0] (adlar) {ADLAR};
+    \node [draw, minimum width=1cm, minimum height=0.8cm, right=0cm of adlar] (b4) {--};
+    \node [draw, minimum width=1cm, minimum height=0.8cm, right=0cm of b4] (mux3) {MUX3};
+    \node [draw, minimum width=1cm, minimum height=0.8cm, right=0cm of mux3] (mux2) {MUX2};
+    \node [draw, minimum width=1cm, minimum height=0.8cm, right=0cm of mux2] (mux1) {MUX1};
+    \node [draw, minimum width=1cm, minimum height=0.8cm, right=0cm of mux1] (mux0) {MUX0};
+    
+    \node [below=0.2cm of refs1] {7};
+    \node [below=0.2cm of refs0] {6};
+    \node [below=0.2cm of adlar] {5};
+    \node [below=0.2cm of b4] {4};
+    \node [below=0.2cm of mux3] {3};
+    \node [below=0.2cm of mux2] {2};
+    \node [below=0.2cm of mux1] {1};
+    \node [below=0.2cm of mux0] {0};
+\end{tikzpicture}
+\end{center}
+
+\begin{center}
+\captionof{table}{ADMUX બિટ ફંક્શન્સ}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{બિટ્સ} & \textbf{નામ} & \textbf{ફંક્શન} \\ \hline
+7:6 & REFS1:0 & રેફરન્સ સિલેક્શન \\ \hline
+5 & ADLAR & ADC લેફ્ટ એડજસ્ટ રિઝલ્ટ \\ \hline
+3:0 & MUX3:0 & એનાલોગ ચેનલ સિલેક્શન \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{REFS1:0}: વોલ્ટેજ રેફરન્સ (AREF, AVCC, ઇન્ટરનલ) પસંદ કરે
+    \item \keyword{ADLAR}: ADC રજિસ્ટર્સમાં રિઝલ્ટ એલાઇનમેન્ટ
+    \item \keyword{MUX3:0}: ઇનપુટ ચેનલ (ADC0-ADC7) પસંદ કરે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Reference, Alignment, Multiplexer}
+\end{mnemonicbox}
+
+\questionmarks{4(ક OR)}{7}{AVRની Two Wire serial Interface (TWI)ની ચર્ચા કરો.}
+
+\begin{solutionbox}
+ટુ વાયર ઇન્ટરફેસ (TWI) એ પેરિફેરલ ડિવાઇસ સાથે કમ્યુનિકેશન માટે AVRનો I$^2$C પ્રોટોકોલનો અમલ છે.
+
+\textbf{ડાયાગ્રામ:}
+
+\begin{center}
+\begin{tikzpicture}[node distance=2.5cm, auto]
+    \node [gtu block] (master) {માસ્ટર AVR};
+    \node [gtu block, right=of master] (slave1) {સ્લેવ 1};
+    \node [gtu block, right=of slave1] (slave2) {સ્લેવ 2};
+    
+    \path [gtu arrow, <->] (master) -- node[above] {SDA} (slave1);
+    \path [gtu arrow, <->] (master) -- node[below] {SCL} (slave1);
+    \path [gtu arrow, <->] (slave1) -- node[above] {SDA} (slave2);
+    \path [gtu arrow, <->] (slave1) -- node[below] {SCL} (slave2);
+\end{tikzpicture}
+\end{center}
+
+\begin{center}
+\captionof{table}{TWI લાક્ષણિકતાઓ}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{ફીચર} & \textbf{વર્ણન} \\ \hline
+પિન્સ & SCL (સીરિયલ ક્લોક) અને SDA (સીરિયલ ડેટા) \\ \hline
+સ્પીડ & સ્ટાન્ડર્ડ (100kHz), ફાસ્ટ (400kHz) \\ \hline
+એડ્રેસિંગ & 7-બિટ અથવા 10-બિટ ડિવાઇસ એડ્રેસિંગ \\ \hline
+ઓપરેશન & માસ્ટર અથવા સ્લેવ મોડ \\ \hline
+બસ સ્ટ્રક્ચર & મલ્ટી-માસ્ટર, મલ્ટી-સ્લેવ \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{બાયડાયરેક્શનલ}: બંને ડિવાઇસ ટ્રાન્સમિટ અને રિસીવ કરી શકે
+    \item \keyword{રજિસ્ટર્સ}: TWBR, TWCR, TWSR, TWDR, TWAR
+    \item \keyword{ACK/NACK}: વિશ્વસનીય ટ્રાન્સફર માટે એક્નોલેજમેન્ટ
+    \item \keyword{સ્ટાર્ટ/સ્ટોપ}: ટ્રાન્સમિશન શરૂ/સમાપ્ત કરવા માટે ખાસ કન્ડિશન્સ
+    \item \keyword{સામાન્ય ઉપયોગ}: EEPROM, RTC, સેન્સર્સ, ડિસ્પ્લે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Serial Clock and Data Transfer}
+\end{mnemonicbox}
+
+\questionmarks{5(અ)}{3}{L293D મોટર ડ્રાઇવરનો ઉપયોગ કરી DC મોટરને ATmega32 સાથે ઇન્ટરફેસ કરવા માટે સર્કિટ ડાયાગ્રામ દોરો.}
+
+\begin{solutionbox}
+L293D માઇક્રોકન્ટ્રોલર્સ સાથે DC મોટર કંટ્રોલ કરવા માટે બાયડાયરેક્શનલ ડ્રાઇવ કરંટ પ્રદાન કરે છે.
+
+\textbf{સર્કિટ ડાયાગ્રામ:}
+
+\begin{center}
+\begin{tikzpicture}[node distance=2.5cm]
+    \node [gtu block] (avr) {ATmega32};
+    \node [gtu block, right=of avr] (l293d) {L293D};
+    \node [gtu block, right=of l293d] (motor) {DC Motor};
+    \node [gtu block, below=1cm of l293d] (power) {Power\\Supply};
+    
+    \path [gtu arrow] (avr) -- node[above, font=\small] {PD0} node[below, font=\small] {IN1} (l293d);
+    \path [gtu arrow] (avr.east) ++(0,-0.3) -- ++(2.5,0) node[above, font=\small, midway] {PD1} node[below, font=\small, midway] {IN2};
+    \path [gtu arrow] (l293d) -- node[above, font=\small] {OUT1/OUT2} (motor);
+    \path [gtu arrow] (power) -- (l293d);
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{કંટ્રોલ પિન્સ}: PD0, PD1 મોટર દિશા નિયંત્રિત કરે છે
+    \item \keyword{ડ્રાઇવર પાવર}: લોજિક અને મોટર માટે અલગ
+    \item \keyword{H-બ્રિજ}: ફોરવર્ડ/રિવર્સ ઓપરેશન સક્ષમ કરે છે
+    \item \keyword{એનેબલ પિન}: PWM સ્પીડ કંટ્રોલ માટે વાપરી શકાય
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Bridge Controls Direction}
+\end{mnemonicbox}
+
+\questionmarks{5(બ)}{4}{ATmega32 માં ઓન ચિપ ADCની લાક્ષણિકતા લખો.}
+
+\begin{solutionbox}
+ATmega32 એનાલોગ સિગ્નલ્સ માપવા માટે વર્સેટાઇલ એનાલોગ-ટુ-ડિજિટલ કન્વર્ટર ધરાવે છે.
+
+\begin{center}
+\captionof{table}{ATmega32 ADC ફીચર્સ}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{ફીચર} & \textbf{સ્પેસિફિકેશન} \\ \hline
+રેઝોલ્યુશન & 10-બિટ \\ \hline
+ચેનલ્સ & 8 સિંગલ-એન્ડેડ ઇનપુટ્સ \\ \hline
+કન્વર્ઝન ટાઇમ & 65-260 $\mu$s \\ \hline
+રેફરન્સ વોલ્ટેજ & AREF, AVCC, અથવા 2.56V ઇન્ટરનલ \\ \hline
+એક્યુરસી & $\pm$2 LSB \\ \hline
+કન્વર્ઝન મોડ્સ & સિંગલ અને ફ્રી રનિંગ \\ \hline
+ઇનપુટ રેન્જ & 0V થી VREF \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{સક્સેસિવ એપ્રોક્સિમેશન}: કન્વર્ઝન ટેકનિક
+    \item \keyword{મલ્ટિપ્લેક્સર}: 8 ઇનપુટ ચેનલ્સ વચ્ચે પસંદ કરે છે
+    \item \keyword{ઇન્ટરપ્ટ}: પૂર્ણ થયા પર વૈકલ્પિક ઇન્ટરપ્ટ
+    \item \keyword{સેમ્પલિંગ રેટ}: મહત્તમ રેઝોલ્યુશન પર 15 KSPS સુધી
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Multiple Channels, Ten-bit Resolution}
+\end{mnemonicbox}
+
+\questionmarks{5(ક)}{7}{સ્માર્ટ ઇરીગેશન સિસ્ટમ સમજાવો.}
+
+\begin{solutionbox}
+સ્માર્ટ ઇરીગેશન સિસ્ટમ માઇક્રોકન્ટ્રોલર ટેકનોલોજીનો ઉપયોગ કરીને પર્યાવરણીય પરિસ્થિતિઓના આધારે વોટરિંગને ઓટોમેટ કરે છે.
+
+\textbf{ડાયાગ્રામ:}
+
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto]
+    \node [gtu block] (mcu) {ATmega32};
+    \node [gtu block, above left=1cm and 1.5cm of mcu] (soil) {સોઇલ મોઇસ્ચર\\સેન્સર};
+    \node [gtu block, above=1cm of mcu] (temp) {તાપમાન સેન્સર};
+    \node [gtu block, above right=1cm and 1.5cm of mcu] (humid) {ભેજ સેન્સર};
+    \node [gtu block, below left=1cm and 1.5cm of mcu] (pump) {વોટર પમ્પ\\કંટ્રોલ};
+    \node [gtu block, below=1cm of mcu] (valve) {વાલ્વ કંટ્રોલ};
+    \node [gtu block, below right=1cm and 1.5cm of mcu] (lcd) {LCD ડિસ્પ્લે};
+    \node [gtu block, left=2cm of mcu] (rtc) {RTC મોડ્યુલ};
+    
+    \path [gtu arrow] (soil) -- (mcu);
+    \path [gtu arrow] (temp) -- (mcu);
+    \path [gtu arrow] (humid) -- (mcu);
+    \path [gtu arrow] (mcu) -- (pump);
+    \path [gtu arrow] (mcu) -- (valve);
+    \path [gtu arrow] (mcu) -- (lcd);
+    \path [gtu arrow] (rtc) -- (mcu);
+\end{tikzpicture}
+\end{center}
+
+\begin{center}
+\captionof{table}{સિસ્ટમ કોમ્પોનન્ટ્સ}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{કોમ્પોનન્ટ} & \textbf{ફંક્શન} \\ \hline
+સોઇલ મોઇસ્ચર સેન્સર & માટીમાં પાણીની માત્રા માપે છે \\ \hline
+તાપમાન/ભેજ & પર્યાવરણીય પરિસ્થિતિનું મોનિટરિંગ કરે છે \\ \hline
+વોટર પમ્પ & જરૂર પડે ત્યારે પાણી આપે છે \\ \hline
+વાલ્વ્સ & વિવિધ ઝોન્સમાં પાણી ફ્લોને નિયંત્રિત કરે છે \\ \hline
+LCD ડિસ્પ્લે & સિસ્ટમ સ્ટેટસ બતાવે છે \\ \hline
+RTC મોડ્યુલ & શેડ્યૂલ્ડ ઇરીગેશન માટે સમય ટ્રેક કરે છે \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{એડેપ્ટિવ કંટ્રોલ}: પરિસ્થિતિઓના આધારે વોટરિંગ એડજસ્ટ કરે છે
+    \item \keyword{વોટર કન્ઝર્વેશન}: માત્ર જરૂરી પ્રમાણમાં પાણીનો ઉપયોગ કરે છે
+    \item \keyword{રિમોટ મોનિટરિંગ}: વૈકલ્પિક WiFi/GSM કનેક્ટિવિટી
+    \item \keyword{ડેટા લોગિંગ}: ભેજના સ્તર અને વોટરિંગ ઇવેન્ટ્સની નોંધ રાખે છે
+    \item \keyword{બેટરી બેકઅપ}: પાવર આઉટેજ દરમિયાન ઓપરેશન સુનિશ્ચિત કરે છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Sense Moisture, Control Water Automatically}
+\end{mnemonicbox}
+
+\questionmarks{5(અ OR)}{3}{L293D મોટર ડ્રાઇવર IC નો પિન ડાયાગ્રામ દોરો અને સમજાવો.}
+
+\begin{solutionbox}
+L293D એ મોટર્સ અને અન્ય ઇન્ડક્ટિવ લોડ્સ કંટ્રોલ કરવા માટે વપરાતી ક્વાડ્રુપલ હાફ-H ડ્રાઇવર IC છે.
+
+\textbf{ડાયાગ્રામ:}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.9]
+    \draw [thick] (0,0) rectangle (4,8);
+    
+    \foreach \i/\label in {1/EN1, 2/IN1, 3/OUT1, 4/GND, 5/GND, 6/OUT2, 7/IN2, 8/VCC2} {
+        \node [anchor=east, font=\small] at (-0.1, 8-\i+0.5) {\label};
+        \node [anchor=west] at (-0.1, 8-\i+0.5) {\i};
+    }
+    
+    \foreach \i/\label in {16/VCC1, 15/IN4, 14/OUT4, 13/GND, 12/GND, 11/OUT3, 10/IN3, 9/EN2} {
+        \pgfmathsetmacro{\pos}{8-(16-\i+1)+0.5}
+        \node [anchor=west, font=\small] at (4.1, \pos) {\label};
+        \node [anchor=east] at (4.1, \pos) {\i};
+    }
+    
+    \node at (2,4) {L293D};
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{VCC1 (પિન 16)}: લોજિક સપ્લાય વોલ્ટેજ (5V)
+    \item \keyword{VCC2 (પિન 8)}: મોટર સપ્લાય વોલ્ટેજ (4.5V-36V)
+    \item \keyword{EN1/EN2}: એનેબલ ઇનપુટ્સ (સ્પીડ કંટ્રોલ માટે PWM થઈ શકે)
+    \item \keyword{IN1-IN4}: દિશા નિયંત્રિત કરવા માટે લોજિક ઇનપુટ્સ
+    \item \keyword{OUT1-OUT4}: મોટર્સ કનેક્ટ કરવા માટે આઉટપુટ્સ
+    \item \keyword{GND}: ગ્રાઉન્ડ કનેક્શન્સ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Enable, Input, Output, Power}
+\end{mnemonicbox}
+
+\questionmarks{5(બ OR)}{4}{AVR માં ADC સાથે સંકળાયેલ રજીસ્ટરોની યાદી બનાવો.}
+
+\begin{solutionbox}
+AVRની ADC સિસ્ટમ તેના ઓપરેશન કંટ્રોલ કરવા અને પરિણામો સ્ટોર કરવા માટે અનેક રજિસ્ટર્સનો ઉપયોગ કરે છે.
+
+\begin{center}
+\captionof{table}{ADC રજિસ્ટર્સ}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{રજિસ્ટર} & \textbf{ફંક્શન} & \textbf{વર્ણન} \\ \hline
+ADMUX & મલ્ટિપ્લેક્સર & ચેનલ સિલેક્શન અને રેફરન્સ ઓપ્શન્સ \\ \hline
+ADCSRA & કંટ્રોલ \& સ્ટેટસ & કંટ્રોલ બિટ્સ અને ફ્લેગ્સ \\ \hline
+ADCH & ડેટા હાઇ & કન્વર્ઝન રિઝલ્ટનો હાઇ બાઇટ \\ \hline
+ADCL & ડેટા લો & કન્વર્ઝન રિઝલ્ટનો લો બાઇટ \\ \hline
+SFIOR & સ્પેશિયલ ફંક્શન & ADC ટ્રિગર સોર્સ સિલેક્શન \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{ADMUX}: ચેનલ અને રેફરન્સ સિલેક્શન
+    \item \keyword{ADCSRA}: ADC એનેબલ, કન્વર્ઝન સ્ટાર્ટ, પ્રીસ્કેલર
+    \item \keyword{ADCH/ADCL}: રિઝલ્ટ રજિસ્ટર્સ (10-બિટ વેલ્યુ)
+    \item \keyword{SFIOR}: ઓટો-ટ્રિગર સોર્સ (ટાઇમર, એક્સટર્નલ)
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Multiplexer Controls and Gets Result}
+\end{mnemonicbox}
+
+\questionmarks{5(ક OR)}{7}{IoT આધારિત હોમ ઓટોમેશન સિસ્ટમ સમજાવો.}
+
+\begin{solutionbox}
+IoT હોમ ઓટોમેશન ઘરના ઉપકરણોને રિમોટ મોનિટરિંગ અને કંટ્રોલ માટે ઇન્ટરનેટ સાથે જોડે છે.
+
+\textbf{ડાયાગ્રામ:}
+
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto]
+    \node [gtu block] (internet) {ઇન્ટરનેટ};
+    \node [gtu block, below=1.5cm of internet] (gateway) {WiFi ગેટવે};
+    \node [gtu block, below=1.5cm of gateway] (controller) {AVR કંટ્રોલર};
+    
+    \node [gtu block, below left=1cm and 2cm of controller] (light) {લાઇટ કંટ્રોલ};
+    \node [gtu block, below=1cm of controller] (fan) {પંખા કંટ્રોલ};
+    \node [gtu block, below right=1cm and 2cm of controller] (door) {દરવાજા લોક};
+    
+    \node [gtu block, right=2cm of controller] (temp) {તાપમાન સેન્સર્સ};
+    \node [gtu block, right=2cm of gateway] (motion) {મોશન સેન્સર્સ};
+    
+    \node [gtu block, left=2cm of gateway] (app) {મોબાઇલ એપ};
+    \node [gtu block, left=2cm of internet] (cloud) {ક્લાઉડ સર્વિસીસ};
+    
+    \path [gtu arrow, <->] (internet) -- (gateway);
+    \path [gtu arrow, <->] (gateway) -- (controller);
+    \path [gtu arrow] (controller) -- (light);
+    \path [gtu arrow] (controller) -- (fan);
+    \path [gtu arrow] (controller) -- (door);
+    \path [gtu arrow] (temp) -- (controller);
+    \path [gtu arrow] (motion) -- (gateway);
+    \path [gtu arrow, <->] (app) -- (gateway);
+    \path [gtu arrow, <->] (cloud) -- (internet);
+\end{tikzpicture}
+\end{center}
+
+\begin{center}
+\captionof{table}{સિસ્ટમ કોમ્પોનન્ટ્સ}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{કોમ્પોનન્ટ} & \textbf{ફંક્શન} \\ \hline
+કંટ્રોલર & સેન્સર ડેટા અને કમાન્ડ્સ પ્રોસેસ કરે છે \\ \hline
+સેન્સર્સ & પર્યાવરણીય પરિસ્થિતિઓનું મોનિટરિંગ કરે છે \\ \hline
+એક્ચ્યુએટર્સ & ઉપકરણો અને સિસ્ટમ્સ કંટ્રોલ કરે છે \\ \hline
+કમ્યુનિકેશન & WiFi/ઇથરનેટ/બ્લુટુથ કનેક્ટિવિટી \\ \hline
+ગેટવે & લોકલ નેટવર્કને ઇન્ટરનેટ સાથે જોડે છે \\ \hline
+મોબાઇલ એપ & રિમોટ કંટ્રોલ માટે યુઝર ઇન્ટરફેસ \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{રિમોટ એક્સેસ}: ગમે ત્યાંથી ઘર કંટ્રોલ કરો
+    \item \keyword{શેડ્યુલિંગ}: સમય આધારિત ડિવાઇસ ઓપરેશન ઓટોમેટ કરો
+    \item \keyword{વોઇસ કંટ્રોલ}: ડિજિટલ આસિસ્ટન્ટ સાથે એકીકરણ
+    \item \keyword{એનર્જી મોનિટરિંગ}: પાવર કન્ઝમ્પશન ટ્રેક કરો
+    \item \keyword{સિક્યુરિટી}: અસામાન્ય પ્રવૃત્તિઓ માટે એલર્ટ
+    \item \keyword{સીન સેટિંગ}: અનેક ડિવાઇસનું વન-ટચ કંટ્રોલ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Connect, Control, Automate, Monitor}
+\end{mnemonicbox}
+
+\end{document}
