@@ -1,0 +1,1198 @@
+\documentclass{article}
+% Adjust the relative path to point to the latex-templates directory
+% Absolute paths for template files
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/preamble.tex}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/gujarati-boxes.tex}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/commands.tex}
+
+\title{Communication Engineering (1333201) - Winter 2024 Solution (Gujarati)}
+\date{May 19, 2024}
+
+\begin{document}
+\maketitle
+
+\questionmarks{1(અ)}{3}{મોડ્યુલેશન એટલે શું? તેની જરૂરિયાત શું છે?}
+
+\begin{solutionbox}
+મોડ્યુલેશન એ એવી પ્રક્રિયા છે જેમાં હાઇ-ફ્રિકવન્સી કેરિયર સિગ્નલની એક અથવા વધુ પ્રોપર્ટીઝને માહિતી ધરાવતા મોડ્યુલેટિંગ સિગ્નલ સાથે બદલવામાં આવે છે.
+
+\begin{center}
+\captionof{table}{મોડ્યુલેશનની જરૂરિયાત}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{કારણ} & \textbf{સમજૂતી} \\ \hline
+Antenna Size & એન્ટેના સાઇઝની જરૂરિયાત ઘટાડે છે ($\lambda = c/f$) \\ \hline
+Multiplexing & અનેક સિગ્નલોને સ્પેક્ટ્રમ શેર કરવા દે છે \\ \hline
+Range & ટ્રાન્સમિશન અંતર વધારે છે \\ \hline
+Interference & નોઇઝ ઇન્ટરફેરન્સ ઘટાડે છે \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{પ્રાયોગિક ટ્રાન્સમિશન}: લો-ફ્રિકવન્સી માહિતી સિગ્નલોને વાયરલેસ ટ્રાન્સમિશન માટે યોગ્ય બનાવે છે
+    \item \textbf{સિગ્નલ સેપરેશન}: અલગ અલગ સિગ્નલોને એક સાથે ટ્રાન્સમિટ કરવા સક્ષમ બનાવે છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{RARE Messages: Range, Antenna, Reduce interference, Enable multiplexing}
+\end{mnemonicbox}
+
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm, auto, >=latex, thick]
+    \node [gtu block] (source) {Information\\Source};
+    \node [gtu block, right=1.5cm of source] (mod) {Modulator};
+    \node [gtu block, right=1.5cm of mod] (chan) {Channel};
+    \node [gtu block, right=1.5cm of chan] (demod) {Demodulator};
+    \node [gtu block, right=1.5cm of demod] (dest) {Destination};
+    
+    \node [above=0.5cm of mod] (carrier) {Carrier};
+    \draw [gtu arrow] (carrier) -- (mod);
+    
+    \draw [gtu arrow] (source) -- (mod);
+    \draw [gtu arrow] (mod) -- (chan);
+    \draw [gtu arrow] (chan) -- (demod);
+    \draw [gtu arrow] (demod) -- (dest);
+    
+    \node [above of=chan, node distance=1.5cm] (noise) {Noise};
+    \draw [gtu arrow] (noise) -- (chan);
+\end{tikzpicture}
+\captionof{figure}{કોમ્યુનિકેશન સિસ્ટમ બ્લોક ડાયાગ્રામ}
+\end{center}
+
+\questionmarks{1(બ)}{4}{AM અને FM ની તુલના કરો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{AM અને FM વચ્ચે તુલના}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પેરામીટર} & \textbf{AM (Amplitude Modulation)} & \textbf{FM (Frequency Modulation)} \\ \hline
+Parameter varied & કેરિયરનું એમ્પ્લિટ્યુડ & કેરિયરની ફ્રિકવન્સી \\ \hline
+Bandwidth & સાંકડી ($2 \times f_m$) & પહોળી ($2 \times (m_f + 1) f_m$) \\ \hline
+Noise immunity & નબળી & ઉત્કૃષ્ટ \\ \hline
+Power efficiency & ઓછું કાર્યક્ષમ & વધુ કાર્યક્ષમ \\ \hline
+Circuit complexity & સરળ & જટિલ \\ \hline
+Quality & મધ્યમ & ઉચ્ચ \\ \hline
+Applications & મીડિયમ વેવ બ્રોડકાસ્ટિંગ & હાઇ-ફિડેલિટી બ્રોડકાસ્ટિંગ \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{BANC-QA: Bandwidth, Amplitude/frequency, Noise, Complexity, Quality, Applications}
+\end{mnemonicbox}
+
+\questionmarks{1(ક)}{7}{એમ્પ્લિટ્યુડ મોડ્યુલેશન વેવફોર્મ સાથે સમજાવો અને મોડ્યુલેટેડ સિગ્નલ માટે વોલ્ટેજ સમીકરણ તારવો અને DSBFC AM નું ફ્રિકવન્સી સ્પેક્ટ્રમ સ્કેચ કરો.}
+
+\begin{solutionbox}
+Amplitude Modulation (AM) એ એક તકનીક છે જ્યાં કેરિયર વેવનું એમ્પ્લિટ્યુડ મોડ્યુલેટિંગ સિગ્નલના તત્કાલિન એમ્પ્લિટ્યુડના પ્રમાણમાં બદલાય છે.
+
+\textbf{વોલ્ટેજ સમીકરણ:}
+
+\begin{itemize}
+    \item કેરિયર સિગ્નલ: $v_1(t) = A_1 \sin(\omega_c t)$
+    \item મોડ્યુલેટિંગ સિગ્નલ: $v_2(t) = A_2 \sin(\omega_m t)$
+    \item મોડ્યુલેટેડ સિગ્નલ: $v(t) = A_1[1 + m \sin(\omega_m t)] \sin(\omega_c t)$
+    \item જ્યાં $m = A_2/A_1$ (મોડ્યુલેશન ઇન્ડેક્સ)
+\end{itemize}
+
+\begin{center}
+\begin{tikzpicture}[x=0.05cm,y=1.0cm, >=latex, thick]
+    % Axes
+    \draw[->] (0,0) -- (150,0) node[right] {$t$};
+    \draw[->] (0,-1.5) -- (0,1.5) node[above] {$v(t)$};
+    
+    % Waveform
+    \draw[blue, domain=0:140, samples=500] plot (\x, {(1 + 0.5*sin(10*\x)) * sin(100*\x)});
+    \draw[dashed, red] (0,1) -- (140,1);
+    \draw[dashed, red] (0,-1) -- (140,-1);
+    
+    \node at (70, 1.8) {એન્વલપ મેસેજ સિગ્નલને અનુસરે છે};
+\end{tikzpicture}
+\captionof{figure}{AM વેવફોર્મ}
+\end{center}
+
+\textbf{DSBFC AM નું ફ્રિકવન્સી સ્પેક્ટ્રમ}
+
+\begin{center}
+\begin{tikzpicture}[>=latex, thick]
+    \draw[->] (0,0) -- (6,0) node[right] {$f$};
+    \draw[->] (0,0) -- (0,3) node[above] {Amplitude};
+    
+    \draw[thick] (3,0) -- (3,2.5) node[above] {$A_1$};
+    \node at (3,-0.3) {$f_c$};
+    
+    \draw[thick] (1.5,0) -- (1.5,1.25) node[above] {$\frac{mA_1}{2}$};
+    \node at (1.5,-0.3) {$f_c - f_m$};
+    \node at (1.5,-0.7) {(LSB)};
+    
+    \draw[thick] (4.5,0) -- (4.5,1.25) node[above] {$\frac{mA_1}{2}$};
+    \node at (4.5,-0.3) {$f_c + f_m$};
+    \node at (4.5,-0.7) {(USB)};
+\end{tikzpicture}
+\captionof{figure}{AM ફ્રિકવન્સી સ્પેક્ટ્રમ}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{બેન્ડવિડ્થ}: AM સિગ્નલની બેન્ડવિડ્થ $2 \times f_m$ છે
+    \item \textbf{સાઇડબેન્ડ્સ}: અપર સાઇડબેન્ડ (USB) $f_c+f_m$ પર અને લોઅર સાઇડબેન્ડ (LSB) $f_c-f_m$ પર
+    \item \textbf{પાવર વિતરણ}: કેરિયર અને બે સાઇડબેન્ડ્સમાં
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{CAM-SIP: Carrier Amplitude Modified, Sidebands In Pair}
+\end{mnemonicbox}
+
+\questionmarks{1(ક OR)}{7}{AM માં કુલ પાવર માટે સમીકરણ તારવો, DSB અને SSB માં પાવર બચતની ટકાવારી ગણો.}
+
+\begin{solutionbox}
+\textbf{AM માં કુલ પાવરની તારવણી:}
+
+\begin{itemize}
+    \item AM સિગ્નલ: $v(t) = A_1[1 + m \sin(\omega_m t)] \sin(\omega_c t)$
+    \item કુલ પાવર: $P = P_{\text{carrier}} + P_{\text{sidebands}}$
+    \item $P_{\text{carrier}} = A_1^2/2$
+    \item $P_{\text{sidebands}} = A_1^2 m^2/4$
+\end{itemize}
+
+\begin{center}
+\captionof{table}{AM માં પાવર વિતરણ}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{ઘટક} & \textbf{પાવર એક્સપ્રેશન} & \textbf{કુલ પાવરના \% (m=1)} \\ \hline
+Carrier & $P_c = A_1^2/2$ & 66.67\% \\ \hline
+Sidebands & $P_s = A_1^2 m^2/4$ & 33.33\% \\ \hline
+Total & $P_t = A_1^2(1+m^2/2)/2$ & 100\% \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{પાવર બચત:}
+
+\begin{itemize}
+    \item \textbf{DSB-SC}: 100\% કેરિયર પાવર બચાવે છે (કુલ પાવરના 66.67\%)
+    \begin{itemize}
+        \item ફક્ત સાઇડબેન્ડ્સ ટ્રાન્સમિટ થાય છે
+        \item ટકાવારી બચત = $(P_c/P_t) \times 100 = 66.67\%$
+    \end{itemize}
+    
+    \item \textbf{SSB}: 50\% સાઇડબેન્ડ પાવર + 100\% કેરિયર પાવર બચાવે છે
+    \begin{itemize}
+        \item એક સાઇડબેન્ડ + કેરિયર દૂર કરવામાં આવે છે
+        \item ટકાવારી બચત = $(P_c + P_s/2)/P_t \times 100 = 83.33\%$
+    \end{itemize}
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{CAST-83: Carrier And Sideband Transmission, 83\% saved in SSB}
+\end{mnemonicbox}
+
+\questionmarks{2(અ)}{3}{વ્યાખ્યા આપો: (1) AM માટે મોડ્યુલેશન ઇન્ડેક્સ (2) FM માટે મોડ્યુલેશન ઇન્ડેક્સ.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{મોડ્યુલેશન ઇન્ડેક્સ વ્યાખ્યાઓ}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પેરામીટર} & \textbf{AM મોડ્યુલેશન ઇન્ડેક્સ} & \textbf{FM મોડ્યુલેશન ઇન્ડેક્સ} \\ \hline
+વ્યાખ્યા & મોડ્યુલેટિંગ સિગ્નલના પીક એમ્પ્લિટ્યુડ અને કેરિયરના પીક એમ્પ્લિટ્યુડનો ગુણોત્તર & ફ્રિકવન્સી ડેવિએશન અને મોડ્યુલેટિંગ ફ્રિકવન્સીનો ગુણોત્તર \\ \hline
+સૂત્ર & $m = A_m/A_c$ & $m_f = \Delta f/f_m$ \\ \hline
+રેન્જ & $0 \le m \le 1$ ડિસ્ટોર્શન વગર & કોઈ ચોક્કસ ઉપલી મર્યાદા નથી \\ \hline
+અસર & \% મોડ્યુલેશન નક્કી કરે છે & બેન્ડવિડ્થ નક્કી કરે છે \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{AM મોડ્યુલેશન ઇન્ડેક્સ}: એમ્પ્લિટ્યુડ વેરિએશન અને પાવર ડિસ્ટ્રિબ્યુશન નક્કી કરે છે
+    \item \textbf{FM મોડ્યુલેશન ઇન્ડેક્સ}: બેન્ડવિડ્થ અને સિગ્નલ ક્વોલિટી નક્કી કરે છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{ARM-FDM: Amplitude Ratio for Modulation, Frequency Deviation for Modulation}
+\end{mnemonicbox}
+
+\questionmarks{2(બ)}{4}{એન્વલપ ડિટેક્ટર માટે બ્લોક ડાયાગ્રામ દોરો અને સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[auto, >=latex, thick, node distance=1.5cm]
+    \node (input) {AM Signal};
+    \node [draw, rectangle, minimum size=1cm, right=1cm of input] (diode) {Diode};
+    \node [draw, rectangle, minimum size=1cm, right=1.5cm of diode] (rc) {RC Filter};
+    \node [draw, rectangle, minimum size=1cm, right=1.5cm of rc] (load) {Load};
+    \node [right=1cm of load] (output) {Demodulated Output};
+    
+    \draw [->] (input) -- (diode);
+    \draw [->] (diode) -- (rc);
+    \draw [->] (rc) -- (load);
+    \draw [->] (load) -- (output);
+\end{tikzpicture}
+\captionof{figure}{એન્વલપ ડિટેક્ટર બ્લોક ડાયાગ્રામ}
+\end{center}
+
+\begin{center}
+\captionof{table}{ઘટકો અને તેમના કાર્યો}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{ઘટક} & \textbf{કાર્ય} \\ \hline
+Diode & AM સિગ્નલને રેક્ટિફાય કરે છે (નકારાત્મક હાફ-સાઇકલ્સ દૂર કરે છે) \\ \hline
+RC Filter & એન્વલપ રિકવર કરવા માટે રેક્ટિફાય કરેલા સિગ્નલને સ્મૂધ કરે છે \\ \hline
+Load & આઉટપુટ સર્કિટ અને ઇમ્પિડન્સ મેચિંગ પૂરું પાડે છે \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{કાર્યસિદ્ધાંત}: ડાયોડ ફક્ત પોઝિટિવ હાફ-સાઇકલ્સ દરમિયાન કંડક્ટ કરે છે
+    \item \textbf{ટાઇમ કોન્સ્ટન્ટ}: RC રિપલ અટકાવવા માટે પૂરતો મોટો પણ મોડ્યુલેશનને ફોલો કરવા માટે પૂરતો નાનો હોવો જોઈએ
+    \item \textbf{શરત}: $RC \gg 1/f_c$ પરંતુ $RC \ll 1/f_m$
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{DEER: Diode Extracts Envelope Representation}
+\end{mnemonicbox}
+
+\questionmarks{2(ક)}{7}{FM રેડિયો રિસીવરનો બ્લોક ડાયાગ્રામ દોરો અને દરેક બ્લોકનું કાર્ય સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm, auto, >=latex, thick, scale=0.8, transform shape]
+    \node [gtu block] (ant) {Antenna};
+    \node [gtu block, right=1cm of ant] (rf) {RF Amplifier};
+    \node [gtu block, right=1cm of rf] (mix) {Mixer};
+    \node [gtu block, below=1cm of mix] (lo) {Local Oscillator};
+    \node [gtu block, right=1cm of mix] (if) {IF Amplifier};
+    \node [gtu block, right=1cm of if] (lim) {Limiter};
+    \node [gtu block, below=1cm of lim] (disc) {FM Discriminator};
+    \node [gtu block, left=1cm of disc] (audio) {Audio Amplifier};
+    \node [gtu block, left=1cm of audio] (spk) {Speaker};
+    
+    \draw [gtu arrow] (ant) -- (rf);
+    \draw [gtu arrow] (rf) -- (mix);
+    \draw [gtu arrow] (lo) -- (mix);
+    \draw [gtu arrow] (mix) -- (if);
+    \draw [gtu arrow] (if) -- (lim);
+    \draw [gtu arrow] (lim) -- (disc);
+    \draw [gtu arrow] (disc) -- (audio);
+    \draw [gtu arrow] (audio) -- (spk);
+\end{tikzpicture}
+\captionof{figure}{FM રેડિયો રિસીવર}
+\end{center}
+
+\begin{center}
+\captionof{table}{દરેક બ્લોકના કાર્યો}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{બ્લોક} & \textbf{કાર્ય} \\ \hline
+Antenna & ઇલેક્ટ્રોમેગ્નેટિક વેવ્સ મેળવે છે \\ \hline
+RF Amplifier & નબળા RF સિગ્નલોને એમ્પ્લિફાય કરે છે (88-108 MHz) \\ \hline
+Mixer & RF ને IF ફ્રિકવન્સી (10.7 MHz) માં કન્વર્ટ કરે છે \\ \hline
+Local Oscillator & મિક્સિંગ માટે ફ્રિકવન્સી જનરેટ કરે છે (RF+10.7 MHz) \\ \hline
+IF Amplifier & ફિક્સ્ડ ગેઇન સાથે IF સિગ્નલને એમ્પ્લિફાય કરે છે \\ \hline
+Limiter & એમ્પ્લિટ્યુડ ભિન્નતા દૂર કરે છે \\ \hline
+FM Discriminator & ફ્રિકવન્સી ભિન્નતાને વોલ્ટેજમાં કન્વર્ટ કરે છે \\ \hline
+Audio Amplifier & રિકવર થયેલ ઓડિયોને એમ્પ્લિફાય કરે છે \\ \hline
+Speaker & ઇલેક્ટ્રિકલને સાઉન્ડ વેવ્સમાં કન્વર્ટ કરે છે \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{સુપરહિટરોડાઇન સિદ્ધાંત}: ફિક્સ્ડ IF પર સિગ્નલો પ્રોસેસ કરવા માટે ફ્રિકવન્સી કન્વર્ઝનનો ઉપયોગ કરે છે
+    \item \textbf{વિશિષ્ટ FM ફીચર}: લિમિટર ડિમોડ્યુલેશન પહેલાં એમ્પ્લિટ્યુડમાં નોઇઝ દૂર કરે છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{RAMLIDASS: RF, Amplifier, Mixer, Local oscillator, IF, Discriminator, Audio, Speaker System}
+\end{mnemonicbox}
+
+\questionmarks{2(અ OR)}{3}{ફ્રિકવન્સી મોડ્યુલેશન અને ફેઝ મોડ્યુલેશન માટે માત્ર વેવફોર્મ દોરો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[x=0.08cm,y=0.8cm, >=latex, thick]
+    \node at (-15, 2.5) {Modulating Signal};
+    \draw[domain=0:100, samples=100] plot (\x, {sin(10*\x)});
+    
+    \node at (-15, 0) {FM Signal};
+    \draw[domain=0:100, samples=500] plot (\x, {sin((20 + 5*sin(10*\x))*\x)});
+    
+    \node at (-15, -2.5) {PM Signal};
+    \draw[domain=0:100, samples=500] plot (\x, {sin(20*\x + 5*sin(10*\x))});
+\end{tikzpicture}
+\captionof{figure}{FM અને PM વેવફોર્મ્સ}
+\end{center}
+
+\textbf{મુખ્ય લાક્ષણિકતાઓ:}
+
+\begin{itemize}
+    \item \textbf{FM}: જ્યારે મોડ્યુલેટિંગ સિગ્નલ પોઝિટિવ હોય ત્યારે ફ્રિકવન્સી વધે છે
+    \item \textbf{PM}: એમ્પ્લિટ્યુડ ફેરફારો સાથે ફેઝ તરત જ શિફ્ટ થાય છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{FIP-PAF: Frequency Increases with Positive signal, Phase Advances with Faster changes}
+\end{mnemonicbox}
+
+\questionmarks{2(બ OR)}{4}{રેડિયો રિસીવરની કોઈપણ ચાર લાક્ષણિકતાઓ વ્યાખ્યાયિત કરો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{રેડિયો રિસીવરની લાક્ષણિકતાઓ}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{લાક્ષણિકતા} & \textbf{વ્યાખ્યા} \\ \hline
+Sensitivity & નબળા સિગ્નલો મેળવવાની ક્ષમતા ($\mu$V અથવા dBm માં માપવામાં આવે છે) \\ \hline
+Selectivity & ઇચ્છિત સિગ્નલને અડીને આવેલી ચેનલોથી અલગ કરવાની ક્ષમતા \\ \hline
+Fidelity & મૂળ મોડ્યુલેટિંગ સિગ્નલને પુનઃઉત્પાદિત કરવાની ચોકસાઈ \\ \hline
+Image Rejection & ઇમેજ ફ્રિકવન્સી ઇન્ટરફેરન્સને રિજેક્ટ કરવાની ક્ષમતા \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{વધારાની લાક્ષણિકતાઓ:}
+
+\begin{itemize}
+    \item \textbf{Signal-to-Noise Ratio}: સિગ્નલ પાવર અને નોઇઝ પાવરનો ગુણોત્તર
+    \item \textbf{Bandwidth}: ફ્રિકવન્સી રેન્જ જે પ્રાપ્ત કરી શકાય છે
+    \item \textbf{Stability}: ટ્યુન કરેલી ફ્રિકવન્સી જાળવી રાખવાની ક્ષમતા
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{SFIS-BSS: Sensitivity, Fidelity, Image rejection, Selectivity - Better Signal Stability}
+\end{mnemonicbox}
+
+\questionmarks{2(ક OR)}{7}{AM રેડિયો રિસીવરનો બ્લોક ડાયાગ્રામ દોરો અને દરેક બ્લોકનું કાર્ય સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm, auto, >=latex, thick, scale=0.8, transform shape]
+    \node [gtu block] (ant) {Antenna};
+    \node [gtu block, right=1cm of ant] (rf) {RF Tuner \&\\Amplifier};
+    \node [gtu block, right=1cm of rf] (mix) {Mixer};
+    \node [gtu block, below=1cm of mix] (lo) {Local\\Oscillator};
+    \node [gtu block, right=1cm of mix] (if) {IF\\Amplifier};
+    \node [gtu block, right=1cm of if] (det) {Detector};
+    \node [gtu block, below=1cm of det] (agc) {AGC};
+    \node [gtu block, right=1cm of det] (audio) {Audio\\Amplifier};
+    \node [gtu block, right=1cm of audio] (spk) {Speaker};
+    
+    \draw [gtu arrow] (ant) -- (rf);
+    \draw [gtu arrow] (rf) -- (mix);
+    \draw [gtu arrow] (lo) -- (mix);
+    \draw [gtu arrow] (mix) -- (if);
+    \draw [gtu arrow] (if) -- (det);
+    \draw [gtu arrow] (det) -- (audio);
+    \draw [gtu arrow] (det) -- (agc);
+    \draw [gtu arrow] (agc) -| (if);
+    \draw [gtu arrow] (audio) -- (spk);
+\end{tikzpicture}
+\captionof{figure}{AM રેડિયો રિસીવર}
+\end{center}
+
+\begin{center}
+\captionof{table}{દરેક બ્લોકના કાર્યો}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{બ્લોક} & \textbf{કાર્ય} \\ \hline
+Antenna & AM રેડિયો વેવ્સ કેપ્ચર કરે છે \\ \hline
+RF Tuner \& Amplifier & ઇચ્છિત ફ્રિકવન્સી પસંદ કરે છે અને એમ્પ્લિફાય કરે છે \\ \hline
+Mixer & RF સિગ્નલને IF (455 kHz) માં કન્વર્ટ કરે છે \\ \hline
+Local Oscillator & મિક્સિંગ માટે ફ્રિકવન્સી જનરેટ કરે છે (RF+455 kHz) \\ \hline
+IF Amplifier & ફિક્સ્ડ સિલેક્ટિવિટી સાથે IF સિગ્નલને એમ્પ્લિફાય કરે છે \\ \hline
+Detector & AM એન્વલપમાંથી ઓડિયો રિકવર કરે છે \\ \hline
+AGC & ઓટોમેટિક ગેઇન કંટ્રોલ પૂરું પાડે છે \\ \hline
+Audio Amplifier & ઓડિયો સિગ્નલને એમ્પ્લિફાય કરે છે \\ \hline
+Speaker & ઇલેક્ટ્રિકલને સાઉન્ડ વેવ્સમાં કન્વર્ટ કરે છે \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{સુપરહિટરોડાઇન સિદ્ધાંત}: વધુ સારી સિલેક્ટિવિટી માટે ફ્રિકવન્સી કન્વર્ઝનનો ઉપયોગ કરે છે
+    \item \textbf{AGC ફીડબેક લૂપ}: સિગ્નલ સ્ટ્રેન્થ ફેરફારો હોવા છતાં સતત આઉટપુટ જાળવી રાખે છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{ARMLESS: Antenna, RF, Mixer, Local oscillator, Envelope detector, Sound System}
+\end{mnemonicbox}
+
+
+\questionmarks{3(અ)}{3}{ક્વોન્ટાઇઝેશન વ્યાખ્યાયિત કરો. નોન-યુનિફોર્મ ક્વોન્ટાઇઝેશન ટૂંકમાં સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Quantization} એ સતત એમ્પ્લિટ્યુડ મૂલ્યોને ડિજિટલ રજૂઆત માટે ડિસ્ક્રીટ લેવલ્સમાં રૂપાંતરિત કરવાની પ્રક્રિયા છે.
+
+\begin{center}
+\captionof{table}{Non-uniform Quantization}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{પાસું} & \textbf{વર્ણન} \\ \hline
+વ્યાખ્યા & એમ્પ્લિટ્યુડ રેન્જ માટે અલગ અલગ સ્ટેપ સાઇઝ સોંપવી \\ \hline
+ફાયદો & નાના એમ્પ્લિટ્યુડ સિગ્નલો માટે ક્વોન્ટાઇઝેશન નોઇઝ ઘટાડે છે \\ \hline
+અમલીકરણ & Companding (compression-expansion) તકનીકોનો ઉપયોગ કરીને \\ \hline
+ઉદાહરણ & ટેલિફોનીમાં વપરાતી $\mu$-law અને A-law companding \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{કાર્યસિદ્ધાંત}: ઓછા એમ્પ્લિટ્યુડ માટે નાની સ્ટેપ સાઇઝ, ઉચ્ચ એમ્પ્લિટ્યુડ માટે મોટી સ્ટેપ સાઇઝ
+    \item \textbf{અસર}: મજબૂત સિગ્નલોના ભોગે નબળા સિગ્નલો માટે SNR સુધારે છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{QUEST-CS: QUantization with Enhanced Steps - Compressing Small signals}
+\end{mnemonicbox}
+
+\questionmarks{3(બ)}{4}{સેમ્પલ અને હોલ્ડ સર્કિટ વેવફોર્મ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[auto, >=latex, thick, node distance=2cm]
+    \node (input) {Analog Input};
+    \node [draw, rectangle, minimum size=1cm, right=1.5cm of input] (sh) {Sample \& Hold};
+    \node [right=1.5cm of sh] (output) {Sampled Output};
+    \node [below=1cm of sh] (clock) {Clock};
+
+    \draw [->] (input) -- (sh);
+    \draw [->] (sh) -- (output);
+    \draw [->] (clock) -- (sh);
+\end{tikzpicture}
+\captionof{figure}{સેમ્પલ અને હોલ્ડ સર્કિટ}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[x=0.08cm,y=1.0cm, >=latex, thick, scale=0.8, transform shape]
+    \draw[->] (0,0) -- (80,0) node[right] {$t$};
+    \draw[->] (0,-1.5) -- (0,1.5) node[above] {$V$};
+
+    \draw[blue, dashed] plot[domain=0:75, samples=100] (\x, {sin(6*\x)});
+    \foreach \x in {0, 10, 20, 30, 40, 50, 60, 70} {
+        \draw[red, thick] (\x, {sin(6*\x)}) -- (\x+8, {sin(6*\x)});
+        \draw[red, thick] (\x, {sin(6*\x)}) -- (\x, 0);
+        \draw[red, thick, dotted] (\x+8, {sin(6*\x)}) -- (\x+8, 0);
+    }
+\end{tikzpicture}
+\captionof{figure}{સેમ્પલ અને હોલ્ડ વેવફોર્મ}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{સેમ્પલિંગ મોડ}: સ્વિચ બંધ થાય છે, કેપેસિટર ઇનપુટ વોલ્ટેજ સુધી ચાર્જ થાય છે
+    \item \textbf{હોલ્ડ મોડ}: સ્વિચ ખુલે છે, કેપેસિટર વોલ્ટેજ જાળવી રાખે છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{CHASED: Capacitor Holds Amplitude Samples for Extended Duration}
+\end{mnemonicbox}
+
+\questionmarks{3(ક)}{7}{સેમ્પલિંગ શું છે? સેમ્પલિંગના પ્રકારો ટૂંકમાં સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Sampling} એ નિયમિત અંતરાલે માપન કરીને સતત-સમયના સિગ્નલને ડિસ્ક્રીટ-ટાઇમ સિગ્નલમાં રૂપાંતરિત કરવાની પ્રક્રિયા છે.
+
+\begin{center}
+\captionof{table}{સેમ્પલિંગના પ્રકારો}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પ્રકાર} & \textbf{વર્ણન} & \textbf{લાક્ષણિકતાઓ} \\ \hline
+Natural Sampling & સિગ્નલને રેક્ટેન્ગ્યુલર પલ્સ સાથે ગુણવામાં આવે છે & પલ્સ દરમિયાન મૂળ સિગ્નલનો આકાર જાળવી રાખે છે \\ \hline
+Flat-top Sampling & સેમ્પલિંગ ઇન્ટરવલ દરમિયાન સેમ્પલ મૂલ્ય અચળ રાખવામાં આવે છે & દાદર જેવું આઉટપુટ બનાવે છે \\ \hline
+Ideal Sampling & ત્વરિત સેમ્પલને ઇમ્પલ્સ તરીકે દર્શાવવામાં આવે છે & શૂન્ય પહોળાઈ પલ્સ સાથેનો સૈદ્ધાંતિક ખ્યાલ \\ \hline
+Uniform Sampling & સમાન સમયના અંતરાલે સેમ્પલ લેવામાં આવે છે & વ્યવહારમાં સૌથી સામાન્ય \\ \hline
+Non-uniform Sampling & વિવિધ અંતરાલે સેમ્પલ લેવામાં આવે છે & વિશિષ્ટ એપ્લિકેશન્સ માટે વપરાય છે \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[x=0.08cm, y=0.8cm, >=latex, thick]
+    \node at (-20, 1.5) {Natural};
+    \draw[->] (0,0) -- (60,0);
+    \foreach \x in {5, 15, ..., 55} {
+        \draw[blue, thick] (\x, 0) -- (\x, {sin(6*\x)});
+        \draw[blue, thick] (\x+2, 0) -- (\x+2, {sin(6*(\x+2))});
+        \draw[blue, thick] (\x, {sin(6*\x)}) -- (\x+2, {sin(6*(\x+2))});
+    }
+
+    \node at (-20, -2.5) {Flat-top};
+    \draw[->] (0,-4) -- (60,-4);
+    \foreach \x in {5, 15, ..., 55} {
+        \draw[red, thick] (\x, -4) -- (\x, {sin(6*\x)-4});
+        \draw[red, thick] (\x+2, -4) -- (\x+2, {sin(6*\x)-4});
+        \draw[red, thick] (\x, {sin(6*\x)-4}) -- (\x+2, {sin(6*\x)-4});
+    }
+\end{tikzpicture}
+\captionof{figure}{નેચરલ અને ફ્લેટ-ટોપ સેમ્પલિંગ}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{નાયક્વિસ્ટ ક્રાઇટેરિયા}: સેમ્પલિંગ ફ્રિકવન્સી સિગ્નલમાં સૌથી વધુ ફ્રિકવન્સી કરતાં ઓછામાં ઓછી બમણી હોવી જોઈએ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{INFUN: Ideal, Natural, Flat-top, Uniform, Non-uniform}
+\end{mnemonicbox}
+
+\questionmarks{3(અ OR)}{3}{ક્વોન્ટાઇઝેશન પ્રક્રિયા અને તેની જરૂરિયાત સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Quantization Process} ડિજિટલ રજૂઆત માટે સતત એમ્પ્લિટ્યુડ મૂલ્યોને મર્યાદિત ડિસ્ક્રીટ લેવલ્સમાં મેપ કરે છે.
+
+\begin{center}
+\captionof{table}{ક્વોન્ટાઇઝેશન પ્રક્રિયા અને જરૂરિયાત}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{પાસું} & \textbf{વર્ણન} \\ \hline
+પ્રક્રિયા & એમ્પ્લિટ્યુડ રેન્જને ડિસ્ક્રીટ લેવલ્સમાં વિભાજીત કરવી \\ \hline
+જરૂરિયાત & એનાલોગ-ટુ-ડિજિટલ કન્વર્ઝન માટે જરૂરી \\ \hline
+અસર & ક્વોન્ટાઇઝેશન એરર/નોઇઝ રજૂ કરે છે \\ \hline
+પેરામીટર્સ & સ્ટેપ સાઇઝ, લેવલ્સની સંખ્યા (n-bit માટે $2^n$) \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{સ્ટેપ સાઇઝ ગણતરી}: Step size = $(V_{\max} - V_{\min})/2^n$
+    \item \textbf{ક્વોન્ટાઇઝેશન એરર}: મહત્તમ એરર $\pm Q/2$ છે જ્યાં $Q$ સ્ટેપ સાઇઝ છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{SEND: Step-size Establishes Noise in Digitization}
+\end{mnemonicbox}
+
+\questionmarks{3(બ OR)}{4}{સિગ્નલના સેમ્પલિંગ માટે નાયક્વિસ્ટ ક્રાઇટેરિયા જણાવો અને સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Nyquist Sampling Theorem} જણાવે છે કે બેન્ડલિમિટેડ સિગ્નલને સંપૂર્ણ રીતે પુનઃપ્રાપ્ત કરવા માટે, સેમ્પલિંગ ફ્રિકવન્સી સિગ્નલમાં સૌથી વધુ ફ્રિકવન્સી હોવ ઘટક કરતાં ઓછામાં ઓછી બમણી હોવી જોઈએ.
+
+\begin{center}
+\captionof{table}{Nyquist Criteria}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{પેરામીટર} & \textbf{વર્ણન} \\ \hline
+Criterion & $f_s \ge 2f_{\max}$ \\ \hline
+Nyquist Rate & $2f_{\max}$ (લઘુત્તમ સેમ્પલિંગ ફ્રિકવન્સી) \\ \hline
+Nyquist Interval & $1/(2f_{\max})$ (મહત્તમ સેમ્પલિંગ સમયગાળો) \\ \hline
+Aliasing & જ્યારે $f_s < 2f_{\max}$ હોય ત્યારે થાય છે \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{અંડરસેમ્પલિંગના પરિણામો}: Aliasing (ફ્રિકવન્સી ફોલ્ડિંગ)
+    \item \textbf{વ્યવહારુ ઉપયોગ}: સેમ્પલિંગ પહેલાં એન્ટિ-એલિયાઝિંગ ફિલ્ટર્સ વપરાય છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{TRAP-A: Twice Rate Avoids Problematic Aliasing}
+\end{mnemonicbox}
+
+\questionmarks{3(ક OR)}{7}{PAM, PWM અને PPM વેવફોર્મ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{પલ્સ મોડ્યુલેશન તકનીકો}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{તકનીક} & \textbf{વર્ણન} & \textbf{પેરામીટર બદલાય છે} & \textbf{ઉપયોગ} \\ \hline
+PAM & Pulse Amplitude Modulation & પલ્સનું એમ્પ્લિટ્યુડ & સરળ ADC સિસ્ટમ્સ \\ \hline
+PWM & Pulse Width Modulation & પલ્સની પહોળાઈ/અવધિ & મોટર કંટ્રોલ, પાવર રેગ્યુલેશન \\ \hline
+PPM & Pulse Position Modulation & પલ્સની સ્થિતિ/ટાઇમિંગ & ઉચ્ચ નોઇઝ ઇમ્યુનિટી સિસ્ટમ્સ \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[x=0.08cm, y=0.5cm, >=latex, thick]
+    \node at (-10, 2) {PAM};
+    \foreach \x in {0, 10, ..., 80} {
+        \draw[thick] (\x, 0) -- (\x, {1.5 + sin(4*\x)});
+    }
+    
+    \node at (-10, -3) {PWM};
+    \foreach \x in {0, 10, ..., 80} {
+        \draw[thick, fill=gray!30] ({\x-1-sin(4*\x)}, -5) rectangle ({\x+1+sin(4*\x)}, -3);
+    }
+    
+    \node at (-10, -8) {PPM};
+    \foreach \x in {0, 10, ..., 80} {
+        \draw[thick] ({\x+sin(4*\x)*3}, -10) -- ({\x+sin(4*\x)*3}, -8);
+    }
+\end{tikzpicture}
+\captionof{figure}{પલ્સ મોડ્યુલેશન વેવફોર્મ્સ}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{PAM}: સૌથી સરળ સ્વરૂપ, નોઇઝ માટે સૌથી વધુ સંવેદનશીલ
+    \item \textbf{PWM}: સારી નોઇઝ ઇમ્યુનિટી, સરળ જનરેશન
+    \item \textbf{PPM}: શ્રેષ્ઠ નોઇઝ ઇમ્યુનિટી, ચોક્કસ ટાઇમિંગની જરૂર છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{AWP-PAW: Amplitude, Width, Position - Pulse Alteration Ways}
+\end{mnemonicbox}
+
+
+% Q4 Conversion
+
+\questionmarks{4(અ)}{3}{DM માં સ્લોપ ઓવરલોડ નોઇઝ અને ગ્રેન્યુલર નોઇઝ શું છે?}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{ડેલ્ટા મોડ્યુલેશનમાં નોઇઝ પ્રકારો}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{નોઇઝ પ્રકાર} & \textbf{વ્યાખ્યા} & \textbf{કારણ} & \textbf{ઉકેલ} \\ \hline
+Slope Overload Noise & જ્યારે સિગ્નલ સ્લોપ સ્ટેપ સાઇઝ ક્ષમતા કરતાં વધી જાય ત્યારે આવતી એરર & ઝડપથી બદલાતા સિગ્નલો માટે સ્ટેપ સાઇઝ ખૂબ નાની હોવી & સ્ટેપ સાઇઝ અથવા સેમ્પલિંગ ફ્રિકવન્સી વધારવી \\ \hline
+Granular Noise & ધીમે ધીમે બદલાતા સિગ્નલોની આસપાસ સતત હંટિંગને કારણે એરર & ધીમે ધીમે બદલાતા સિગ્નલો માટે સ્ટેપ સાઇઝ ખૂબ મોટી હોવી & સ્ટેપ સાઇઝ ઘટાડવી \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[x=0.08cm, y=1.0cm, >=latex, thick]
+    \node at (-10, 2) {Slope Overload};
+    \draw[blue] (0,0) -- (10,0.5) -- (20,2) -- (30,4);
+    \draw[red, step=2] (0,0) -- (5,0) -- (5,0.5) -- (10,0.5) -- (10,1) -- (15,1);
+    \node at (20, -0.5) {Steps too slow};
+
+    \node at (50, 2) {Granular Noise};
+    \draw[blue] (60,1) -- (90,1);
+    \draw[red] (60,0.8) -- (65,0.8) -- (65,1.2) -- (70,1.2) -- (70,0.8) -- (75,0.8) -- (75,1.2);
+    \node at (75, -0.5) {Hunting around DC};
+\end{tikzpicture}
+\captionof{figure}{DM નોઇઝ પ્રકારો}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{FAST-SLOW: Fast signals cause Slope overload, SLOW signals cause Granular noise}
+\end{mnemonicbox}
+
+\questionmarks{4(બ)}{4}{TDM ફ્રેમ દોરો અને સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[x=1.5cm, y=0.8cm, >=latex, thick]
+    \draw (0,0) rectangle (1,1) node[pos=0.5] {FS};
+    \draw (1,0) rectangle (2,1) node[pos=0.5] {CH1};
+    \draw (2,0) rectangle (3,1) node[pos=0.5] {CH2};
+    \draw (3,0) rectangle (4,1) node[pos=0.5] {...};
+    \draw (4,0) rectangle (5,1) node[pos=0.5] {CHn};
+    \draw (5,0) rectangle (6,1) node[pos=0.5] {FS};
+    
+    \node at (3, 1.5) {એક ફ્રેમ};
+    \draw [->] (0.5, -0.5) -- (0.5, 0) node[below=0.5cm, align=center] {Frame\\Sync};
+    \draw [->] (1.5, -0.5) -- (1.5, 0) node[below=0.5cm, align=center] {Channel 1\\Sample};
+\end{tikzpicture}
+\captionof{figure}{TDM ફ્રેમ માળખું}
+\end{center}
+
+\begin{center}
+\captionof{table}{TDM ફ્રેમ ઘટકો}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{ઘટક} & \textbf{વર્ણન} \\ \hline
+Frame Sync (FS) & પેટર્ન જે ફ્રેમની શરૂઆત દર્શાવે છે \\ \hline
+Time Slot & એક ચેનલને ફાળવવામાં આવેલ ભાગ \\ \hline
+Channel Sample & ચોક્કસ ચેનલમાંથી ડેટા \\ \hline
+Frame Length & કુલ સમયગાળો (FS + બધી ચેનલો) \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{કાર્યસિદ્ધાંત}: વિવિધ ચેનલોને અલગ અલગ સમયના સ્લોટ ફાળવે છે
+    \item \textbf{સિંક્રોનાઇઝેશન}: યોગ્ય ડિમલ્ટિપ્લેક્સિંગ માટે આવશ્યક
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{FAST-Ch: Frame And Slots for Transmitting Channels}
+\end{mnemonicbox}
+
+\questionmarks{4(ક)}{7}{PCM ટ્રાન્સમિટર અને રિસીવરના દરેક બ્લોકનું કાર્ય વર્ણવો. PCM સિસ્ટમનો ઉપયોગ, ફાયદા અને ગેરફાયદા આપો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm, auto, >=latex, thick, scale=0.8, transform shape]
+    % Transmitter
+    \node [gtu block] (samp) {Sampler};
+    \node [gtu block, right=1cm of samp] (quant) {Quantizer};
+    \node [gtu block, right=1cm of quant] (enc) {Encoder};
+    \node [gtu block, right=1cm of enc] (lc) {Line Coder};
+    
+    % Receiver
+    \node [gtu block, below=2cm of lc] (ld) {Line Decoder};
+    \node [gtu block, left=1cm of ld] (dec) {Decoder};
+    \node [gtu block, left=1cm of dec] (filt) {Reconstruction\\Filter};
+    
+    \node at ($(enc)!0.5!(dec)$) [yshift=0.5cm] {PCM Transmitter};
+    \node at ($(ld)!0.5!(filt)$) [yshift=-1cm] {PCM Receiver};
+    
+    \draw [gtu arrow] (samp) -- (quant);
+    \draw [gtu arrow] (quant) -- (enc);
+    \draw [gtu arrow] (enc) -- (lc);
+    \draw [gtu arrow, dashed] (lc) -- (ld) node[midway, right] {Channel};
+    \draw [gtu arrow] (ld) -- (dec);
+    \draw [gtu arrow] (dec) -- (filt);
+\end{tikzpicture}
+\captionof{figure}{PCM સિસ્ટમ}
+\end{center}
+
+\begin{center}
+\captionof{table}{PCM બ્લોક કાર્યો}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{બ્લોક} & \textbf{કાર્ય} \\ \hline
+Sampler & એનાલોગ સિગ્નલને PAM સિગ્નલમાં કન્વર્ટ કરે છે \\ \hline
+Quantizer & સેમ્પલને ડિસ્ક્રીટ લેવલ્સ સોંપે છે \\ \hline
+Encoder & ક્વોન્ટાઇઝ્ડ લેવલ્સને બાઈનરી કોડમાં કન્વર્ટ કરે છે \\ \hline
+Line Coder & બાઈનરીને ટ્રાન્સમિશન ફોર્મેટમાં કન્વર્ટ કરે છે \\ \hline
+Line Decoder & પ્રાપ્ત થયેલ સિગ્નલમાંથી બાઈનરી રિકવર કરે છે \\ \hline
+Decoder & બાઈનરીને પાછા ક્વોન્ટાઇઝ્ડ લેવલ્સમાં કન્વર્ટ કરે છે \\ \hline
+Reconstruction Filter & ડીકોડ કરેલા આઉટપુટને સ્મૂધ કરીને એનાલોગ સિગ્નલ બનાવે છે \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{ઉપયોગો, ફાયદા અને ગેરફાયદા:}
+
+\begin{center}
+\captionof{table}{PCM સિસ્ટમ લાક્ષણિકતાઓ}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{શ્રેણી} & \textbf{વર્ણન} \\ \hline
+ઉપયોગો & ટેલિફોન સિસ્ટમ્સ, CD ઓડિયો, ડિજિટલ TV, મોબાઈલ કોમ્યુનિકેશન્સ \\ \hline
+ફાયદા & નોઇઝ સામે સુરક્ષિત, સિગ્નલ રિજનરેશન શક્ય, ડિજિટલ સિસ્ટમ્સ સાથે સુસંગત \\ \hline
+ગેરફાયદા & વધુ બેન્ડવિડ્થની જરૂર, વધુ જટિલતા, ક્વોન્ટાઇઝેશન નોઇઝ \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{SEQUEL-DR: Sample, Quantize, Encode - Line code, Decode, Reconstruct}
+\end{mnemonicbox}
+
+\questionmarks{4(અ OR)}{3}{DM અને ADM મોડ્યુલેશન વચ્ચે તફાવત આપો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{DM અને ADM વચ્ચે તુલના}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પેરામીટર} & \textbf{Delta Modulation (DM)} & \textbf{Adaptive Delta Modulation (ADM)} \\ \hline
+Step Size & Fixed & Variable (સિગ્નલ સ્લોપને અનુકૂળ) \\ \hline
+Tracking Ability & મર્યાદિત & વધુ સારું સિગ્નલ ટ્રેકિંગ \\ \hline
+Noise Performance & સ્લોપ ઓવરલોડ અને ગ્રેન્યુલર નોઇઝથી પીડાય છે & નોઇઝ સમસ્યાઓ ઘટી છે \\ \hline
+Complexity & સરળ & વધુ જટિલ \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[x=0.08cm, y=0.5cm, >=latex, thick]
+    \node at (-15, 0) {Input};
+    \draw[dashed] plot[domain=0:50] (\x, {sin(6*\x)*3});
+    
+    \node at (-15, -4) {DM Output};
+    \draw[red] (0,-4) -- (2,-3.5) -- (4,-4) -- (6,-3.5);
+    \node at (60, -4) {Fixed steps};
+    
+    \node at (-15, -8) {ADM Output};
+    \draw[blue] (0,-8) -- (2,-7) -- (4,-5) -- (6,-8);
+    \node at (60, -8) {Variable steps};
+\end{tikzpicture}
+\captionof{figure}{DM vs ADM ટ્રેકિંગ}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{FAST-VAR: Fixed And Simple Tracking vs Variable Adaptive Response}
+\end{mnemonicbox}
+
+\questionmarks{4(બ OR)}{4}{મૂળભૂત PCM-TDM સિસ્ટમનો બ્લોક ડાયાગ્રામ સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm, auto, >=latex, thick, scale=0.75, transform shape]
+    \node (in1) {Input 1};
+    \node [right=1cm of in1, gtu block] (lpf1) {LPF};
+    
+    \node [below=0.5cm of in1] (in2) {Input 2};
+    \node [right=1cm of in2, gtu block] (lpf2) {LPF};
+    
+    \node [below=0.5cm of in2] (inn) {Input n};
+    \node [right=1cm of inn, gtu block] (lpfn) {LPF};
+    
+    \node [gtu block, right=3cm of lpf2, minimum height=3cm] (mux) {Multiplexer};
+    
+    \draw [gtu arrow] (in1) -- (lpf1);
+    \draw [gtu arrow] (in2) -- (lpf2);
+    \draw [gtu arrow] (inn) -- (lpfn);
+    
+    \draw [gtu arrow] (lpf1) -- (mux.west |- lpf1.east);
+    \draw [gtu arrow] (lpf2) -- (mux.west |- lpf2.east);
+    \draw [gtu arrow] (lpfn) -- (mux.west |- lpfn.east);
+    
+    \node [gtu block, right=1cm of mux] (enc) {PCM Encoder};
+    \draw [gtu arrow] (mux) -- (enc);
+    
+    \node [right=2cm of enc] (out) {Channel};
+    \draw [gtu arrow] (enc) -- (out);
+\end{tikzpicture}
+\captionof{figure}{PCM-TDM સિસ્ટમ}
+\end{center}
+
+\begin{center}
+\captionof{table}{PCM-TDM સિસ્ટમ ઘટકો}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{ઘટક} & \textbf{કાર્ય} \\ \hline
+Low-pass Filters & ઇનપુટ સિગ્નલોની બેન્ડવિડ્થ મર્યાદિત કરે છે \\ \hline
+Multiplexer & બહુવિધ સિગ્નલોને સમયના સ્લોટ્સમાં જોડે છે \\ \hline
+PCM Encoder & ડિજિટલમાં રૂપાંતરિત કરે છે (સેમ્પલ, ક્વોન્ટાઇઝ, એન્કોડ) \\ \hline
+Transmission Channel & ડિજિટાઈઝ્ડ, મલ્ટિપ્લેક્સ્ડ સિગ્નલનું વહન કરે છે \\ \hline
+PCM Decoder & ક્વોન્ટાઇઝ્ડ સેમ્પલ્સનું પુનઃનિર્માણ કરે છે \\ \hline
+Demultiplexer & ચેનલોને સમયના સ્લોટ્સમાંથી અલગ કરે છે \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{કાર્યસિદ્ધાંત}: પલ્સ કોડ મોડ્યુલેશન સાથે ટાઈમ ડિવિઝન મલ્ટિપ્લેક્સિંગને જોડે છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{FLIMPED: Filter, Limit, Multiplex, PCM Encode, Decode}
+\end{mnemonicbox}
+
+\questionmarks{4(ક OR)}{7}{સમીકરણ અને વેવફોર્મ સાથે DPCM મોડ્યુલેટર સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Differential Pulse Code Modulation (DPCM)} વર્તમાન સેમ્પલ અને અગાઉના સેમ્પલ્સના આધારે અનુમાનિત મૂલ્ય વચ્ચેના તફાવતને એન્કોડ કરે છે.
+
+\textbf{સમીકરણ:}
+\begin{itemize}
+    \item Error signal: $e(n) = x(n) - \hat{x}(n)$
+    \item જ્યાં $x(n)$ વર્તમાન સેમ્પલ છે, $\hat{x}(n)$ અનુમાનિત સેમ્પલ છે
+    \item Prediction: $\hat{x}(n) = \Sigma(a_i \times x(n-i))$
+    \item Transmitted signal: DPCM output $= Q[e(n)]$
+\end{itemize}
+
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto, >=latex, thick]
+    \node (input) {$x(n)$};
+    \node [draw, circle, right=1cm of input] (sum) {+};
+    \node [gtu block, right=1cm of sum] (quant) {Quantizer};
+    \node [gtu block, right=1cm of quant] (enc) {Encoder};
+    \node [right=1cm of enc] (out) {Output};
+    
+    \node [gtu block, below=1cm of quant] (pred) {Predictor};
+    \node [draw, circle, left=1cm of pred] (sub) {+}; % Feedback summation
+    
+    \draw [gtu arrow] (input) -- (sum);
+    \draw [gtu arrow] (sum) -- (quant);
+    \draw [gtu arrow] (quant) -- (enc);
+    \draw [gtu arrow] (enc) -- (out);
+    
+    \draw [gtu arrow] (quant) |- (sub);
+    \draw [gtu arrow] (sub) -- (pred);
+    \draw [gtu arrow] (pred) -| (sum) node[pos=0.9, left] {-};
+    \draw [gtu arrow] (pred) -| (sub) node[pos=0.9, left] {+};
+\end{tikzpicture}
+\captionof{figure}{DPCM મોડ્યુલેટર}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[x=0.5cm, y=0.5cm, >=latex, thick]
+    \foreach \x in {0,1,2,3,4} {
+        \draw[thick] (\x*2, 0) -- (\x*2, {sin(20*\x*2)*4}) node[circle, fill, inner sep=1pt, label=above:$x(\x)$] {};
+    }
+    \foreach \x in {0,1,2,3,4} {
+        \draw[dashed, red] (\x*2+0.5, 0) -- (\x*2+0.5, {sin(20*\x*2)*3.5}) node[circle, draw, red, inner sep=1pt] {};
+    }
+    \node at (5, -2) {તફાવત એન્કોડ થયેલ છે};
+\end{tikzpicture}
+\captionof{figure}{DPCM વેવફોર્મ}
+\end{center}
+
+\begin{center}
+\captionof{table}{DPCM લાક્ષણિકતાઓ}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{ફીચર} & \textbf{વર્ણન} \\ \hline
+ફાયદો & ઘટાડેલ બિટ રેટ (PCM ની સરખામણીમાં 30-50\%) \\ \hline
+આગાહી & વર્તમાન આગાહી માટે અગાઉના સેમ્પલ(s) નો ઉપયોગ કરે છે \\ \hline
+જટિલતા & PCM કરતાં વધુ પરંતુ ADPCM કરતાં ઓછી \\ \hline
+ઉપયોગ & સ્પીચ કોડિંગ, ઇમેજ કમ્પ્રેશન \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{PQED: Predict, Quantize Error, Encode Difference}
+\end{mnemonicbox}
+
+% Q5 Conversion
+
+\questionmarks{5(અ)}{3}{એન્ટેના, રેડિએશન પેટર્ન અને પોલરાઇઝેશન વ્યાખ્યાયિત કરો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{એન્ટેના વ્યાખ્યાઓ}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{શબ્દ} & \textbf{વ્યાખ્યા} \\ \hline
+Antenna & એક ઉપકરણ જે ઇલેક્ટ્રિકલ એનર્જીને ઇલેક્ટ્રોમેગ્નેટિક વેવ્સમાં અને તેનાથી વિપરીત રૂપાંતરિત કરે છે \\ \hline
+Radiation Pattern & અવકાશ કોઓર્ડિનેટ્સના કાર્ય તરીકે એન્ટેનાના રેડિએશન ગુણધર્મોનું ગ્રાફિકલ નિરૂપણ \\ \hline
+Polarization & એન્ટેના દ્વારા રેડિએટ થતા ઇલેક્ટ્રોમેગ્નેટિક વેવના ઇલેક્ટ્રિક ફિલ્ડ વેક્ટરની દિશા \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{પોલરાઇઝેશનના પ્રકારો:}
+\begin{itemize}
+    \item \textbf{Linear}: ઇલેક્ટ્રિક ફિલ્ડ એક દિશામાં ઓસિલેટ થાય છે (વર્ટિકલ, હોરિઝોન્ટલ)
+    \item \textbf{Circular}: ઇલેક્ટ્રિક ફિલ્ડ અચળ એમ્પ્લિટ્યુડ સાથે ફરે છે (RHCP, LHCP)
+    \item \textbf{Elliptical}: ઇલેક્ટ્રિક ફિલ્ડ અલગ અલગ એમ્પ્લિટ્યુડ સાથે ફરે છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{WAVE-PRO: Wireless Antenna Validates Electromagnetic Propagation, Radiation, Orientation}
+\end{mnemonicbox}
+
+\questionmarks{5(બ)}{4}{સ્કેચ સાથે માઇક્રોસ્ટ્રીપ એન્ટેના સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[x=1cm, y=1cm, >=latex, thick]
+    % Ground
+    \fill[gray!30] (0,0) rectangle (4,0.2);
+    \draw (0,0) rectangle (4,0.2);
+    \node at (2, -0.3) {Ground Plane};
+    
+    % Substrate
+    \fill[yellow!20] (0,0.2) rectangle (4,0.8);
+    \draw (0,0.2) rectangle (4,0.8);
+    \node at (4.5, 0.5) {Substrate};
+    
+    % Patch
+    \fill[brown!40] (1,0.8) rectangle (3,1.0);
+    \draw (1,0.8) rectangle (3,1.0);
+    \node at (2, 1.3) {Patch};
+    
+    % Feed
+    \draw[->] (2, -0.5) -- (2, 1.0);
+    \node at (2.2, -0.6) {Feed};
+\end{tikzpicture}
+\captionof{figure}{માઇક્રોસ્ટ્રીપ પેચ એન્ટેના}
+\end{center}
+
+\begin{center}
+\captionof{table}{માઇક્રોસ્ટ્રીપ એન્ટેના ઘટકો}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{ઘટક} & \textbf{કાર્ય} \\ \hline
+Patch & રેડિએટિંગ એલિમેન્ટ (સામાન્ય રીતે કોપર) \\ \hline
+Substrate & પેચ અને ગ્રાઉન્ડ વચ્ચે ડાઇલેક્ટ્રિક મટિરિયલ \\ \hline
+Ground Plane & તળિયે મેટલ લેયર \\ \hline
+Feed Point & સિગ્નલ માટે કનેક્શન પોઇન્ટ \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{કાર્યસિદ્ધાંત}: કિનારીઓ પર ફ્રિંજિંગ ફિલ્ડ્સ રેડિએશનનું કારણ બને છે
+    \item \textbf{ફાયદા}: લો પ્રોફાઇલ, હલકો વજન, સરળ ફેબ્રિકેશન, PCB સાથે સુસંગત
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{SPGF: Substrate, Patch, Ground, Feed}
+\end{mnemonicbox}
+
+\questionmarks{5(ક)}{7}{જરૂરી સ્કેચ અને વેવફોર્મ સાથે ડેલ્ટા મોડ્યુલેશન સમજાવો.}
+
+\begin{solutionbox}
+Delta Modulation (DM) એ ડિફરન્શિયલ પલ્સ કોડ મોડ્યુલેશનનું સૌથી સરળ સ્વરૂપ છે જ્યાં ક્રમિક સેમ્પલ્સ વચ્ચેનો તફાવત એક જ બીટમાં એનકોડ કરવામાં આવે છે.
+
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto, >=latex, thick]
+    \node (input) {Input};
+    \node [draw, circle, right=1cm of input] (sum) {+};
+    \node [gtu block, right=1cm of sum] (quant) {1-bit\\Quantizer};
+    \node [right=1cm of quant] (out) {Output};
+    
+    \node [gtu block, below=1cm of quant] (int) {Integrator};
+    \node [gtu block, left=1cm of int] (delay) {Delay};
+    
+    \draw [gtu arrow] (input) -- (sum);
+    \draw [gtu arrow] (sum) -- (quant);
+    \draw [gtu arrow] (quant) -- (out);
+    
+    \draw [gtu arrow] (quant) |- (delay);
+    \draw [gtu arrow] (delay) -- (int);
+    \draw [gtu arrow] (int) -| (sum) node[pos=0.9, left] {-};
+\end{tikzpicture}
+\captionof{figure}{ડેલ્ટા મોડ્યુલેટર}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[x=0.08cm, y=1.0cm, >=latex, thick]
+    \draw[blue, thick] plot[domain=0:100, samples=100] (\x, {sin(4*\x)});
+    \draw[red, thick, step=0.2] plot[domain=0:100, samples=50] (\x, {round(sin(4*\x)/0.2)*0.2});
+    \node at (50, 1.5) {Staircase Approximation};
+\end{tikzpicture}
+\captionof{figure}{ડેલ્ટા મોડ્યુલેશન વેવફોર્મ}
+\end{center}
+
+\begin{center}
+\captionof{table}{ડેલ્ટા મોડ્યુલેશન લાક્ષણિકતાઓ}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{લાક્ષણિકતા} & \textbf{વર્ણન} \\ \hline
+Bit Rate & 1 bit per sample \\ \hline
+Step Size & Fixed (મુખ્ય મર્યાદા) \\ \hline
+Slope Overload & જ્યારે સિગ્નલ સ્ટેપ સાઇઝ ટ્રેક કરી શકે તેના કરતાં ઝડપથી બદલાય ત્યારે \\ \hline
+Granular Noise & ધીમે ધીમે બદલાતા સિગ્નલોમાં થાય છે (સતત હંટિંગ) \\ \hline
+Advantages & સરળતા, ઓછો બિટ રેટ \\ \hline
+Disadvantages & મર્યાદિત ડાયનેમિક રેન્જ, નોઇઝ સમસ્યાઓ \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{SIGN-UP: SInGle bit, Next step Up or down, Predict}
+\end{mnemonicbox}
+
+\questionmarks{5(અ OR)}{3}{સ્માર્ટ એન્ટેના શું છે? સ્માર્ટ એન્ટેના એપ્લિકેશન આપો.}
+
+\begin{solutionbox}
+\textbf{સ્માર્ટ એન્ટેના} એ એક એડેપ્ટિવ એરે સિસ્ટમ છે જે કોમ્યુનિકેશન પરફોર્મન્સ વધારવા માટે ડિજિટલ સિગ્નલ પ્રોસેસિંગ એલ્ગોરિધમનો ઉપયોગ કરીને ડાયનેમિક રીતે તેની રેડિએશન પેટર્ન એડજસ્ટ કરે છે.
+
+\begin{center}
+\captionof{table}{સ્માર્ટ એન્ટેના એપ્લિકેશન્સ}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{એપ્લિકેશન} & \textbf{ફાયદો} \\ \hline
+Cellular Base Stations & વધેલી ક્ષમતા અને કવરેજ \\ \hline
+Wireless LAN & સુધારેલું થ્રૂપુટ અને ઘટેલું ઇન્ટરફેરન્સ \\ \hline
+Satellite Communications & બેહતર સિગ્નલ ક્વોલિટી અને પાવર કાર્યક્ષમતા \\ \hline
+Military Communications & વધેલી સુરક્ષા અને જામ રેસિસ્ટન્સ \\ \hline
+IoT Networks & વિસ્તારિત બેટરી લાઇફ, સુધારેલી કનેક્ટિવિટી \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{કાર્યસિદ્ધાંત}: ઇચ્છિત યુઝર્સ તરફ સિગ્નલ એનર્જી ફોકસ કરવા બીમફોર્મિંગનો ઉપયોગ કરે છે
+    \item \textbf{પ્રકારો}: સ્વિચ્ડ બીમ સિસ્ટમ્સ અને એડેપ્ટિવ એરે સિસ્ટમ્સ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{SWIM-CM: Smart Wireless In Mobile-Cellular-Military}
+\end{mnemonicbox}
+
+\questionmarks{5(બ OR)}{4}{પેરાબોલિક રિફ્લેક્ટર એન્ટેના સ્કેચ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[x=1cm, y=1cm, >=latex, thick]
+    \draw [domain=-2:2, samples=100] plot (\x, {0.25*\x*\x});
+    \draw [->] (-1.5, 2) -- (-0.8, 0.16);
+    \draw [->] (1.5, 2) -- (0.8, 0.16);
+    \draw [->] (0, 0.5) -- (0, 2);
+    
+    \node [circle, fill, inner sep=1.5pt] at (0, 1) {};
+    \node at (0.3, 1) {Focus};
+    
+    \node at (0, -0.5) {Parabolic Dish};
+\end{tikzpicture}
+\captionof{figure}{પેરાબોલિક રિફ્લેક્ટર એન્ટેના}
+\end{center}
+
+\begin{center}
+\captionof{table}{પેરાબોલિક રિફ્લેક્ટર ઘટકો}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{ઘટક} & \textbf{કાર્ય} \\ \hline
+Parabolic Dish & સિગ્નલ્સને પરાવર્તિત અને કેન્દ્રિત કરે છે \\ \hline
+Feed Horn & ફોકલ પોઇન્ટ પર સિગ્નલ્સને રેડિયેટ/રિસીવ કરે છે \\ \hline
+Supporting Structure & જ્યોમેટ્રી અને સ્થિરતા જાળવે છે \\ \hline
+Waveguide & ફીડ હોર્નને ટ્રાન્સમિટર/રિસીવર સાથે જોડે છે \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{કાર્યસિદ્ધાંત}: આવતા સમાંતર કિરણો ફોકલ પોઇન્ટ પર પરાવર્તિત થાય છે
+    \item \textbf{લાક્ષણિકતાઓ}: ઉચ્ચ ગેઇન, દિશાત્મકતા, સાંકડી બીમવિડ્થ
+    \item \textbf{એપ્લિકેશન્સ}: સેટેલાઇટ કોમ્યુનિકેશન, રેડિયો એસ્ટ્રોનોમી, રડાર, માઇક્રોવેવ લિંક્સ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{PFGH: Parabolic Focus Gives High-gain}
+\end{mnemonicbox}
+
+\questionmarks{5(ક OR)}{7}{એડેપ્ટિવ ડેલ્ટા મોડ્યુલેશન જરૂરી સ્કેચ અને વેવફોર્મ સાથે સમજાવો.}
+
+\begin{solutionbox}
+Adaptive Delta Modulation (ADM) ઇનપુટ સિગ્નલની લાક્ષણિકતાઓ અનુસાર સ્ટેપ સાઇઝને ડાયનેમિક રીતે એડજસ્ટ કરીને સ્ટાન્ડર્ડ DMમાં સુધારો કરે છે.
+
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto, >=latex, thick]
+    \node (input) {Input};
+    \node [draw, circle, right=1cm of input] (sum) {+};
+    \node [gtu block, right=1cm of sum] (quant) {1-bit\\Quantizer};
+    \node [right=1cm of quant] (out) {Output};
+    
+    \node [gtu block, below=1cm of quant] (step) {Step Size\\Control};
+    \node [gtu block, below=1cm of step] (int) {Integrator};
+    
+    \draw [gtu arrow] (input) -- (sum);
+    \draw [gtu arrow] (sum) -- (quant);
+    \draw [gtu arrow] (quant) -- (out);
+    
+    \draw [gtu arrow] (quant) -- (step);
+    \draw [gtu arrow] (step) -- (int);
+    \draw [gtu arrow] (int) -| (sum) node[pos=0.9, left] {-};
+\end{tikzpicture}
+\captionof{figure}{એડેપ્ટિવ ડેલ્ટા મોડ્યુલેટર}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[x=0.08cm, y=1.0cm, >=latex, thick]
+    \draw[blue, thick] plot[domain=0:100, samples=100] (\x, {sin(4*\x)});
+    \draw[red, thick] (0,0) -- (10,0.2) -- (20,0.8) -- (30,1.0) -- (40,0.8) -- (50,0);
+    \node at (50, 1.5) {Variable Step Size};
+\end{tikzpicture}
+\captionof{figure}{ADM વેવફોર્મ}
+\end{center}
+
+\begin{center}
+\captionof{table}{ADM લાક્ષણિકતાઓ}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{પાસું} & \textbf{વર્ણન} \\ \hline
+Step Size & Variable (સિગ્નલ સ્લોપને અનુકૂળ) \\ \hline
+Control Logic & ક્રમિક સમાન બિટ્સ માટે સ્ટેપ સાઇઝ વધારે છે \\ \hline
+Advantages & ઘટાડેલ સ્લોપ ઓવરલોડ અને ગ્રેન્યુલર નોઇઝ \\ \hline
+Disadvantages & DM કરતાં વધુ જટિલ \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{સ્ટેપ સાઇઝ એડજસ્ટમેન્ટ}: $\mu(n) = \mu(n-1) \times K$ જો ક્રમિક બિટ્સ સમાન હોય
+    \item \textbf{સ્ટેપ સાઇઝ એડજસ્ટમેન્ટ}: $\mu(n) = \mu(n-1) / K$ જો ક્રમિક બિટ્સ બદલાય
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{ADVISED: ADaptive Variable Increment Step for Enhanced Delta modulation}
+\end{mnemonicbox}
+
+\end{document}
+
+

@@ -1,0 +1,1095 @@
+\documentclass{article}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/preamble.tex}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/gujarati-boxes.tex}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/commands.tex}
+
+\title{Electronics Devices \& Circuits (1323202) - Winter 2023 Solution}
+\date{January 24, 2024}
+
+\begin{document}
+\maketitle
+
+
+\questionmarks{1(a)}{3}{સ્વચ્છ આકૃતિ સાથે ડીસી લોડ લાઈન વિષે સમજાવો.}
+
+\begin{solutionbox}
+DC લોડ લાઈન ટ્રાન્ઝિસ્ટરના આઉટપુટ ખાસિયતો પર એક સીધી રેખા છે જે બધા સંભવિત ઓપરેટિંગ પોઇન્ટ્સ બતાવે છે.
+
+\textbf{આકૃતિ:}
+
+\begin{center}
+\begin{tikzpicture}[scale=1]
+    % Axes
+    \draw[->] (0,0) -- (5,0) node[right] {$V_{CE}$};
+    \draw[->] (0,0) -- (0,4) node[above] {$I_C$};
+    
+    % Load Line
+    \draw[thick] (0,3) node[left] {$I_{C(sat)} = \frac{V_{CC}}{R_C}$} -- (4,0) node[below] {$V_{CC} (Cutoff)$};
+    
+    % Curves
+    \draw[gray, domain=0:4] plot (\x, {3*(1-exp(-\x))*0.8});
+    \draw[gray, domain=0:4] plot (\x, {3*(1-exp(-\x))*0.6});
+    \draw[gray, domain=0:4] plot (\x, {3*(1-exp(-\x))*0.4});
+    
+    % Q-point
+    \filldraw (1.5, 1.875) circle (2pt) node[above right] {$Q (Operating Point)$};
+    
+    \node at (2.5, -1) {DC Load Line};
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{કલેક્ટર સેચુરેશન કરંટ}: જ્યારે $V_{CE} = 0$, ત્યારે $I_C = V_{CC}/R_C$
+    \item \textbf{કટઓફ વોલ્ટેજ}: જ્યારે $I_C = 0$, ત્યારે $V_{CE} = V_{CC}$
+    \item \textbf{Q-પોઇન્ટ}: લોડ લાઈન પર ઓપરેટિંગ પોઇન્ટ
+\end{itemize}
+
+\begin{mnemonicbox}
+"LEVEL" - "Load line Establishes Voltage and current for Every Load condition"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{1(b)}{4}{થર્મલ રનઅવે વિગતવાર સમજાવો.}
+
+\begin{solutionbox}
+થર્મલ રનઅવે એક એવી સ્થિતિ છે જ્યાં ગરમી ટ્રાન્ઝિસ્ટરના કલેક્ટર કરંટમાં વધારો કરે છે, જે વધુ ગરમી ઉત્પન્ન કરે છે, જે ટ્રાન્ઝિસ્ટરને નુકસાન તરફ દોરી જાય છે.
+
+\textbf{આકૃતિ:}
+
+\begin{center}
+\begin{tikzpicture}[gtu block]
+    \node [draw, rectangle] (temp1) {તાપમાન વધે છે};
+    \node [draw, rectangle, below=0.8cm of temp1] (leak) {લીકેજ કરંટ વધે છે};
+    \node [draw, rectangle, below=0.8cm of leak] (ic) {કલેક્ટર કરંટ વધે છે};
+    \node [draw, rectangle, below=0.8cm of ic] (power) {વધુ પાવર વપરાશ};
+    \node [draw, rectangle, below=0.8cm of power] (temp2) {વધુ તાપમાન વધારો};
+    
+    \draw [gtu arrow] (temp1) -- (leak);
+    \draw [gtu arrow] (leak) -- (ic);
+    \draw [gtu arrow] (ic) -- (power);
+    \draw [gtu arrow] (power) -- (temp2);
+    \draw [gtu arrow] (temp2.east) to[out=0,in=0] (temp1.east);
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{ગરમી ઉત્પાદન}: પાવર વપરાશ = $V_{CE} \times I_C$
+    \item \textbf{મહત્વપૂર્ણ અસર}: વધારેલ જંક્શન તાપમાન $V_{BE}$ ઘટાડે છે
+    \item \textbf{નિવારણ}: હીટ સિંક, થર્મલ સ્ટેબલાઇઝેશન સર્કિટ્સ, યોગ્ય બાયસિંગ
+    \item \textbf{ખતરો}: નિયંત્રિત ન કરવામાં આવે તો ટ્રાન્ઝિસ્ટરને નષ્ટ કરી શકે છે
+\end{itemize}
+
+\begin{mnemonicbox}
+"HEAT" - "Higher Emission Amplifies Temperature"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{1(c)}{7}{ટુ સ્ટેજ R-C કપલ્ડ એમ્પ્લીફાયરનો સર્કિટ ડાયાગ્રામ અને ફ્રીક્વન્શી રિસ્પોન્સ દોરો. દરેક કમ્પોનન્ટનું મહત્વ સમજાવો.}
+
+\begin{solutionbox}
+R-C કપલ્ડ એમ્પ્લીફાયર મલ્ટીપલ ટ્રાન્ઝિસ્ટર સ્ટેજ્સને જોડવા માટે કેપેસિટર્સનો ઉપયોગ કરે છે.
+
+\textbf{સર્કિટ ડાયાગ્રામ:}
+
+\begin{center}
+\begin{circuitikz}[american, scale=0.9, transform shape]
+    % Stage 1
+    \draw (0,0) node[ground] {} to[R, l=$R_{E1}$] (0,1) to[Tnpn, n=Q1] (0,3) to[R, l=$R_{C1}$] (0,5) -- (0,6) node[vcc] {$V_{CC}$};
+    \draw (Q1.B) -- (-1.5, 1.85); 
+    \draw (-1.5, 6) to[R, l=$R_1$] (-1.5, 1.85) to[R, l=$R_2$] (-1.5, 0) node[ground] {};
+    \draw (-3.5, 1.85) to[C, l=$C_{in}$] (-1.5, 1.85);
+    \draw (-3.5, 1.85) node[left] {$V_{in}$};
+    \draw (0,1) -- (1,1) to[C, l=$C_{E1}$] (1,0) node[ground] {};
+    
+    % Coupling
+    \draw (0,3) to[C, l=$C_C$] (3,3) -- (3, 1.85);
+    
+    % Stage 2
+    \draw (4.5,0) node[ground] {} to[R, l=$R_{E2}$] (4.5,1) to[Tnpn, n=Q2] (4.5,3) to[R, l=$R_{C2}$] (4.5,5) -- (4.5,6) -- (0,6);
+    \draw (Q2.B) -- (3, 1.85);
+    \draw (3, 6) to[R, l=$R_3$] (3, 1.85) to[R, l=$R_4$] (3, 0) node[ground] {};
+    \draw (4.5,1) -- (5.5,1) to[C, l=$C_{E2}$] (5.5,0) node[ground] {};
+    
+    % Output
+    \draw (4.5,3) to[C, l=$C_{out}$] (6.5,3) node[right] {$V_{out}$};
+    
+    \draw (-1.5, 6) -- (0,6);
+    \draw (3,6) -- (4.5,6);
+\end{circuitikz}
+\end{center}
+
+\textbf{ફ્રીક્વન્સી રિસ્પોન્સ:}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.8]
+    \begin{axis}[
+        xlabel={Frequency (log scale)},
+        ylabel={Gain (dB)},
+        xmode=log,
+        ymin=0, ymax=50,
+        grid=both,
+        width=10cm, height=5cm
+    ]
+    \addplot[smooth, thick] coordinates {
+        (10, 10) (100, 37) (1000, 40) (10000, 40) (100000, 37) (1000000, 10)
+    };
+    \draw[dashed] (100, 37) -- (100, 0) node[below] {$f_L$};
+    \draw[dashed] (100000, 37) -- (100000, 0) node[below] {$f_H$};
+    \draw[<->] (100, 20) -- (100000, 20) node[midway, fill=white] {Bandwidth};
+    \end{axis}
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{કપલિંગ કેપેસિટર્સ ($C_C$)}: DC બ્લોક કરે છે, સ્ટેજ્સ વચ્ચે AC સિગ્નલ ટ્રાન્સફર કરે છે
+    \item \textbf{બાયસિંગ રેસિસ્ટર્સ ($R_1, R_2$)}: ટ્રાન્ઝિસ્ટર ઓપરેશન માટે યોગ્ય Q-પોઇન્ટ સ્થાપિત કરે છે
+    \item \textbf{બાયપાસ કેપેસિટર્સ ($C_E$)}: $R_E$ પર નેગેટિવ ફીડબેકથી ગેઇન ઘટાડો રોકે છે
+    \item \textbf{બેન્ડવિડ્થ}: લો ($f_L$) અને હાઈ ($f_H$) કટઓફ ફ્રીક્વન્સી વચ્ચેનો રેન્જ
+\end{itemize}
+
+\begin{mnemonicbox}
+"CARS" - "Coupling capacitors Allow Resistance Separation"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\vspace{0.5em}\centerline{\textbf{OR}}\questionmarks{1(c)}{7}{એમ્પ્લીફાયરમાં નેગેટીવ અને પોઝીટીવ ફીડબેક સરખાવો.}
+
+\begin{solutionbox}
+ફીડબેક સિસ્ટમ્સ આઉટપુટના એક ભાગને ઇનપુટ પર પાછો મોકલે છે.
+
+\begin{center}
+\captionof{table}{ફીડબેક પ્રકારોની સરખામણી}
+\begin{tabulary}{\textwidth}{|L|L|L|}
+\hline
+\textbf{પેરામીટર} & \textbf{નેગેટિવ ફીડબેક} & \textbf{પોઝિટિવ ફીડબેક} \\
+\hline
+ગેઇન & ઘટાડે છે & વધારે છે \\
+\hline
+બેન્ડવિડ્થ & વધારે છે & ઘટાડે છે \\
+\hline
+સ્ટેબિલિટી & સુધારે છે & ઘટાડે છે \\
+\hline
+ડિસ્ટોર્શન & ઘટાડે છે & વધારે છે \\
+\hline
+નોઇઝ & ઘટાડે છે & વધારે છે \\
+\hline
+ઇનપુટ/આઉટપુટ ઇમ્પીડન્સ & નિયંત્રિત કરી શકાય છે & અનિશ્ચિત \\
+\hline
+એપ્લિકેશન્સ & એમ્પ્લિફાયર, રેગ્યુલેટર & ઓસિલેટર, શ્મિટ ટ્રિગર \\
+\hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{નેગેટિવ ફીડબેક}: આઉટપુટ ઇનપુટથી 180° શિફ્ટ હોય છે
+    \item \textbf{પોઝિટિવ ફીડબેક}: આઉટપુટ ઇનપુટથી 0° શિફ્ટ હોય છે
+    \item \textbf{બાર્ખાઉસન ક્રાઇટેરિયા}: યુનિટી ગેઇન સાથે પોઝિટિવ ફીડબેક ઓસિલેશન ઉત્પન્ન કરે છે
+\end{itemize}
+
+\begin{mnemonicbox}
+"SIGN" - "Stability Increases with Gain Negation"
+\end{mnemonicbox}
+\end{solutionbox}
+\questionmarks{2(a)}{3}{ઓસિલેશન માટે બારખૌસન ક્રાઈટરીઆ (Barkhausen's criteria) જણાવો અને સમજાવો.}
+
+\begin{solutionbox}
+બાર્ખાઉસન ક્રાઇટેરિયા ફીડબેક સિસ્ટમમાં સતત ઓસિલેશન માટેની શરતો નિર્ધારિત કરે છે.
+
+\textbf{આકૃતિ:}
+
+\begin{center}
+\begin{tikzpicture}[gtu block]
+    \node [draw, rectangle] (amp) {એમ્પ્લિફાયર ($A$)};
+    \node [draw, rectangle, below=1cm of amp] (beta) {ફીડબેક નેટવર્ક ($\beta$)};
+    \node [left=1cm of amp] (in) {};
+    \node [right=1cm of amp] (out) {};
+
+    \draw [gtu arrow] (in) -- node[above] {$V_{in}=0$} (amp);
+    \draw [gtu arrow] (amp) -- node[above] {$V_{out}$} (out);
+    \draw [gtu arrow] (amp.east) -- ++(0.5,0) |- (beta.east);
+    \draw [gtu arrow] (beta.west) -| (amp.west);
+    
+    \node [right, align=left] at (4,0) {શરતો:\\1. લૂપ ગેઇન $|A\beta| = 1$\\2. ફેઝ શિફ્ટ $\angle A\beta = 0^\circ$ કે $360^\circ$};
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{ગેઇન શરત}: લૂપ ગેઇન ($A\times\beta$) 1 (યુનિટી) હોવી જોઈએ
+    \item \textbf{ફેઝ શરત}: લૂપની આસપાસ કુલ ફેઝ શિફ્ટ $0^\circ$ અથવા $360^\circ$ હોવી જોઈએ
+    \item \textbf{વ્યવહારિક અમલીકરણ}: શરૂઆતમાં લૂપ ગેઇન $> 1$ હોય છે જેથી ઓસિલેશન શરૂ થાય, પછી નોન-લિનિયારિટીના કારણે 1 પર સ્થિર થાય છે
+\end{itemize}
+
+\begin{mnemonicbox}
+"LOOP" - "Loop's Overall Output Phase"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(b)}{4}{ફિક્સ્ડ બાયસ, કલેક્ટર ટુ બેઝ બાયસ અને વોલ્ટેજ ડિવાઈડર બાયસ પદ્ધતિઓની સરખામણી કરો.}
+
+\begin{solutionbox}
+વિવિધ બાયસિંગ તકનીકો સ્થિરતા અને તાપમાન ક્ષતિપૂર્તિના વિવિધ સ્તરો પ્રદાન કરે છે.
+
+\begin{center}
+\captionof{table}{બાયસિંગ પદ્ધતિઓની સરખામણી}
+\begin{tabulary}{\textwidth}{|L|L|L|L|}
+\hline
+\textbf{પેરામીટર} & \textbf{ફિક્સ્ડ બાયસ} & \textbf{કલેક્ટર-બેઝ બાયસ} & \textbf{વોલ્ટેજ ડિવાઇડર બાયસ} \\
+\hline
+સ્ટેબિલિટી & નબળી & વધુ સારી & ઉત્તમ \\
+\hline
+સર્કિટ જટિલતા & સરળ & મધ્યમ & જટિલ \\
+\hline
+તાપમાન સ્ટેબિલિટી & નબળી & મધ્યમ & સારી \\
+\hline
+કોમ્પોનેન્ટ્સ & 1 રેસિસ્ટર & 1 રેસિસ્ટર & 3-4 રેસિસ્ટર \\
+\hline
+સ્ટેબિલિટી ફેક્ટર (S) & ઉચ્ચ (અસ્થિર) & મધ્યમ & નીચો (સ્થિર) \\
+\hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{ફિક્સ્ડ બાયસ}: બેઝથી $V_{CC}$ સુધી એક રેસિસ્ટર
+    \item \textbf{કલેક્ટર-બેઝ બાયસ}: કલેક્ટરથી બેઝ સુધી ફીડબેક રેસિસ્ટર નેગેટિવ ફીડબેક આપે છે
+    \item \textbf{વોલ્ટેજ ડિવાઇડર}: બે રેસિસ્ટર $\beta$ થી સ્વતંત્ર સ્થિર રેફરન્સ વોલ્ટેજ બનાવે છે
+\end{itemize}
+
+\begin{mnemonicbox}
+"STORM" - "Stability Through Optimized Resistor Methods"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(c)}{7}{હાર્ટલી ઓસીલેટર પર ટૂંક નોંધ લખો.}
+
+\begin{solutionbox}
+હાર્ટલી ઓસિલેટર એક LC ઓસિલેટર છે જેમાં ફીડબેક માટે ટેપ્ડ ઇન્ડક્ટર હોય છે.
+
+\textbf{સર્કિટ ડાયાગ્રામ:}
+
+\begin{center}
+\begin{circuitikz}[american, scale=0.9, transform shape]
+    % Transistor
+    \draw (0,0) node[ground] {} to[R, l=$R_E$] (0,1) to[Tnpn, n=Q1] (0,3) to[L, l=$RFC$] (0,5) -- (0,6) node[vcc] {$V_{CC}$};
+    \draw (0,1) -- (1,1) to[C, l=$C_E$] (1,0) node[ground] {};
+    
+    % Biasing
+    \draw (-1.5, 6) to[R, l=$R_1$] (-1.5, 1.85) -- (Q1.B);
+    \draw (-1.5, 1.85) to[R, l=$R_2$] (-1.5, 0) node[ground] {};
+    \draw (-1.5, 6) -- (0,6);
+    
+    % Tank Circuit
+    \draw (3, 4) to[C, l=$C$] (3, 0);
+    \draw (4.5, 4) to[L, l=$L_1$] (4.5, 2) node[ground] {} to[L, l=$L_2$] (4.5, 0);
+    \draw (3,4) -- (4.5,4);
+    \draw (3,0) -- (4.5,0);
+    
+    % Coupling
+    \draw (0,3) -- (0,4) to[C, l=$C_C$] (3,4); % Collector to Tank
+    \draw (-1.5, 1.85) -- (-2.5, 1.85) to[C, l=$C_{in}$] (-2.5, 0) -- (3,0); % Feedback to Base
+\end{circuitikz}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{સર્કિટ કોમ્પોનેન્ટ્સ}: એમ્પ્લિફાયર (CE મોડ), ટેન્ક સર્કિટ ($L_1, L_2, C$)
+    \item \textbf{ફ્રીક્વન્સી ફોર્મ્યુલા}: $f = \frac{1}{2\pi\sqrt{L_{eq}C}}$ જ્યાં $L_{eq} = L_1 + L_2$
+    \item \textbf{ફીડબેક}: $L_2$ પર વોલ્ટેજ બેઝ પર પાછો આપવામાં આવે છે (ટેન્ક દ્વારા $180^\circ$ ફેઝ શિફ્ટ + એમ્પ્લિફાયર દ્વારા $180^\circ$ = $360^\circ$)
+    \item \textbf{એપ્લિકેશન્સ}: RF સિગ્નલ જનરેટર, રેડિયો રિસીવર
+\end{itemize}
+
+\begin{mnemonicbox}
+"TILC" - "Tapped Inductor with LC Circuit"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\vspace{0.5em}\centerline{\textbf{OR}}\questionmarks{2(a)}{3}{ટ્રાન્ઝિસ્ટરનું સ્વિચ તરીકે કાર્ય સમજાવો.}
+
+\begin{solutionbox}
+ટ્રાન્ઝિસ્ટર ડિજિટલ એપ્લિકેશન્સ માટે કટઓફ (OFF) અને સેચુરેશન (ON) રીજન્સ વચ્ચે સ્વિચ કરે છે.
+
+\textbf{આકૃતિ:}
+
+\begin{center}
+\begin{tikzpicture}[gtu block]
+    \node [draw, rectangle] (in) {ઇનપુટ};
+    \node [draw, diamond, right=1cm of in] (trans) {ટ્રાન્ઝિસ્ટર};
+    \node [draw, rectangle, right=1cm of trans] (out) {આઉટપુટ};
+    
+    \draw [gtu arrow] (in) -- node[above] {High} (trans);
+    \draw [gtu arrow] (trans) -- node[above] {Low (ON)} (out);
+    
+    \node [below=0.5cm of trans] (state) {સ્ટેટ};
+    \draw [dashed] (trans) -- (state);
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{કટઓફ રીજન}: $V_{BE} < 0.7V$, ઓપન સ્વિચ તરીકે કાર્ય કરે છે, $V_{CE} \approx V_{CC}$ (આઉટપુટ High)
+    \item \textbf{સેચુરેશન રીજન}: $V_{BE} > 0.7V$, ક્લોઝ્ડ સ્વિચ તરીકે કાર્ય કરે છે, $V_{CE} \approx 0.2V$ (આઉટપુટ Low)
+    \item \textbf{સ્વિચિંગ ટાઇમ}: જંક્શન કેપેસિટન્સ દ્વારા મર્યાદિત થાય છે
+\end{itemize}
+
+\begin{mnemonicbox}
+"COPS" - "Cutoff-On-Produces Switching"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(b)}{4}{હીટ સિંક વ્યાખ્યાયિત કરો. હીટ સિંકના પ્રકારોની યાદી બનાવો અને તેની એપ્લિકેશન લખો.}
+
+\begin{solutionbox}
+હીટ સિંક એક થર્મલ કન્ડક્ટર છે જે ઓવરહિટીંગ અટકાવવા ઇલેક્ટ્રોનિક કોમ્પોનેન્ટ્સમાંથી ગરમી દૂર કરે છે.
+
+\textbf{આકૃતિ:}
+
+\begin{center}
+\begin{tikzpicture}
+    % Simple finned heat sink
+    \draw[fill=gray!30] (0,0) rectangle (4, 0.5); % Base
+    \foreach \x in {0.2, 0.8, ..., 3.8}
+        \draw[fill=gray!30] (\x, 0.5) rectangle (\x+0.2, 1.5); % Fins
+    \node at (2, -0.5) {Transistor};
+    \draw (1.5, -0.5) rectangle (2.5, 0);
+\end{tikzpicture}
+\end{center}
+
+\textbf{હીટ સિંકના પ્રકારો:}
+
+\begin{center}
+\captionof{table}{હીટ સિંક પ્રકાર અને એપ્લિકેશન}
+\begin{tabulary}{\textwidth}{|L|L|L|}
+\hline
+\textbf{પ્રકાર} & \textbf{વર્ણન} & \textbf{એપ્લિકેશન} \\
+\hline
+પેસિવ & કોઈ ચલિત ભાગો નહીં, કુદરતી કન્વેક્શન & ઓછી પાવર ડિવાઇસીસ \\
+\hline
+એક્ટિવ & ફેન અથવા પંપ સાથે & હાઈ પાવર એમ્પ્લિફાયર, CPU \\
+\hline
+લિક્વિડ-કૂલ્ડ & હીટ ટ્રાન્સફર માટે પ્રવાહી વાપરે છે & સુપરકોમ્પ્યુટર્સ \\
+\hline
+ફિન્ડ & મલ્ટીપલ ફિન્સ સરફેસ એરિયા વધારે છે & પાવર ટ્રાન્ઝિસ્ટર \\
+\hline
+\end{tabulary}
+\end{center}
+
+\begin{mnemonicbox}
+"COOL" - "Conducting Out Of Local heat"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(c)}{7}{એમ્પ્લીફાયરમાં નેગેટીવ ફીડબેક ના ફાયદા અને ગેરફાયદાને વિગતવાર સમજાવો.}
+
+\begin{solutionbox}
+નેગેટિવ ફીડબેક આઉટપુટ સિગ્નલના એક ભાગને વિરુદ્ધ ફેઝમાં ઇનપુટ પર પાછો મોકલે છે જેથી સ્ટેબિલિટી સુધરે.
+
+\textbf{ફીડબેક બ્લોક ડાયાગ્રામ:}
+
+\begin{center}
+\begin{tikzpicture}[gtu block]
+    \node [draw, circle] (sum) {$\Sigma$};
+    \node [draw, rectangle, right=1cm of sum] (amp) {$A$};
+    \node [draw, rectangle, below=1cm of amp] (beta) {$\beta$};
+    \node [left=1cm of sum] (in) {$V_{in}$};
+    \node [right=1cm of amp] (out) {$V_{out}$};
+
+    \draw [gtu arrow] (in) -- node[above] {+} (sum);
+    \draw [gtu arrow] (sum) -- (amp);
+    \draw [gtu arrow] (amp) -- (out);
+    \draw [gtu arrow] (amp.east) -- ++(0.5,0) |- (beta.east);
+    \draw [gtu arrow] (beta.west) -| node[left] {-} (sum.south);
+\end{tikzpicture}
+\end{center}
+
+\begin{center}
+\captionof{table}{નેગેટિવ ફીડબેકના ફાયદા અને ગેરફાયદા}
+\begin{tabulary}{\textwidth}{|L|L|}
+\hline
+\textbf{ફાયદા} & \textbf{ગેરફાયદા} \\
+\hline
+ગેઇન સ્ટેબિલાઇઝ કરે છે & સમગ્ર ગેઇન ઘટાડે છે \\
+\hline
+બેન્ડવિડ્થ વધારે છે & વધુ કોમ્પોનેન્ટ્સની જરૂર પડે છે \\
+\hline
+નોન-લિનિયર ડિસ્ટોર્શન ઘટાડે છે & ફીડબેક સર્કિટમાં પાવર વપરાશ \\
+\hline
+નોઇઝ ઘટાડે છે & જટિલ ડિઝાઇન \\
+\hline
+ઇનપુટ/આઉટપુટ ઇમ્પીડન્સ નિયંત્રિત કરે છે & અયોગ્ય ડિઝાઇન હોય તો ઓસિલેશનની શક્યતા \\
+\hline
+\end{tabulary}
+\end{center}
+
+\begin{mnemonicbox}
+"STABLE" - "Stabilized Transmission And Bandwidth with Less Error"
+\end{mnemonicbox}
+\end{solutionbox}
+\questionmarks{3(a)}{3}{SCR નો સિમ્બોલ દોરો અને SCR નું કાર્ય સમજાવો.}
+
+\begin{solutionbox}
+સિલિકોન કંટ્રોલ્ડ રેક્ટિફાયર (SCR) એ ત્રણ ટર્મિનલ વાળું PNPN ચાર-લેયર ડિવાઇસ છે.
+
+\textbf{સિમ્બોલ:}
+
+\begin{center}
+\begin{circuitikz}[american, scale=1.2, transform shape]
+    \draw (0,0) to[Thyristor, name=SCR] (0, 2);
+    \node[above] at (0,2) {એનોડ (A)};
+    \node[below] at (0,0) {કેથોડ (K)};
+    \node[right] at (SCR.gate) {ગેટ (G)};
+\end{circuitikz}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{સ્ટ્રક્ચર}: P-N-P-N ચાર-લેયર સેમિકન્ડક્ટર ડિવાઇસ
+    \item \textbf{ઓપરેશન}: ગેટ ટ્રિગર ન થાય ત્યાં સુધી OFF રહે છે, ત્યારબાદ કરંટ હોલ્ડિંગ વેલ્યુથી નીચે ન જાય ત્યાં સુધી કન્ડક્ટ કરે છે
+    \item \textbf{ટર્મિનલ્સ}: એનોડ (A), કેથોડ (K), ગેટ (G)
+\end{itemize}
+
+\begin{mnemonicbox}
+"AGK" - "Anode-Gate controls Kathode current"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3(b)}{4}{સર્કિટ ડાયાગ્રામ સાથે SCR ની ટુ ટ્રાન્ઝિસ્ટર એનાલોજી સમજાવો.}
+
+\begin{solutionbox}
+SCRને સેમિકન્ડક્ટર લેયર્સ શેર કરતા ઇન્ટરકનેક્ટેડ PNP અને NPN ટ્રાન્ઝિસ્ટર તરીકે રજૂ કરી શકાય છે.
+
+\textbf{સર્કિટ ડાયાગ્રામ:}
+
+\begin{center}
+\begin{circuitikz}[american, scale=1.0, transform shape]
+    % PNP Transistor (Upper)
+    \draw (2,4) node[above] {એનોડ} to[Tpnp, n=Q1] (2,2);
+    
+    % NPN Transistor (Lower)
+    \draw (1,0) node[below] {કેથોડ} to[Tnpn, mirror, n=Q2] (1,2);
+    
+    % Connections
+    \draw (Q1.C) -- (1,2) -- (Q2.B); % PNP Collector to NPN Base
+    \draw (Q2.C) -- (2,2) -- (Q1.B); % NPN Collector to PNP Base
+    
+    % Gate
+    \draw (Q2.B) -- (0, 0.85) node[left] {ગેટ};
+    
+    % Nodes
+    \node[right] at (Q1.E) {Q1 (PNP)};
+    \node[left] at (Q2.E) {Q2 (NPN)};
+\end{circuitikz}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{PNP સેક્શન}: ઉપરનો ટ્રાન્ઝિસ્ટર જેનો કલેક્ટર NPN બેઝ સાથે જોડાયેલો છે
+    \item \textbf{NPN સેક્શન}: નીચેનો ટ્રાન્ઝિસ્ટર જેનો કલેક્ટર PNP બેઝ સાથે જોડાયેલો છે
+    \item \textbf{રિજનરેટિવ ફીડબેક}: Q1 નો કલેક્ટર કરંટ Q2 ના બેઝને આપે છે; Q2 નો કલેક્ટર કરંટ Q1 ના બેઝને આપે છે. એકવાર ટ્રિગર થયા પછી, લૂપ કન્ડક્શન જાળવી રાખે છે.
+\end{itemize}
+
+\begin{mnemonicbox}
+"PNPN" - "Positive-Negative-Positive-Negative layers"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3(c)}{7}{સર્કિટ ડાયાગ્રામ સાથે TRIAC આધારિત ફેન રેગ્યુલેટરનું કાર્ય સમજાવો.}
+
+\begin{solutionbox}
+TRIAC-આધારિત ફેન રેગ્યુલેટર ફેઝ કંટ્રોલ દ્વારા લોડને અપાતા AC પાવરને નિયંત્રિત કરે છે.
+
+\textbf{સર્કિટ ડાયાગ્રામ:}
+
+\begin{center}
+\begin{circuitikz}[american, scale=1.0, transform shape]
+    \draw (0,4) node[left] {AC Live} to[short, o-] (1,4) -- (3,4) -- (5,4);
+    
+    % Load
+    \draw (5,4) to[lamp, l=Fan/Load] (5,2) to[Triac, n=T1, mirror] (5,0) -- (0,0) node[left] {AC Neutral} node[short, o] {};
+    
+    % Trigger Circuit
+    \draw (1,4) to[R, l=$R_1$] (1,2.5) to[vR, l=$R_2 (Speed)$] (1,1) -- (3,1);
+    \draw (3,1) to[C, l=$C_1$] (3,0) node[ground] {};
+    \draw (3,0) -- (5,0); % Connect to neutral line
+    
+    % DIAC
+    \draw (3,1) -- (3,2) to[generic, l=DIAC] (T1.gate);
+    
+    \node[right] at (T1) {TRIAC};
+\end{circuitikz}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{ફેઝ કંટ્રોલ}: અસરકારક RMS વોલ્ટેજ નિયંત્રિત કરવા માટે TRIAC ના ફાયરિંગ એંગલ બદલે છે
+    \item \textbf{ડાયક}: TRIAC માટે બાયડાયરેક્શનલ ટ્રિગરિંગ પલ્સ આપે છે
+    \item \textbf{RC ટાઇમિંગ સર્કિટ}: $R_1, R_2, C_1$ ડિલે એંગલ નક્કી કરે છે; $R_2$ બદલવાથી સ્પીડ બદલાય છે
+    \item \textbf{ઓપરેશન}: જ્યારે કેપેસિટર વોલ્ટેજ DIAC બ્રેકઓવર સુધી પહોંચે છે, ત્યારે TRIAC ફાયર થાય છે
+\end{itemize}
+
+\begin{mnemonicbox}
+"TRIAC" - "Triggered Response In AC Circuits"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\vspace{0.5em}\centerline{\textbf{OR}}\questionmarks{3(a)}{3}{DIAC અને TRIAC ની V-I લાક્ષણિકતાઓ દોરો.}
+
+\begin{solutionbox}
+DIACs અને TRIACs સિમેટ્રિકલ ફોરવર્ડ અને રિવર્સ લાક્ષણિકતાઓ ધરાવતા બાયડાયરેક્શનલ ડિવાઇસ છે.
+
+\textbf{DIAC ખાસિયતો:}
+\begin{center}
+\begin{tikzpicture}[scale=0.6]
+    \draw[->] (-3,0) -- (3,0) node[right] {$V$};
+    \draw[->] (0,-3) -- (0,3) node[above] {$I$};
+    \draw[thick, blue] plot [smooth] coordinates {(0,0) (1,0.1) (2,0.2) (1.5,1.5) (2.5,2.5)};
+    \draw[thick, blue] plot [smooth] coordinates {(0,0) (-1,-0.1) (-2,-0.2) (-1.5,-1.5) (-2.5,-2.5)};
+    \node at (2, 1.5) {કન્ડક્શન};
+    \node at (-2, -1.5) {કન્ડક્શન};
+    \node[below] at (2,0) {$V_{BO}$};
+    \node[above] at (-2,0) {$-V_{BO}$};
+\end{tikzpicture}
+\end{center}
+
+\textbf{TRIAC ખાસિયતો:}
+\begin{center}
+\begin{tikzpicture}[scale=0.6]
+    \draw[->] (-3,0) -- (3,0) node[right] {$V_{MT2-MT1}$};
+    \draw[->] (0,-3) -- (0,3) node[above] {$I_T$};
+    % Quadrant 1
+    \draw[thick, red] plot coordinates {(0,0) (2,0.2) (2.2,0.3) (1,1.5) (2,2.5)};
+    % Quadrant 3
+    \draw[thick, red] plot coordinates {(0,0) (-2,-0.2) (-2.2,-0.3) (-1,-1.5) (-2,-2.5)};
+    
+    \node at (2.5, 2) {Mode I};
+    \node at (-2.5, -2) {Mode III};
+    \node[right] at (1.5, 0.5) {Gate Triggered};
+\end{tikzpicture}
+\end{center}
+
+\begin{mnemonicbox}
+"BIBO" - "Bidirectional In, Bidirectional Out"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3(b)}{4}{SCR ની ગેટ ટ્રિગરિંગ પદ્ધતિ સમજાવો.}
+
+\begin{solutionbox}
+ગેટ ટ્રિગરિંગ ચોક્કસ સમયે SCR ચાલુ કરવા માટે ગેટ ટર્મિનલ પર કંટ્રોલ સિગ્નલ લાગુ કરે છે.
+
+\textbf{આકૃતિ:}
+
+\begin{center}
+\begin{circuitikz}[american, scale=1.0, transform shape]
+    \draw (0,4) to[battery1, l=$V_{AK}$] (0,0);
+    \draw (0,4) to[lamp, l=Load] (3,4) to[Thyristor, name=SCR] (3,0) -- (0,0);
+    
+    % Gate Circuit
+    \draw (-2, 0.85) to[battery1, l=$V_G$] (-2, 2) to[R, l=$R_G$] (0.5, 2) -- (SCR.gate);
+    \draw (-2, 0.85) -- (3, 0.85); % Common cathode ground level connection
+    
+    \node[right] at (SCR.gate) {$I_G$};
+\end{circuitikz}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{ગેટ પલ્સ}: ગેટ અને કેથોડ વચ્ચે પોઝિટિવ કરંટ લાગુ કરવામાં આવે છે
+    \item \textbf{ટાઇમિંગ}: AC સર્કિટ્સમાં ફાયરિંગ એંગલ ($\alpha$) ને નિયંત્રિત કરે છે
+    \item \textbf{જરૂરિયાત}: એનોડ કરંટ લેચિંગ કરંટ સુધી પહોંચે ત્યાં સુધી ગેટ કરંટ ચાલુ રહેવો જોઈએ
+\end{itemize}
+
+\begin{mnemonicbox}
+"GATE" - "Gain Activation Through Electron flow"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3(c)}{7}{ડીસી પાવર કંટ્રોલ માટે SCRની એપ્લિકેશન સમજાવો.}
+
+\begin{solutionbox}
+SCR PWM અથવા ફેઝ કંટ્રોલ તકનીકોનો ઉપયોગ કરીને સપ્લાય વોલ્ટેજને ચોપિંગ (Chopping) કરીને DC પાવરને નિયંત્રિત કરે છે.
+
+\textbf{સર્કિટ ડાયાગ્રામ:}
+
+\begin{center}
+\begin{circuitikz}[american, scale=1.0, transform shape]
+    \draw (0,0) to[battery1, l=$V_{DC}$] (0,3) -- (2,3);
+    \draw (2,3) to[Thyristor, name=SCR] (4,3);
+    \draw (4,3) to[R, l=$R_{Load}$] (4,0) -- (0,0);
+    
+    % Trigger
+    \draw (SCR.gate) -- (2.8, 2.2) node[below] {Trigger/PWM};
+    
+    \draw (4,0) to[open, v^>=$V_{out}$] (4,3);
+\end{circuitikz}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{ચોપિંગ}: SCR સ્વીચ તરીકે કાર્ય કરે છે, જે ઝડપથી ON અને OFF થાય છે
+    \item \textbf{પાવર કંટ્રોલ}: સરેરાશ આઉટપુટ વોલ્ટેજ $V_{avg} = V_{in} \times \text{Duty Cycle}$
+    \item \textbf{કોમ્યુટેશન}: DC સર્કિટ્સમાં, SCR ને OFF કરવા માટે ફોર્સ્ડ કોમ્યુટેશન સર્કિટની જરૂર પડે છે
+\end{itemize}
+
+\begin{mnemonicbox}
+"POWER" - "Pulse Operation With Electronic Regulation"
+\end{mnemonicbox}
+\end{solutionbox}
+\questionmarks{4(a)}{3}{Ideal OP-AMP ની લાક્ષણિકતાઓની સૂચિ બનાવો.}
+
+\begin{solutionbox}
+આદર્શ ઓપરેશનલ એમ્પ્લિફાયર્સ સંપૂર્ણ લાક્ષણિકતાઓ ધરાવતા સૈદ્ધાંતિક ઉપકરણો છે.
+
+\begin{center}
+\captionof{table}{આદર્શ Op-Amp લાક્ષણિકતાઓ}
+\begin{tabulary}{\textwidth}{|L|L|}
+\hline
+\textbf{લાક્ષણિકતા} & \textbf{આદર્શ મૂલ્ય} \\
+\hline
+ઓપન લૂપ ગેઇન ($A_{OL}$) & અનંત ($\infty$) \\
+\hline
+ઇનપુટ ઇમ્પીડન્સ ($Z_{in}$) & અનંત ($\infty$) \\
+\hline
+આઉટપુટ ઇમ્પીડન્સ ($Z_{out}$) & શૂન્ય ($0\Omega$) \\
+\hline
+બેન્ડવિડ્થ ($BW$) & અનંત ($\infty$) \\
+\hline
+CMRR & અનંત ($\infty$) \\
+\hline
+સ્લ્યુ રેટ & અનંત ($\infty$) \\
+\hline
+ઓફસેટ વોલ્ટેજ & શૂન્ય ($0V$) \\
+\hline
+\end{tabulary}
+\end{center}
+
+\begin{mnemonicbox}
+"IBOCSS" - "Infinite Bandwidth, Open-loop gain, CMRR, Slew rate, and Sensitivity"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(b)}{4}{સર્કિટ ડાયાગ્રામ સાથે OP-AMP નો ઉપયોગ કરીને ડીફરન્સીઅલ એમ્પ્લીફાયરનું કાર્ય સમજાવો.}
+
+\begin{solutionbox}
+ડિફરેન્શિયલ એમ્પ્લિફાયર કોમન સિગ્નલ્સને રિજેક્ટ કરતી વખતે બે ઇનપુટ્સ વચ્ચેના વોલ્ટેજ તફાવતને એમ્પ્લિફાય કરે છે.
+
+\textbf{સર્કિટ ડાયાગ્રામ:}
+
+\begin{center}
+\begin{circuitikz}[american, scale=1.0, transform shape]
+    \draw (0,0) node[op amp] (opamp) {};
+    
+    % Inverting Input
+    \draw (opamp.-) -- (-2, 0.5) to[R, l=$R_1$] (-4, 0.5) node[left] {$V_1$};
+    \draw (opamp.-) -- (-1.5, 0.5) -- (-1.5, 2) to[R, l=$R_2$] (1.5, 2) -| (opamp.out);
+    
+    % Non-Inverting Input
+    \draw (opamp.+) -- (-1.5, -0.5) to[R, l=$R_3 (R_1)$] (-4, -0.5) node[left] {$V_2$};
+    \draw (-1.5, -0.5) to[R, l=$R_4 (R_2)$] (-1.5, -2) node[ground] {};
+    
+    % Output
+    \draw (opamp.out) to[short, -o] (2,0) node[right] {$V_{out}$};
+\end{circuitikz}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{ગેઇન ફોર્મ્યુલા}: $V_{out} = \frac{R_2}{R_1}(V_2 - V_1)$ (જ્યારે $R_3=R_1, R_4=R_2$)
+    \item \textbf{કોમન મોડ રિજેક્શન}: બંને ઇનપુટ્સમાં સામાન્ય હોય તેવા સિગ્નલ્સ (નોઇઝ) ને દૂર કરે છે
+    \item \textbf{એપ્લિકેશન્સ}: ઇન્સ્ટ્રુમેન્ટેશન, મેડિકલ ઇક્વિપમેન્ટ
+\end{itemize}
+
+\begin{mnemonicbox}
+"DIFF" - "Dual Input For Feedback"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(c)}{7}{OP-AMP ને ઇન્વર્ટિંગ એમ્પ્લીફાયર (ક્લોઝ્ડ લૂપ) તરીકે સમજાવો અને વોલ્ટેજ ગેઇન નું સમીકરણ મેળવો.}
+
+\begin{solutionbox}
+ઇન્વર્ટિંગ એમ્પ્લિફાયર ઇનપુટ સિગ્નલને ઇન્વર્ટ (180° ફેઝ શિફ્ટ) અને એમ્પ્લિફાય કરે છે.
+
+\textbf{સર્કિટ ડાયાગ્રામ:}
+
+\begin{center}
+\begin{circuitikz}[american, scale=1.0, transform shape]
+    \draw (0,0) node[op amp] (opamp) {};
+    \draw (opamp.+) -- (-1, -0.5) node[ground] {};
+    \draw (opamp.-) -- (-1, 0.5) to[R, l=$R_i$] (-3, 0.5) node[left] {$V_{in}$};
+    \draw (opamp.-) -- (-1, 0.5) -- (-1, 2) to[R, l=$R_f$] (1, 2) -| (opamp.out);
+    \draw (opamp.out) to[short, -o] (2,0) node[right] {$V_{out}$};
+\end{circuitikz}
+\end{center}
+
+\textbf{ગેઇન ડેરિવેશન:}
+\begin{itemize}
+    \item ઇન્વર્ટિંગ ઇનપુટ (વર્ચ્યુઅલ ગ્રાઉન્ડ નોડ $V^-$) પર KCL લાગુ કરો:
+    \[ I_1 + I_2 = 0 \]
+    \item ઓપ-એમ્પ ઇનપુટ ઇમ્પીડન્સ અનંત હોવાથી, અંદર જતો કરંટ શૂન્ય છે.
+    \[ I_1 = \frac{V_{in} - V^-}{R_i}, \quad I_2 = \frac{V_{out} - V^-}{R_f} \]
+    \item વર્ચ્યુઅલ ગ્રાઉન્ડ કન્સેપ્ટ ($V^+ = 0$) મુજબ, $V^- \approx 0$.
+    \[ \frac{V_{in}}{R_i} + \frac{V_{out}}{R_f} = 0 \]
+    \[ \frac{V_{out}}{R_f} = -\frac{V_{in}}{R_i} \]
+    \[ A_v = \frac{V_{out}}{V_{in}} = -\frac{R_f}{R_i} \]
+\end{itemize}
+
+\begin{mnemonicbox}
+"VAIN" - "Virtual ground Amplification Inverts Negative"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\vspace{0.5em}\centerline{\textbf{OR}}\questionmarks{4(a)}{3}{OPAMP ના નીચેના પેરામીટર્સ વ્યાખ્યાયિત કરો: 1) CMRR, 2) સ્લૂ રેટ, 3) ગેઇન બેન્ડવિડ્થ પ્રોડક્ટ}
+
+\begin{solutionbox}
+આ પેરામીટર્સ ઓપરેશનલ એમ્પ્લિફાયર્સની કીપરફોર્મન્સ લાક્ષણિકતાઓ નક્કી કરે છે.
+
+\begin{center}
+\captionof{table}{Op-Amp પેરામીટર્સ}
+\begin{tabulary}{\textwidth}{|L|L|L|}
+\hline
+\textbf{પેરામીટર} & \textbf{વ્યાખ્યા} & \textbf{મહત્વ} \\
+\hline
+CMRR & ડિફરેન્શિયલ ગેઇનનો કોમન-મોડ ગેઇન સાથેનો ગુણોત્તર ($A_d/A_{cm}$) & ઊંચું CMRR નોઇઝ રિજેક્શન માટે સારું \\
+\hline
+સ્લ્યુ રેટ & આઉટપુટ વોલ્ટેજમાં થતા ફેરફારનો મહત્તમ દર ($dV/dt$) & હાઈ-ફ્રીક્વન્સી પરફોર્મન્સ નક્કી કરે છે \\
+\hline
+ગેઇન-બેન્ડવિડ્થ & ઓપન લૂપ ગેઇન અને ફ્રીક્વન્સીનો ગુણાકાર & આપેલ ઓપ-એમ્પ માટે અચળ રહે છે \\
+\hline
+\end{tabulary}
+\end{center}
+
+\begin{mnemonicbox}
+"CSG" - "Common-mode rejection, Speed, and Gain"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(b)}{4}{OPAMP નો ઉપયોગ કરી સમિંગ એમ્પ્લીફાયર દોરો અને સમજાવો.}
+
+\begin{solutionbox}
+સમિંગ એમ્પ્લિફાયર ઇનપુટ વોલ્ટેજના વેઇટેડ સરવાળાના પ્રમાણમાં આઉટપુટ ઉત્પન્ન કરે છે.
+
+\textbf{સર્કિટ ડાયાગ્રામ:}
+
+\begin{center}
+\begin{circuitikz}[american, scale=1.0, transform shape]
+    \draw (0,0) node[op amp] (opamp) {};
+    \draw (opamp.+) -- (-1, -0.5) node[ground] {};
+    
+    % Summing Inputs
+    \draw (opamp.-) -- (-1, 0.5) -- (-1, 2) to[R, l=$R_f$] (1, 2) -| (opamp.out);
+    
+    \draw (-1, 0.5) -- (-2, 0.5);
+    \draw (-2, 0.5) to[R, l=$R_1$] (-4, 0.5) node[left] {$V_1$};
+    \draw (-2, 0.5) -- (-2, 0) to[R, l=$R_2$] (-4, 0) node[left] {$V_2$};
+    \draw (-2, 0) -- (-2, -0.5) to[R, l=$R_3$] (-4, -0.5) node[left] {$V_3$};
+    
+    \draw (opamp.out) to[short, -o] (2,0) node[right] {$V_{out}$};
+\end{circuitikz}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{આઉટપુટ ફોર્મ્યુલા}: $V_{out} = -R_f \left( \frac{V_1}{R_1} + \frac{V_2}{R_2} + \frac{V_3}{R_3} \right)$
+    \item \textbf{એવરેજિંગ}: જો $R_1=R_2=R_3=R$ અને $R_f=R/3$, તો આઉટપુટ નેગેટિવ એવરેજ છે
+    \item \textbf{એપ્લિકેશન્સ}: ઓડિયો મિક્સર, એનાલોગ એડિશન
+\end{itemize}
+
+\begin{mnemonicbox}
+"SUM" - "Several Unified Multipliers"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(c)}{7}{IC 555 નો પિન ડાયાગ્રામ દોરો અને વેવફોર્મ સાથે IC555 નો ઉપયોગ કરીને મોનોસ્ટેબલ મલ્ટિવાઇબ્રેટર સમજાવો.}
+
+\begin{solutionbox}
+IC 555 ટાઇમર મોનોસ્ટેબલ મોડમાં ટ્રિગર થાય ત્યારે ફિક્સ્ડ સમયગાળા ($T$) નો સિંગલ પલ્સ ઉત્પન્ન કરે છે.
+
+\textbf{પિન ડાયાગ્રામ:}
+
+\begin{center}
+\begin{tikzpicture}
+    \draw (0,0) rectangle (3,4);
+    \node at (1.5, 2) {555};
+    \foreach \y/\t in {3.5/8 (VCC), 2.5/7 (DIS), 1.5/6 (THR), 0.5/5 (CV)}
+        \draw (3,\y) -- (3.5,\y) node[right] {\t};
+    \foreach \y/\t in {3.5/1 (GND), 2.5/2 (TR), 1.5/3 (OUT), 0.5/4 (RST)}
+        \draw (0,\y) -- (-0.5,\y) node[left] {\t};
+\end{tikzpicture}
+\end{center}
+
+\textbf{મોનોસ્ટેબલ સર્કિટ અને વેવફોર્મ્સ:}
+
+\begin{center}
+\begin{circuitikz}[american, scale=0.8, transform shape]
+    % 555 Block inside
+    \draw (0,0) rectangle (4,4);
+    \node at (2,3.5) {IC 555};
+    
+    % External R-C
+    \draw (2,4) -- (2,5) node[vcc] {$V_{CC}$};
+    \draw (0,3) node[left] {Discharge (7)} -- (-1,3) to[R, l=$R$] (-1,5) -- (2,5);
+    \draw (0,2) node[left] {Threshold (6)} -- (-1,2) -- (-1,3); 
+    \draw (-1,2) to[C, l=$C$] (-1,0) node[ground] {};
+    
+    % Trigger
+    \draw (0,1) node[left] {Trigger (2)} -- (-2,1) node[left] {Trig Input};
+    
+    % Output
+    \draw (4,2) node[right] {Output (3)} -- (5,2) node[right] {$V_{out}$};
+    
+    % Ground
+    \draw (2,0) -- (2,-0.5) node[ground] {};
+    
+    % Waveforms
+    \begin{scope}[shift={(6,0)}]
+        \draw[->] (0,0) -- (4,0) node[right] {$t$};
+        \draw[->] (0,2.5) -- (0,3.5) node[above] {$V$};
+        
+        % Trigger
+        \draw[blue] (0,3) -- (0.5,3) -- (0.5,1) -- (1,1) -- (1,3) -- (4,3);
+        \node[blue, right] at (4,3) {Trigger};
+        
+        % Capacitor
+        \draw[green!60!black] (0,0) -- (1,0) to[out=45, in=210] (3,2) -- (3,0) -- (4,0);
+        \node[green!60!black, right] at (4,1) {$V_C$};
+        
+        % Output
+        \draw[red] (0,0) -- (1,0) -- (1,2) -- (3,2) -- (3,0) -- (4,0);
+        \node[red, right] at (4,2) {$V_{out}$};
+        
+        \draw[<->] (1,-0.5) -- (3,-0.5) node[midway, below] {$T = 1.1 RC$};
+    \end{scope}
+\end{circuitikz}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{ઓપરેશન}: ટ્રિગર (પિન 2) લો પલ્સ ટાઇમિંગ સાયકલ શરૂ કરે છે. આઉટપુટ હાઈ થાય છે. કેપેસિટર R મારફતે ચાર્જ થાય છે.
+    \item \textbf{સાયકલનો અંત}: જ્યારે $V_C = 2/3 V_{CC}$ થાય, ત્યારે આઉટપુટ લો થાય છે, કેપેસિટર ડિસ્ચાર્જ થાય છે.
+    \item \textbf{પલ્સ સમય}: $T = 1.1 \times R \times C$ સેકંડ.
+\end{itemize}
+
+\begin{mnemonicbox}
+"TIMER" - "Triggered Input Makes Extended Response"
+\end{mnemonicbox}
+\end{solutionbox}
+\questionmarks{5(a)}{3}{SMPS નો બ્લોક ડાયાગ્રામ દોરો અને તેની એપ્લીકેશન લખો.}
+
+\begin{solutionbox}
+સ્વિચ મોડ પાવર સપ્લાય (SMPS) કાર્યક્ષમ પાવર રૂપાંતરણ માટે સ્વિચિંગ એલિમેન્ટ્સનો ઉપયોગ કરે છે.
+
+\textbf{બ્લોક ડાયાગ્રામ:}
+
+\begin{center}
+\begin{tikzpicture}[gtu block]
+    \node [draw, rectangle] (ac) {AC ઇનપુટ};
+    \node [draw, rectangle, right=0.5cm of ac] (rect1) {રેક્ટિફાયર \& ફિલ્ટર};
+    \node [draw, rectangle, below=1cm of rect1] (switch) {સ્વિચિંગ સર્કિટ};
+    \node [draw, rectangle, right=0.5cm of switch] (trans) {ટ્રાન્સફોર્મર};
+    \node [draw, rectangle, right=0.5cm of trans] (rect2) {રેક્ટિફાયર \& ફિલ્ટર};
+    \node [draw, rectangle, above=1cm of rect2] (out) {આઉટપુટ};
+    
+    \draw [gtu arrow] (ac) -- (rect1);
+    \draw [gtu arrow] (rect1) -- (switch);
+    \draw [gtu arrow] (switch) -- (trans);
+    \draw [gtu arrow] (trans) -- (rect2);
+    \draw [gtu arrow] (rect2) -- (out);
+    
+    % Feedback
+    \node [draw, rectangle, below=1cm of switch] (pwm) {PWM કંટ્રોલ};
+    \draw [gtu arrow] (out.east) -- ++(0.5,0) |- (pwm.east);
+    \draw [gtu arrow] (pwm) -- (switch);
+\end{tikzpicture}
+\end{center}
+
+\textbf{એપ્લિકેશન્સ:}
+\begin{itemize}
+    \item કોમ્પ્યુટર પાવર સપ્લાય (ATX)
+    \item મોબાઇલ ફોન ચાર્જર
+    \item TV પાવર સપ્લાય
+    \item LED લાઇટિંગ ડ્રાઇવર્સ
+\end{itemize}
+
+\begin{mnemonicbox}
+"SAFE" - "Switching Achieves Filtered Energy"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(b)}{4}{ડાયાગ્રામ સાથે રેગ્યુલેટેડ પાવર સ્પ્લાયનું કાર્ય સમજાવો.}
+
+\begin{solutionbox}
+રેગ્યુલેટેડ પાવર સપ્લાય ઇનપુટ અથવા લોડમાં ફેરફાર થવા છતાં સ્થિર આઉટપુટ જાળવે છે.
+
+\textbf{બ્લોક ડાયાગ્રામ:}
+
+\begin{center}
+\begin{tikzpicture}[gtu block]
+    \node [draw, rectangle] (ac) {AC ઇનપુટ};
+    \node [draw, rectangle, right=0.5cm of ac] (trans) {ટ્રાન્સફોર્મર};
+    \node [draw, rectangle, right=0.5cm of trans] (rect) {રેક્ટિફાયર};
+    \node [draw, rectangle, below=1cm of rect] (filt) {ફિલ્ટર};
+    \node [draw, rectangle, left=0.5cm of filt] (reg) {રેગ્યુલેટર};
+    \node [draw, rectangle, left=0.5cm of reg] (load) {લોડ};
+    
+    \draw [gtu arrow] (ac) -- (trans);
+    \draw [gtu arrow] (trans) -- (rect);
+    \draw [gtu arrow] (rect) -- (filt);
+    \draw [gtu arrow] (filt) -- (reg);
+    \draw [gtu arrow] (reg) -- (load);
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{ટ્રાન્સફોર્મર}: AC વોલ્ટેજને જરૂરી લેવલ સુધી ઘટાડે છે
+    \item \textbf{રેક્ટિફાયર}: AC ને પલ્સેટિંગ DC માં રૂપાંતરિત કરે છે (ડાયોડ બ્રિજ)
+    \item \textbf{ફિલ્ટર}: કેપેસિટર્સ સાથે DC રિપલને સ્મૂથ કરે છે
+    \item \textbf{રેગ્યુલેટર}: સ્થિર DC વોલ્ટેજ જાળવે છે (દા.ત., 7805, LM317)
+\end{itemize}
+
+\begin{mnemonicbox}
+"TRFRO" - "Transform, Rectify, Filter, Regulate, Output"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(c)}{7}{OP-AMP નો મૂળભૂત બ્લોક ડાયાગ્રામ દોરી સમજાવો.}
+
+\begin{solutionbox}
+ઓપરેશનલ એમ્પ્લિફાયર ચોક્કસ કાર્યો કરતા ચાર કેસ્કેડેડ તબક્કાઓ ધરાવે છે.
+
+\textbf{બ્લોક ડાયાગ્રામ:}
+
+\begin{center}
+\begin{tikzpicture}[gtu block]
+    \node [draw, rectangle, align=center] (in) {ડિફરેન્શિયલ\\ઇનપુટ સ્ટેજ};
+    \node [draw, rectangle, align=center, right=0.5cm of in] (mid) {ઇન્ટરમીડિયેટ\\સ્ટેજ};
+    \node [draw, rectangle, align=center, right=0.5cm of mid] (level) {લેવલ\\શિફ્ટર};
+    \node [draw, rectangle, align=center, right=0.5cm of level] (out) {આઉટપુટ\\સ્ટેજ};
+    
+    \draw [gtu arrow] (in) -- (mid);
+    \draw [gtu arrow] (mid) -- (level);
+    \draw [gtu arrow] (level) -- (out);
+    
+    \node [below=0.5cm of mid] (const) {કોન્સ્ટન્ટ કરંટ સોર્સ};
+    \draw [dashed] (const) -- (in);
+    \draw [dashed] (const) -- (mid);
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{ડિફરેન્શિયલ ઇનપુટ સ્ટેજ}: ઉચ્ચ ઇનપુટ ઇમ્પીડન્સ અને CMRR પ્રદાન કરે છે (ડ્યુઅલ ઇનપુટ બેલેન્સ્ડ આઉટપુટ)
+    \item \textbf{ઇન્ટરમીડિયેટ સ્ટેજ}: ઉચ્ચ વોલ્ટેજ ગેઇન પ્રદાન કરે છે (ડ્યુઅલ ઇનપુટ અનબેલેન્સ્ડ આઉટપુટ)
+    \item \textbf{લેવલ શિફ્ટર}: DC લેવલને શૂન્ય વોલ્ટ્સ પર શિફ્ટ કરે છે (એમીટર ફોલોઅર)
+    \item \textbf{આઉટપુટ સ્ટેજ}: લો આઉટપુટ ઇમ્પીડન્સ અને કરંટ ડ્રાઇવ આપે છે (પુશ-પુલ એમ્પ્લિફાયર)
+\end{itemize}
+
+\begin{mnemonicbox}
+"DILO" - "Differential Input, Level shift, Output"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\vspace{0.5em}\centerline{\textbf{OR}}\questionmarks{5(a)}{3}{LM317 નો ઉપયોગ કરીને એડજસ્ટેબલ વોલ્ટેજ રેગ્યુલેટર ડાયાગ્રામ સાથે સમજાવો.}
+
+\begin{solutionbox}
+LM317 એક વેરિયેબલ પોઝિટિવ વોલ્ટેજ રેગ્યુલેટર છે જે 1.25V થી 37V સુધી આઉટપુટ એડજસ્ટ કરે છે.
+
+\textbf{સર્કિટ ડાયાગ્રામ:}
+
+\begin{center}
+\begin{circuitikz}[american, scale=1.0, transform shape]
+    \draw (0,0) rectangle (2,1.5);
+    \node at (1, 0.75) {LM317};
+    \draw (-1, 1.25) to[short, o-] (0, 1.25) node[right] {IN};
+    \draw (2, 1.25) to[short, -o] (4, 1.25) node[right] {$V_{out}$};
+    \draw (2, 0.25) node[left] {ADJ} -- (2.5, 0.25) -- (2.5, -2) node[ground] {};
+    
+    \draw (2.5, 1.25) to[R, l=$R_1$] (2.5, 0.25);
+    \draw (2.5, 0.25) to[vR, l=$R_2$] (2.5, -2);
+    
+    \draw (-1, 1.25) to[C, l=$C_{in}$] (-1, 0) node[ground] {};
+    \draw (4, 1.25) to[C, l=$C_{out}$] (4, 0) node[ground] {};
+\end{circuitikz}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{ફોર્મ્યુલા}: $V_{out} = 1.25V \times (1 + \frac{R_2}{R_1}) + I_{adj}R_2$ જ્યાં $1.25V$ રેફરન્સ વોલ્ટેજ ($V_{ref}$) છે
+    \item \textbf{રેસિસ્ટર્સ}: $R_1$ રેફરન્સ કરંટ સેટ કરે છે, $R_2$ આઉટપુટ વોલ્ટેજ એડજસ્ટ કરે છે
+    \item \textbf{પ્રોટેક્શન}: આંતરિક થર્મલ ઓવરલોડ અને શોર્ટ સર્કિટ પ્રોટેક્શન
+\end{itemize}
+
+\begin{mnemonicbox}
+"AVR" - "Adjustable Voltage Regulation"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(b)}{4}{ફિક્સ્ડ વોલ્ટેજ રેગ્યુલેટર IC અને વેરિયેબલ વોલ્ટેજ રેગ્યુલેટર IC વચ્ચેનો તફાવત આપો.}
+
+\begin{solutionbox}
+ફિક્સ્ડ આઉટપુટ રેગ્યુલેટર્સ (જેમ કે 78XX) અને એડજસ્ટેબલ રેગ્યુલેટર્સ (જેમ કે LM317) વચ્ચેની સરખામણી.
+
+\begin{center}
+\captionof{table}{ફિક્સ્ડ vs વેરિયેબલ રેગ્યુલેટર્સ}
+\begin{tabulary}{\textwidth}{|L|L|L|}
+\hline
+\textbf{પેરામીટર} & \textbf{ફિક્સ્ડ રેગ્યુલેટર} & \textbf{વેરિયેબલ રેગ્યુલેટર} \\
+\hline
+આઉટપુટ વોલ્ટેજ & પ્રીસેટ (દા.ત., 5V, 12V) & એડજસ્ટેબલ રેન્જ (દા.ત., 1.2V-37V) \\
+\hline
+કોમ્પોનેન્ટ્સ & ઓછા (2 કેપેસિટર્સ) & વધુ (રેસિસ્ટર્સ + કેપેસિટર્સ) \\
+\hline
+સુગમતા (Flexibility) & ઓછી (નિશ્ચિત એપ્લિકેશન) & ઉચ્ચ (સાર્વત્રિક એપ્લિકેશન) \\
+\hline
+ઉદાહરણો & 7805, 7812, 7905 & LM317, LM337, LM723 \\
+\hline
+કિંમત & સામાન્ય રીતે સસ્તા & થોડી વધારે \\
+\hline
+પિન કોન્ફિગ & In, Ground, Out & In, Adjust, Out \\
+\hline
+\end{tabulary}
+\end{center}
+
+\begin{mnemonicbox}
+"FOCUS" - "Fixed Output Compared to User-Set"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(c)}{7}{OP-AMP ની એપ્લીકેશનની યાદી બનાવો. OP-AMP નો ઉપયોગ કરીને D to A કન્વર્ટરનું કાર્ય સર્કિટ ડાયાગ્રામ સાથ સમજાવો.}
+
+\begin{solutionbox}
+DAC ડિજિટલ બાઈનરી ઇનપુટનું સમકક્ષ એનાલોગ વોલ્ટેજમાં રૂપાંતર કરે છે.
+
+\textbf{OP-AMP ની એપ્લિકેશન્સ:}
+\begin{enumerate}
+    \item એમ્પ્લિફાયર (ઇન્વર્ટિંગ, નોન-ઇન્વર્ટિંગ, ડિફરેન્શિયલ)
+    \item ફિલ્ટર્સ (એક્ટિવ લો પાસ, હાઈ પાસ)
+    \item ઓસિલેટર (વેઈન બ્રિજ, ફેઝ શિફ્ટ)
+    \item કમ્પેરેટર અને શ્મિટ ટ્રિગર
+    \item ગાણિતિક ક્રિયાઓ (સમિંગ, ઇન્ટિગ્રેટર, ડિફરન્શિએટર)
+\end{enumerate}
+
+\textbf{R-2R Ladder DAC સર્કિટ:}
+
+\begin{center}
+\begin{circuitikz}[american, scale=0.9, transform shape]
+    \draw (0,0) node[op amp] (opamp) {};
+    \draw (opamp.+) -- (-1, -0.5) node[ground] {};
+    \draw (opamp.-) -- (-1, 0.5) -- (-1, 2) to[R, l=$3R$] (1, 2) -| (opamp.out);
+    \draw (opamp.out) to[short, -o] (2,0) node[right] {$V_{out}$};
+
+    % Ladder R-2R (4-bit)
+    \draw (-1, 0.5) -- (-2, 0.5);
+    \draw (-2, 0.5) to[R, l=$2R$] (-2, -1.5) node[below] {$b_3 (MSB)$};
+    
+    \draw (-2, 0.5) to[R, l=$R$] (-4, 0.5);
+    \draw (-4, 0.5) to[R, l=$2R$] (-4, -1.5) node[below] {$b_2$};
+    
+    \draw (-4, 0.5) to[R, l=$R$] (-6, 0.5);
+    \draw (-6, 0.5) to[R, l=$2R$] (-6, -1.5) node[below] {$b_1$};
+    
+    \draw (-6, 0.5) to[R, l=$R$] (-8, 0.5);
+    \draw (-8, 0.5) to[R, l=$2R$] (-8, -1.5) node[below] {$b_0 (LSB)$};
+    \draw (-8, 0.5) to[R, l=$2R$] (-10, 0.5) node[ground] {}; % Termination
+    
+\end{circuitikz}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{સિદ્ધાંત}: લેડર નેટવર્ક બાઈનરી વેઇટેડ કરંટ બનાવે છે
+    \item \textbf{આઉટપુટ}: $V_{out} \propto -(b_3 2^{-1} + b_2 2^{-2} + b_1 2^{-3} + b_0 2^{-4}) V_{ref}$
+    \item \textbf{ફાયદા}: માત્ર બે રેસિસ્ટર મૂલ્યો ($R, 2R$) ની જરૂર છે, સ્કેલેબલ છે
+\end{itemize}
+
+\begin{mnemonicbox}
+"DART" - "Digital to Analog Resistor Translation"
+\end{mnemonicbox}
+
+
+\end{solutionbox}
+\end{document}

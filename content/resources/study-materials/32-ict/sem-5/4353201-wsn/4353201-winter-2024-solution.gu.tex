@@ -1,0 +1,1139 @@
+\documentclass{article}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/preamble.tex}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/gujarati-boxes.tex}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/commands.tex}
+
+\title{વાયરલેસ સેન્સર નેટવર્ક અને IoT (4353201) - શિયાળો 2024 સોલ્યુશન}
+\date{નવેમ્બર 21, 2024}
+
+\begin{document}
+\maketitle
+
+\questionmarks{1(a)}{3}{સિંગલ હોપ અને મલ્ટિહોપ નેટવર્કની સરખામણી કરો.}
+
+\begin{solutionbox}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પેરામીટર} & \textbf{સિંગલ હોપ નેટવર્ક} & \textbf{મલ્ટિહોપ નેટવર્ક} \\
+\hline
+\textbf{કમ્યુનિકેશન} & સીધું બેઝ સ્ટેશન સાથે & મધ્યવર્તી નોડ્સ દ્વારા \\
+\textbf{એનર્જી વપરાશ} & દૂરના નોડ્સ માટે વધુ & નોડ્સ વચ્ચે વિતરિત \\
+\textbf{નેટવર્ક કવરેજ} & ટ્રાન્સમિશન રેન્જ દ્વારા મર્યાદિત & વિસ્તૃત કવરેજ વિસ્તાર \\
+\textbf{જટિલતા} & સરળ રાઉટિંગ & જટિલ રાઉટિંગ પ્રોટોકોલ \\
+\hline
+\end{tabulary}
+
+\begin{itemize}
+    \item \textbf{સિંગલ હોપ}: બધા નોડ્સ બેઝ સ્ટેશન સાથે સીધો સંપર્ક કરે છે
+    \item \textbf{મલ્ટિહોપ}: ડેટા ગંતવ્ય સુધી પહોંચવા માટે અનેક મધ્યવર્તી નોડ્સમાંથી પસાર થાય છે
+\end{itemize}
+
+\begin{mnemonicbox}Single Direct, Multi Relay\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{1(b)}{4}{સેન્સર નોડના મૂળભૂત ઘટકો સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[gtu block]
+    \node (sn) {Sensor Node};
+    
+    \node (sensing) [below left=1.5cm and 0.5cm of sn] {Sensing Unit};
+    \node (proc) [below right=1.5cm and 0.5cm of sn] {Processing Unit};
+    \node (comm) [below left=3.5cm and 0.5cm of sn] {Communication Unit};
+    \node (power) [below right=3.5cm and 0.5cm of sn] {Power Unit};
+    
+    \node (sensors) [below=0.5cm of sensing, font=\small] {Sensors \& ADC};
+    \node (mem) [below=0.5cm of proc, font=\small] {Processor \& Memory};
+    \node (trans) [below=0.5cm of comm, font=\small] {Transceiver};
+    \node (batt) [below=0.5cm of power, font=\small] {Battery};
+
+    \draw [gtu arrow] (sn) -- (sensing);
+    \draw [gtu arrow] (sn) -- (proc);
+    \draw [gtu arrow] (sn) -- (comm);
+    \draw [gtu arrow] (sn) -- (power);
+    
+    \draw [gtu arrow] (sensing) -- (sensors);
+    \draw [gtu arrow] (proc) -- (mem);
+    \draw [gtu arrow] (comm) -- (trans);
+    \draw [gtu arrow] (power) -- (batt);
+\end{tikzpicture}
+\end{center}
+
+\textbf{મૂળભૂત ઘટકો:}
+\begin{itemize}
+    \item \textbf{સેન્સિંગ સબસિસ્ટમ}: સેન્સર્સ અને ADC નો ઉપયોગ કરીને પર્યાવરણમાંથી ડેટા એકત્રિત કરે છે
+    \item \textbf{પ્રોસેસિંગ સબસિસ્ટમ}: ડેટા પ્રોસેસિંગ માટે મેમોરી સાથે માઇક્રોકંટ્રોલર/પ્રોસેસર
+    \item \textbf{કમ્યુનિકેશન સબસિસ્ટમ}: વાયરલેસ ડેટા ટ્રાન્સમિશન માટે રેડિયો ટ્રાન્સીવર
+    \item \textbf{પાવર સબસિસ્ટમ}: પાવર સપ્લાય માટે બેટરી અથવા એનર્જી હાર્વેસ્ટિંગ યુનિટ
+\end{itemize}
+
+\begin{mnemonicbox}Sense Process Communicate Power\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{1(c)}{7}{WSN માં પાવર કન્ઝમ્પશન ઘટાડવા માટે કોઈપણ ચાર ટેકનોલોજીની યાદી બનાવો અને કોઈપણ બે ટેકનોલોજીને વિગતવાર સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{ચાર પાવર રિડક્શન ટેકનોલોજીઓ:}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{ટેકનોલોજી} & \textbf{વર્ણન} \\
+\hline
+\textbf{સ્લીપ શેડ્યુલિંગ} & નોડ્સ સક્રિય અને સ્લીપ મોડ વચ્ચે ફેરફાર કરે છે \\
+\textbf{ડેટા એગ્રિગેશન} & અનેક ડેટા પેકેટ્સને એક જ ટ્રાન્સમિશનમાં જોડે છે \\
+\textbf{ટોપોલોજી કંટ્રોલ} & એનર્જી ઘટાડવા માટે નેટવર્ક સ્ટ્રક્ચર ઓપ્ટિમાઇઝ કરે છે \\
+\textbf{એનર્જી હાર્વેસ્ટિંગ} & સોલાર, વાઇબ્રેશન જેવા રિન્યુએબલ સોર્સનો ઉપયોગ કરે છે \\
+\hline
+\end{tabulary}
+\end{center}
+
+\textbf{વિગતવાર સમજૂતી:}
+
+\textbf{1. સ્લીપ શેડ્યુલિંગ:}
+\begin{itemize}
+    \item \textbf{એક્ટિવ મોડ}: નોડ સેન્સિંગ, પ્રોસેસિંગ, કમ્યુનિકેશન કરે છે
+    \item \textbf{સ્લીપ મોડ}: નોડ બિનજરૂરી ઘટકોને પાવર ડાઉન કરે છે
+    \item \textbf{ફાયદા}: આઇડલ લિસનિંગ એનર્જી કન્ઝમ્પશન 90\% સુધી ઘટાડે છે
+\end{itemize}
+
+\textbf{2. ડેટા એગ્રિગેશન:}
+\begin{itemize}
+    \item \textbf{પ્રક્રિયા}: મધ્યવર્તી નોડ્સ પર અનેક સેન્સર રીડિંગ્સ જોડવામાં આવે છે
+    \item \textbf{ટેકનિક્સ}: એવરેજ, મેક્સિમમ, મિનિમમ ફંક્શન્સ લાગુ કરવામાં આવે છે
+    \item \textbf{ફાયદો}: કુલ ટ્રાન્સમિશનની સંખ્યા નોંધપાત્ર રીતે ઘટાડે છે
+\end{itemize}
+
+\begin{mnemonicbox}Sleep Aggregate Topology Harvest\end{mnemonicbox}
+\end{solutionbox}
+
+\vspace{0.5em}\centerline{\textbf{OR}}\questionmarks{1(c)}{ 7 }{વાયરલેસ સેન્સર નેટવર્કના કોઈપણ ચાર પડકારોની યાદી બનાવો અને કોઈપણ બેને વિગતવાર સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{ચાર WSN પડકારો:}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{પડકાર} & \textbf{અસર} \\
+\hline
+\textbf{મર્યાદિત એનર્જી} & નેટવર્ક લાઇફટાઇમને અસર કરે છે \\
+\textbf{મર્યાદિત બેન્ડવિડ્થ} & ડેટા ટ્રાન્સમિશનને મર્યાદિત કરે છે \\
+\textbf{સિક્યુરિટી વલ્નરેબિલિટીઝ} & ડેટા ઇન્ટેગ્રિટીને જોખમમાં મૂકે છે \\
+\textbf{સ્કેલેબિલિટી ઇશ્યુઝ} & મોટા નેટવર્ક પરફોર્મન્સને અસર કરે છે \\
+\hline
+\end{tabulary}
+\end{center}
+
+\textbf{વિગતવાર સમજૂતી:}
+
+\textbf{1. મર્યાદિત એનર્જી:}
+\begin{itemize}
+    \item \textbf{બેટરી કન્સ્ટ્રેઈન્ટ}: નોડ્સ મર્યાદિત કેપેસિટી સાથે નાની બેટરીઓ પર કામ કરે છે
+    \item \textbf{એનર્જી ડિપ્લીશન}: ટ્રાન્સમિશન અને રિસેપ્શન દરમિયાન ઉચ્ચ એનર્જી વપરાશ
+    \item \textbf{સોલ્યુશન એપ્રોચ}: પાવર મેનેજમેન્ટ પ્રોટોકોલ્સ, એનર્જી-એફિશિયન્ટ રાઉટિંગ
+\end{itemize}
+
+\textbf{2. સિક્યુરિટી વલ્નરેબિલિટીઝ:}
+\begin{itemize}
+    \item \textbf{ફિઝિકલ એટેક્સ}: નોડ્સને ભૌતિક રીતે કેપ્ચર અથવા નુકસાન થઈ શકે છે
+    \item \textbf{નેટવર્ક એટેક્સ}: ઇવ્સડ્રોપિંગ, જેમિંગ, ડિનાયલ ઓફ સર્વિસ એટેક્સ
+    \item \textbf{કાઉન્ટરમેઝર્સ}: એન્ક્રિપ્શન, ઓથેન્ટિકેશન, સિક્યોર રાઉટિંગ પ્રોટોકોલ્સ
+\end{itemize}
+
+\begin{mnemonicbox}Energy Bandwidth Security Scale\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(a)}{3}{``IEEE 802.15.4 સ્ટાન્ડર્ડ અને ZigBee સ્પેસિફિકેશન્સ વાયરલેસ સેન્સર નેટવર્ક માટે લોકપ્રિય પ્રોટોકોલ પસંદગીઓ છે'' - જસ્ટિફાઈ}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{જસ્ટિફિકેશન ટેબલ:}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{ફીચર} & \textbf{WSN માટે ફાયદો} \\
+\hline
+\textbf{લો પાવર કન્ઝમ્પશન} & બેટરી લાઇફ વધારે છે \\
+\textbf{લો ડેટા રેટ} & સેન્સર ડેટા માટે યોગ્ય \\
+\textbf{શોર્ટ રેન્જ} & ક્લસ્ટર્ડ સેન્સર્સ માટે પરફેક્ટ \\
+\textbf{લો કોસ્ટ} & મોટા ડિપ્લોયમેન્ટ માટે આર્થિક \\
+\hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{IEEE 802.15.4}: PHY અને MAC લેયર સ્પેસિફિકેશન્સ પ્રદાન કરે છે
+    \item \textbf{ZigBee}: ટોચ પર નેટવર્ક અને એપ્લિકેશન લેયર્સ ઉમેરે છે
+    \item \textbf{પરફેક્ટ મેચ}: WSN આવશ્યકતાઓ પ્રોટોકોલ ક્ષમતાઓ સાથે સંરેખિત થાય છે
+\end{itemize}
+
+\begin{mnemonicbox}Low Power, Low Data, Low Cost, Low Range\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(b)}{4}{યોગ્ય ઉદાહરણની મદદથી એનર્જી એફિશિયન્ટ રાઉટિંગ સમજાવો}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[gtu state]
+    \node (A) {Source Node};
+    \node (B) [above right=1cm and 2cm of A, fill=green!30] {Node 1\\(Battery: 80\%)};
+    \node (C) [below right=1cm and 2cm of A, fill=red!30] {Node 2\\(Battery: 30\%)};
+    \node (D) [right=2cm of B] at ($(B)!0.5!(C) + (3,0)$) {Destination};
+
+    \draw [gtu arrow] (A) -- (B);
+    \draw [gtu arrow, dashed] (A) -- (C);
+    \draw [gtu arrow] (B) -- (D);
+    \draw [gtu arrow, dashed] (C) -- (D);
+\end{tikzpicture}
+\end{center}
+
+\textbf{એનર્જી એફિશિયન્ટ રાઉટિંગ:}
+\begin{itemize}
+    \item \textbf{ઉદ્દેશ્ય}: નેટવર્ક લાઇફટાઇમ મહત્તમ કરતા પાથ્સ પસંદ કરો
+    \item \textbf{એપ્રોચ}: નોડ્સના બાકી બેટરી લેવલ્સ ધ્યાનમાં લો
+    \item \textbf{ઉદાહરણ}: નોડ 2 (30\% બેટરી) ને બદલે નોડ 1 (80\% બેટરી) દ્વારા રૂટ કરો
+\end{itemize}
+
+\textbf{મુખ્ય ટેકનિક્સ:}
+\begin{itemize}
+    \item \textbf{બેટરી અવેરનેસ}: બાકી એનર્જી લેવલ્સનું નિરીક્ષણ કરો
+    \item \textbf{લોડ બેલેન્સિંગ}: અનેક પાથ્સ વચ્ચે ટ્રાફિક વિતરણ કરો
+    \item \textbf{ક્લસ્ટરિંગ}: લાંબા-અંતરના ટ્રાન્સમિશન ઘટાડવા માટે નજીકના નોડ્સને ગ્રુપ કરો
+\end{itemize}
+
+\begin{mnemonicbox}Battery Balance Cluster\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(c)}{7}{યોગ્ય સ્કેચની મદદથી LEACH પ્રોટોકોલના સેટઅપ અને સ્ટેડી સ્ટેટ ફેઝ સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[gtu state, node distance=2cm]
+    \node (n1) {Node 1};
+    \node (n2) [right=of n1] {Node 2 (CH)};
+    \node (n3) [right=of n2] {Node 3};
+    \node (bs) [below=3cm of n2] {Base Station};
+
+    % Setup Phase
+    \node [above=0.5cm of n2, font=\bfseries] {Setup Phase};
+    \draw [gtu arrow, bend left] (n2) to node[above, font=\small] {Adv} (n1);
+    \draw [gtu arrow, bend right] (n2) to node[above, font=\small] {Adv} (n3);
+    \draw [gtu arrow, bend left] (n1) to node[below, font=\small] {Join} (n2);
+    \draw [gtu arrow, bend right] (n3) to node[below, font=\small] {Join} (n2);
+
+    % Steady State Phase
+    \node [right=4cm of n2, font=\bfseries] (steady) {Steady State Phase};
+    \draw [gtu arrow] (n1) -- node[above, font=\small, sloped] {Data} (n2);
+    \draw [gtu arrow] (n3) -- node[above, font=\small, sloped] {Data} (n2);
+    \draw [gtu arrow, line width=1.5pt] (n2) -- node[right, font=\small] {Aggregated Data} (bs);
+\end{tikzpicture}
+\end{center}
+
+\textbf{LEACH પ્રોટોકોલ ફેઝિસ:}
+
+\textbf{સેટઅપ ફેઝ:}
+\begin{itemize}
+    \item \textbf{ક્લસ્ટર હેડ સિલેક્શન}: પ્રોબેબિલિટી થ્રેશોલ્ડ આધારિત રેન્ડમ સિલેક્શન
+    \item \textbf{એડવર્ટાઇઝમેન્ટ}: પસંદ કરેલા CHs એનાઉન્સમેન્ટ મેસેજિસ બ્રોડકાસ્ટ કરે છે
+    \item \textbf{ક્લસ્ટર ફોર્મેશન}: નોન-CH નોડ્સ નજીકના ક્લસ્ટર હેડમાં જોડાય છે
+    \item \textbf{શેડ્યુલ ક્રિએશન}: CH ક્લસ્ટર મેમ્બર્સ માટે TDMA શેડ્યુલ બનાવે છે
+\end{itemize}
+
+\textbf{સ્ટેડી સ્ટેટ ફેઝ:}
+\begin{itemize}
+    \item \textbf{ડેટા ટ્રાન્સમિશન}: નોડ્સ TDMA શેડ્યુલ અનુસાર CH ને ડેટા મોકલે છે
+    \item \textbf{ડેટા એગ્રિગેશન}: CH ક્લસ્ટર મેમ્બર્સ પાસેથી પ્રાપ્ત ડેટાને જોડે છે
+    \item \textbf{ડેટા ફોરવર્ડિંગ}: CH એગ્રિગેટેડ ડેટાને બેઝ સ્ટેશન પર ટ્રાન્સમિટ કરે છે
+\end{itemize}
+
+\textbf{ફાયદા:}
+\begin{itemize}
+    \item \textbf{એનર્જી ડિસ્ટ્રિબ્યુશન}: નોડ્સ વચ્ચે CH રોલ રોટેટ કરે છે
+    \item \textbf{કોલિઝન એવોઇડન્સ}: TDMA શેડ્યુલિંગ ઇન્ટરફેરન્સ અટકાવે છે
+\end{itemize}
+
+\begin{mnemonicbox}Select Advertise Join Schedule, Send Aggregate Forward\end{mnemonicbox}
+\end{solutionbox}
+
+\vspace{0.5em}\centerline{\textbf{OR}}\questionmarks{2(a)}{ 3 }{વાયરલેસ સેન્સર નેટવર્કમાં રાઉટિંગ પ્રોટોકોલ્સનું વર્ગીકરણ આપો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{WSN રાઉટિંગ પ્રોટોકોલ વર્ગીકરણ:}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{વર્ગીકરણ આધાર} & \textbf{પ્રકારો} \\
+\hline
+\textbf{નેટવર્ક સ્ટ્રક્ચર} & ફ્લેટ, હાઇરાર્કિકલ, લોકેશન-બેઝ્ડ \\
+\textbf{પ્રોટોકોલ ઓપરેશન} & મલ્ટિપાથ, ક્વેરી-બેઝ્ડ, નેગોસિએશન-બેઝ્ડ \\
+\textbf{પાથ એસ્ટેબ્લિશમેન્ટ} & પ્રોએક્ટિવ, રિએક્ટિવ, હાઇબ્રિડ \\
+\hline
+\end{tabulary}
+\end{center}
+
+\textbf{મુખ્ય કેટેગરીઝ:}
+\begin{itemize}
+    \item \textbf{ફ્લેટ રાઉટિંગ}: બધા નોડ્સની સમાન ભૂમિકા (જેમ કે, ફ્લડિંગ, SPIN)
+    \item \textbf{હાઇરાર્કિકલ રાઉટિંગ}: ક્લસ્ટર-બેઝ્ડ એપ્રોચ (જેમ કે, LEACH, TEEN)
+    \item \textbf{લોકેશન-બેઝ્ડ રાઉટિંગ}: જિયોગ્રાફિક ઇન્ફોર્મેશનનો ઉપયોગ (જેમ કે, GEAR)
+\end{itemize}
+
+\begin{mnemonicbox}Flat Hierarchical Location\end{mnemonicbox}
+\end{solutionbox}
+
+\vspace{0.5em}\centerline{\textbf{OR}}\questionmarks{2(b)}{ 4 }{સ્કેચની મદદથી લો ડ્યુટી સાઇકલ પ્રોટોકોલના વેકઅપ કોન્સેપ્ટને સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[gtu block]
+    \node (time) {Time $\rightarrow$};
+    
+    % Node A Timeline
+    \node (a_lbl) [below=0.5cm of time] {Node A:};
+    \foreach \x/\t in {0/Sleep, 2/Wake, 3/Listen, 4/Sleep, 6/Wake, 7/Listen, 8/Sleep} {
+        \node [draw, minimum width=1cm, minimum height=0.6cm, right=\x cm of a_lbl] {\t};
+    }
+
+    % Node B Timeline  
+    \node (b_lbl) [below=1.5cm of a_lbl] {Node B:};
+    \foreach \x/\t in {0/Sleep, 3/Wake, 4/Tx, 5/Sleep, 7/Wake, 8/Listen, 9/Sleep} {
+        \node [draw, minimum width=1cm, minimum height=0.6cm, right=\x cm of b_lbl] {\t};
+    }
+\end{tikzpicture}
+\end{center}
+
+\textbf{લો ડ્યુટી સાઇકલ વેકઅપ કોન્સેપ્ટ:}
+\begin{itemize}
+    \item \textbf{સ્લીપ પીરિયડ}: એનર્જી બચાવવા માટે નોડ્સ રેડિયો બંધ કરે છે
+    \item \textbf{વેક પીરિયડ}: નોડ્સ સમયાંતરે કમ્યુનિકેશન ચેક કરવા માટે જાગે છે
+    \item \textbf{સિંક્રોનાઇઝેશન}: સેન્ડરને રિસીવરના વેકઅપ શેડ્યુલની જાણ હોવી જરૂરી
+\end{itemize}
+
+\textbf{મુખ્ય ફાયદા:}
+\begin{itemize}
+    \item \textbf{એનર્જી સેવિંગ્સ}: આઇડલ લિસનિંગ 99\% સુધી ઘટાડે છે
+    \item \textbf{કોઓર્ડિનેટેડ એક્સેસ}: વેકઅપ પીરિયડ દરમિયાન કોલિઝન અટકાવે છે
+\end{itemize}
+
+\begin{mnemonicbox}Sleep Wake Listen Repeat\end{mnemonicbox}
+\end{solutionbox}
+
+\vspace{0.5em}\centerline{\textbf{OR}}\questionmarks{2(c)}{ 7 }{S-MAC પ્રોટોકોલના Synch, RTS અને CTS તબક્કાઓ અને તેના મેસેજ પાસિંગ એપ્રોચ સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[gtu state, node distance=2cm]
+    \node (A) {Node A};
+    \node (B) [right=of A] {Node B};
+    \node (C) [right=of B] {Node C};
+
+    % Phases
+    \node (sync) [below=1cm of A, font=\bfseries] {1. SYNC Phase};
+    \draw [gtu arrow] (A) -- node[above] {SYNC} (B);
+    \draw [gtu arrow] (A) to[bend left] node[above] {SYNC} (C);
+    
+    \node (rts) [below=2cm of sync, font=\bfseries] {2. RTS/CTS Phase};
+    \draw [gtu arrow] (A) -- node[above] {RTS} (B);
+    \draw [gtu arrow] (B) -- node[below] {CTS} (A);
+    \node [right=0.5cm of rts, font=\small, text width=3cm] {Node C overhears CTS and sleeps};
+
+    \node (data) [below=2cm of rts, font=\bfseries] {3. Data Phase};
+    \draw [gtu arrow] (A) -- node[above] {DATA} (B);
+    \draw [gtu arrow] (B) -- node[below] {ACK} (A);
+\end{tikzpicture}
+\end{center}
+
+\textbf{S-MAC પ્રોટોકોલ ફેઝિસ:}
+
+\textbf{1. સિંક્રોનાઇઝેશન ફેઝ:}
+\begin{itemize}
+    \item \textbf{હેતુ}: સામાન્ય સ્લીપ/વેક શેડ્યુલ સ્થાપિત કરવું
+    \item \textbf{પ્રક્રિયા}: નોડ્સ શેડ્યુલ ઇન્ફોર્મેશન સાથે SYNC પેકેટ્સનું વિનિમય કરે છે
+    \item \textbf{ફાયદો}: નેટવર્ક વ્યાપી કોઓર્ડિનેટેડ સ્લીપ પેટર્ન સુનિશ્ચિત કરે છે
+\end{itemize}
+
+\textbf{2. RTS ફેઝ (રિક્વેસ્ટ ટુ સેન્ડ):}
+\begin{itemize}
+    \item \textbf{શરૂઆત}: સેન્ડર ઇન્ટેન્ડેડ રિસીવર ને RTS પેકેટ ટ્રાન્સમિટ કરે છે
+    \item \textbf{કન્ટેન્ટ}: સોર્સ એડ્રેસ, ડેસ્ટિનેશન એડ્રેસ, ટ્રાન્સમિશન ડ્યુરેશન
+\end{itemize}
+
+\textbf{3. CTS ફેઝ (ક્લિયર ટુ સેન્ડ):}
+\begin{itemize}
+    \item \textbf{રિસ્પોન્સ}: રિસીવર ઉપલબ્ધતાની પુષ્ટિ કરતું CTS પેકેટ મોકલે છે
+    \item \textbf{વર્ચ્યુઅલ સેન્સિંગ}: પડોશી નોડ્સ CTS સાંભળે છે અને ટ્રાન્સમિશન મુલતવી રાખે છે
+\end{itemize}
+
+\textbf{મેસેજ પાસિંગ એપ્રોચ:}
+\begin{itemize}
+    \item \textbf{કોલિઝન એવોઇડન્સ}: RTS/CTS હેન્ડશેક હિડન ટર્મિનલ પ્રોબ્લેમ અટકાવે છે
+    \item \textbf{એનર્જી કન્ઝર્વેશન}: ઓવરહિયરિંગ નોડ્સ ડેટા એક્સચેન્જ દરમિયાન સ્લીપ મોડમાં જાય છે
+    \item \textbf{પીરિયોડિક સિંક્રોનાઇઝેશન}: નેટવર્ક-વાઇડ શેડ્યુલ કોઓર્ડિનેશન જાળવે છે
+\end{itemize}
+
+\begin{mnemonicbox}Sync Request Clear Transmit\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3(a)}{3}{IEEE 802.15.4 સ્ટાન્ડર્ડનું સુપર ફ્રેમ સ્ટ્રક્ચર સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[gtu block]
+    \draw (0,0) rectangle (12,1);
+    \node at (6, 1.3) {Super Frame (15.36 ms)};
+    
+    \draw (0,0) rectangle (1,1) node[pos=0.5] {Beacon};
+    \draw (1,0) rectangle (4,1) node[pos=0.5] {CAP};
+    \draw (4,0) rectangle (8,1) node[pos=0.5] {CFP (GTS)};
+    \draw (8,0) rectangle (12,1) node[pos=0.5] {Inactive Period};
+    
+    \node at (2.5, -0.5) {Contention Access};
+    \node at (6, -0.5) {Contention Free};
+    \node at (10, -0.5) {Sleep Mode};
+\end{tikzpicture}
+\end{center}
+
+\begin{center}
+\captionof{table}{સુપર ફ્રેમ ઘટકો:}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{ઘટક} & \textbf{વર્ણન} & \textbf{અવધિ} \\
+\hline
+\textbf{બીકન} & નેટવર્ક સિંક્રોનાઇઝેશન & નિશ્ચિત \\
+\textbf{CAP} & કન્ટેન્શન એક્સેસ પીરિયડ & ચલ \\
+\textbf{CFP} & કન્ટેન્શન ફ્રી પીરિયડ & ચલ \\
+\textbf{ઇનએક્ટિવ} & સ્લીપ પીરિયડ & ચલ \\
+\hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{CAP}: ચેનલ એક્સેસ માટે CSMA/CA નો ઉપયોગ કરે છે
+    \item \textbf{CFP}: રિયલ-ટાઇમ ડેટા માટે GTS (ગેરેન્ટીડ ટાઇમ સ્લોટ્સ) નો ઉપયોગ કરે છે
+    \item \textbf{ઇનએક્ટિવ પીરિયડ}: ડિવાઇસિસ લો-પાવર મોડમાં જઈ શકે છે
+\end{itemize}
+
+\begin{mnemonicbox}Beacon Contend Guarantee Sleep\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3(b)}{4}{M2M અને IoT ટેકનોલોજીની સરખામણી કરો.}
+
+\begin{solutionbox}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પેરામીટર} & \textbf{M2M} & \textbf{IoT} \\
+\hline
+\textbf{કમ્યુનિકેશન} & પોઇન્ટ-ટુ-પોઇન્ટ & ઇન્ટરનેટ-બેઝ્ડ \\
+\textbf{ડેટા પ્રોસેસિંગ} & લોકલ & ક્લાઉડ-બેઝ્ડ \\
+\textbf{કનેક્ટિવિટી} & સેલ્યુલર/વાયર્ડ & અનેક પ્રોટોકોલ્સ \\
+\textbf{એપ્લિકેશન્સ} & વિશિષ્ટ ઇન્ડસ્ટ્રીઝ & કન્ઝ્યુમર અને ઇન્ડસ્ટ્રિયલ \\
+\hline
+\end{tabulary}
+
+\textbf{મુખ્ય તફાવતો:}
+\begin{itemize}
+    \item \textbf{M2M}: મશીન-ટુ-મશીન ડાયરેક્ટ કમ્યુનિકેશન
+    \item \textbf{IoT}: ક્લાઉડ ઇન્ટિગ્રેશન સાથે ઇન્ટરનેટ ઓફ થિંગ્સ
+    \item \textbf{સ્કોપ}: M2M એ વ્યાપક IoT ઇકોસિસ્ટમનો ઉપસમૂહ છે
+    \item \textbf{ઇન્ટેલિજન્સ}: IoT વધુ એડવાન્સ્ડ એનાલિટિક્સ અને AI પ્રદાન કરે છે
+\end{itemize}
+
+\begin{mnemonicbox}M2M Direct, IoT Internet\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3(c)}{7}{IoT આર્કિટેક્ચરનો બ્લોક ડાયાગ્રામ દોરો અને તેને સમજાવો}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[gtu block]
+    \node (phys) [draw, rectangle, minimum width=4cm, minimum height=1cm] {1. Physical Layer\\(Sensors, Actuators)};
+    \node (conn) [draw, rectangle, minimum width=4cm, minimum height=1cm, above=0.5cm of phys] {2. Connectivity Layer\\(WiFi, BT, Cellular)};
+    \node (proc) [draw, rectangle, minimum width=4cm, minimum height=1cm, above=0.5cm of conn] {3. Data Processing Layer\\(Edge/Fog)};
+    \node (accum) [draw, rectangle, minimum width=4cm, minimum height=1cm, above=0.5cm of proc] {4. Data Accumulation Layer\\(Cloud Storage)};
+    \node (abstr) [draw, rectangle, minimum width=4cm, minimum height=1cm, above=0.5cm of accum] {5. Data Abstraction Layer\\(Databases)};
+    \node (app) [draw, rectangle, minimum width=4cm, minimum height=1cm, above=0.5cm of abstr] {6. Application Layer\\(Analytics, Apps)};
+    \node (collab) [draw, rectangle, minimum width=4cm, minimum height=1cm, above=0.5cm of app] {7. Collaboration Layer\\(Business Processes)};
+
+    \draw [gtu arrow] (phys) -- (conn);
+    \draw [gtu arrow] (conn) -- (proc);
+    \draw [gtu arrow] (proc) -- (accum);
+    \draw [gtu arrow] (accum) -- (abstr);
+    \draw [gtu arrow] (abstr) -- (app);
+    \draw [gtu arrow] (app) -- (collab);
+\end{tikzpicture}
+\end{center}
+
+\textbf{IoT આર્કિટેક્ચર લેયર્સ:}
+
+\textbf{1. ફિઝિકલ લેયર:}
+\begin{itemize}
+    \item \textbf{ઘટકો}: સેન્સર્સ (તાપમાન, ભેજ), એક્ચ્યુએટર્સ (મોટર્સ, વાલ્વ્સ)
+    \item \textbf{કાર્ય}: ભૌતિક પર્યાવરણમાંથી ડેટા કલેક્શન
+\end{itemize}
+
+\textbf{2. કનેક્ટિવિટી લેયર:}
+\begin{itemize}
+    \item \textbf{પ્રોટોકોલ્સ}: WiFi, Bluetooth, Zigbee, LoRaWAN, સેલ્યુલર
+    \item \textbf{કાર્ય}: ડિવાઇસિસમાંથી પ્રોસેસિંગ સેન્ટર્સ સુધી ડેટા ટ્રાન્સમિટ કરવું
+\end{itemize}
+
+\textbf{3. ડેટા પ્રોસેસિંગ લેયર:}
+\begin{itemize}
+    \item \textbf{ટેકનોલોજીઝ}: એજ કમ્પ્યુટિંગ, ફોગ કમ્પ્યુટિંગ
+    \item \textbf{કાર્ય}: સેન્સર ડેટાની રિયલ-ટાઇમ પ્રોસેસિંગ અને ફિલ્ટરિંગ
+\end{itemize}
+
+\textbf{4. ડેટા એક્યુમ્યુલેશન લેયર:}
+\begin{itemize}
+    \item \textbf{ઇન્ફ્રાસ્ટ્રક્ચર}: ક્લાઉડ સ્ટોરેજ, ડેટા વેરહાઉસિસ
+    \item \textbf{કાર્ય}: IoT ડેટાના વિશાળ પ્રમાણને સ્ટોર કરવું
+\end{itemize}
+
+\textbf{5. ડેટા એબ્સ્ટ્રેક્શન લેયર:}
+\begin{itemize}
+    \item \textbf{ઘટકો}: ડેટાબેસિસ, ડેટા એનાલિટિક્સ એન્જિન્સ
+    \item \textbf{કાર્ય}: એપ્લિકેશન્સ માટે ડેટાને ઓર્ગેનાઇઝ અને તૈયાર કરવું
+\end{itemize}
+
+\textbf{6. એપ્લિકેશન લેયર:}
+\begin{itemize}
+    \item \textbf{સર્વિસિસ}: વેબ એપ્લિકેશન્સ, મોબાઇલ એપ્સ, ડેશબોર્ડ્સ
+    \item \textbf{કાર્ય}: યુઝર ઇન્ટરફેસિસ અને બિઝનેસ લોજિક પ્રદાન કરવું
+\end{itemize}
+
+\textbf{7. કોલાબોરેશન લેયર:}
+\begin{itemize}
+    \item \textbf{ઇન્ટિગ્રેશન}: ERP સિસ્ટમ્સ, બિઝનેસ પ્રોસેસિસ
+    \item \textbf{કાર્ય}: વિવિધ સ્ટેકહોલ્ડર્સ વચ્ચે કોલાબોરેશન સક્ષમ કરવું
+\end{itemize}
+
+\begin{mnemonicbox}Physical Connect Process Accumulate Abstract Apply Collaborate\end{mnemonicbox}
+\end{solutionbox}
+
+\vspace{0.5em}\centerline{\textbf{OR}}\questionmarks{3(a)}{ 3 }{MAC પ્રોટોકોલની એનર્જી સમસ્યાઓ સમજાવો}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{MAC પ્રોટોકોલ્સમાં એનર્જી સમસ્યાઓ:}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{સમસ્યા} & \textbf{વર્ણન} & \textbf{અસર} \\
+\hline
+\textbf{આઇડલ લિસનિંગ} & કમ્યુનિકેશન વિના રેડિયો ચાલુ રહે છે & 50-60\% એનર્જી વેસ્ટ \\
+\textbf{કોલિઝન} & અનેક ટ્રાન્સમિશન્સ ઇન્ટરફેર કરે છે & રિટ્રાન્સમિશન ઓવરહેડ \\
+\textbf{ઓવરહિયરિંગ} & અપ્રસ્તુત પેકેટ્સ પ્રાપ્ત કરવું & બિનજરૂરી એનર્જી વપરાશ \\
+\hline
+\end{tabulary}
+\end{center}
+
+\textbf{મુખ્ય મુદ્દાઓ:}
+\begin{itemize}
+    \item \textbf{આઇડલ લિસનિંગ}: WSN માં સૌથી વધુ એનર્જી-વપરાતી પ્રવૃત્તિ
+    \item \textbf{પ્રોટોકોલ ઓવરહેડ}: કંટ્રોલ પેકેટ્સ વધારાની એનર્જી વાપરે છે
+    \item \textbf{પૂર ગરીબ શેડ્યુલિંગ}: બિનકાર્યક્ષમ ચેનલ એક્સેસ એનર્જી વધારે છે
+\end{itemize}
+
+\begin{mnemonicbox}Idle Collide Overhear\end{mnemonicbox}
+\end{solutionbox}
+
+\vspace{0.5em}\centerline{\textbf{OR}}\questionmarks{3(b)}{ 4 }{IoT સિસ્ટમ માટે મોડિફાઇડ OSI મોડેલ સમજાવો}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{IoT માટે મોડિફાઇડ OSI મોડેલ:}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{લેયર} & \textbf{પરંપરાગત OSI} & \textbf{IoT મોડિફિકેશન} \\
+\hline
+\textbf{એપ્લિકેશન} & યુઝર એપ્લિકેશન્સ & IoT એપ્લિકેશન્સ, ક્લાઉડ સર્વિસિસ \\
+\textbf{પ્રેઝન્ટેશન} & ડેટા ફોર્મેટિંગ & JSON, XML, CoAP \\
+\textbf{સેશન} & સેશન મેનેજમેન્ટ & MQTT, HTTP સેશન્સ \\
+\textbf{ટ્રાન્સપોર્ટ} & TCP, UDP & UDP, CoAP, MQTT \\
+\textbf{નેટવર્ક} & IP રાઉટિંગ & 6LoWPAN, IPv6 \\
+\textbf{ડેટા લિંક} & Ethernet, WiFi & IEEE 802.15.4, LoRa \\
+\textbf{ફિઝિકલ} & ફિઝિકલ મીડિયમ & સેન્સર્સ, એક્ચ્યુએટર્સ, રેડિયો \\
+\hline
+\end{tabulary}
+\end{center}
+
+\textbf{મુખ્ય મોડિફિકેશન્સ:}
+\begin{itemize}
+    \item \textbf{લાઇટવેઇટ પ્રોટોકોલ્સ}: રિસોર્સ-કન્સ્ટ્રેઇન્ડ ડિવાઇસિસ માટે ઓપ્ટિમાઇઝ્ડ
+    \item \textbf{એનર્જી એફિશિયન્સી}: લો પાવર કન્ઝમ્પશન માટે ડિઝાઇન કરેલા પ્રોટોકોલ્સ
+    \item \textbf{ઇન્ટરઓપરેબિલિટી}: વિવિધ IoT ડિવાઇસિસ અને પ્લેટફોર્મ્સ માટે સપોર્ટ
+\end{itemize}
+
+\begin{mnemonicbox}Apps Present Session Transport Network Link Physical\end{mnemonicbox}
+\end{solutionbox}
+
+\vspace{0.5em}\centerline{\textbf{OR}}\questionmarks{3(c)}{ 7 }{IoT ના સ્રોતો વિગતવાર સમજાવો}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[gtu block]
+    \node (root) [draw, circle, minimum size=2cm, font=\bfseries] {IoT Sources};
+    
+    \node (tech) [above left=2cm of root, align=center] {Technology Evolution\\(Internet, Mobile,\\Cloud, Big Data)};
+    \node (bus) [above right=2cm of root, align=center] {Business Drivers\\(Cost Reduction,\\Efficiency, CX)};
+    \node (enable) [below left=2cm of root, align=center] {Tech Enablers\\(Sensors, Wireless,\\Processing, Storage)};
+    \node (market) [below right=2cm of root, align=center] {Market Demands\\(Smart Cities,\\Healthcare, Industry)};
+    
+    \draw [gtu arrow] (root) -- (tech);
+    \draw [gtu arrow] (root) -- (bus);
+    \draw [gtu arrow] (root) -- (enable);
+    \draw [gtu arrow] (root) -- (market);
+\end{tikzpicture}
+\end{center}
+
+\textbf{1. ટેકનોલોજી ઇવોલ્યુશન સ્રોતો:}
+\begin{itemize}
+    \item \textbf{ઇન્ટરનેટ વિસ્તરણ}: ગ્લોબલ કનેક્ટિવિટી ઇન્ફ્રાસ્ટ્રક્ચર ડેવલપમેન્ટ
+    \item \textbf{મોબાઇલ રિવોલ્યુશન}: સ્માર્ટફોન અને ટેબ્લેટ્સ કનેક્ટેડ ઇકોસિસ્ટમ બનાવે છે
+    \item \textbf{ક્લાઉડ કમ્પ્યુટિંગ}: સ્કેલેબલ કમ્પ્યુટિંગ અને સ્ટોરેજ રિસોર્સિસ
+    \item \textbf{બિગ ડેટા એનાલિટિક્સ}: વિશાળ ડેટા વોલ્યુમ્સ પ્રોસેસ કરવાની ક્ષમતા
+\end{itemize}
+
+\textbf{2. બિઝનેસ ડ્રાઇવર્સ:}
+\begin{itemize}
+    \item \textbf{ઓપરેશનલ એફિશિયન્સી}: બિઝનેસ પ્રોસેસિસનું ઓટોમેશન અને ઓપ્ટિમાઇઝેશન
+    \item \textbf{કોસ્ટ રિડક્શન}: ઓપરેશનલ અને મેઇન્ટેનન્સ કોસ્ટ ઓછી
+    \item \textbf{નવા બિઝનેસ મોડલ્સ}: ડેટા-ડ્રિવન સર્વિસિસ અને પ્રોડક્ટ્સ
+    \item \textbf{કસ્ટમર સેટિસફેક્શન}: સ્માર્ટ સર્વિસિસ દ્વારા યુઝર એક્સપિરિયન્સ વધારવું
+\end{itemize}
+
+\textbf{3. ટેકનોલોજિકલ એનેબલર્સ:}
+\begin{itemize}
+    \item \textbf{સેન્સર એડવાન્સમેન્ટ}: નાના, સસ્તા, વધુ સચોટ સેન્સર્સ
+    \item \textbf{કમ્યુનિકેશન પ્રોગ્રેસ}: બહેતર વાયરલેસ પ્રોટોકોલ્સ અને સ્ટાન્ડર્ડ્સ
+    \item \textbf{પ્રોસેસિંગ ઇવોલ્યુશન}: વધુ શક્તિશાળી છતાં એનર્જી-એફિશિયન્ટ પ્રોસેસર્સ
+    \item \textbf{સ્ટોરેજ રિવોલ્યુશન}: સસ્તું અને વધુ વિશ્વસનીય ડેટા સ્ટોરેજ સોલ્યુશન્સ
+\end{itemize}
+
+\textbf{4. માર્કેટ ડિમાન્ડ્સ:}
+\begin{itemize}
+    \item \textbf{સ્માર્ટ સિટીઝ}: શહેરી આયોજન અને ઇન્ફ્રાસ્ટ્રક્ચર મેનેજમેન્ટ
+    \item \textbf{હેલ્થકેર}: રિમોટ મોનિટરિંગ અને ટેલિમેડિસિન
+    \item \textbf{ઇન્ડસ્ટ્રિયલ ઓટોમેશન}: ઇન્ડસ્ટ્રી 4.0 અને સ્માર્ટ મેન્યુફેક્ચરિંગ
+    \item \textbf{એન્વાયરન્મેન્ટલ મોનિટરિંગ}: ક્લાઇમેટ ચેન્જ અને સસ્ટેનેબિલિટી ચિંતાઓ
+\end{itemize}
+
+\textbf{મુખ્ય કન્વર્જન્સ ફેક્ટર્સ:}
+\begin{itemize}
+    \item \textbf{IPv6 એડોપ્શન}: અબજો ડિવાઇસિસ માટે અનલિમિટેડ એડ્રેસિંગ
+    \item \textbf{5G નેટવર્ક્સ}: હાઇ-સ્પીડ, લો-લેટન્સી કમ્યુનિકેશન
+    \item \textbf{AI ઇન્ટિગ્રેશન}: ઇન્ટેલિજન્ટ ડિસિઝન મેકિંગ માટે મશીન લર્નિંગ
+\end{itemize}
+
+\begin{mnemonicbox}Technology Business Enable Market\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(a)}{3}{મૂળભૂત IoT ઘટકો સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{મૂળભૂત IoT ઘટકો:}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{ઘટક} & \textbf{કાર્ય} & \textbf{ઉદાહરણો} \\
+\hline
+\textbf{સેન્સર્સ} & ડેટા કલેક્શન & તાપમાન, દબાણ, ગતિ \\
+\textbf{કનેક્ટિવિટી} & ડેટા ટ્રાન્સમિશન & WiFi, Bluetooth, સેલ્યુલર \\
+\textbf{ડેટા પ્રોસેસિંગ} & ઇન્ફોર્મેશન એનાલિસિસ & એજ/ક્લાઉડ કમ્પ્યુટિંગ \\
+\textbf{યુઝર ઇન્ટરફેસ} & હ્યુમન ઇન્ટરેક્શન & મોબાઇલ એપ્સ, ડેશબોર્ડ્સ \\
+\hline
+\end{tabulary}
+\end{center}
+
+\textbf{મુખ્ય કાર્યો:}
+\begin{itemize}
+    \item \textbf{સેન્સિંગ}: પર્યાવરણ ડેટા એકત્રિત કરો
+    \item \textbf{કનેક્ટિંગ}: પ્રોસેસિંગ સેન્ટર્સ પર ડેટા મોકલો
+    \item \textbf{પ્રોસેસિંગ}: વિશ્લેષણ કરો અને આંતરદૃષ્ટિ કાઢો
+    \item \textbf{એક્ટિંગ}: વિશ્લેષણના આધારે એક્ચ્યુએટર્સને નિયંત્રિત કરો
+\end{itemize}
+
+\begin{mnemonicbox}Sense Connect Process Interface\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(b)}{4}{કન્સ્ટ્રેઇન્ડ એપ્લિકેશન પ્રોટોકોલ (CoAP) વિશે સંક્ષિપ્તમાં ચર્ચા કરો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[gtu state, node distance=4cm]
+    \node (client) {Client};
+    \node (server) [right=of client] {Server};
+    
+    \draw [gtu arrow] (client) -- node[above] {GET /temp} (server);
+    \draw [gtu arrow] (server) -- node[below] {2.05 Content (25$^\circ$C)} (client);
+\end{tikzpicture}
+\end{center}
+
+\begin{center}
+\captionof{table}{CoAP ફીચર્સ:}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{ફીચર} & \textbf{વર્ણન} & \textbf{ફાયદો} \\
+\hline
+\textbf{લાઇટવેઇટ} & સરળ પ્રોટોકોલ ડિઝાઇન & લો રિસોર્સ વપરાશ \\
+\textbf{UDP-બેઝ્ડ} & UDP ટ્રાન્સપોર્ટનો ઉપયોગ કરે છે & ઘટાડેલો ઓવરહેડ \\
+\textbf{RESTful} & REST આર્કિટેક્ચર & સરળ ઇન્ટિગ્રેશન \\
+\textbf{રિલાયબલ} & બિલ્ટ-ઇન રિટ્રાન્સમિશન & ડિલિવરી સુનિશ્ચિત કરે છે \\
+\hline
+\end{tabulary}
+\end{center}
+
+\textbf{મુખ્ય લાક્ષણિકતાઓ:}
+\begin{itemize}
+    \item \textbf{રિક્વેસ્ટ/રિસ્પોન્સ}: HTTP જેવું જ પરંતુ IoT માટે ઓપ્ટિમાઇઝ્ડ
+    \item \textbf{કન્ફર્મેબલ મેસેજિસ}: એક્નોલેજમેન્ટ્સ દ્વારા વિશ્વસનીયતા
+    \item \textbf{રિસોર્સ ડિસ્કવરી}: બિલ્ટ-ઇન સર્વિસ ડિસ્કવરી મિકેનિઝમ
+    \item \textbf{બ્લોક ટ્રાન્સફર}: મોટા ડેટા ટ્રાન્સફર માટે સપોર્ટ
+\end{itemize}
+
+\begin{mnemonicbox}Light UDP REST Reliable\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(c)}{7}{ક્લાઉડ દ્વારા સેન્સર અને કંટ્રોલિંગ ડિવાઇસ (એક્ચ્યુએટર) મેનેજમેન્ટની પ્રક્રિયા સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[gtu state, node distance=2.5cm]
+    \node (sens) {Sensor};
+    \node (gw) [right=of sens] {Gateway};
+    \node (cloud) [right=of gw] {Cloud};
+    \node (act) [below=of gw] {Actuator};
+    \node (user) [below=of cloud] {User App};
+
+    \draw [gtu arrow] (sens) -- node[above, font=\small] {Data} (gw);
+    \draw [gtu arrow] (gw) -- node[above, font=\small] {MQTT} (cloud);
+    \draw [gtu arrow] (cloud) -- node[right, font=\small] {Dash} (user);
+    \draw [gtu arrow] (user) -- node[left, font=\small] {Cmd} (cloud);
+    \draw [gtu arrow] (cloud) to[bend right] node[above, font=\small] {Action} (gw);
+    \draw [gtu arrow] (gw) -- node[left, font=\small] {Sig} (act);
+\end{tikzpicture}
+\end{center}
+
+\textbf{ક્લાઉડ-બેઝ્ડ IoT મેનેજમેન્ટ પ્રક્રિયા:}
+
+\textbf{1. ડેટા કલેક્શન ફેઝ:}
+\begin{itemize}
+    \item \textbf{સેન્સર્સ}: પર્યાવરણ ડેટા એકત્રિત કરો (તાપમાન, ભેજ, ગતિ)
+    \item \textbf{લોકલ પ્રોસેસિંગ}: એજ ડિવાઇસિસ પર મૂળભૂત ફિલ્ટરિંગ અને ફોર્મેટિંગ
+    \item \textbf{ડેટા ટ્રાન્સમિશન}: WiFi/સેલ્યુલર કનેક્શન દ્વારા ક્લાઉડ પર ડેટા મોકલો
+\end{itemize}
+
+\textbf{2. ક્લાઉડ પ્રોસેસિંગ ફેઝ:}
+\begin{itemize}
+    \item \textbf{ડેટા ઇન્જેશન}: ક્લાઉડ ડેટાબેસેસમાં સેન્સર ડેટા પ્રાપ્ત કરો અને સ્ટોર કરો
+    \item \textbf{રિયલ-ટાઇમ એનાલિટિક્સ}: તાત્કાલિક આંતરદૃષ્ટિ માટે ડેટા સ્ટ્રીમ્સ પ્રોસેસ કરો
+    \item \textbf{મશીન લર્નિંગ}: પેટર્ન રેકગ્નિશન અને પ્રેડિક્શન માટે AI અલ્ગોરિધમ્સ લાગુ કરો
+\end{itemize}
+
+\textbf{3. ડિસિઝન મેકિંગ ફેઝ:}
+\begin{itemize}
+    \item \textbf{રૂલ એન્જિન}: જરૂરી ક્રિયાઓ નક્કી કરવા માટે બિઝનેસ રૂલ્સ લાગુ કરો
+    \item \textbf{થ્રેશોલ્ડ મોનિટરિંગ}: જ્યારે મૂલ્યો મર્યાદા કરતા વધારે હોય ત્યારે એલર્ટ્સ ટ્રિગર કરો
+    \item \textbf{ઓટોમેટેડ રિસ્પોન્સિસ}: એક્ચ્યુએટર્સ માટે કંટ્રોલ કમાન્ડ્સ જનરેટ કરો
+\end{itemize}
+
+\textbf{4. કંટ્રોલ એક્ઝીક્યુશન ફેઝ:}
+\begin{itemize}
+    \item \textbf{કમાન્ડ ડિસ્પેચ}: યોગ્ય એક્ચ્યુએટર્સને કંટ્રોલ સિગ્નલ્સ મોકલો
+    \item \textbf{ડિવાઇસ મેનેજમેન્ટ}: એક્ચ્યુએટર સ્ટેટસ અને પરફોર્મન્સ મોનિટર કરો
+    \item \textbf{ફીડબેક લૂપ}: સફળ કમાન્ડ એક્ઝીક્યુશનની પુષ્ટિ એકત્રિત કરો
+\end{itemize}
+
+\textbf{5. યુઝર ઇન્ટરેક્શન:}
+\begin{itemize}
+    \item \textbf{ડેશબોર્ડ}: સેન્સર ડેટા અને સિસ્ટમ સ્ટેટસનું રિયલ-ટાઇમ વિઝ્યુલાઇઝેશન
+    \item \textbf{મોબાઇલ એપ્સ}: રિમોટ મોનિટરિંગ અને મેન્યુઅલ કંટ્રોલ ક્ષમતાઓ
+    \item \textbf{નોટિફિકેશન્સ}: યુઝર્સને મોકલેલા એલર્ટ્સ અને ચેતવણીઓ
+\end{itemize}
+
+\textbf{ફાયદા:}
+\begin{itemize}
+    \item \textbf{સ્કેલેબિલિટી}: હજારો ડિવાઇસિસ એક સાથે હેન્ડલ કરો
+    \item \textbf{રિમોટ એક્સેસ}: ઇન્ટરનેટ સાથે ગમે ત્યાંથી ડિવાઇસિસ કંટ્રોલ કરો
+    \item \textbf{ડેટા એનાલિટિક્સ}: ઐતિહાસિક વિશ્લેષણ અને પ્રિડિક્ટિવ મેઇન્ટેનન્સ
+    \item \textbf{ઇન્ટિગ્રેશન}: અન્ય બિઝનેસ સિસ્ટમ્સ અને સર્વિસિસ સાથે કનેક્ટ કરો
+\end{itemize}
+
+\begin{mnemonicbox}Collect Process Decide Control Interact\end{mnemonicbox}
+\end{solutionbox}
+
+\vspace{0.5em}\centerline{\textbf{OR}}\questionmarks{4(a)}{ 3 }{ઇન્ટરનેટ ઓફ થિંગ્સની વ્યાખ્યા આપો અને તેનો વિઝન જણાવો.}
+
+\begin{solutionbox}
+\textbf{વ્યાખ્યા:}
+ઇન્ટરનેટ ઓફ થિંગ્સ (IoT) એ ઇન્ટરકનેક્ટેડ ફિઝિકલ ડિવાઇસિસનું નેટવર્ક છે જે સેન્સર્સ, સોફ્ટવેર અને કનેક્ટિવિટી સાથે એમ્બેડેડ છે જે ઇન્ટરનેટ પર ડેટા એકત્રિત અને વિનિમય કરે છે.
+
+\begin{center}
+\captionof{table}{IoT વિઝન:}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{પાસું} & \textbf{વિઝન} \\
+\hline
+\textbf{કનેક્ટિવિટી} & બધું દરેક જગ્યાએ જોડાયેલું \\
+\textbf{ઇન્ટેલિજન્સ} & સ્માર્ટ ડિસિઝન મેકિંગ \\
+\textbf{ઓટોમેશન} & ન્યૂનતમ માનવ હસ્તક્ષેપ \\
+\textbf{ઇન્ટિગ્રેશન} & સીમલેસ સિસ્ટમ ઇન્ટરેક્શન \\
+\hline
+\end{tabulary}
+\end{center}
+
+\textbf{કોર વિઝન એલિમેન્ટ્સ:}
+\begin{itemize}
+    \item \textbf{સર્વવ્યાપી કમ્પ્યુટિંગ}: રોજિંદા પદાર્થોમાં એમ્બેડેડ ટેકનોલોજી
+    \item \textbf{સીમલેસ ઇન્ટરેક્શન}: કુદરતી માનવ-ડિવાઇસ કમ્યુનિકેશન
+    \item \textbf{ઇન્ટેલિજન્ટ એન્વાયરન્મેન્ટ}: સંદર્ભ-જાગૃત રિસ્પોન્સિવ સિસ્ટમ્સ
+\end{itemize}
+
+\begin{mnemonicbox}Connect Intelligence Automate Integrate\end{mnemonicbox}
+\end{solutionbox}
+
+\vspace{0.5em}\centerline{\textbf{OR}}\questionmarks{4(b)}{ 4 }{(Message Queue Telemetry Transport) MQTT પ્રોટોકોલ વિશે સંક્ષિપ્તમાં ચર્ચા કરો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[gtu state, node distance=3cm]
+    \node (pub) {Publisher};
+    \node (broker) [right=of pub] {Broker};
+    \node (sub) [right=of broker] {Subscriber};
+
+    \draw [gtu arrow] (pub) -- node[above, font=\small] {Publish(TopicA)} (broker);
+    \draw [gtu arrow] (sub) -- node[below, font=\small] {Subscribe(TopicA)} (broker);
+    \draw [gtu arrow, dashed] (broker) -- node[above, font=\small] {Forward Msg} (sub);
+\end{tikzpicture}
+\end{center}
+
+\begin{center}
+\captionof{table}{MQTT લાક્ષણિકતાઓ:}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{ફીચર} & \textbf{વર્ણન} & \textbf{ફાયદો} \\
+\hline
+\textbf{લાઇટવેઇટ} & ન્યૂનતમ પ્રોટોકોલ ઓવરહેડ & IoT ડિવાઇસિસ માટે યોગ્ય \\
+\textbf{પબ્લિશ/સબ્સ્ક્રાઇબ} & ડિકપલ્ડ કમ્યુનિકેશન & સ્કેલેબલ આર્કિટેક્ચર \\
+\textbf{QoS લેવલ્સ} & ક્વોલિટી ઓફ સર્વિસ વિકલ્પો & વિશ્વસનીય ડિલિવરી \\
+\textbf{પર્સિસ્ટન્ટ સેશન્સ} & સેશન સ્ટેટ જળવાયેલ & કનેક્શન રિઝિલિયન્સ \\
+\hline
+\end{tabulary}
+\end{center}
+
+\textbf{MQTT ઘટકો:}
+\begin{itemize}
+    \item \textbf{પબ્લિશર}: બ્રોકરને મેસેજિસ મોકલે છે
+    \item \textbf{સબ્સ્ક્રાઇબર}: બ્રોકર પાસેથી મેસેજિસ મેળવે છે
+    \item \textbf{બ્રોકર}: સેન્ટ્રલ મેસેજ રાઉટર
+    \item \textbf{ટોપિક્સ}: મેસેજ કેટેગરાઇઝેશન સિસ્ટમ
+\end{itemize}
+
+\textbf{ક્વોલિટી ઓફ સર્વિસ (QoS) લેવલ્સ:}
+\begin{itemize}
+    \item \textbf{QoS 0}: વધુમાં વધુ એક વાર ડિલિવરી (At most once)
+    \item \textbf{QoS 1}: ઓછામાં ઓછું એક વાર ડિલિવરી (At least once)
+    \item \textbf{QoS 2}: બરાબર એક વાર ડિલિવરી (Exactly once)
+\end{itemize}
+
+\begin{mnemonicbox}Publish Subscribe Broker Topic\end{mnemonicbox}
+\end{solutionbox}
+
+\vspace{0.5em}\centerline{\textbf{OR}}\questionmarks{4(c)}{ 7 }{Raspberry Pi નો આર્કિટેક્ચર બ્લોક ડાયાગ્રામ દોરો અને સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[gtu block]
+    \node (cpu) [draw, rectangle, minimum width=2cm] {CPU (ARM A72)};
+    \node (gpu) [draw, rectangle, minimum width=2cm, right=0.5cm of cpu] {GPU (VideoCore)};
+    \node (ram) [draw, rectangle, minimum width=2cm, right=0.5cm of gpu] {RAM (4GB)};
+    \node (store) [draw, rectangle, minimum width=2cm, right=0.5cm of ram] {MicroSD};
+    
+    \node (gpio) [draw, rectangle, minimum width=2cm, below=1cm of cpu] {GPIO (40 pins)};
+    \node (usb) [draw, rectangle, minimum width=2cm, below=1cm of gpu] {USB (3.0)};
+    \node (net) [draw, rectangle, minimum width=2cm, below=1cm of ram] {Network (WiFi/Eth)};
+    \node (av) [draw, rectangle, minimum width=2cm, below=1cm of store] {A/V (HDMI/Audio)};
+    
+    \node [draw, rectangle, inner sep=0.5cm, fit=(cpu)(av)] (board) {};
+    \node [above=0.1cm of board] {\textbf{Raspberry Pi 4}};
+\end{tikzpicture}
+\end{center}
+
+\textbf{Raspberry Pi આર્કિટેક્ચર ઘટકો:}
+
+\textbf{1. પ્રોસેસિંગ યુનિટ:}
+\begin{itemize}
+    \item \textbf{CPU}: ક્વાડ-કોર ARM Cortex-A72 પ્રોસેસર 1.5GHz પર ચાલે છે
+    \item \textbf{GPU}: ગ્રાફિક્સ પ્રોસેસિંગ અને વિડિયો પ્રવેગક માટે VideoCore VI
+    \item \textbf{પરફોર્મન્સ}: Linux જેવી સંપૂર્ણ ઓપરેટિંગ સિસ્ટમ્સ ચલાવવા માટે સક્ષમ
+\end{itemize}
+
+\textbf{2. મેમોરી સિસ્ટમ:}
+\begin{itemize}
+    \item \textbf{RAM}: પ્રોગ્રામ એક્ઝીક્યુશન માટે 4GB LPDDR4 સિસ્ટમ મેમોરી
+    \item \textbf{સ્ટોરેજ}: ઓપરેટિંગ સિસ્ટમ અને ડેટા સ્ટોરેજ માટે માઇક્રોએસડી કાર્ડ સ્લોટ
+\end{itemize}
+
+\textbf{3. ઇનપુટ/આઉટપુટ ઇન્ટરફેસિસ:}
+\begin{itemize}
+    \item \textbf{GPIO}: સેન્સર કનેક્ટિવિટી માટે 40-પિન જનરલ પર્પઝ ઇનપુટ/આઉટપુટ
+    \item \textbf{USB પોર્ટ્સ}: પેરિફેરલ્સ અને સ્ટોરેજ ઉપકરણો માટે 4x USB 3.0 પોર્ટ્સ
+    \item \textbf{ડિસ્પ્લે}: 4K વિડિયો આઉટપુટને સપોર્ટ કરતા 2x માઇક્રો-HDMI પોર્ટ્સ
+\end{itemize}
+
+\textbf{4. કનેક્ટિવિટી વિકલ્પો:}
+\begin{itemize}
+    \item \textbf{ઇથરનેટ}: વાયર્ડ નેટવર્ક કનેક્શન માટે ગીગાબીટ ઇથરનેટ પોર્ટ
+    \item \textbf{વાયરલેસ}: ડ્યુઅલ-બેન્ડ WiFi 802.11ac અને Bluetooth 5.0
+\end{itemize}
+
+\textbf{IoT એપ્લિકેશન્સ:}
+\begin{itemize}
+    \item \textbf{હોમ ઓટોમેશન}, \textbf{ઇન્ડસ્ટ્રિયલ મોનિટરિંગ}, \textbf{રોબોટિક્સ}
+\end{itemize}
+
+\begin{mnemonicbox}Process Memory Interface Connect Power\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(a)}{3}{IoT સાથે સ્માર્ટ હેલ્થ મોનિટરિંગ સિસ્ટમનો બ્લોક ડાયાગ્રામ દોરો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[gtu state, node distance=2cm]
+    \node (patient) {Patient};
+    \node (sensor) [right=of patient] {Sensors (HR, Temp)};
+    \node (mcu) [right=of sensor] {MCU (ESP32)};
+    \node (cloud) [below=of mcu] {Cloud Server};
+    \node (app) [left=of cloud] {Mobile/Doctor App};
+    \node (alert) [right=of cloud] {Alerts (SMS)};
+
+    \draw [gtu arrow] (patient) -- (sensor);
+    \draw [gtu arrow] (sensor) -- (mcu);
+    \draw [gtu arrow] (mcu) -- node[right] {WiFi} (cloud);
+    \draw [gtu arrow] (cloud) -- (app);
+    \draw [gtu arrow] (cloud) -- (alert);
+\end{tikzpicture}
+\end{center}
+
+\textbf{સિસ્ટમ ઘટકો:}
+\begin{itemize}
+    \item \textbf{સેન્સર્સ}: વાઇટલ સાઇન્સ એકત્રિત કરો (હાર્ટ રેટ, બ્લડ પ્રેશર)
+    \item \textbf{માઇક્રોકંટ્રોલર}: સેન્સર ડેટા પ્રોસેસ અને કમ્યુનિકેશન મેનેજ કરો
+    \item \textbf{ક્લાઉડ પ્લેટફોર્મ}: ડેટા સ્ટોર કરો અને એનાલિટિક્સ સેવાઓ પ્રદાન કરો
+    \item \textbf{યુઝર ઇન્ટરફેસિસ}: મોનિટરિંગ માટે મોબાઇલ એપ્સ અને વેબ ડેશબોર્ડ્સ
+\end{itemize}
+
+\begin{mnemonicbox}Sense Process Connect Store Monitor\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(b)}{4}{IoT માં વિવિધ પ્રકારના સેન્સરની યાદી આપો અને કોઈપણ બેની કાર્યપદ્ધતિ સંક્ષિપ્તમાં સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{IoT સેન્સર પ્રકારો:}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{સેન્સર પ્રકાર} & \textbf{માપન} & \textbf{એપ્લિકેશન્સ} \\
+\hline
+\textbf{તાપમાન} & ગરમી/શરદી સ્તર & થર્મોસ્ટેટ, હવામાન \\
+\textbf{ભેજ} & ભેજ સામગ્રી & કૃષિ, સ્ટોરેજ \\
+\textbf{દબાણ} & એકમ વિસ્તાર દીઠ બળ & હવામાન, ઔદ્યોગિક \\
+\textbf{મોશન/PIR} & હલનચલન શોધ & સુરક્ષા, ઓટોમેશન \\
+\textbf{ગેસ} & રાસાયણિક રચના & હવાની ગુણવત્તા \\
+\textbf{પ્રકાશ} & રોશની સ્તર & સ્માર્ટ લાઇટિંગ \\
+\hline
+\end{tabulary}
+\end{center}
+
+\textbf{વિગતવાર કાર્યપદ્ધતિ:}
+
+\textbf{1. તાપમાન સેન્સર (DHT22):}
+\begin{itemize}
+    \item \textbf{સિદ્ધાંત}: તાપમાન સાથે થર્મિસ્ટર રેઝિસ્ટન્સ બદલાય છે
+    \item \textbf{પ્રક્રિયા}: માઇક્રોકંટ્રોલર રેઝિસ્ટન્સ મૂલ્ય વાંચે છે અને તાપમાનમાં રૂપાંતરિત કરે છે
+    \item \textbf{આઉટપુટ}: તાપમાન અને ભેજ ડેટા સાથે ડિજિટલ સિગ્નલ
+\end{itemize}
+
+\textbf{2. PIR મોશન સેન્સર:}
+\begin{itemize}
+    \item \textbf{સિદ્ધાંત}: ગતિશીલ પદાર્થો દ્વારા ઉત્સર્જિત ઇન્ફ્રારેડ રેડિયેશન શોધે છે
+    \item \textbf{કાર્ય}: ઇન્ફ્રારેડ લેવલ્સમાં ફેરફાર ડિજિટલ આઉટપુટ સિગ્નલ ટ્રિગર કરે છે
+    \item \textbf{એપ્લિકેશન્સ}: સુરક્ષા સિસ્ટમ્સ, ઓટોમેટિક લાઇટિંગ
+\end{itemize}
+
+\begin{mnemonicbox}Temperature Humidity Pressure Motion Gas Light\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(c)}{7}{IoT સાથે સ્માર્ટ હોમ ઓટોમેશનનો બ્લોક ડાયાગ્રામ દોરો અને તેની કાર્યપદ્ધતિ સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[gtu block]
+    \node (ctrl) [draw, rectangle, minimum width=3cm] {Controller (RPi)};
+    \node (sens) [left=of ctrl, align=center] {Sensors\\(Temp, Motion)};
+    \node (act) [right=of ctrl, align=center] {Actuators\\(Lights, AC)};
+    \node (comm) [below=of ctrl] {Comm (WiFi)};
+    \node (cloud) [below=of comm] {Cloud Server};
+    \node (user) [left=of cloud] {User App};
+    \node (voice) [right=of cloud] {Voice Asst};
+
+    \draw [gtu arrow] (sens) -- (ctrl);
+    \draw [gtu arrow] (ctrl) -- (act);
+    \draw [gtu arrow] (ctrl) -- (comm);
+    \draw [gtu arrow] (comm) -- (cloud);
+    \draw [gtu arrow] (cloud) -- (user);
+    \draw [gtu arrow] (cloud) -- (voice);
+\end{tikzpicture}
+\end{center}
+
+\textbf{સ્માર્ટ હોમ ઓટોમેશન કાર્યપદ્ધતિ:}
+\begin{itemize}
+    \item \textbf{ડેટા કલેક્શન}: સેન્સર્સ (પર્યાવરણ, સુરક્ષા) ઘરની સ્થિતિનું નિરીક્ષણ કરે છે.
+    \item \textbf{ડેટા પ્રોસેસિંગ}: લોકલ (ક્રિટિકલ) અને ક્લાઉડ (એનાલિટિક્સ) પ્રોસેસિંગ.
+    \item \textbf{ડિસિઝન મેકિંગ}: રૂલ્સ અને AI ક્રિયાઓ નિયંત્રિત કરે છે.
+    \item \textbf{કંટ્રોલ એક્ઝીક્યુશન}: કંટ્રોલર એક્ચ્યુએટર્સને સિગ્નલ મોકલે છે (લાઇટ ડીમ, દરવાજા લોક).
+    \item \textbf{યુઝર ઇન્ટરેક્શન}: એપ્સ અને વોઇસ આસિસ્ટન્ટ્સ રિમોટ કંટ્રોલ આપે છે.
+\end{itemize}
+
+\textbf{મુખ્ય વિશેષતાઓ:}
+\begin{itemize}
+    \item \textbf{એનર્જી એફિશિયન્સી}: ઓપ્ટિમાઇઝ્ડ વપરાશ 30-40\% પાવર બચાવે છે.
+    \item \textbf{સિક્યુરિટી}: રિયલ-ટાઇમ એલર્ટ્સ અને મોનિટરિંગ.
+    \item \textbf{સગવડ}: ઓટોમેટેડ રૂટિન અને વોઇસ કંટ્રોલ.
+\end{itemize}
+
+\begin{mnemonicbox}Collect Process Decide Control Interact Secure\end{mnemonicbox}
+\end{solutionbox}
+
+\vspace{0.5em}\centerline{\textbf{OR}}\questionmarks{5(a)}{ 3 }{કોઈપણ ત્રણ ઔદ્યોગિક અને લશ્કરી IoT એપ્લિકેશન્સની યાદી આપો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{ઔદ્યોગિક IoT એપ્લિકેશન્સ:}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{એપ્લિકેશન} & \textbf{વર્ણન} & \textbf{ફાયદા} \\
+\hline
+\textbf{પ્રિડિક્ટિવ મેઇન્ટેનન્સ} & સાધનોની તંદુરસ્તી મોનિટર & ડાઉનટાઇમ ઘટાડો \\
+\textbf{સપ્લાય ચેઇન ટ્રેકિંગ} & માલની હિલચાલ ટ્રેક & કાર્યક્ષમતા વધારો \\
+\textbf{એનર્જી મેનેજમેન્ટ} & પાવર વપરાશ ઓપ્ટિમાઇઝ & ખર્ચ ઘટાડો \\
+\hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\captionof{table}{લશ્કરી IoT એપ્લિકેશન્સ (IoMT):}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{એપ્લિકેશન} & \textbf{વર્ણન} & \textbf{ફાયદા} \\
+\hline
+\textbf{બેટલફિલ્ડ સર્વેલન્સ} & રિયલ-ટાઇમ કોમ્બેટ ઝોન & પરિસ્થિતિ જાગૃતિ \\
+\textbf{એસેટ ટ્રેકિંગ} & સાધનો/વાહનો મોનિટર & લોજિસ્ટિક્સ ઓપ્ટિમાઇઝેશન \\
+\textbf{સોલ્જર હેલ્થ} & સૈનિક વાઇટલ સાઇન્સ & સલામતી અને પ્રતિભાવ \\
+\hline
+\end{tabulary}
+\end{center}
+
+\begin{mnemonicbox}Predict Track Energy, Survey Track Monitor\end{mnemonicbox}
+\end{solutionbox}
+
+\vspace{0.5em}\centerline{\textbf{OR}}\questionmarks{5(b)}{ 4 }{IoT માં વિવિધ પ્રકારના એક્ચ્યુએટર્સની યાદી આપો અને કોઈપણ બેની કાર્યપદ્ધતિ સંક્ષિપ્તમાં સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{IoT એક્ચ્યુએટર પ્રકારો:}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{એક્ચ્યુએટર પ્રકાર} & \textbf{કાર્ય} & \textbf{એપ્લિકેશન્સ} \\
+\hline
+\textbf{સર્વો મોટર} & કોણીય પોઝિશનિંગ & રોબોટિક્સ \\
+\textbf{રિલે} & ઇલેક્ટ્રિકલ સ્વિચિંગ & લાઇટ્સ, ઉપકરણો \\
+\textbf{સોલેનોઇડ વાલ્વ} & પ્રવાહી નિયંત્રણ & સિંચાઈ \\
+\textbf{LED} & પ્રકાશ ઉત્સર્જન & ઇન્ડિકેટર્સ \\
+\textbf{બઝર} & અવાજ જનરેશન & એલાર્મ્સ \\
+\textbf{સ્ટેપર મોટર} & રોટેશનલ કંટ્રોલ & 3D પ્રિન્ટર્સ \\
+\hline
+\end{tabulary}
+\end{center}
+
+\textbf{વિગતવાર કાર્યપદ્ધતિ:}
+
+\textbf{1. સર્વો મોટર:}
+\begin{itemize}
+    \item \textbf{કંટ્રોલ સિગ્નલ}: PWM સિગ્નલ પોઝિશન નક્કી કરે છે
+    \item \textbf{ફીડબેક}: આંતરિક પોટેન્શિયોમીટર ચોકસાઈ સુનિશ્ચિત કરે છે
+    \item \textbf{કાર્ય}: સર્કિટ ઇચ્છિત વિ વાસ્તવિક પોઝિશનની તુલના કરે છે
+\end{itemize}
+
+\textbf{2. રિલે મોડ્યુલ:}
+\begin{itemize}
+    \item \textbf{સિદ્ધાંત}: ઇલેક્ટ્રોમેગ્નેટ મિકેનિકલ સ્વિચ ખસેડે છે
+    \item \textbf{સ્વિચિંગ}: હાઇ વોલ્ટેજ સર્કિટને કનેક્ટ/ડિસ્કનેક્ટ કરે છે
+    \item \textbf{આઇસોલેશન}: લો વોલ્ટેજ MCU થી હાઇ લોડ્સ સુરક્ષિત રીતે નિયંત્રિત કરે છે
+\end{itemize}
+
+\begin{mnemonicbox}Servo Relay Solenoid LED Buzzer Stepper\end{mnemonicbox}
+\end{solutionbox}
+
+\vspace{0.5em}\centerline{\textbf{OR}}\questionmarks{5(c)}{ 7 }{IoT સાથે સ્માર્ટ પાર્કિંગ સિસ્ટમનો બ્લોક ડાયાગ્રામ દોરો અને તેની કાર્યપદ્ધતિ સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[gtu block]
+    \node (space) [draw, rectangle, minimum width=2.5cm] {Parking Space};
+    \node (sensor) [draw, rectangle, minimum width=2.5cm, right=0.5cm of space] {Sensor (IR/US)};
+    \node (mcu) [draw, rectangle, minimum width=2.5cm, right=0.5cm of sensor] {MCU (NodeMCU)};
+    \node (cloud) [draw, rectangle, minimum width=2.5cm, below=1cm of mcu] {Cloud Server};
+    \node (app) [draw, rectangle, minimum width=2.5cm, left=0.5cm of cloud] {Mobile App};
+    \node (disp) [draw, rectangle, minimum width=2.5cm, right=0.5cm of cloud] {Display Board};
+    \node (led) [draw, rectangle, minimum width=2.5cm, above=0.5cm of mcu] {LED Indicator};
+
+    \draw [gtu arrow] (space) -- (sensor);
+    \draw [gtu arrow] (sensor) -- (mcu);
+    \draw [gtu arrow] (mcu) -- (led);
+    \draw [gtu arrow] (mcu) -- node[right] {WiFi} (cloud);
+    \draw [gtu arrow] (cloud) -- (app);
+    \draw [gtu arrow] (cloud) -- (disp);
+\end{tikzpicture}
+\end{center}
+
+\textbf{સ્માર્ટ પાર્કિંગ સિસ્ટમ કાર્યપદ્ધતિ:}
+
+\textbf{1. વાહન શોધ (Vehicle Detection):}
+\begin{itemize}
+    \item દરેક જગ્યાએ IR/Ultrasonic સેન્સર્સ વાહનની હાજરી શોધે છે.
+    \item સતત દેખરેખ ચોક્કસ ઓક્યુપન્સી સ્ટેટસ સુનિશ્ચિત કરે છે.
+\end{itemize}
+
+\textbf{2. ડેટા કલેક્શન અને પ્રોસેસિંગ:}
+\begin{itemize}
+    \item માઇક્રોકંટ્રોલર સેન્સર ડેટા (Occupied/Free) પ્રોસેસ કરે છે.
+    \item કચરામાંથી ખોટા પોઝિટિવ્સ ટાળવા માટે ડેટા માન્ય કરે છે.
+\end{itemize}
+
+\textbf{3. કમ્યુનિકેશન:}
+\begin{itemize}
+    \item WiFi ક્લાઉડ સર્વર પર રિયલ-ટાઇમ સ્ટેટસ ટ્રાન્સમિટ કરે છે.
+    \item ક્લાઉડ ડેટાબેઝ રેકોર્ડ્સ સ્ટોર કરે છે અને એનાલિટિક્સ કરે છે.
+\end{itemize}
+
+\textbf{4. યુઝર સર્વિસિસ:}
+\begin{itemize}
+    \item મોબાઇલ એપ્લિકેશન જગ્યાઓ શોધવા અને આરક્ષિત કરવાની મંજૂરી આપે છે.
+    \item ઉપલબ્ધ સ્થળો પર રિયલ-ટાઇમ નેવિગેશન.
+\end{itemize}
+
+\textbf{5. ઇન્ડિકેટર્સ:}
+\begin{itemize}
+    \item ઓન-સાઇટ LED ઇન્ડિકેટર્સ (લાલ/લીલા) અને ડિસ્પ્લે બોર્ડ્સ.
+\end{itemize}
+
+\textbf{ફાયદા:}
+\begin{itemize}
+    \item \textbf{સમય બચત}: ઝડપી પાર્કિંગ સ્થળ સ્થાન.
+    \item \textbf{ટ્રાફિક ઘટાડો}: ઓછું ચક્કર લગાવવું.
+    \item \textbf{આવક}: ઓપ્ટિમાઇઝ્ડ જગ્યા ઉપયોગ.
+\end{itemize}
+
+\begin{mnemonicbox}Detect Process Communicate Interface Indicate Serve\end{mnemonicbox}
+\end{solutionbox}
+
+\end{document}

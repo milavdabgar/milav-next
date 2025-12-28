@@ -1,0 +1,874 @@
+\documentclass{article}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/preamble.tex}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/gujarati-boxes.tex}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/commands.tex}
+
+\title{ઇલેક્ટ્રિકલ અને ઇલેક્ટ્રોનિક્સ એન્જિનિયરિંગના તત્વો (1313202) - ઉનાળુ 2024 સોલ્યુશન}
+\date{June 13, 2024}
+
+\begin{document}
+\maketitle
+
+\questionmarks{1(a)}{3}{વ્યાખ્યા આપો: 1. નોડ, 2. લૂપ, 3. બ્રાંચ}
+
+\begin{solutionbox}
+\begin{enumerate}
+    \item \textbf{નોડ (Node):} સર્કિટમાં એવો બિંદુ જ્યાં બે અથવા વધુ સર્કિટ એલિમેન્ટ મળે છે અથવા જોડાય છે.
+    \item \textbf{લૂપ (Loop):} સર્કિટમાં એક બંધ માર્ગ જે એક જ બિંદુથી શરૂ થઈને એ જ બિંદુ પર પરત આવે છે, કોઈપણ નોડને એક વખતથી વધુ ઓળંગીને નહીં.
+    \item \textbf{બ્રાંચ (Branch):} સર્કિટમાં બે નોડને જોડતો માર્ગ અથવા એલિમેન્ટ.
+\end{enumerate}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Never Loop Between: Nodes Link, Loops Bound, Branches Establish connections}
+\end{mnemonicbox}
+
+\questionmarks{1(b)}{4}{Superposition થીયરમ અને Maximum power transfer થીયરમ નું સ્ટેટમેંટ લખો.}
+
+\begin{solutionbox}
+\begin{itemize}
+    \item \textbf{Superposition થીયરમ:} લીનિયર સર્કિટમાં મલ્ટીપલ સોર્સ હોય ત્યારે, કોઈપણ એલિમેન્ટમાં રિસ્પોન્સ (વોલ્ટેજ અથવા કરંટ) એ દરેક સોર્સના એકલા કાર્ય કરવાથી થતા રિસ્પોન્સના બીજગણિતીય સરવાળાની બરાબર હોય છે, જ્યારે બીજા બધા સોર્સને તેમના આંતરિક ઇમ્પિડન્સથી બદલી દેવામાં આવે.
+    \item \textbf{Maximum Power Transfer થીયરમ:} સોર્સથી લોડમાં મહત્તમ પાવર ત્યારે ટ્રાન્સફર થાય છે જ્યારે લોડ રેઝિસ્ટન્સ સોર્સના આંતરિક રેઝિસ્ટન્સની બરાબર હોય ($R_L = R_S$).
+\end{itemize}
+
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto]
+    % Superposition
+    \node [gtu block] (src) {સોર્સ};
+    \node [gtu block, right=of src] (ind) {વ્યક્તિગત\\પ્રતિક્રિયાઓ};
+    \node [gtu block, right=of ind] (sum) {સરવાળો = કુલ\\પ્રતિક્રિયા};
+    
+    \draw [gtu arrow] (src) -- (ind);
+    \draw [gtu arrow] (ind) -- (sum);
+    
+    % Max Power
+    \node [gtu block, below=1.5cm of src] (source) {સોર્સ $R_S$};
+    \node [gtu block, right=of source] (load) {લોડ $R_L$};
+    \node [gtu block, right=of load] (cond) {મેક્સ પાવર\\જ્યારે $R_S = R_L$};
+    
+    \draw [gtu dashed arrow] (source) -- (load);
+    \draw [gtu arrow] (load) -- (cond);
+\end{tikzpicture}
+\captionof{figure}{Superposition અને Max Power Transfer ના કોન્સેપ્ટ}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Sum Powers Matched: Sum individual powers; Match resistance for maximum}
+\end{mnemonicbox}
+
+\questionmarks{1(c)}{7}{કિરચોફનો વોલ્ટેજ નો નિયમ અને કિરચોફનો કરંટનો નિયમ સમજાવો.}
+
+\begin{solutionbox}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{નિયમ} & \textbf{સમજૂતી} & \textbf{ગાણિતિક સ્વરૂપ} \\ \hline
+\textbf{કિરચોફનો વોલ્ટેજ નો નિયમ (KVL)} & સર્કિટમાં કોઈપણ બંધ લૂપમાં બધા વોલ્ટેજનો બીજગણિતીય સરવાળો શૂન્ય થાય છે. & $\sum V = 0$ \\ \hline
+\textbf{કિરચોફનો કરંટનો નિયમ (KCL)} & નોડમાં પ્રવેશતા અને નીકળતા બધા કરંટનો બીજગણિતીય સરવાળો શૂન્ય થાય છે. & $\sum I = 0$ \\ \hline
+\end{tabulary}
+
+\begin{center}
+\begin{tabular}{cc}
+\begin{circuitikz}[scale=0.8]
+    \draw (0,0) to[battery1, l=$V_1$] (0,3) -- (3,3) to[R, l=$V_2$] (3,0) -- (0,0);
+    \draw (1.5,1.5) node[circle, draw] {Loop};
+    \node at (1.5,-0.5) {KVL: $V_1 - V_2 = 0$};
+\end{circuitikz}
+&
+\begin{circuitikz}[scale=0.8]
+    \draw (0,0) node[circle,fill,inner sep=2pt,label=above:Node] (N) {};
+    \draw[<-] (N) -- (-1.5, 1) node[left] {$I_1$};
+    \draw[<-] (N) -- (-1.5, -1) node[left] {$I_2$};
+    \draw[->] (N) -- (1.5, 1) node[right] {$I_3$};
+    \draw[->] (N) -- (1.5, -1) node[right] {$I_4$};
+    \node at (0,-1.5) {KCL: $I_1 + I_2 = I_3 + I_4$};
+\end{circuitikz}
+\end{tabular}
+\captionof{figure}{KVL અને KCL ડાયાગ્રામ}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{KVL નું ભૌતિક અર્થઘટન:} સર્કિટ લૂપમાં ઊર્જા સંરક્ષિત રહે છે.
+    \item \textbf{KCL નું ભૌતિક અર્થઘટન:} સર્કિટ નોડમાં ચાર્જ સંરક્ષિત રહે છે.
+    \item \textbf{KVL નો ઉપયોગ:} સર્કિટ લૂપમાં અજ્ઞાત વોલ્ટેજ શોધવા.
+    \item \textbf{KCL નો ઉપયોગ:} સર્કિટ જંક્શનમાં અજ્ઞાત કરંટ શોધવા.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Voltages Loop to Zero, Currents Node to Zero}
+\end{mnemonicbox}
+
+\questionmarks{1(c) OR}{7}{રેસિસ્ટન્સ ના સીરીઝ અને પેરેલલ કનેક્શન જરુરી સમીકરણો સાથે સમજાવો.}
+
+\begin{solutionbox}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{કનેક્શન} & \textbf{લાક્ષણિકતાઓ} & \textbf{સમતુલ્ય રેસિસ્ટન્સ} & \textbf{કરંટ-વોલ્ટેજ સંબંધ} \\ \hline
+\textbf{સીરીઝ} & બધા રેસિસ્ટર્સમાંથી એક સરખો કરંટ વહે છે. & $R_{eq} = R_1 + R_2 + \dots + R_n$ & $I = V/R_{eq}$ \\ \hline
+\textbf{પેરેલલ} & બધા રેસિસ્ટર્સ પર એક સરખો વોલ્ટેજ આવે છે. & $1/R_{eq} = 1/R_1 + 1/R_2 + \dots + 1/R_n$ & $I = I_1 + I_2 + \dots + I_n$ \\ \hline
+\end{tabulary}
+
+\begin{center}
+\begin{tabular}{cc}
+\begin{circuitikz}[scale=0.7]
+    \draw (0,0) to[battery1, l=$V$] (0,2) -- (1,2)
+    to[R, l=$R_1$] (2,2)
+    to[R, l=$R_2$] (3,2)
+    to[R, l=$R_3$] (4,2) -- (4,0) -- (0,0);
+    \node at (2,-0.5) {સીરીઝ કનેક્શન};
+\end{circuitikz}
+&
+\begin{circuitikz}[scale=0.7]
+    \draw (0,0) to[battery1, l=$V$] (0,2) -- (3,2);
+    \draw (1,2) to[R, l=$R_1$] (1,0);
+    \draw (2,2) to[R, l=$R_2$] (2,0);
+    \draw (3,2) to[R, l=$R_3$] (3,0);
+    \draw (0,0) -- (3,0);
+    \node at (1.5,-0.5) {પેરેલલ કનેક્શન};
+\end{circuitikz}
+\end{tabular}
+\captionof{figure}{સીરીઝ અને પેરેલલ કનેક્શન}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{સીરીઝમાં કરંટ:} $I = I_1 = I_2 = \dots = I_n$
+    \item \textbf{સીરીઝમાં વોલ્ટેજ:} $V = V_1 + V_2 + \dots + V_n$
+    \item \textbf{પેરેલલમાં કરંટ:} $I = I_1 + I_2 + \dots + I_n$
+    \item \textbf{પેરેલલમાં વોલ્ટેજ:} $V = V_1 = V_2 = \dots = V_n$
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Same Current Series, Same Voltage Parallel}
+\end{mnemonicbox}
+
+\questionmarks{2(a)}{3}{Ohm's law ની મર્યાદાઓ જણાવો.}
+
+\begin{solutionbox}
+\begin{itemize}
+    \item \textbf{નોન-લિનિયર કંપોનન્ટ્સ:} ડાયોડ, ટ્રાન્ઝિસ્ટર જેવા કંપોનન્ટ્સને લાગુ પડતો નથી, જે નોન-લિનિયર V-I લાક્ષણિકતાઓ ધરાવે છે.
+    \item \textbf{તાપમાન ફેરફાર:} જ્યારે તાપમાન નોંધપાત્ર રીતે બદલાય છે ત્યારે માન્ય રહેતો નથી, કારણ કે તાપમાન સાથે રેઝિસ્ટન્સ બદલાય છે.
+    \item \textbf{ઉચ્ચ ફ્રિક્વન્સી:} ખૂબ ઊંચી ફ્રિક્વન્સી પર સ્કિન ઇફેક્ટ અને અન્ય અસરોને કારણે નિષ્ફળ જાય છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Ohm's Not Linear Thermal High: Non-linear, Temperature, High frequency}
+\end{mnemonicbox}
+
+\questionmarks{2(b)}{4}{વ્યાખ્યા આપો: 1. ડોપીંગ, 2. ઈંટ્રાસીક સેમીકંડક્ટર, 3. એક્સ્ટ્રાસીક સેમીકંડક્ટર, 4. ડોપંટ}
+
+\begin{solutionbox}
+\begin{enumerate}
+    \item \textbf{ડોપીંગ (Doping):} શુદ્ધ સેમીકંડક્ટરમાં અશુદ્ધિના પરમાણુઓ ઉમેરવાની પ્રક્રિયા જેનાથી ઇલેક્ટ્રિકલ ગુણધર્મો બદલાય છે.
+    \item \textbf{ઈંટ્રાસીક સેમીકંડક્ટર (Intrinsic Semiconductor):} શુદ્ધ સેમીકંડક્ટર (જેમ કે શુદ્ધ Si અથવા Ge) જેમાં ઇલેક્ટ્રોન અને હોલની સંખ્યા સરખી હોય છે.
+    \item \textbf{એક્સ્ટ્રાસીક સેમીકંડક્ટર (Extrinsic Semiconductor):} ડોપ કરેલા સેમીકંડક્ટર જેમાં ઇલેક્ટ્રોન અને હોલની સંખ્યા અસરખી હોય છે (N-type અથવા P-type).
+    \item \textbf{ડોપંટ (Dopant):} ડોપિંગ પ્રક્રિયા દરમિયાન સેમીકંડક્ટરમાં ઉમેરાતા અશુદ્ધિના તત્વો (જેમ કે Boron, Phosphorus).
+\end{enumerate}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Do In-Ex-Do: Doping Introduces Extrinsic properties through Dopants}
+\end{mnemonicbox}
+
+\questionmarks{2(c)}{7}{ટ્રાયવેલેંટ મટીરીયલ ની વ્યાખ્યા આપો અને તેના ઉદાહરણ આપો. P-type સેમીકંડક્ટરની રચના જરુરી આકૃતિ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\begin{itemize}
+    \item \textbf{ટ્રાયવેલેંટ મટીરીયલ:} એવા તત્વો જેમના બાહ્યતમ કોશમાં 3 વેલેન્સ ઇલેક્ટ્રોન હોય છે.
+    \item \textbf{ઉદાહરણો:} Boron (B), Aluminum (Al), Gallium (Ga), Indium (In).
+\end{itemize}
+
+\textbf{P-type સેમીકંડક્ટરની રચના:}
+જ્યારે શુદ્ધ સિલિકોન ક્રિસ્ટલને ટ્રાયવેલેંટ ઇમ્પ્યોરિટી (જેમ કે Boron) સાથે ડોપ કરવામાં આવે છે:
+\begin{enumerate}
+    \item \textbf{બોન્ડ ફોર્મેશન:} Boron ના 3 વેલેન્સ ઇલેક્ટ્રોન 3 પડોશી Silicon એટમ સાથે કોવેલેન્ટ બોન્ડ બનાવે છે.
+    \item \textbf{હોલ ક્રિએશન:} ચોથો બોન્ડ અપૂર્ણ રહે છે કારણ કે Boron પાસે ચોથો ઇલેક્ટ્રોન નથી. આ ખૂટતો ઇલેક્ટ્રોન એક ખાલી જગ્યા બનાવે છે જેને \textbf{હોલ (Hole)} કહેવાય છે.
+    \item \textbf{ચાર્જ કેરિયર્સ:} હોલ પોઝિટિવ ચાર્જ કેરિયર્સ છે. હોલ ડોપિંગ દ્વારા ઉત્પન્ન થતા હોવાથી તે \textbf{મેજોરિટી કેરિયર્સ} બને છે, જ્યારે ઇલેક્ટ્રોન \textbf{માઇનોરિટી કેરિયર્સ} હોય છે.
+\end{enumerate}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.8]
+    \foreach \x in {0,2,4}
+    \foreach \y in {0,2,4}
+        \node [draw, circle, minimum size=0.8cm] at (\x,\y) {Si};
+    
+    \node [draw, circle, minimum size=0.8cm, fill=yellow!20] at (2,2) {B};
+    
+    % Bonds
+    \draw (0.4, 2.1) -- (1.6, 2.1); \draw (0.4, 1.9) -- (1.6, 1.9); % Left
+    \draw (2.4, 2.1) -- (3.6, 2.1); \draw (2.4, 1.9) -- (3.6, 1.9); % Right
+    \draw (2.1, 2.4) -- (2.1, 3.6); \draw (1.9, 2.4) -- (1.9, 3.6); % Top
+    \draw (2.1, 1.6) -- (2.1, 0.4); \draw (1.9, 1.6) -- (1.9, 0.4); % Bottom
+    
+    % Hole
+    \draw [red, dashed] (2, 2.8) circle (0.15);
+    \node [red, right] at (2.2, 2.8) {હોલ (Hole)};
+\end{tikzpicture}
+\captionof{figure}{સિલિકોન લેટિસમાં બોરોન એટમ હોલ બનાવે છે}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Three Makes Positive: Three valence electrons make a Positive hole}
+\end{mnemonicbox}
+
+\questionmarks{2(a) OR}{3}{રેસિસ્ટન્સને અસર કરતા પરિબળો જણાવો અને તેમાથી કોઈપણ એક સમજાવો.}
+
+\begin{solutionbox}
+\textbf{રેસિસ્ટન્સને અસર કરતા પરિબળો:}
+\begin{enumerate}
+    \item કન્ડક્ટરની લંબાઈ ($L$)
+    \item ક્રોસ-સેક્શનલ એરિયા ($A$)
+    \item મટીરિયલ (રેસિસ્ટિવિટી, $\rho$)
+    \item તાપમાન ($T$)
+\end{enumerate}
+
+\textbf{તાપમાનની અસરની સમજૂતી:}
+મોટાભાગના મેટાલિક કન્ડક્ટરનો રેસિસ્ટન્સ તાપમાન સાથે વધે છે.
+\[ R = R_0[1 + \alpha(T - T_0)] \]
+જ્યાં:
+\begin{itemize}
+    \item $R$ = તાપમાન $T$ પર રેસિસ્ટન્સ
+    \item $R_0$ = રેફરન્સ તાપમાન $T_0$ પર રેસિસ્ટન્સ
+    \item $\alpha$ = રેસિસ્ટન્સનો તાપમાન કોએફિશિયન્ટ
+\end{itemize}
+તાપમાન વધતા પરમાણુઓ વધુ કંપન કરે છે, જે ઇલેક્ટ્રોન પ્રવાહને અવરોધે છે, જેથી રેસિસ્ટન્સ વધે છે.
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{LAMT: Length, Area, Material, Temperature}
+\end{mnemonicbox}
+
+\questionmarks{2(b) OR}{4}{વ્યાખ્યા આપો: 1. વેલેન્સ બેન્ડ, 2. કંડકશન બેન્ડ, 3. ફોરબિડન એનર્જી ગેપ, 4. ફ્રી ઇલેક્ટ્રોન}
+
+\begin{solutionbox}
+\begin{itemize}
+    \item \textbf{વેલેન્સ બેન્ડ:} એનર્જી બેન્ડ જેમાં એટમ સાથે બંધાયેલા વેલેન્સ ઇલેક્ટ્રોન ભરેલા હોય છે.
+    \item \textbf{કંડકશન બેન્ડ:} ઉચ્ચ એનર્જી બેન્ડ જ્યાં ઇલેક્ટ્રોન મુક્તપણે ફરી શકે છે અને વીજળી વહન કરી શકે છે.
+    \item \textbf{ફોરબિડન એનર્જી ગેપ:} વેલેન્સ અને કંડકશન બેન્ડ વચ્ચેની એનર્જી રેન્જ જ્યાં કોઈ ઇલેક્ટ્રોન સ્ટેટ્સ અસ્તિત્વમાં હોતા નથી.
+    \item \textbf{ફ્રી ઇલેક્ટ્રોન:} ઇલેક્ટ્રોન જે એટલી ઊર્જા મેળવે છે કે તે વેલેન્સ બેન્ડમાંથી કંડકશન બેન્ડમાં કૂદી શકે છે, પાછળ હોલ છોડીને.
+\end{itemize}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.8]
+    \draw[thick] (0, 3) rectangle (4, 4);
+    \node at (2, 3.5) {કંડકશન બેન્ડ (ફ્રી $e^-$)};
+    
+    \draw[thick] (0, 0) rectangle (4, 1);
+    \node at (2, 0.5) {વેલેન્સ બેન્ડ (બાઉન્ડ $e^-$)};
+    
+    \draw[<->] (4.2, 1) -- (4.2, 3);
+    \node[right, align=left] at (4.2, 2) {ફોરબિડન\\ગેપ ($E_g$)};
+\end{tikzpicture}
+\captionof{figure}{એનર્જી બેન્ડ ડાયાગ્રામ}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Very Clearly Freedom Follows: Valence, Conduction, Forbidden gap, Free electrons}
+\end{mnemonicbox}
+
+\questionmarks{2(c) OR}{7}{પેન્ટાવેલેંટ મટીરીયલ ની વ્યાખ્યા આપો અને તેના ઉદાહરણ આપો. N-type સેમીકંડક્ટરની રચના જરુરી આકૃતિ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\begin{itemize}
+    \item \textbf{પેન્ટાવેલેંટ મટીરીયલ:} એવા તત્વો જેમના બાહ્યતમ કોશમાં 5 વેલેન્સ ઇલેક્ટ્રોન હોય છે.
+    \item \textbf{ઉદાહરણો:} Phosphorus (P), Arsenic (As), Antimony (Sb).
+\end{itemize}
+
+\textbf{N-type સેમીકંડક્ટરની રચના:}
+જ્યારે શુદ્ધ સિલિકોન ક્રિસ્ટલને પેન્ટાવેલેંટ ઇમ્પ્યોરિટી (જેમ કે Phosphorus) સાથે ડોપ કરવામાં આવે છે:
+\begin{enumerate}
+    \item \textbf{બોન્ડ ફોર્મેશન:} Phosphorus ના 4 વેલેન્સ ઇલેક્ટ્રોન 4 પડોશી Silicon એટમ સાથે કોવેલેન્ટ બોન્ડ બનાવે છે.
+    \item \textbf{ફ્રી ઇલેક્ટ્રોન:} પાંચમો વેલેન્સ ઇલેક્ટ્રોન ઢીલી રીતે બંધાયેલ રહે છે અને સરળતાથી મુક્ત થઈ શકે છે.
+    \item \textbf{ચાર્જ કેરિયર્સ:} ઇલેક્ટ્રોન નેગેટિવ ચાર્જ કેરિયર્સ છે. ઇલેક્ટ્રોન \textbf{મેજોરિટી કેરિયર્સ} બને છે, જ્યારે હોલ \textbf{માઇનોરિટી કેરિયર્સ} હોય છે.
+\end{enumerate}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.8]
+    \foreach \x in {0,2,4}
+    \foreach \y in {0,2,4}
+        \node [draw, circle, minimum size=0.8cm] at (\x,\y) {Si};
+    
+    \node [draw, circle, minimum size=0.8cm, fill=yellow!20] at (2,2) {P};
+    
+    % Bonds
+    \draw (0.4, 2.1) -- (1.6, 2.1); \draw (0.4, 1.9) -- (1.6, 1.9); % Left
+    \draw (2.4, 2.1) -- (3.6, 2.1); \draw (2.4, 1.9) -- (3.6, 1.9); % Right
+    \draw (2.1, 2.4) -- (2.1, 3.6); \draw (1.9, 2.4) -- (1.9, 3.6); % Top
+    \draw (2.1, 1.6) -- (2.1, 0.4); \draw (1.9, 1.6) -- (1.9, 0.4); % Bottom
+    
+    % Free Electron
+    \draw [fill=black] (2.8, 2.8) circle (0.05);
+    \node [right] at (2.9, 2.8) {ફ્રી ઇલેક્ટ્રોન};
+\end{tikzpicture}
+\captionof{figure}{સિલિકોન લેટિસમાં ફોસ્ફરસ એટમ ફ્રી ઇલેક્ટ્રોન બનાવે છે}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Five Makes Negative: Five valence electrons make a Negative carrier}
+\end{mnemonicbox}
+
+\questionmarks{3(a)}{3}{ડાયોડની સાપેક્ષમાં 1. ડીપ્લીશન રીજીયન, 2. ની વોલ્ટેજ, અને 3. બ્રેકડાઉન વોલ્ટેજની વ્યાખ્યા આપો}
+
+\begin{solutionbox}
+\begin{enumerate}
+    \item \textbf{ડીપ્લીશન રીજીયન (Depletion Region):} P-N જંક્શન પાસેનો વિસ્તાર જે ઇલેક્ટ્રોન અને હોલના ડિફ્યુઝન અને રિકોમ્બિનેશનને કારણે મોબાઇલ ચાર્જ કેરિયર્સથી ખાલી હોય છે. તેમાં માત્ર સ્થિર આયનો હોય છે.
+    \item \textbf{ની વોલ્ટેજ (Knee Voltage, $V_k$):} લઘુત્તમ ફોરવર્ડ વોલ્ટેજ જેના પછી કરંટ ઝડપથી વધવાનું શરૂ થાય છે. (Si માટે ~0.7V, Ge માટે ~0.3V). તેને કટ-ઈન વોલ્ટેજ પણ કહે છે.
+    \item \textbf{બ્રેકડાઉન વોલ્ટેજ (Breakdown Voltage, $V_{BR}$):} રિવર્સ વોલ્ટેજ જેના પર P-N જંક્શન બ્રેક થાય છે અને મોટો રિવર્સ કરંટ વહેવા દે છે, જે ડાયોડને નુકસાન પહોંચાડી શકે છે.
+\end{enumerate}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Depleted Knees Break: Depletion occurs, Knee begins conduction, Breakdown ends blocking}
+\end{mnemonicbox}
+
+\questionmarks{3(b)}{4}{P-N જંક્શન ડાયોડ ની V-I લાક્ષણિકતા જરુરી ગ્રાફ સાથે સમજાવો.}
+
+\begin{solutionbox}
+V-I લાક્ષણિકતા ડાયોડ પરના વોલ્ટેજ અને તેમાંથી વહેતા કરંટ વચ્ચેનો સંબંધ દર્શાવે છે.
+
+\begin{enumerate}
+    \item \textbf{ફોરવર્ડ બાયસ ($V > 0$):} શરૂઆતમાં, કરંટ ઓછો હોય છે. એકવાર વોલ્ટેજ ની વોલ્ટેજ ($V_k \approx 0.7V$) કરતા વધી જાય, કરંટ એક્સપોનેન્શિયલી વધે છે.
+    \item \textbf{રિવર્સ બાયસ ($V < 0$):} માત્ર ખૂબ જ નાનો લીકેજ કરંટ (સેચુરેશન કરંટ $I_s$) વહે છે.
+    \item \textbf{બ્રેકડાઉન:} જો રિવર્સ વોલ્ટેજ બ્રેકડાઉન વોલ્ટેજ ($V_{BR}$) કરતા વધી જાય, તો કરંટમાં તીવ્ર વધારો થાય છે.
+\end{enumerate}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.8]
+    \draw[->] (-3,0) -- (3,0) node[right] {$V$};
+    \draw[->] (0,-3) -- (0,3) node[above] {$I$};
+    
+    % Forward
+    \draw[blue, thick] (0,0) -- (0.5,0.1) plot[domain=0.5:1.2] (\x, {exp(2*(\x-0.7))});
+    \node [right] at (1.5, 2) {ફોરવર્ડ બાયસ};
+    \draw[dashed] (0.7,0) -- (0.7,1);
+    \node[below] at (0.7,0) {$V_k$};
+    
+    % Reverse
+    \draw[red, thick] (0,0) -- (-2, -0.1) -- (-2, -2.5);
+    \node [left] at (-1.5, -1) {રિવર્સ બાયસ};
+    \node[above] at (-2,0) {$V_{BR}$};
+    \node at (-1, -3) {બ્રેકડાઉન};
+\end{tikzpicture}
+\captionof{figure}{PN જંક્શન ડાયોડની V-I લાક્ષણિકતાઓ}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Forward Flows, Reverse Restricts, Breakdown Bursts}
+\end{mnemonicbox}
+
+\questionmarks{3(c)}{7}{Varactor ડાયોડ ની લાક્ષણિકતા દોરો. Varactor ડાયોડની કાર્યપધ્ધતિ આકૃતિ સાથે સમજાવો અને તેની એપ્લીકેશન લખો.}
+
+\begin{solutionbox}
+\textbf{Varactor ડાયોડની કાર્યપધ્ધતિ:}
+Varactor (Variable Capacitor) ડાયોડ એ સિદ્ધાંત પર કાર્ય કરે છે કે ડીપ્લીશન રીજીયન P અને N કન્ડક્ટિવ રીજીયન (પ્લેટ્સ તરીકે વર્તે છે) વચ્ચે ડાઇ-ઇલેક્ટ્રિક તરીકે કામ કરે છે.
+\begin{itemize}
+    \item તે વોલ્ટેજ-ડિપેન્ડન્ટ કેપેસિટર તરીકે વર્તે છે.
+    \item \textbf{રિવર્સ બાયસ}માં ઓપરેટ થાય છે.
+    \item જેમ રિવર્સ વોલ્ટેજ ($V_R$) વધે છે, ડીપ્લીશન વિડ્થ ($W$) વધે છે. $C \propto 1/W$ હોવાથી, કેપેસિટન્સ \textbf{ઘટે છે}.
+    \item સંબંધ: $C = \frac{K}{\sqrt{V_R}}$
+\end{itemize}
+
+\begin{center}
+\begin{tabular}{cc}
+\begin{circuitikz}[scale=0.8]
+    \draw (0,0) to[vC, l=Varactor] (2,0);
+\end{circuitikz} &
+\begin{tikzpicture}[scale=0.8]
+    \draw[->] (0,0) -- (4,0) node[right] {$V_R$};
+    \draw[->] (0,0) -- (0,3) node[above] {$C$};
+    \draw[blue, thick] plot[domain=0.2:3.5] (\x, {2.5/sqrt(\x)});
+\end{tikzpicture} \\
+સિમ્બોલ & લાક્ષણિકતાઓ ($C$ વિરુદ્ધ $V_R$)
+\end{tabular}
+\end{center}
+
+\textbf{એપ્લિકેશન્સ:}
+\begin{itemize}
+    \item વોલ્ટેજ કંટ્રોલ્ડ ઓસીલેટર્સ (VCOs)
+    \item ફ્રિક્વન્સી મોડ્યુલેશન (FM) ટ્રાન્સમિટર્સ
+    \item રેડિયોમાં ઓટોમેટિક ફ્રિક્વન્સી કંટ્રોલ (AFC)
+    \item ટીવી ટ્યુનિંગ સર્કિટ્સ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Capacitance Varies Reversely: Capacitance Varies with Reverse voltage}
+\end{mnemonicbox}
+
+\questionmarks{3(a) OR}{3}{નીચે દર્શાવેલ ડાયોડની એપ્લીકેશન લખો. 1. Varactor ડાયોડ, 2. Photo ડાયોડ, 3. Light Emitting ડાયોડ}
+
+\begin{solutionbox}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{ડાયોડનો પ્રકાર} & \textbf{એપ્લિકેશન્સ} \\ \hline
+\textbf{Varactor ડાયોડ} & ટ્યુનિંગ સર્કિટ્સ, VCOs, ફ્રિક્વન્સી મોડ્યુલેટર્સ. \\ \hline
+\textbf{Photo ડાયોડ} & લાઇટ ડિટેક્ટર્સ, સોલર સેલ, ઓપ્ટિકલ કોમ્યુનિકેશન રિસીવર્સ, સ્મોક ડિટેક્ટર્સ. \\ \hline
+\textbf{LED} & ઇન્ડીકેટર્સ, ડિજિટલ ડિસ્પ્લે (7-સેગમેન્ટ), ટ્રાફિક લાઈટ્સ, લાઇટિંગ. \\ \hline
+\end{tabulary}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Vary Photo Emit: Varactor varies frequency, Photo detects light, LED emits light}
+\end{mnemonicbox}
+
+\questionmarks{3(b) OR}{4}{P-N junction ડાયોડની કાર્યપધ્ધતિ ફોરવર્ડ બાયસ અને રીવર્સ બાયસ માં સમજાવો.}
+
+\begin{solutionbox}
+\begin{enumerate}
+    \item \textbf{ફોરવર્ડ બાયસ:} P-ટર્મિનલ પોઝિટિવ સાથે અને N-ટર્મિનલ નેગેટિવ સાથે જોડાયેલ.
+    \begin{itemize}
+        \item P માંથી હોલ અને N માંથી ઇલેક્ટ્રોન જંક્શન તરફ ધકેલાય છે.
+        \item ડીપ્લીશન વિડ્થ ઘટે છે.
+        \item ઓછો રેઝિસ્ટન્સ પાથ; કરંટ સરળતાથી વહે છે.
+    \end{itemize}
+    \item \textbf{રિવર્સ બાયસ:} P-ટર્મિનલ નેગેટિવ સાથે અને N-ટર્મિનલ પોઝિટિવ સાથે જોડાયેલ.
+    \begin{itemize}
+        \item P માંથી હોલ અને N માંથી ઇલેક્ટ્રોન જંક્શનથી દૂર ખેંચાય છે.
+        \item ડીપ્લીશન વિડ્થ વધે છે.
+        \item ઉચ્ચ રેઝિસ્ટન્સ પાથ; લગભગ કોઈ કરંટ વહેતો નથી (લીકેજ સિવાય).
+    \end{itemize}
+\end{enumerate}
+
+\begin{center}
+\begin{tabular}{cc}
+\begin{circuitikz}[scale=0.7]
+    \draw (0,0) to[battery1, l=$V$] (0,2) -- (1,2)
+    to[D*, l=Diode] (3,2) -- (3,0) -- (0,0);
+    \node at (1.5,-0.5) {ફોરવર્ડ બાયસ};
+\end{circuitikz} &
+\begin{circuitikz}[scale=0.7]
+    \draw (0,0) to[battery1, l=$V$, invert] (0,2) -- (1,2)
+    to[D*, l=Diode] (3,2) -- (3,0) -- (0,0);
+    \node at (1.5,-0.5) {રિવર્સ બાયસ};
+\end{circuitikz}
+\end{tabular}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Forward Flows, Reverse Resists}
+\end{mnemonicbox}
+
+\questionmarks{3(c) OR}{7}{Photo ડાયોડ ની લાક્ષણિકતા દોરો. Photo ડાયોડની કાર્યપધ્ધિત આકૃતિ સાથે સમજાવો અને તેની એપ્લીકેશન લખો.}
+
+\begin{solutionbox}
+\textbf{Photo ડાયોડની કાર્યપધ્ધિત:}
+Photo ડાયોડ એ P-N જંક્શન ડાયોડ છે જે \textbf{રિવર્સ બાયસ}માં ઓપરેટ કરવા માટે ડિઝાઈન કરેલ છે. તેમાં પ્રકાશને જંક્શન પર પડવા દેવા માટે પારદર્શક બારી હોય છે.
+\begin{itemize}
+    \item જ્યારે પ્રકાશ (ફોટોન્સ) ડીપ્લીશન રીજીયન પર પડે છે, ત્યારે તે ઇલેક્ટ્રોન-હોલ પેર ઉત્પન્ન કરે છે.
+    \item રિવર્સ બાયસ ઇલેક્ટ્રિક ફિલ્ડ આ કેરિયર્સને જંક્શન પાર કરાવે છે, જેનાથી કરંટ ઉત્પન્ન થાય છે.
+    \item આ રિવર્સ કરંટ પ્રકાશની તીવ્રતાના પ્રમાણમાં હોય છે.
+\end{itemize}
+
+\begin{center}
+\begin{tabular}{cc}
+\begin{circuitikz}[scale=0.8]
+    \draw (0,0) to[photodiode, l=PD] (2,0);
+\end{circuitikz} &
+\begin{tikzpicture}[scale=0.8]
+    \draw[->] (-3,0) -- (0,0) node[right] {$V_R$};
+    \draw[->] (0,-3) -- (0,0) node[above] {$I_R$};
+    
+    \draw[blue, thick] (0,0) -- (-2.5, -0.5) node[left] {Low Light};
+    \draw[blue, thick] (0,0) -- (-2.5, -1.5) node[left] {Medium};
+    \draw[blue, thick] (0,0) -- (-2.5, -2.5) node[left] {High Light};
+\end{tikzpicture} \\
+સિમ્બોલ & લાક્ષણિકતાઓ
+\end{tabular}
+\end{center}
+
+\textbf{એપ્લિકેશન્સ:}
+\begin{itemize}
+    \item લાઈટ સેન્સર્સ (સ્ટ્રીટ લાઈટ્સ)
+    \item ઓપ્ટિકલ ફાઈબર રિસીવર્સ
+    \item રિમોટ કંટ્રોલ રિસીવર્સ
+    \item સિક્યુરિટી એલાર્મ્સ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Light In, Current Out: Light intensity controls current output}
+\end{mnemonicbox}
+\questionmarks{4(a)}{3}{ટૂંકનોંધ લખો: હાફ વેવ રેક્ટિફાયર}
+
+\begin{solutionbox}
+\textbf{હાફ વેવ રેક્ટિફાયર:}
+\begin{center}
+\begin{tabular}{cc}
+\begin{circuitikz}[scale=0.8]
+    \draw (0,0) to[sV, l=$V_{in}$] (0,2) 
+    to[D, l=D] (2,2) 
+    to[R, l=$R_L$] (2,0) -- (0,0);
+    \draw (2,2) -- (3,2) node[right] {$+$};
+    \draw (2,0) -- (3,0) node[right] {$-$ $V_{out}$};
+\end{circuitikz} &
+\begin{tikzpicture}[scale=0.6]
+    \draw[->] (0,0) -- (4,0) node[right] {$t$};
+    \draw[->] (0,-1.5) -- (0,1.5) node[above] {$V$};
+    \draw[blue, dashed] plot[domain=0:3.5] (\x, {sin(\x r * 3)});
+    \draw[red, thick] plot[domain=0:3.5] (\x, {max(0, sin(\x r * 3))});
+    \node at (2, -1) {ઈનપુટ/આઉટપુટ};
+\end{tikzpicture}
+\end{tabular}
+\captionof{figure}{હાફ વેવ રેક્ટિફાયર સર્કિટ અને વેવફોર્મ}
+\end{center}
+
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{ઓપરેશન ફેઝ} & \textbf{વર્ણન} \\ \hline
+\textbf{પોઝિટિવ હાફ સાયકલ} & ડાયોડ ફોરવર્ડ બાયસ થાય છે અને કંડક્ટ કરે છે. લોડમાંથી કરંટ વહે છે. આઉટપુટ ઈનપુટને અનુસરે છે. \\ \hline
+\textbf{નેગેટિવ હાફ સાયકલ} & ડાયોડ રિવર્સ બાયસ થાય છે અને કરંટ બ્લોક કરે છે. આઉટપુટ વોલ્ટેજ શૂન્ય હોય છે. \\ \hline
+\end{tabulary}
+
+\begin{itemize}
+    \item \textbf{આઉટપુટ ફ્રિક્વન્સી:} $f_{out} = f_{in}$
+    \item \textbf{કાર્યક્ષમતા (Efficiency):} 40.6\%
+    \item \textbf{રિપલ ફેક્ટર:} 1.21
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Half Passes Positive: Only positive half-cycle passes through}
+\end{mnemonicbox}
+
+\questionmarks{4(b)}{4}{વોલ્ટેજ રેગ્યુલેટર તરીકે ઝેનર ડાયોડ સમજાવો.}
+
+\begin{solutionbox}
+\textbf{ઝેનર ડાયોડ વોલ્ટેજ રેગ્યુલેટર:}
+\begin{center}
+\begin{circuitikz}[scale=0.9]
+    \draw (0,0) to[battery1, l=$V_{in}$] (0,3) to[R, l=$R_S$] (3,3) -- (5,3);
+    \draw (3,3) to[zD*, l=$D_Z$] (3,0);
+    \draw (5,3) to[R, l=$R_L$] (5,0);
+    \draw (0,0) -- (5,0);
+    \node at (5.5, 1.5) {$V_{out} = V_Z$};
+\end{circuitikz}
+\captionof{figure}{ઝેનર વોલ્ટેજ રેગ્યુલેટર}
+\end{center}
+
+\textbf{કાર્ય સિદ્ધાંત:}
+\begin{enumerate}
+    \item ઝેનર ડાયોડ લોડની સમાંતરમાં \textbf{રિવર્સ બાયસ}માં જોડાયેલ હોય છે.
+    \item તે બ્રેકડાઉન રીજીયનમાં કાર્ય કરે છે જ્યાં તેના પરનો વોલ્ટેજ ($V_Z$) કરંટની વિશાળ શ્રેણી માટે અચળ રહે છે.
+    \item \textbf{લાઇન રેગ્યુલેશન:} જો ઈનપુટ વોલ્ટેજ $V_{in}$ વધે છે, તો ઝેનર કરંટ વધે છે, પરંતુ $R_L$ પર વોલ્ટેજ $V_Z$ પર સ્થિર રહે છે. વધારાનો વોલ્ટેજ $R_S$ પર ડ્રોપ થાય છે.
+    \item \textbf{લોડ રેગ્યુલેશન:} જો લોડ કરંટ બદલાય છે, તો ઝેનર કરંટ એડજસ્ટ થાય છે જેથી કુલ કરંટ અચળ રહે અને $V_{out} = V_Z$ જળવાઈ રહે.
+\end{enumerate}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Zener Zeros Voltage Variations}
+\end{mnemonicbox}
+
+\questionmarks{4(c)}{7}{રેક્ટિફાયરની જરૂરિયાત લખો. બ્રિજ વેવ રેક્ટિફાયર સર્કિટ ડાયાગ્રામ સાથે સમજાવો અને તેના ઇનપુટ અને આઉટપુટ વેવફોર્મ દોરો.}
+
+\begin{solutionbox}
+\textbf{રેક્ટિફાયરની જરૂરિયાત:}
+\begin{itemize}
+    \item AC વોલ્ટેજ (મેઈન્સમાંથી) ને DC વોલ્ટેજમાં કન્વર્ટ કરવા માટે.
+    \item મોટાભાગના ઇલેક્ટ્રોનિક ઉપકરણો (ટીવી, કોમ્પ્યુટર, મોબાઈલ) ને કાર્ય કરવા માટે DC પાવરની જરૂર હોય છે.
+\end{itemize}
+
+\textbf{બ્રિજ વેવ રેક્ટિફાયર:}
+\begin{center}
+\begin{circuitikz}[scale=0.8]
+    \draw (0,0) to[sV, l=$V_{in}$] (0,3);
+    \draw (0,3) -- (2,3) -- (3,2);
+    \draw (0,0) -- (2,0) -- (5,0) -- (5,2);
+    
+    % Bridge
+    \draw (3,2) to[D*, l=$D_1$] (4,3);
+    \draw (4,3) to[D*, l=$D_2$] (5,2);
+    \draw (5,2) to[D*, l=$D_3$] (4,1);
+    \draw (4,1) to[D*, l=$D_4$] (3,2);
+    
+    % Load
+    \draw (4,3) -- (4,4) -- (7,4) to[R, l=$R_L$] (7,0) -- (5,0);
+    \draw (4,1) to[short,-*] (4,1) -- (4,0); % Ground connection visually
+    \node at (7.5, 2) {$V_{out}$};
+\end{circuitikz}
+\captionof{figure}{બ્રિજ રેક્ટિફાયર સર્કિટ}
+\end{center}
+
+\textbf{વેવફોર્મ્સ:}
+\begin{center}
+\begin{tikzpicture}[scale=0.7]
+    \draw[->] (0,0) -- (7,0) node[right] {$t$};
+    \draw[->] (0,2) -- (0,5) node[above] {$V_{in}$};
+    \draw[blue] (0,3.5) sin (1,4.5) cos (2,3.5) sin (3,2.5) cos (4,3.5) sin (5,4.5) cos (6,3.5);
+    \node at (8, 3.5) {ઈનપુટ};
+    
+    \draw[->] (0,-2) -- (7,-2) node[right] {$t$};
+    \draw[->] (0,-2) -- (0,1) node[above] {$V_{out}$};
+    \draw[red, thick] (0,-2) sin (1,-1) cos (2,-2) sin (3,-1) cos (4,-2) sin (5,-1) cos (6,-2);
+    \node at (8, -1) {આઉટપુટ};
+\end{tikzpicture}
+\captionof{figure}{ઈનપુટ અને આઉટપુટ વેવફોર્મ}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{પોઝિટિવ હાફ સાયકલ:} $D_1$ અને $D_3$ કંડક્ટ કરે છે.
+    \item \textbf{નેગેટિવ હાફ સાયકલ:} $D_2$ અને $D_4$ કંડક્ટ કરે છે.
+    \item બંને હાફ સાયકલમાં $R_L$ માંથી એક જ દિશામાં કરંટ વહે છે.
+    \item કાર્યક્ષમતા: 81.2\%
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Bridge Both Better: Bridge rectifier uses both half cycles}
+\end{mnemonicbox}
+
+\questionmarks{4(a) OR}{3}{શંટ કેપેસિટર ફિલ્ટરની કાર્યપધ્ધતિ સમજાવો.}
+
+\begin{solutionbox}
+\textbf{શંટ કેપેસિટર ફિલ્ટર:}
+\begin{center}
+\begin{circuitikz}[scale=0.8]
+    \draw (0,0) to[sV, l=Rectifier] (0,2) -- (2,2);
+    \draw (2,2) to[C, l=$C$] (2,0);
+    \draw (2,2) -- (4,2) to[R, l=$R_L$] (4,0) -- (0,0);
+    \draw (2,0) -- (0,0);
+\end{circuitikz}
+\end{center}
+\begin{itemize}
+    \item \textbf{ચાર્જિંગ:} જ્યારે રેક્ટિફાયર વોલ્ટેજ વધે છે, ત્યારે કેપેસિટર પીક વોલ્ટેજ $V_m$ સુધી ચાર્જ થાય છે.
+    \item \textbf{ડિસ્ચાર્જિંગ:} જ્યારે રેક્ટિફાયર વોલ્ટેજ ઘટે છે, ત્યારે કેપેસિટર $R_L$ દ્વારા ડિસ્ચાર્જ થાય છે, વોલ્ટેજ જાળવી રાખે છે.
+    \item \textbf{પરિણામ:} ઓછા રિપલ સાથે સ્મૂધ DC આઉટપુટ.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Capacitor Catches Peaks: Capacitor stores peak voltage}
+\end{mnemonicbox}
+
+\questionmarks{4(b) OR}{4}{સેન્ટર ટેપ ફૂલ વેવ રેક્ટિફાયર અને બ્રિજ વેવ રેક્ટિફાયરની સરખામણી કરો.}
+
+\begin{solutionbox}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પેરામીટર} & \textbf{સેન્ટર ટેપ FW રેક્ટિફાયર} & \textbf{બ્રિજ રેક્ટિફાયર} \\ \hline
+\textbf{ડાયોડની સંખ્યા} & 2 & 4 \\ \hline
+\textbf{ટ્રાન્સફોર્મર} & સેન્ટર-ટેપ્ડ જરૂરી (મોટું, ખર્ચાળ) & સાદું ટ્રાન્સફોર્મર (નાનું, સસ્તું) \\ \hline
+\textbf{PIV રેટિંગ} & $2V_m$ & $V_m$ \\ \hline
+\textbf{કાર્યક્ષમતા (Efficiency)} & 81.2\% & 81.2\% \\ \hline
+\textbf{ખર્ચ} & વધારે (ટ્રાન્સફોર્મરને કારણે) & ઓછો \\ \hline
+\end{tabulary}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Center Taps Transformer, Bridge Bypasses Tapping}
+\end{mnemonicbox}
+
+\questionmarks{4(c) OR}{7}{રેક્ટિફાયરમાં ફિલ્ટર સર્કિટની જરૂરિયાત લખો. $\pi$ ફિલ્ટર સર્કિટ ડાયાગ્રામ સાથે સમજાવો અને તેના ઇનપુટ અને આઉટપુટ વેવફોર્મ દોરો.}
+
+\begin{solutionbox}
+\textbf{ફિલ્ટરની જરૂરિયાત:}
+રેક્ટિફાયર આઉટપુટમાંથી AC કમ્પોનન્ટ્સ (રિપલ) દૂર કરવા અને ઇલેક્ટ્રોનિક સર્કિટ માટે યોગ્ય સ્ટેડી/સ્મૂધ DC વોલ્ટેજ પ્રદાન કરવા.
+
+\textbf{$\pi$ ફિલ્ટર (CLC ફિલ્ટર):}
+\begin{center}
+\begin{circuitikz}[scale=0.8]
+    \draw (0,0) to[sV, l=In] (0,2) -- (1,2);
+    \draw (1,2) to[C, l=$C_1$] (1,0);
+    \draw (1,2) to[L, l=$L$] (3,2);
+    \draw (3,2) to[C, l=$C_2$] (3,0);
+    \draw (3,2) -- (4,2) to[R, l=$R_L$] (4,0) -- (0,0);
+    \draw (1,0) -- (0,0); % ગ્રાઉન્ડ
+    \draw (3,0) -- (1,0);
+\end{circuitikz}
+\captionof{figure}{$\pi$ (Pi) ફિલ્ટર સર્કિટ}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{$C_1$}: મોટાભાગના AC રિપલને ગ્રાઉન્ડમાં બાયપાસ કરે છે.
+    \item \textbf{$L$}: બાકીના AC ને બ્લોક કરે છે (AC માટે ઉચ્ચ ઈમ્પિડન્સ) પરંતુ DC ને પસાર થવા દે છે.
+    \item \textbf{$C_2$}: કોઈપણ બાકી રહેલા રિપલને ફિલ્ટર કરે છે.
+\end{itemize}
+
+\textbf{વેવફોર્મ્સ:}
+\begin{center}
+\begin{tikzpicture}[scale=0.7]
+    \draw[->] (0,0) -- (5,0) node[right] {$t$};
+    \draw[->] (0,0) -- (0,2) node[above] {$V$};
+    \draw[red, thick] plot[domain=0:5] (\x, {1.5 + 0.1*sin(\x r * 5)});
+    \node at (2.5, 2) {ફિલ્ટર કરેલ આઉટપુટ (લગભગ DC)};
+\end{tikzpicture}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Capacitor-Inductor-Capacitor Perfectly Irons}
+\end{mnemonicbox}
+
+\questionmarks{5(a)}{3}{PNP ટ્રાન્ઝિસ્ટરની કાર્યપધ્ધતિ આકૃતિ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{PNP ટ્રાન્ઝિસ્ટર:}
+PNP ટ્રાન્ઝિસ્ટરમાં બે P-ટાઈપ વિસ્તારો (એમિટર અને કલેક્ટર) વચ્ચે પાતળું N-ટાઈપ બેઝ સેન્ડવીચ કરેલું હોય છે.
+
+\begin{center}
+\begin{tikzpicture}[scale=0.8]
+    \draw (0,0) rectangle (3,2);
+    \draw (1,0) -- (1,2);
+    \draw (2,0) -- (2,2);
+    \node at (0.5,1) {P (E)};
+    \node at (1.5,1) {N (B)};
+    \node at (2.5,1) {P (C)};
+    
+    % Biasing
+    \draw (0.5,0) -- (0.5,-1) -- (1.5,-1);
+    \draw (1.5,0) -- (1.5,-1);
+    \node at (1,-1.3) {ફોરવર્ડ બાયસ્ડ};
+    
+    \draw (2.5,0) -- (2.5,-1) -- (1.5,-1);
+    \node at (2,-1.3) {રિવર્સ બાયસ્ડ};
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{એમિટર-બેઝ જંક્શન:} ફોરવર્ડ બાયસ્ડ. હોલ એમિટરથી બેઝ તરફ જાય છે.
+    \item \textbf{કલેક્ટર-બેઝ જંક્શન:} રિવર્સ બાયસ્ડ. બેઝને પાર કરતા હોલ કલેક્ટર દ્વારા એકત્રિત કરવામાં આવે છે.
+    \item મેજોરિટી કેરિયર્સ: હોલ. કરંટ પ્રવાહ એમિટરથી કલેક્ટર તરફ હોય છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Positive-Negative-Positive}
+\end{mnemonicbox}
+
+\questionmarks{5(b)}{4}{N-channel JFET ની કાર્યપધ્ધતિ આકૃતિ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{N-channel JFET:}
+\begin{center}
+\begin{circuitikz}[scale=0.8]
+    \draw (0,0) node[njfet] (Q) {};
+    \node[right] at (Q.D) {ડ્રેન};
+    \node[right] at (Q.S) {સોર્સ};
+    \node[left] at (Q.G) {ગેટ};
+    
+    % Channel illustration
+    \draw (2, -1) rectangle (3, 1); \node at (2.5,0) {N-Ch};
+    \draw[fill=gray] (1.8, 0) rectangle (2, 0.5); \node[left] at (1.8, 0.25) {P (Gate)};
+    \draw[fill=gray] (3, 0) rectangle (3.2, 0.5); \node[right] at (3.2, 0.25) {P (Gate)};
+\end{circuitikz}
+\end{center}
+
+\textbf{કાર્યપધ્ધતિ:}
+\begin{itemize}
+    \item કરંટ N-ચેનલ દ્વારા ડ્રેનથી સોર્સ તરફ વહે છે.
+    \item ગેટ પર રિવર્સ વોલ્ટેજ લાગુ કરવામાં આવે છે ($V_{GS} < 0$).
+    \item નેગેટિવ ગેટ વોલ્ટેજ વધારવાથી ડીપ્લીશન રીજન પહોળી થાય છે, ચેનલ સાંકડી થાય છે.
+    \item આ રેસિસ્ટન્સ વધારે છે અને ડ્રેન કરંટ ($I_D$) ઘટાડે છે. તેથી, તે Voltage Controlled Device છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Negative Channel Junction Effect}
+\end{mnemonicbox}
+
+\questionmarks{5(c)}{7}{BJT અને JFET ની સરખામણી કરો.}
+
+\begin{solutionbox}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પેરામીટર} & \textbf{BJT} & \textbf{JFET} \\ \hline
+\textbf{પ્રકાર} & બાયપોલર (ઇલેક્ટ્રોન અને હોલ) & યુનિપોલર (માત્ર મેજોરિટી કેરિયર્સ) \\ \hline
+\textbf{કંટ્રોલ} & કરંટ-કંટ્રોલ્ડ ડિવાઇસ ($I_B$ $I_C$ ને કંટ્રોલ કરે છે) & વોલ્ટેજ-કંટ્રોલ્ડ ડિવાઇસ ($V_{GS}$ $I_D$ ને કંટ્રોલ કરે છે) \\ \hline
+\textbf{ઇનપુટ ઇમ્પીડન્સ} & ઓછો ($k\Omega$ રેન્જ) & ખૂબ વધારે ($M\Omega$ રેન્જ) \\ \hline
+\textbf{નોઈઝ} & વધારે નોઈઝ & ઓછો નોઈઝ \\ \hline
+\textbf{તાપમાન સ્ટેબિલિટી} & ઓછી & વધારે \\ \hline
+\textbf{કદ} & મોટું & નાનું (ICs માં બનાવવું સરળ) \\ \hline
+\end{tabulary}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Current Bipolar Low, Voltage Unipolar High}
+\end{mnemonicbox}
+
+\questionmarks{5(a) OR}{3}{E-waste ને નાબૂદ કરવાની પદ્ધતિ જણાવો અને તેમાથી કોઈપણ એક સમજાવો.}
+
+\begin{solutionbox}
+\textbf{પદ્ધતિઓ:}
+\begin{enumerate}
+    \item રિસાયકલિંગ (Recycling)
+    \item રીયુઝ (Reuse)
+    \item ઇન્સિનરેશન (Incineration)
+    \item લેન્ડફિલિંગ (Landfilling)
+    \item ટેક-બેક સિસ્ટમ્સ (Take-back systems)
+\end{enumerate}
+
+\textbf{રિસાયકલિંગ:}
+આમાં ઇલેક્ટ્રોનિક ઉપકરણોને ડિસમેન્ટલ કરવા અને પ્લાસ્ટિક, ગ્લાસ અને મેટલ્સ (સોનું, કોપર વગેરે) જેવા મટીરિયલ્સને અલગ પાડવાનો સમાવેશ થાય છે. આ રિકવર કરેલા મટીરિયલ્સને પ્રોસેસ કરીને નવા ઉત્પાદનો બનાવવા માટે ઉપયોગમાં લેવાય છે. તે પર્યાવરણીય પ્રદૂષણ ઘટાડે છે અને કુદરતી સંસાધનોનું સંરક્ષણ કરે છે.
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{RRIL-T: Recycling, Reuse, Incineration, Landfill, Take-back}
+\end{mnemonicbox}
+
+\questionmarks{5(b) OR}{4}{PNP અને NPN Transistor ની સરખામણી કરો.}
+
+\begin{solutionbox}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પેરામીટર} & \textbf{PNP} & \textbf{NPN} \\ \hline
+\textbf{સ્ટ્રક્ચર} & P-N-P લેયર્સ & N-P-N લેયર્સ \\ \hline
+\textbf{મેજોરિટી કેરિયર્સ} & હોલ & ઇલેક્ટ્રોન \\ \hline
+\textbf{કલેક્ટર કરંટ} & હોલના પ્રવાહને કારણે & ઇલેક્ટ્રોનના પ્રવાહને કારણે \\ \hline
+\textbf{બાયસિંગ} & બેઝ એમિટરની સાપેક્ષે નેગેટિવ & બેઝ એમિટરની સાપેક્ષે પોઝિટિવ \\ \hline
+\textbf{સ્પીડ} & ધીમી (હોલ મોબિલિટી ઓછી છે) & ઝડપી (ઇલેક્ટ્રોન મોબિલિટી વધારે છે) \\ \hline
+\textbf{ઉપયોગ} & ઓછો સામાન્ય & સૌથી સામાન્ય \\ \hline
+\end{tabulary}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Positive-Negative-Positive (Holes), Negative-Positive-Negative (Electrons)}
+\end{mnemonicbox}
+
+\questionmarks{5(c) OR}{7}{CE કોંફીગરેશન ની ઈનપુટ અને આઉટપુટ લાક્ષણિકતા દોરો અને સમજાવો.}
+
+\begin{solutionbox}
+\textbf{1. ઈનપુટ લાક્ષણિકતા ($I_B$ વિરુદ્ધ $V_{BE}$):}
+આ સ્થિર $V_{CE}$ પર બેઝ કરંટ અને બેઝ-એમિટર વોલ્ટેજ વચ્ચેનો ગ્રાફ છે. તે ફોરવર્ડ-બાયસ્ડ ડાયોડ કર્વ જેવો દેખાય છે.
+\begin{center}
+\begin{tikzpicture}[scale=0.7]
+    \draw[->] (0,0) -- (4,0) node[right] {$V_{BE}$};
+    \draw[->] (0,0) -- (0,3) node[above] {$I_B$};
+    \draw[blue, thick] (0.7,0) .. controls (1,0.5) and (1.2,2) .. (1.5,3);
+    \node at (2,1) {$V_{CE} > 0$};
+\end{tikzpicture}
+\end{center}
+
+\textbf{2. આઉટપુટ લાક્ષણિકતા ($I_C$ વિરુદ્ધ $V_{CE}$):}
+સ્થિર $I_B$ પર કલેક્ટર કરંટ અને કલેક્ટર-એમિટર વોલ્ટેજ વચ્ચેનો ગ્રાફ.
+\begin{itemize}
+    \item \textbf{કટ-ઓફ ક્ષેત્ર (Cut-off):} બંને જંક્શન રિવર્સ બાયસ્ડ. $I_C \approx 0$.
+    \item \textbf{એક્ટિવ ક્ષેત્ર (Active):} JE ફોરવર્ડ, JC રિવર્સ બાયસ્ડ. $I_C = \beta I_B$. એમ્પ્લીફિકેશન માટે વપરાય છે.
+    \item \textbf{સેચુરેશન ક્ષેત્ર (Saturation):} બંને જંક્શન ફોરવર્ડ બાયસ્ડ. $V_{CE}$ ખૂબ ઓછો હોય છે. સ્વિચિંગ (ON) માટે વપરાય છે.
+\end{itemize}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.7]
+    \draw[->] (0,0) -- (4,0) node[right] {$V_{CE}$};
+    \draw[->] (0,0) -- (0,4) node[above] {$I_C$};
+    \draw (0,0) -- (0.5, 3) -- (4, 3.2) node[right] {$I_{B3}$};
+    \draw (0,0) -- (0.5, 2) -- (4, 2.2) node[right] {$I_{B2}$};
+    \draw (0,0) -- (0.5, 1) -- (4, 1.2) node[right] {$I_{B1}$};
+    
+    \node[draw, dashed, fit={(0,0) (0.5,3.5)}] (sat) {}; \node[above] at (sat.north) {Sat};
+    \node[draw, dashed, fit={(0,0) (4,0.5)}] (cut) {}; \node[right] at (cut.east) {Cut-off};
+    \node at (2,2.5) {Active};
+\end{tikzpicture}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Input Shows Voltage Effects, Output Shows Current Control}
+\end{mnemonicbox}
+
+\end{document}
