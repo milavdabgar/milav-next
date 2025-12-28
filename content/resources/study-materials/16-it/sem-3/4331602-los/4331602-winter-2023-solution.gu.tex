@@ -1,0 +1,733 @@
+\documentclass{article}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/preamble.tex}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/gujarati-boxes.tex}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/commands.tex}
+\usetikzlibrary{fit}
+
+\title{Linux Operating System (4331602) - Winter 2023 Solution}
+\date{January 16, 2024}
+
+\begin{document}
+\maketitle
+
+\questionmarks{1(a)}{3}{Linux ના આર્કિટેક્ચર દોરો અને સંક્ષિપ્તમાં વિવિધ સ્તરો સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{Linux Architecture:}
+
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm]
+    \node [gtu block, minimum width=8cm] (user) {User Applications};
+    \node [gtu block, minimum width=8cm, below=0.5cm of user] (shell) {System Call Interface / Shell};
+    \node [gtu block, minimum width=8cm, minimum height=2cm, below=0.5cm of shell] (kernel) {Kernel \\ (Process, Memory, File, Network Management)};
+    \node [gtu block, minimum width=8cm, below=0.5cm of kernel] (drivers) {Device Drivers};
+    \node [gtu block, minimum width=8cm, below=0.5cm of drivers] (hw) {Hardware};
+
+    \draw [gtu arrow] (user) -- (shell);
+    \draw [gtu arrow] (shell) -- (kernel);
+    \draw [gtu arrow] (kernel) -- (drivers);
+    \draw [gtu arrow] (drivers) -- (hw);
+\end{tikzpicture}
+\captionof{figure}{Linux Architecture}
+\end{center}
+
+\textbf{Layers:}
+\begin{itemize}
+    \item \keyword{User Space}: વપરાશકર્તા applications અને system utilities સમાવે છે.
+    \item \keyword{System Call Interface}: user programs અને kernel વચ્ચે interface પ્રદાન કરે છે.
+    \item \keyword{Kernel Space}: મૂળ operating system જે process, memory, વગેરેનું management કરે છે.
+    \item \keyword{Hardware}: Computer system ના physical components.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{USKDH - Users System Kernel Drives Hardware}
+\end{mnemonicbox}
+
+\questionmarks{1(b)}{4}{રેસની સ્થિતિ શું છે? યોગ્ય ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\begin{center}
+\captionof{table}{Race Condition}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{પાસું} & \textbf{વિવરણ} \\ \hline
+વ્યાખ્યા & અનેક processes એકસાથે shared resource ને access કરે છે. \\ \hline
+સમસ્યા & timing dependency ને કારણે અનિશ્ચિત પરિણામો. \\ \hline
+ઉદાહરણ & બે transactions દ્વારા બેંક account balance ને update કરવું. \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{Example Scenario:}
+\begin{enumerate}
+    \item \keyword{Process A}: balance = 1000 વાંચે છે, 100 ઉમેરે છે (1100 લખવા તૈયાર).
+    \item \keyword{Process B}: balance = 1000 વાંચે છે, 50 બાદ કરે છે (950 લખવા તૈયાર).
+    \item \keyword{પરિણામ}: અંતિમ balance 1050 ને બદલે 1100 અથવા 950 હોઈ શકે.
+\end{enumerate}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{RRRR - Race Results Random Resources}
+\end{mnemonicbox}
+
+\questionmarks{1(c)}{7}{વિવિધ પ્રકારની ઓપરેટિંગ સિસ્ટમોની યાદી બનાવો. મલ્ટિપ્રોગ્રામિંગ ઓપરેટિંગ સિસ્ટમના કાર્યને યોગ્ય ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{Types of Operating Systems:}
+\begin{center}
+\captionof{table}{Types of Operating Systems}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{Type} & \textbf{Characteristics} \\ \hline
+Batch & Jobs user interaction વિના groups માં process થાય છે. \\ \hline
+Time-sharing & અનેક વપરાશકર્તાઓ એકસાથે system share કરે છે. \\ \hline
+Real-time & Operations માટે સખત time constraints હોય છે. \\ \hline
+Distributed & Networked processors વચ્ચે computations વહેંચાયેલ હોય છે. \\ \hline
+Multiprogramming & CPU utilization માટે memory માં અનેક programs રાખવામાં આવે છે. \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{Multiprogramming Working:}
+\begin{itemize}
+    \item \keyword{Memory Management}: Main memory માં એકસાથે અનેક jobs load થાય છે.
+    \item \keyword{CPU Utilization}: જ્યારે એક job I/O માટે રાહ જુએ, ત્યારે CPU બીજી job પર switch કરે છે.
+    \item \keyword{Context Switching}: OS હાલની job નું state save કરે છે અને બીજી job load કરે છે.
+\end{itemize}
+
+\textbf{ઉદાહરણ}: એક user વેબ browser, music player, અને word processor એકસાથે ચલાવે છે. જ્યારે browser network data ની રાહ જુએ, ત્યારે CPU music player ચલાવે છે.
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{MPMP - Multiple Programs Maximize Performance}
+\end{mnemonicbox}
+
+\questionmarks{1(c) OR}{7}{વિવિધ પ્રકારની ઓપરેટિંગ સિસ્ટમોની યાદી બનાવો. બેચ ઓપરેટિંગ સિસ્ટમ્સ વિગતવાર સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{Batch Operating System:}
+\begin{itemize}
+    \item \keyword{Job Collection}: Jobs (program + data) offline collect થાય છે.
+    \item \keyword{Batching}: Operator સમાન jobs ને batches માં group કરે છે.
+    \item \keyword{Sequential Execution}: Batch ની દરેક job એક પછી એક execute થાય છે.
+    \item \keyword{No Interaction}: Execution દરમ્યાન user interact કરી શકતો નથી.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{BBBB - Batch Brings Better Business}
+\end{mnemonicbox}
+
+\questionmarks{2(a)}{3}{પ્રક્રિયા જીવન ચક્ર દોરો અને સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto]
+    \node [gtu state] (new) {New};
+    \node [gtu state, right=of new] (ready) {Ready};
+    \node [gtu state, right=of ready] (running) {Running};
+    \node [gtu state, right=of running] (term) {Terminated};
+    \node [gtu state, below=of ready] (wait) {Waiting};
+
+    \path [gtu arrow] (new) -- node {Admit} (ready);
+    \path [gtu arrow] (ready) -- node {Dispatch} (running);
+    \path [gtu arrow] (running) -- node {Exit} (term);
+    \path [gtu arrow] (running) edge [bend right] node [above] {Interrupt} (ready);
+    \path [gtu arrow] (running) -- node {I/O Wait} (wait);
+    \path [gtu arrow] (wait) -- node {I/O Complete} (ready);
+\end{tikzpicture}
+\captionof{figure}{Process State Diagram}
+\end{center}
+
+\textbf{States:}
+\begin{itemize}
+    \item \keyword{New}: Process બની રહી છે.
+    \item \keyword{Ready}: Process processor મળવાની રાહમાં છે.
+    \item \keyword{Running}: Instructions execute થઈ રહી છે.
+    \item \keyword{Waiting}: Process કોઈ event (I/O) ની રાહમાં છે.
+    \item \keyword{Terminated}: Process execution પૂરું કર્યું છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{NRWRT - New Ready Waiting Running Terminated}
+\end{mnemonicbox}
+
+\questionmarks{2(b)}{4}{ડેડલોકને વ્યાખ્યાયિત કરો અને ડેડલોક થવા માટે જરૂરી શરતોની ચર્ચા કરો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{Deadlock}: એવી પરિસ્થિતિ જ્યાં processes blocked હોય છે કારણ કે દરેક process resource hold કરે છે અને બીજા resource ની રાહ જુએ છે.
+
+\textbf{શરતો (Coffman Conditions):}
+\begin{enumerate}
+    \item \keyword{Mutual Exclusion}: Resource share કરી શકાતો નથી.
+    \item \keyword{Hold and Wait}: Process resource hold કરી બીજાની રાહ જુએ છે.
+    \item \keyword{No Preemption}: Resource જબરદસ્તીથી લઈ શકાતો નથી.
+    \item \keyword{Circular Wait}: Processes circular chain માં એકબીજાની રાહ જુએ છે.
+\end{enumerate}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{MHNC - My Hold Never Circles}
+\end{mnemonicbox}
+
+\questionmarks{2(c)}{7}{રાઉન્ડ રોબિન અલ્ગોરિધમનું વર્ણન કરો. આપેલ ડેટા માટે ગેન્ટ ચાર્ટ સાથે સરેરાશ રાહ જોવાનો સમય અને સરેરાશ ટર્ન-અરાઉન્ડ સમયની ગણતરી કરો. સંદર્ભ સ્વિચ = 01 ms અને ક્વોન્ટમ સમય = 05 ms ધ્યાનમાં લો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{Round Robin}: Preemptive scheduling જેમાં દરેક process ને fixed time slice (quantum) મળે છે.
+
+\textbf{Given Data:} Context Switch = 1ms, Quantum = 5ms.
+
+\textbf{Gantt Chart:}
+\begin{center}
+\begin{tikzpicture}[x=0.3cm, y=1cm]
+    \draw (0,0) rectangle (5,1) node[midway] {P1};
+    \draw (5,0) rectangle (6,1) node[midway, font=\tiny] {CS};
+    \draw (6,0) rectangle (10,1) node[midway] {P2};
+    \draw (10,0) rectangle (11,1) node[midway, font=\tiny] {CS};
+    \draw (11,0) rectangle (16,1) node[midway] {P3};
+    \draw (16,0) rectangle (17,1) node[midway, font=\tiny] {CS};
+    \draw (17,0) rectangle (22,1) node[midway] {P4};
+    \draw (22,0) rectangle (23,1) node[midway, font=\tiny] {CS};
+    \draw (23,0) rectangle (28,1) node[midway] {P1};
+    \draw (28,0) rectangle (29,1) node[midway, font=\tiny] {CS};
+    \draw (29,0) rectangle (34,1) node[midway] {P3};
+    \draw (34,0) rectangle (35,1) node[midway, font=\tiny] {CS};
+    \draw (35,0) rectangle (37,1) node[midway] {P1}; \node[below] at (37,0) {37};
+    \draw (37,0) rectangle (38,1) node[midway, font=\tiny] {CS};
+    \draw (38,0) rectangle (43,1) node[midway] {P3}; \node[below] at (43,0) {43};
+\end{tikzpicture}
+\captionof{figure}{Gantt Chart (RR)}
+\end{center}
+
+\textbf{ગણતરી:}
+\begin{itemize}
+    \item \textbf{Average Waiting Time} = 16.5 ms
+    \item \textbf{Average Turnaround Time} = 25.5 ms
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{RRRR - Round Robin Rotates Regularly}
+\end{mnemonicbox}
+
+\questionmarks{2(a) OR}{3}{તફાવત: CPU બાઉન્ડ પ્રક્રિયા v/s I/O બાઉન્ડ પ્રક્રિયા.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\begin{center}
+\captionof{table}{CPU vs I/O Bound}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પાસું} & \textbf{CPU Bound} & \textbf{I/O Bound} \\ \hline
+Activity & High CPU computations & Frequent I/O operations \\ \hline
+Burst Time & Long CPU bursts & Short CPU bursts \\ \hline
+Wait States & ઓછી વાર & I/O માટે વારંવાર રાહ જુએ છે \\ \hline
+Examples & Scientific calculation & File copy, Data processing \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{CIC - CPU Computes I/O Interacts}
+\end{mnemonicbox}
+
+\questionmarks{2(b) OR}{4}{ક્રિટિકલ સેક્શનને વ્યાખ્યાયિત કરો અને ક્રિટિકલ સેક્શન સોલ્યુશનની સામાન્ય રચનાની ચર્ચા કરો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{Critical Section (CS)}: Code segment જ્યાં shared resources access થાય છે.
+
+\textbf{General Structure:}
+\begin{lstlisting}[basicstyle=\ttfamily]
+do {
+    entry section   // Request permission
+       critical section
+    exit section    // Release permission
+       remainder section
+} while (true);
+\end{lstlisting}
+
+\textbf{જરૂરિયાતો:}
+\begin{itemize}
+    \item \keyword{Mutual Exclusion}: CS માં ફક્ત એક જ process.
+    \item \keyword{Progress}: જો CS ખાલી હોય, તો next process selection અટકવી ન જોઈએ.
+    \item \keyword{Bounded Waiting}: Entry માટે રાહ જોવાનો સમય મર્યાદિત હોવો જોઈએ.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{ECER - Entry Critical Exit Remainder}
+\end{mnemonicbox}
+
+\questionmarks{2(c) OR}{7}{SJF અલ્ગોરિધમનું વર્ણન કરો. કોષ્ટકમાં આપેલ ડેટા માટે ગેન્ટ ચાર્ટ સાથે સરેરાશ રાહ જોવાનો સમય અને સરેરાશ ટર્ન-અરાઉન્ડ સમયની ગણતરી કરો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{Shortest Job First (SJF)}: Non-preemptive algorithm જ્યાં સૌથી નાના burst time વાળી process પહેલા schedule થાય છે.
+
+\textbf{Gantt Chart:}
+\begin{center}
+\begin{tikzpicture}[x=0.4cm, y=1cm]
+    \draw (0,0) rectangle (8,1) node[midway] {P1};
+    \draw (8,0) rectangle (12,1) node[midway] {P2};
+    \draw (12,0) rectangle (17,1) node[midway] {P4};
+    \draw (17,0) rectangle (26,1) node[midway] {P3};
+    
+    \node[below] at (0,0) {0};
+    \node[below] at (8,0) {8};
+    \node[below] at (12,0) {12};
+    \node[below] at (17,0) {17};
+    \node[below] at (26,0) {26};
+\end{tikzpicture}
+\captionof{figure}{Gantt Chart (SJF)}
+\end{center}
+
+\textbf{ગણતરી:}
+\begin{itemize}
+    \item \textbf{Avg Wait} = 5.75 ms
+    \item \textbf{Avg TAT} = 12.25 ms
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{SJSS - Shortest Jobs Start Soon}
+\end{mnemonicbox}
+
+\questionmarks{3(a)}{3}{બે-સ્તરની ડિરેક્ટરી રચના સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm]
+    \node [gtu block, minimum width=4cm] (mfd) {Master File Directory};
+    \node [gtu block, below left=1cm of mfd] (u1) {User 1 Dir};
+    \node [gtu block, below right=1cm of mfd] (u2) {User 2 Dir};
+    
+    \node [gtu block, below=0.5cm of u1, minimum width=1.5cm] (f1) {File X};
+    \node [gtu block, below=0.5cm of u2, minimum width=1.5cm] (f2) {File X};
+    
+    \draw [gtu arrow] (mfd) -- (u1);
+    \draw [gtu arrow] (mfd) -- (u2);
+    \draw [gtu arrow] (u1) -- (f1);
+    \draw [gtu arrow] (u2) -- (f2);
+\end{tikzpicture}
+\captionof{figure}{Two-level Directory}
+\end{center}
+
+\textbf{વિશેષતા:}
+\begin{itemize}
+    \item દરેક user માટે અલગ directory (UFD).
+    \item Name collision problem ઉકેલે છે.
+    \item Users વચ્ચે isolation પૂરું પાડે છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{TTTT - Two Tiers Tackle Troubles}
+\end{mnemonicbox}
+
+\questionmarks{3(b)}{4}{વિવિધ ફાઇલ કામગીરી સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\begin{center}
+\captionof{table}{File Operations}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{Operation} & \textbf{Description} \\ \hline
+Create & Space allocate કરે અને directory entry બનાવે. \\ \hline
+Open & Metadata memory માં load કરે access માટે. \\ \hline
+Read & Current position થી data વાંચે. \\ \hline
+Write & Current position પર data લખે. \\ \hline
+Delete & Space release કરે અને entry remove કરે. \\ \hline
+Close & Internal resources free કરે. \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{CORWCD - Create Open Read Write Close Delete}
+\end{mnemonicbox}
+
+\questionmarks{3(c)}{7}{વિવિધ ફાઈલ ફાળવણી પદ્ધતિઓની યાદી બનાવો અને જરૂરી રેખાકૃતિ સાથે સંલગ્ન ફાળવણી સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{Methods}: Contiguous, Linked, Indexed.
+
+\textbf{Contiguous Allocation:}
+File disk પર સતત (consecutive) blocks રોકે છે.
+
+\begin{center}
+\begin{tikzpicture}[node distance=0cm]
+    \foreach \x/\label in {0/0, 1/1, 2/2, 3/3, 4/4, 5/5}
+        \node [rectangle, draw, minimum size=1cm] (b\x) at (\x*1.1, 0) {\label};
+        
+    \node [fit=(b1)(b2)(b3), fill=blue!20, opacity=0.5] {};
+    \node [below=0.2cm of b2] {File A (Start:1, Len:3)};
+\end{tikzpicture}
+\captionof{figure}{Contiguous Allocation}
+\end{center}
+
+\textbf{ફાયદા}: સરળ (start, length), ઝડપી access.
+\textbf{ગેરફાયદા}: External fragmentation, file expand કરવામાં મુશ્કેલી.
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{CCCC - Contiguous Creates Continuous Clusters}
+\end{mnemonicbox}
+
+\questionmarks{3(a) OR}{3}{ફાઇલ સ્ટ્રક્ચરના પ્રકારોનું વર્ણન કરો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\begin{itemize}
+    \item \keyword{Sequential}: Records ક્રમમાં store થાય છે. સરળ પણ search ધીમું.
+    \item \keyword{Direct/Random}: Key દ્વારા direct access. ઝડપી access.
+    \item \keyword{Indexed}: અલગ index file data records ને point કરે છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{SDI - Sequential Direct Indexed}
+\end{mnemonicbox}
+
+\questionmarks{3(b) OR}{4}{વિવિધ ફાઇલ લક્ષણો સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\begin{center}
+\captionof{table}{File Attributes}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{Attribute} & \textbf{Description} \\ \hline
+Name & Human-readable identifier \\ \hline
+Type & File format (.txt, .exe) \\ \hline
+Size & File size \\ \hline
+Location & Device પર file location નો pointer \\ \hline
+Protection & Access control info (R/W/X) \\ \hline
+Time/Date & Creation, modification info \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{NTSLPT - Name Type Size Location Permissions Time}
+\end{mnemonicbox}
+
+\questionmarks{3(c) OR}{7}{વિવિધ ફાઈલ ફાળવણી પદ્ધતિઓની યાદી બનાવો અને જરૂરી રેખાકૃતિ સાથે લિંક કરેલ ફાળવણી સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{Linked Allocation:}
+Files non-contiguous blocks માં store થાય છે. દરેક block next block નું pointer ધરાવે છે.
+
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm, auto]
+    \node [gtu block] (b1) {Block 5 \\ Next: 8};
+    \node [gtu block, right=of b1] (b2) {Block 8 \\ Next: 2};
+    \node [gtu block, right=of b2] (b3) {Block 2 \\ Next: -1};
+    
+    \draw [gtu arrow] (b1) -- (b2);
+    \draw [gtu arrow] (b2) -- (b3);
+\end{tikzpicture}
+\captionof{figure}{Linked Allocation}
+\end{center}
+
+\textbf{ફાયદા}: External fragmentation નથી, file સરળતાથી વધારી શકાય.
+\textbf{ગેરફાયદા}: Random access ધીમું છે, pointer overhead.
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{LLLL - Links Lead Logical Locations}
+\end{mnemonicbox}
+
+\questionmarks{4(a)}{3}{પ્રોગ્રામ ધમકીઓ વ્યાખ્યાયિત કરો અને તેના પ્રકારો સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{Program Threats}: Malicious code જે program માં embed હોય છે.
+
+\begin{itemize}
+    \item \keyword{Trojan Horse}: ઉપયોગી દેખાય છે પણ નુકસાન કરે છે.
+    \item \keyword{Trap Door}: Designer દ્વારા છોડવામાં આવેલ secret entry point.
+    \item \keyword{Logic Bomb}: Code જે ચોક્કસ શરતો હેઠળ execute થાય (explode) છે.
+    \item \keyword{Virus}: Code જે અન્ય programs માં પોતાને embed કરે છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{TTLV - Trojan Trap Logic Virus}
+\end{mnemonicbox}
+
+\questionmarks{4(b)}{4}{સિસ્ટમ ઓથેન્ટિકેશન સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{Authentication}: User identity ની verification.
+
+\textbf{પદ્ધતિઓ:}
+\begin{enumerate}
+    \item \keyword{Passwords}: Secret string.
+    \item \keyword{Biometrics}: Fingerprint, retina scan.
+    \item \keyword{Smart Cards}: Chip વાળા physical token.
+    \item \keyword{Two-Factor}: બે પદ્ધતિઓનું combination (e.g., Password + OTP).
+\end{enumerate}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{PBST - Passwords Biometrics Smartcards Two-factor}
+\end{mnemonicbox}
+
+\questionmarks{4(c)}{7}{એક્સેસ કંટ્રોલ લિસ્ટને વિગતવાર સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{Access Control List (ACL)}: દરેક object સાથે જોડાયેલ list જે define કરે છે કે કયા users તેને access કરી શકે.
+
+\textbf{Structure:}
+File X: $(User A, Read), (User B, Read/Write)$
+
+\textbf{ફાયદા}:
+\begin{itemize}
+    \item Individual objects પર ચોક્કસ control.
+    \item Specific users માટે permission revoke કરવી સરળ.
+\end{itemize}
+
+\textbf{ગેરફાયદા}:
+\begin{itemize}
+    \item ACLs search કરવું ધીમું હોઈ શકે.
+    \item ઘણી files માટે ACLs manage કરવું જટિલ છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{ACLU - Access Controls Limit Users}
+\end{mnemonicbox}
+
+\questionmarks{4(a) OR}{3}{સિસ્ટમ ધમકીઓ વ્યાખ્યાયિત કરો અને તેના પ્રકારો સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{System Threats}: OS અથવા environment ને target કરે છે.
+\begin{itemize}
+    \item \keyword{Worm}: Independent program જે network પર ફેલાય છે અને resources વાપરે છે.
+    \item \keyword{Port Scanning}: Vulnerabilities શોધવા open ports detect કરવા.
+    \item \keyword{Denial of Service}: System ને overwhelm કરી legitimate use અટકાવવું.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{WPD - Worm Port DoS}
+\end{mnemonicbox}
+
+\questionmarks{4(c) OR}{7}{વિવિધ ઓપરેટિંગ સિસ્ટમ સુરક્ષા નીતિઓ અને પ્રક્રિયાઓની ચર્ચા કરો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{Policies:}
+\begin{itemize}
+    \item \keyword{User Policy}: Strong passwords.
+    \item \keyword{Access Policy}: Least privilege principle.
+    \item \keyword{Data Policy}: Sensitive data નું encryption.
+\end{itemize}
+
+\textbf{Procedures (પ્રક્રિયાઓ):}
+\begin{itemize}
+    \item \keyword{Auditing}: Logs monitor કરવા.
+    \item \keyword{Backups}: Regular data backup.
+    \item \keyword{Updates}: OS patching.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{APPI - Access Password Policy Incident}
+\end{mnemonicbox}
+
+\questionmarks{5(a)}{3}{નીચેના આદેશો સમજાવો: (i) pwd (ii) cd (iii) comm}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\begin{center}
+\captionof{table}{Commands}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{Command} & \textbf{Purpose} \\ \hline
+\code{pwd} & Print Working Directory. \\ \hline
+\code{cd} & Change Directory. Folder બદલવા માટે. \\ \hline
+\code{comm} & બે sorted files ને line-by-line compare કરે. \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{PCC - Pwd Cd Comm}
+\end{mnemonicbox}
+
+\questionmarks{5(b)}{4}{ત્રીજી ફાઇલમાં બે ફાઇલોના સમાવિષ્ટોને જોડવા માટે શેલ સ્ક્રિપ્ટ લખો.}
+
+\begin{solutionbox}
+\begin{lstlisting}[language=bash, caption={Concatenate Files}]
+#!/bin/bash
+# Script to concatenate two files
+
+echo "Enter first filename:"
+read f1
+echo "Enter second filename:"
+read f2
+echo "Enter output filename:"
+read f3
+
+if [ -f "$f1" ] && [ -f "$f2" ]; then
+    cat "$f1" "$f2" > "$f3"
+    echo "Files merged into $f3"
+else
+    echo "Files not found"
+fi
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{CCCC - Cat Combines Content Correctly}
+\end{mnemonicbox}
+
+\questionmarks{5(c)}{7}{આપેલ 5 અંકની સંખ્યામાં તમામ વ્યક્તિગત અંકોનો સરવાળો શોધવા માટે શેલ સ્ક્રિપ્ટ લખો.}
+
+\begin{solutionbox}
+\begin{lstlisting}[language=bash, caption={Sum of Digits}]
+#!/bin/bash
+# Sum of 5 digits
+
+echo "Enter 5 digit number:"
+read n
+
+if [ ${#n} -ne 5 ]; then
+    echo "Please enter 5 digits"
+    exit 1
+fi
+
+sum=0
+while [ $n -gt 0 ]
+do
+    rem=$((n % 10))
+    sum=$((sum + rem))
+    n=$((n / 10))
+done
+
+echo "Sum of digits: $sum"
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{SSSS - Sum Separates Single Symbols}
+\end{mnemonicbox}
+
+\questionmarks{5(a) OR}{3}{નીચેના આદેશો સમજાવો: (i) man (ii) mkdir (iii) grep}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\begin{center}
+\captionof{table}{More Commands}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{Cmd} & \textbf{Purpose} \\ \hline
+\code{man} & Manual. Help display કરે છે. \\ \hline
+\code{mkdir} & Make Directory. નવું folder બનાવે છે. \\ \hline
+\code{grep} & Global Regular Expression Print. Files માં text search કરે છે. \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{MMG - Manual Make Grep}
+\end{mnemonicbox}
+
+\questionmarks{5(b) OR}{4}{ફિબોનાચી શ્રેણી જનરેટ કરવા અને પ્રદર્શિત કરવા માટે શેલ સ્ક્રિપ્ટ લખો.}
+
+\begin{solutionbox}
+\begin{lstlisting}[language=bash, caption={Fibonacci Series}]
+#!/bin/bash
+# Fibonacci Series
+
+echo "Enter N:"
+read n
+a=0
+b=1
+
+echo -n "$a $b "
+
+for (( i=0; i<n-2; i++ ))
+do
+    c=$((a + b))
+    echo -n "$c "
+    a=$b
+    b=$c
+done
+echo ""
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{FFFF - Fibonacci Follows Forward Formula}
+\end{mnemonicbox}
+
+\questionmarks{5(c) OR}{7}{આપેલ string palindrome છે કે કેમ તે નિર્ધારિત કરવા માટે શેલ સ્ક્રિપ્ટ લખો.}
+
+\begin{solutionbox}
+\begin{lstlisting}[language=bash, caption={Palindrome Check}]
+#!/bin/bash
+# Palindrome Check
+
+echo "Enter string:"
+read str
+len=${#str}
+rev=""
+
+for (( i=$len-1; i>=0; i-- ))
+do
+    rev="$rev${str:$i:1}"
+done
+
+if [ "$str" == "$rev" ]; then
+    echo "Palindrome"
+else
+    echo "Not Palindrome"
+fi
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{PPPP - Palindromes Proceed Perfectly Parallel}
+\end{mnemonicbox}
+
+\end{document}
