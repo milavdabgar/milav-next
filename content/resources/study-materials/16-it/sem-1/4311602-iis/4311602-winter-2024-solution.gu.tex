@@ -1,0 +1,866 @@
+\documentclass{article}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/preamble.tex}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/gujarati-boxes.tex}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/commands.tex}
+
+\usetikzlibrary{mindmap,trees,fit}
+
+\title{માહિતી પ્રણાલીનો પરિચય (4311602) - શિયાળો 2024 ઉકેલ}
+\date{જાન્યુઆરી 09, 2025}
+
+\begin{document}
+\maketitle
+
+\section*{પ્રશ્ન 1}
+
+\questionmarks{1(a)}{NAND લૉજિક ગેટ સમજાવો.}{3}
+\begin{solutionbox}
+    \textbf{NAND ગેટ} એક યુનિવર્સલ ગેટ છે. જ્યારે તેના બધા ઇનપુટ 1 હોય ત્યારે જ તેનું આઉટપુટ 0 મળે છે. તે AND ગેટ અને NOT ગેટનું સંયોજન છે.
+
+    \begin{center}
+        \begin{tikzpicture}[circuit logic US]
+            \node[nand gate, inputs={nn}] (N) at (0,0) {};
+            \draw (N.input 1) -- ++(-0.5,0) node[left] {$A$};
+            \draw (N.input 2) -- ++(-0.5,0) node[left] {$B$};
+            \draw (N.output) -- ++(0.5,0) node[right] {$Y = \overline{A \cdot B}$};
+        \end{tikzpicture}
+    \end{center}
+
+    \textbf{ટ્રુથ ટેબલ:}
+    \begin{center}
+        \begin{tabulary}{\linewidth}{C C C}
+            \toprule
+            $A$ & $B$ & $Y = \overline{A \cdot B}$ \\
+            \midrule
+            0 & 0 & 1 \\
+            0 & 1 & 1 \\
+            1 & 0 & 1 \\
+            1 & 1 & 0 \\
+            \bottomrule
+        \end{tabulary}
+    \end{center}
+
+    \begin{itemize}
+        \item \textbf{યુનિવર્સલ ગેટ}: તે કોઈપણ બીજા ગેટ (AND, OR, NOT) ની જેમ કામ કરી શકે છે.
+        \item \textbf{ઓછો પાવર}: CMOS સર્કિટમાં ઓછો પાવર વાપરે છે.
+    \end{itemize}
+    \begin{mnemonicbox}NOT AND = NAND\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{1(b)}{માત્ર NOR ગેટ નો ઉપયોગ કરી AND ગેટ દોરો.}{4}
+\begin{solutionbox}
+    ડી મોર્ગનના નિયમનો ઉપયોગ કરીને NOR ગેટ દ્વારા AND ગેટ બનાવી શકાય છે: $A \cdot B = \overline{\overline{A} + \overline{B}}$.
+    
+    \textbf{બનાવવાની રીત:}
+    \begin{enumerate}
+        \item NOR ગેટથી NOT A બનાવો ($A$ NOR $A = \overline{A}$).
+        \item NOR ગેટથી NOT B બનાવો ($B$ NOR $B = \overline{B}$).
+        \item $\overline{A}$ અને $\overline{B}$ ને ત્રીજા NOR ગેટમાં આપો જેથી $\overline{\overline{A} + \overline{B}} = A \cdot B$ મળે.
+    \end{enumerate}
+
+    \textbf{સર્કિટ ડાયાગ્રામ:}
+    \begin{center}
+        \begin{tikzpicture}[circuit logic US, scale=1.2]
+            % NOT A
+            \node[nor gate, inputs={nn}] (N1) at (0,1) {};
+            \draw (N1.input 1) -- ++(-0.5,0) coordinate (A);
+            \draw (N1.input 2) -- ++(-0.5,0) coordinate (A_copy);
+            \draw (A) -- ++(-0.5,0) node[left] {$A$};
+            \draw (A) -- (A_copy); % Tie inputs
+            
+            % NOT B
+            \node[nor gate, inputs={nn}] (N2) at (0,-1) {};
+            \draw (N2.input 1) -- ++(-0.5,0) coordinate (B);
+            \draw (N2.input 2) -- ++(-0.5,0) coordinate (B_copy);
+            \draw (B) -- ++(-0.5,0) node[left] {$B$};
+            \draw (B) -- (B_copy); % Tie inputs
+
+            % Final NOR
+            \node[nor gate, inputs={nn}] (N3) at (2.5,0) {};
+            
+            \draw (N1.output) -- ++(0.5,0) |- (N3.input 1) node[midway, above] {$\overline{A}$};
+            \draw (N2.output) -- ++(0.5,0) |- (N3.input 2) node[midway, below] {$\overline{B}$};
+            
+            \draw (N3.output) -- ++(0.5,0) node[right] {$Y = A \cdot B$};
+        \end{tikzpicture}
+    \end{center}
+    \begin{mnemonicbox}બે વાર ઉલટાવવાથી મૂળ ફંક્શન મળે\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{1(c)}{માહિતી પ્રણાલી (Information System) ના ઘટકો આકૃતિ સાથે સમજાવો.}{7}
+\begin{solutionbox}
+    ડેટાને ઉપયોગી માહિતીમાં ફેરવવા માટે ઇન્ફોર્મેશન સિસ્ટમ પાંચ મુખ્ય ઘટકોનો ઉપયોગ કરે છે.
+
+    \textbf{સિસ્ટમ ડાયાગ્રામ:}
+    \begin{center}
+        \begin{tikzpicture}[node distance=2.5cm, auto]
+            \node [gtu block] (proc) {પ્રક્રિયાઓ\\(Procedures)};
+            \node [gtu block, above of=proc] (sw) {સોફ્ટવેર};
+            \node [gtu block, below of=proc] (data) {ડેટા};
+            \node [gtu block, left of=proc, xshift=-1cm] (hw) {હાર્ડવેર};
+            \node [gtu block, right of=proc, xshift=1cm] (ppl) {લોકો\\(People)};
+            
+            \node [left of=hw] (input) {ઇનપુટ};
+            \node [right of=ppl] (output) {આઉટપુટ};
+
+            % Arrows
+            \draw [gtu arrow] (input) -- (hw);
+            \draw [gtu arrow] (hw) -- (proc);
+            \draw [gtu arrow] (sw) -- (proc);
+            \draw [gtu arrow] (data) -- (proc);
+            \draw [gtu arrow] (ppl) -- (proc);
+            \draw [gtu arrow] (proc) -- (ppl); 
+            \draw [gtu arrow] (ppl) -- (output);
+            
+            % Enclosing box
+            \node [draw=black!50, dashed, fit=(hw) (sw) (data) (ppl) (proc), inner sep=0.5cm, label=above:ઇન્ફોર્મેશન સિસ્ટમ] {};
+        \end{tikzpicture}
+    \end{center}
+
+    \textbf{ઘટકો:}
+    \begin{center}
+        \begin{tabulary}{\linewidth}{L L L}
+            \toprule
+            \textbf{ઘટક} & \textbf{વર્ણન} & \textbf{ઉદાહરણો} \\
+            \midrule
+            \textbf{હાર્ડવેર} & ભૌતિક ઉપકરણો & CPU, મેમરી, કીબોર્ડ \\
+            \textbf{સોફ્ટવેર} & પ્રોગ્રામ્સ અને એપ્લિકેશન્સ & OS, એપ્લિકેશન્સ \\
+            \textbf{ડેટા} & કાચી હકીકતો અને આંકડા & નંબરો, ટેક્સ્ટ \\
+            \textbf{પ્રક્રિયાઓ} & નિયમો અને સૂચનાઓ & યુઝર મેન્યુઅલ \\
+            \textbf{લોકો} & વપરાશકર્તાઓ & એન્ડ યુઝર્સ, IT સ્ટાફ \\
+            \bottomrule
+        \end{tabulary}
+    \end{center}
+    \begin{mnemonicbox}હાર્ડવેર, સોફ્ટવેર, ડેટા, પ્રોસીજર, પીપલ\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{1(c) OR}{ગૂગલ સર્ચ એન્જિનની કાર્યપદ્ધતિ ઉદાહરણ સાથે સમજાવો.}{7}
+\begin{solutionbox}
+    ગૂગલ સર્ચ એન્જિન જટિલ અલ્ગોરિધમનો ઉપયોગ કરીને વેબ પેજ શોધે છે અને રેન્ક આપે છે.
+
+    \textbf{કાર્યપદ્ધતિ:}
+    \begin{center}
+        \begin{tikzpicture}[node distance=2cm, auto]
+            \node [gtu block] (crawl) {ક્રોલિંગ\\(Googlebot)};
+            \node [gtu block, right of=crawl, node distance=3.5cm] (index) {ઇન્ડેક્ષિંગ\\(ડેટાબેઝ)};
+            \node [gtu block, right of=index, node distance=3.5cm] (rank) {રેન્કિંગ\\(PageRank)};
+            \node [gtu block, right of=rank, node distance=3.5cm] (serve) {સર્વિંગ\\(પરિણામ)};
+
+            \draw [gtu arrow] (crawl) -- (index);
+            \draw [gtu arrow] (index) -- (rank);
+            \draw [gtu arrow] (rank) -- (serve);
+            
+            \node [below of=crawl, text width=2.5cm, align=center, font=\footnotesize] {પેજ શોધવા};
+            \node [below of=index, text width=2.5cm, align=center, font=\footnotesize] {સ્ટોર કરવું};
+            \node [below of=rank, text width=2.5cm, align=center, font=\footnotesize] {ક્રમ નક્કી કરવો};
+            \node [below of=serve, text width=2.5cm, align=center, font=\footnotesize] {પરિણામ આપવું};
+        \end{tikzpicture}
+    \end{center}
+
+    \textbf{મુખ્ય તબક્કાઓ:}
+    \begin{enumerate}
+        \item \textbf{ક્રોલિંગ}: Googlebot નવા પેજ શોધવા વેબ પર ફરે છે.
+        \item \textbf{ઇન્ડેક્ષિંગ}: પેજ પરનું લખાણ અને મા માહિતી ડેટાબેઝમાં સ્ટોર થાય છે.
+        \item \textbf{રેન્કિંગ}: કયું પેજ સૌથી વધુ ઉપયોગી છે તે નક્કી થાય છે.
+        \item \textbf{સર્વિંગ}: યુઝરને પરિણામ બતાવવામાં આવે છે.
+    \end{enumerate}
+    \begin{mnemonicbox}ક્રોલ, ઇન્ડેક્સ, રેન્ક, સર્વ\end{mnemonicbox}
+\end{solutionbox}
+
+\section*{પ્રશ્ન 2}
+
+\questionmarks{2(a)}{રૂપાંતર કરો: $(16.75)_{10} = (\quad)_8$}{3}
+\begin{solutionbox}
+    દશાંશ $16.75$ ને ઓક્ટલમાં ફેરવવા માટે પૂર્ણાંક અને અપૂર્ણાંક ભાગ અલગ ગણવા પડે.
+
+    \textbf{1. પૂર્ણાંક ભાગ (16):} 8 વડે ભાગો
+    \begin{center}
+        \begin{tabular}{c|c|c}
+            ભાગાકાર & ભાગફળ & શેષ \\
+            \hline
+            $16 \div 8$ & 2 & 0 \\
+            $2 \div 8$ & 0 & 2 \\
+        \end{tabular}
+    \end{center}
+    શેષ નીચેથી ઉપર લખો: $(20)_8$
+
+    \textbf{2. અપૂર્ણાંક ભાગ (0.75):} 8 વડે ગુણો
+    \[ 0.75 \times 8 = 6.00 \rightarrow \text{પૂર્ણાંક } 6 \]
+    ઉપરથી નીચે લખો: $(.6)_8$
+
+    \textbf{જવાબ:}
+    \[ (16.75)_{10} = (20.6)_8 \]
+    \begin{mnemonicbox}પૂર્ણાંક ભાગો, અપૂર્ણાંક ગુણો\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(b)}{મલ્ટીપ્રોસેસિંગ ઓપરેટિંગ સિસ્ટમ સમજાવો.}{4}
+\begin{solutionbox}
+    \textbf{મલ્ટીપ્રોસેસિંગ OS} એક કરતા વધુ પ્રોસેસરો (CPUs) નો ઉપયોગ કરે છે.
+
+    \textbf{આર્કિટેક્ચર:}
+    \begin{center}
+        \begin{tikzpicture}[node distance=1.5cm]
+            \node[gtu block] (mem) at (0,0) {શેર્ડ મેમરી};
+            \node[gtu block] (cpu1) at (-3, 2) {CPU 1};
+            \node[gtu block] (cpu2) at (0, 2) {CPU 2};
+            \node[gtu block] (cpu3) at (3, 2) {CPU 3};
+            
+            \draw[gtu arrow] (cpu1) -- (mem);
+            \draw[gtu arrow] (cpu2) -- (mem);
+            \draw[gtu arrow] (cpu3) -- (mem);
+            
+            \node[draw, dashed, fit=(cpu1) (cpu3) (mem), label=above:સિમેટ્રિક મલ્ટીપ્રોસેસિંગ] {};
+        \end{tikzpicture}
+    \end{center}
+
+    \textbf{લાક્ષણિકતાઓ:}
+    \begin{itemize}
+        \item \textbf{પેરેલલ પ્રોસેસિંગ}: એક સાથે અનેક કામ થાય છે.
+        \item \textbf{વિશ્વસનીયતા}: એક CPU બગડે તો પણ સિસ્ટમ ચાલુ રહે છે.
+        \item \textbf{ઝડપ}: કામ કરવાની ગતિ વધે છે.
+    \end{itemize}
+    \begin{mnemonicbox}એકથી વધુ પ્રોસેસર\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(c)}{ઓપરેટિંગ સિસ્ટમની વ્યાખ્યા આપો. તેના કાર્યોની યાદી આપી સમજાવો.}{7}
+\begin{solutionbox}
+    \textbf{વ્યાખ્યા}: ઓપરેટિંગ સિસ્ટમ (OS) એ સિસ્ટમ સોફ્ટવેર છે જે કોમ્પ્યુટર હાર્ડવેર અને સોફ્ટવેરનું સંચાલન કરે છે.
+
+    \textbf{મુખ્ય કાર્યો:}
+    \begin{center}
+        \begin{tikzpicture}[node distance=2.5cm, auto]
+            \node[gtu block, fill=blue!10] (os) {ઓપરેટિંગ સિસ્ટમ};
+            
+            \node[gtu block, above of=os] (proc) {પ્રોસેસ મેનેજમેન્ટ};
+            \node[gtu block, right of=os, xshift=1cm] (mem) {મેમરી મેનેજમેન્ટ};
+            \node[gtu block, below of=os] (file) {ફાઈલ મેનેજમેન્ટ};
+            \node[gtu block, left of=os, xshift=-1cm] (io) {I/O મેનેજમેન્ટ};
+            \node[gtu block, below right of=os, xshift=1cm] (sec) {સુરક્ષા};
+            
+            \draw[gtu arrow] (os) -- (proc);
+            \draw[gtu arrow] (os) -- (mem);
+            \draw[gtu arrow] (os) -- (file);
+            \draw[gtu arrow] (os) -- (io);
+            \draw[gtu arrow] (os) -- (sec);
+        \end{tikzpicture}
+    \end{center}
+
+    \textbf{કાર્યોનું વર્ણન:}
+    \begin{enumerate}
+        \item \textbf{પ્રોસેસ મેનેજમેન્ટ}: પ્રોસેસ બનાવવી અને શેડ્યૂલ કરવી.
+        \item \textbf{મેમરી મેનેજમેન્ટ}: RAM ની ફાળવણી કરવી.
+        \item \textbf{ફાઈલ મેનેજમેન્ટ}: ડેટાને ફાઈલોમાં સાચવવો.
+        \item \textbf{I/O મેનેજમેન્ટ}: કીબોર્ડ, પ્રિન્ટર જેવા સાધનોનું સંચાલન.
+        \item \textbf{સુરક્ષા}: પાસવર્ડ અને લોગિન દ્વારા રક્ષણ.
+    \end{enumerate}
+    \begin{mnemonicbox}પ્રોસેસ મેમરી ફાઈલ I/O સુરક્ષા\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(a) OR}{રૂપાંતર કરો: $(1111111.11)_2 = (\quad)_{10}$}{3}
+\begin{solutionbox}
+    બાઈનરીમાંથી દશાંશમાં ફેરવવા માટે સ્થાન કિંમત ($2^n$) વાપરો.
+
+    \textbf{બાઈનરી}: \texttt{1111111.11}
+    
+    \textbf{ગણતરી:}
+    $1 \times 64 + 1 \times 32 + 1 \times 16 + 1 \times 8 + 1 \times 4 + 1 \times 2 + 1 \times 1 + 1 \times 0.5 + 1 \times 0.25$
+    
+    સરવાળો: $127 + 0.75 = 127.75$
+
+    \textbf{જવાબ:}
+    \[ (1111111.11)_2 = (127.75)_{10} \]
+    \begin{mnemonicbox}બે ની ઘાતનો સરવાળો\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(b) OR}{બેચ ઓપરેટિંગ સિસ્ટમ સમજાવો.}{4}
+\begin{solutionbox}
+    \textbf{બેચ OS} માં યુઝર સીધો ઈન્ટરએક્શન કરતો નથી. સમાન પ્રકારના કામો (Jobs) ના જૂથ (Batch) બનાવીને રન કરવામાં આવે છે.
+
+    \textbf{વર્કિંગ મોડેલ:}
+    \begin{center}
+        \begin{tikzpicture}[node distance=2.5cm, auto]
+            \node [gtu block] (users) {યુઝર્સ};
+            \node [gtu block, right of=users] (op) {ઓપરેટર};
+            \node [gtu block, right of=op] (batch) {બેચ};
+            \node [gtu block, right of=batch] (im) {કોમ્પ્યુટર};
+            
+            \draw [gtu arrow] (users) -- node {Jobs} (op);
+            \draw [gtu arrow] (op) -- node {જૂથ} (batch);
+            \draw [gtu arrow] (batch) -- node {પ્રોસેસ} (im);
+        \end{tikzpicture}
+    \end{center}
+
+    \textbf{લાક્ષણિકતાઓ:}
+    \begin{itemize}
+        \item \textbf{નો-ઈન્ટરએક્શન}: જોબ સબમિટ કર્યા પછી બદલી શકાતી નથી.
+        \item \textbf{FIFO}: વહેલા તે પહેલાના ધોરણે કામ થાય છે.
+    \end{itemize}
+    \begin{mnemonicbox}બેચમાં કામ થાય\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(c) OR}{લિનક્સ સિસ્ટમ આર્કિટેક્ચર અને મોડ્સ આકૃતિ સાથે સમજાવો.}{7}
+\begin{solutionbox}
+    લિનક્સ મોનોલિથિક કર્નલ આર્કિટેક્ચર ધરાવે છે.
+
+    \textbf{આર્કિટેક્ચર:}
+    \begin{center}
+        \begin{tikzpicture}
+            % Concentric circles
+            \draw[fill=blue!5] (0,0) circle (3.5cm);
+            \draw[fill=blue!10] (0,0) circle (2.5cm);
+            \draw[fill=blue!20] (0,0) circle (1.5cm);
+            \draw[fill=blue!30] (0,0) circle (0.5cm);
+            
+            \node at (0,0) {\textbf{હાર્ડવેર}};
+            \node at (0,1) {\textbf{કર્નલ}};
+            \node at (0,2) {\textbf{શેલ}};
+            \node at (0,3) {\textbf{યુઝર્સ}};
+            
+            % Annotations
+            \node (apps) at (4,3) {એપ્લિકેશન્સ};
+            \draw[->] (apps) -- (2.5,2.5);
+            
+            \node (sys) at (4,1) {સિસ્ટમ કોલ્સ};
+            \draw[->] (sys) -- (1.8,1.8);
+        \end{tikzpicture}
+    \end{center}
+
+    \textbf{ઓપરેટિંગ મોડ્સ:}
+    \begin{enumerate}
+        \item \textbf{યુઝર મોડ}: સામાન્ય એપ્લિકેશનો અહીં ચાલે છે.
+        \item \textbf{કર્નલ મોડ}: OS નો મુખ્ય ભાગ અહીં ચાલે છે અને હાર્ડવેરને કંટ્રોલ કરે છે.
+    \end{enumerate}
+    \begin{mnemonicbox}હાર્ડવેર - કર્નલ - શેલ - યુઝર\end{mnemonicbox}
+\end{solutionbox}
+
+\section*{પ્રશ્ન 3}
+
+\questionmarks{3(a)}{ઓપન સોર્સ સોફ્ટવેર અને પ્રોપ્રાઈટરી સોફ્ટવેર વચ્ચેનો તફાવત આપો.}{3}
+\begin{solutionbox}
+    \textbf{તફાવત:}
+    \begin{center}
+        \begin{tabulary}{\linewidth}{L L L}
+            \toprule
+            \textbf{મુદ્દો} & \textbf{ઓપન-સોર્સ સોફ્ટવેર} & \textbf{પ્રોપ્રાઈટરી સોફ્ટવેર} \\
+            \midrule
+            \textbf{સોર્સ કોડ} & મફત ઉપલબ્ધ છે & બંધ અને સુરક્ષિત છે \\
+            \textbf{કિંમત} & મોટે ભાગે મફત & લાઈસન્સ ખરીદવું પડે \\
+            \textbf{ફેરફાર} & ફેરફાર કરી શકાય & ફેરફાર ન કરી શકાય \\
+            \textbf{ઉદાહરણ} & Linux, Firefox & Windows, MS Office \\
+            \textbf{સપોર્ટ} & કોમ્યુનિટી દ્વારા & કંપની દ્વારા \\
+            \bottomrule
+        \end{tabulary}
+    \end{center}
+    \begin{mnemonicbox}ઓપન એટલે ખુલ્લું, પ્રોપ્રાઈટરી એટલે માલિકીનું\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3(b)}{ઈથરનેટ કેબલ સમજાવો.}{4}
+\begin{solutionbox}
+    \textbf{ઈથરનેટ કેબલ} LAN કનેક્શન માટે વપરાતું સ્ટાન્ડર્ડ વાયરિંગ છે.
+
+    \textbf{કેબલના પ્રકાર:}
+    \begin{center}
+        \begin{tikzpicture}[node distance=1.5cm, auto]
+            \node [gtu block] (eth) {ઈથરનેટ કેબલ};
+            \node [gtu block, below left of=eth, xshift=-2cm] (twisted) {ટ્વિસ્ટેડ પેર};
+            \node [gtu block, below right of=eth, xshift=2cm] (fiber) {ફાઈબર ઓપ્ટિક};
+            
+            \node [gtu block, below of=twisted] (utp) {UTP (અનશિલ્ડેડ)};
+            \node [gtu block, below of=utp] (stp) {STP (શિલ્ડેડ)};
+            
+            \node [gtu block, below of=fiber] (sm) {સિંગલ મોડ};
+            \node [gtu block, below of=sm] (mm) {મલ્ટી મોડ};
+            
+            \draw [gtu arrow] (eth) -- (twisted);
+            \draw [gtu arrow] (eth) -- (fiber);
+            \draw [gtu arrow] (twisted) -- (utp);
+            \draw [gtu arrow] (twisted) -- (stp);
+            \draw [gtu arrow] (fiber) -- (sm);
+            \draw [gtu arrow] (fiber) -- (mm);
+        \end{tikzpicture}
+    \end{center}
+
+    \textbf{વિશિષ્ટતાઓ:}
+    \begin{itemize}
+        \item \textbf{Cat 5e}: 1 Gbps ઝડપ.
+        \item \textbf{Cat 6}: 10 Gbps ઝડપ.
+        \item \textbf{કનેક્ટર}: RJ-45 વપરાય છે.
+    \end{itemize}
+    \begin{mnemonicbox}ટ્વિસ્ટેડ પેર ડિજિટલ ડેટા લઈ જાય\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3(c)}{ટાઈમ ડિવિઝન મલ્ટીપ્લેક્સિંગ (TDM) આકૃતિ સાથે સમજાવો.}{7}
+\begin{solutionbox}
+    \textbf{TDM} માં એક જ ચેનલ પર અલગ અલગ સમયે મલ્ટીપલ સિગ્નલ મોકલવામાં આવે છે.
+
+    \textbf{TDM પ્રક્રિયા:}
+    \begin{center}
+        \begin{tikzpicture}[scale=0.8]
+            % Axis
+            \draw[->] (0,0) -- (13,0) node[right] {સમય};
+            
+            % Slots
+            \foreach \x/\c/\col in {0/A1/red!30, 1/B1/blue!30, 2/C1/green!30, 3/D1/yellow!30,
+                                    4/A2/red!30, 5/B2/blue!30, 6/C2/green!30, 7/D2/yellow!30,
+                                    8/A3/red!30, 9/B3/blue!30, 10/C3/green!30, 11/D3/yellow!30} {
+                \draw[fill=\col] (\x,0) rectangle (\x+1,1);
+                \node at (\x+0.5, 0.5) {\footnotesize \c};
+            }
+            
+            % Labels
+            \node at (2, -0.5) {ફ્રેમ 1};
+            \node at (6, -0.5) {ફ્રેમ 2};
+            \node at (10, -0.5) {ફ્રેમ 3};
+            
+            \draw [thick, decoration={brace,mirror,amplitude=5pt},decorate] (0,-0.8) -- (4,-0.8);
+            \draw [thick, decoration={brace,mirror,amplitude=5pt},decorate] (4,-0.8) -- (8,-0.8);
+            \draw [thick, decoration={brace,mirror,amplitude=5pt},decorate] (8,-0.8) -- (12,-0.8);
+        \end{tikzpicture}
+    \end{center}
+
+    \textbf{ઘટકો:}
+    \begin{enumerate}
+        \item \textbf{મલ્ટીપ્લેક્સર (MUX)}: સિગ્નલો ભેગા કરે છે.
+        \item \textbf{ટાઈમ સ્લોટ}: દરેક ચેનલને ફાળવેલો સમય.
+        \item \textbf{ડિમલ્ટીપ્લેક્સર}: રિસીવર બાજુ સિગ્નલ છૂટા પાડે છે.
+    \end{enumerate}
+    \begin{mnemonicbox}સમય વહેંચીને સિગ્નલ મોકલો\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3(a) OR}{હાર્ડ રિયલ ટાઈમ અને સોફ્ટ રિયલ ટાઈમ OS વચ્ચેનો તફાવત આપો.}{3}
+\begin{solutionbox}
+    \textbf{તફાવત:}
+    \begin{center}
+        \begin{tabulary}{\linewidth}{L L L}
+            \toprule
+            \textbf{મુદ્દો} & \textbf{હાર્ડ રિયલ ટાઈમ} & \textbf{સોફ્ટ રિયલ ટાઈમ} \\
+            \midrule
+            \textbf{ડેડલાઈન} & ચુસ્ત (Strict) & થોડી છૂટછાટ હોય \\
+            \textbf{નિષ્ફળતા} & સિસ્ટમ ફેલ થાય & પરફોર્મન્સ ઘટે \\
+            \textbf{ઉદાહરણ} & મિસાઈલ, પેસમેકર & વિડિયો સ્ટ્રીમિંગ, ગેમ \\
+            \bottomrule
+        \end{tabulary}
+    \end{center}
+    \begin{mnemonicbox}હાર્ડ એટલે કડક, સોફ્ટ એટલે નરમ\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3(b) OR}{ટ્રાન્સમિશન મોડ્સ સમજાવો.}{4}
+\begin{solutionbox}
+    \textbf{ટ્રાન્સમિશન મોડ્સ} ડેટા વહેવાની દિશા નક્કી કરે છે.
+
+    \begin{center}
+        \begin{tikzpicture}[node distance=2cm, auto, thick]
+            % Simplex
+            \node (s1) at (0,4) {A};
+            \node (s2) at (3,4) {B};
+            \draw[->] (s1) -- node[above] {સિમ્પ્લેક્સ} (s2);
+            \node[below, font=\scriptsize, text width=2cm] at (1.5,4) {એક જ દિશામાં (Radio)};
+
+            % Half Duplex
+            \node (h1) at (0,2) {A};
+            \node (h2) at (3,2) {B};
+            \draw[<->] (h1) -- node[above] {હાફ ડુપ્લેક્સ} (h2);
+            \node[below, font=\scriptsize, text width=2cm] at (1.5,2) {બંને દિશામાં, પણ વારાફરતી (Walkie-Talkie)};
+
+            % Full Duplex
+            \node (f1) at (0,0) {A};
+            \node (f2) at (3,0) {B};
+            \draw[transform canvas={yshift=0.1cm}, ->] (f1) -- (f2);
+            \draw[transform canvas={yshift=-0.1cm}, <-] (f1) -- (f2);
+            \node[above,font=\scriptsize] at (1.5,0.2) {ફુલ ડુપ્લેક્સ};
+            \node[below, font=\scriptsize, text width=2cm] at (1.5,-0.2) {બંને દિશામાં એકસાથે (Mobile)};
+        \end{tikzpicture}
+    \end{center}
+    \begin{mnemonicbox}સિમ્પ્લેક્સ એકલો, હાફ અડધો, ફુલ આખો\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3(c) OR}{એનાલોગ મોડ્યુલેશનના પ્રકારો જણાવો. એમ્પલીટ્યુડ મોડ્યુલેશન સમજાવો.}{7}
+\begin{solutionbox}
+    \textbf{પ્રકારો:}
+    \begin{enumerate}
+        \item એમ્પલીટ્યુડ મોડ્યુલેશન (AM)
+        \item ફ્રિકવન્સી મોડ્યુલેશન (FM)
+        \item ફેઝ મોડ્યુલેશન (PM)
+    \end{enumerate}
+
+    \textbf{એમ્પલીટ્યુડ મોડ્યુલેશન (AM)}: મેસેજ સિગ્નલ મુજબ કેરિયર વેવનો એમ્પલીટ્યુડ બદલાય છે.
+
+    \textbf{આકૃતિ:}
+    \begin{center}
+        \begin{tikzpicture}
+            % Message Signal
+            \draw[samples=100, domain=0:2*pi] plot (\x/2, {0.5*sin(\x r)}) node[right] {મેસેજ};
+            \node at (1.5, -0.8) {Low Freq};
+
+            % Carrier Signal
+            \draw[samples=200, domain=0:2*pi, xshift=4cm] plot (\x/2, {0.5*sin(10*\x r)}) node[right] {કેરિયર};
+            \node at (5.5, -0.8) {High Freq};
+
+            % AM Signal
+            \draw[samples=200, domain=0:4*pi, xshift=8cm, yshift=0] plot (\x/4, {(0.5 + 0.3*sin(\x r)) * sin(10*\x r)}) node[right] {AM સિગ્નલ};
+            \node at (9.5, -0.8) {Modulated};
+            
+            % Arrows
+            \draw[->] (2.8,0) -- (3.5,0);
+            \draw[->] (6.8,0) -- (7.5,0);
+        \end{tikzpicture}
+    \end{center}
+
+    \textbf{સૂત્ર}: $s(t) = A_c[1 + m\cos(\omega_m t)]\cos(\omega_c t)$.
+    \begin{mnemonicbox}એમ્પલીટ્યુડ બદલાય\end{mnemonicbox}
+\end{solutionbox}
+
+\section*{પ્રશ્ન 4}
+
+\questionmarks{4(a)}{FSK અને PSK ની આકૃતિ દોરો.}{3}
+\begin{solutionbox}
+    \textbf{1. FSK (ફ્રિકવન્સી શિફ્ટ કીઈંગ):} બિટ 0 અને 1 મુજબ ફ્રિકવન્સી બદલાય છે.
+    \begin{center}
+        \begin{tikzpicture}[xscale=0.8, yscale=0.6]
+            % Bit stream
+            \draw[thick] (0,2) -- (1,2) node[midway, above] {1} -- (1,1) -- (2,1) node[midway, above] {0} -- (2,2) -- (3,2) node[midway, above] {1};
+            \node at (-1, 1.5) {ડેટા};
+
+            % FSK Signal
+            \draw[samples=200, domain=0:3, yshift=-1.5cm] plot (\x, {0.5 * sin ((\x < 1 ? 20 : (\x < 2 ? 5 : 20)) * \x r * 3)}); 
+            \node at (-1, -1.5) {FSK};
+            \node at (0.5, -2.5) {વધુ $f$}; \node at (1.5, -2.5) {ઓછી $f$}; \node at (2.5, -2.5) {વધુ $f$};
+        \end{tikzpicture}
+    \end{center}
+
+    \textbf{2. PSK (ફેઝ શિફ્ટ કીઈંગ):} બિટ બદલાય ત્યારે ફેઝ $180^\circ$ બદલાય છે.
+    \begin{center}
+        \begin{tikzpicture}[xscale=0.8, yscale=0.6]
+            % Bit stream
+            \draw[thick] (0,2) -- (1,2) node[midway, above] {1} -- (1,1) -- (2,1) node[midway, above] {0} -- (2,2) -- (3,2) node[midway, above] {1};
+            \node at (-1, 1.5) {ડેટા};
+
+            % PSK Signal
+            \draw[samples=200, domain=0:1, yshift=-1.5cm] plot (\x, {0.5*sin(10*\x r)});
+            \draw[samples=200, domain=1:2, yshift=-1.5cm] plot (\x, {0.5*sin(10*\x r + 3.14159 r)}); 
+            \draw[samples=200, domain=2:3, yshift=-1.5cm] plot (\x, {0.5*sin(10*\x r)});
+            
+            \node at (-1, -1.5) {PSK};
+        \end{tikzpicture}
+    \end{center}
+    \begin{mnemonicbox}FSK માં ફ્રિકવન્સી, PSK માં ફેઝ\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(b)}{મેશ ટોપોલોજીમાં 45 લિંક હોય તો નોડની સંખ્યા શોધો.}{4}
+\begin{solutionbox}
+    \textbf{સૂત્ર:} $L = \frac{n(n-1)}{2}$
+
+    \textbf{ગણતરી:}
+    \begin{align*}
+        45 &= \frac{n(n-1)}{2} \\
+        90 &= n^2 - n \\
+        n^2 - n - 90 &= 0 \\
+        (n-10)(n+9) &= 0
+    \end{align*}
+    $n = 10$ (ઋણ ન હોઈ શકે).
+
+    \textbf{જવાબ:} 10 નોડ.
+    \begin{mnemonicbox}સૂત્ર યાદ રાખો\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(c)}{OSI મોડેલ આકૃતિ સાથે સમજાવો.}{7}
+\begin{solutionbox}
+    \textbf{OSI (ઓપન સિસ્ટમ્સ ઇન્ટરકનેક્શન)} મોડેલમાં 7 લેયર હોય છે.
+
+    \textbf{OSI લેયર સ્ટેક:}
+    \begin{center}
+        \begin{tikzpicture}[node distance=0.8cm]
+            \node [gtu block, fill=orange!20, text width=5cm] (L7) {લેયર 7: એપ્લિકેશન};
+            \node [gtu block, fill=orange!20, text width=5cm, below of=L7] (L6) {લેયર 6: પ્રેઝન્ટેશન};
+            \node [gtu block, fill=orange!20, text width=5cm, below of=L6] (L5) {લેયર 5: સેશન};
+            \node [gtu block, fill=green!20, text width=5cm, below of=L5] (L4) {લેયર 4: ટ્રાન્સપોર્ટ};
+            \node [gtu block, fill=green!20, text width=5cm, below of=L4] (L3) {લેયર 3: નેટવર્ક};
+            \node [gtu block, fill=blue!20, text width=5cm, below of=L3] (L2) {લેયર 2: ડેટા લિંક};
+            \node [gtu block, fill=blue!20, text width=5cm, below of=L2] (L1) {લેયર 1: ફિઝિકલ};
+            
+            \draw [->, thick] (L7.east) -- ++(0.5,0) -- ++(0,-5.6) -- (L1.east) node[midway, right] {ડેટા ફ્લો};
+        \end{tikzpicture}
+    \end{center}
+
+    \textbf{લેયર્સના કાર્યો:}
+    \begin{center}
+        \begin{tabulary}{\linewidth}{C L L}
+            \toprule
+            \textbf{લેયર} & \textbf{કાર્ય} & \textbf{ઉદાહરણ} \\
+            \midrule
+            \textbf{7. એપ્લિકેશન} & યુઝર ઈન્ટરફેસ & Browser \\
+            \textbf{6. પ્રેઝન્ટેશન} & ફોર્મેટિંગ, એન્ક્રિપ્શન & JPEG \\
+            \textbf{5. સેશન} & કનેક્શન જાળવવું & RPC \\
+            \textbf{4. ટ્રાન્સપોર્ટ} & ડેટા ડિલિવરી & TCP \\
+            \textbf{3. નેટવર્ક} & રૂટીંગ (IP એડ્રેસ) & Router \\
+            \textbf{2. ડેટા લિંક} & MAC એડ્રેસ & Switch \\
+            \textbf{1. ફિઝિકલ} & બિટ્સ ટ્રાન્સપોર્ટ & Cable \\
+            \bottomrule
+        \end{tabulary}
+    \end{center}
+    \begin{mnemonicbox}આપકી પ્યારી સહેલી તેરી નઈ દિવાની ફિરસે\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(a) OR}{ક્લાસફુલ IPv4 એડ્રેસીંગ સમજાવો.}{3}
+\begin{solutionbox}
+    \textbf{IPv4 ક્લાસ:}
+    \begin{center}
+        \begin{tabulary}{\linewidth}{C C C}
+            \toprule
+            \textbf{ક્લાસ} & \textbf{રેન્જ} & \textbf{ઉપયોગ} \\
+            \midrule
+            \textbf{A} & 1 - 126 & મોટા નેટવર્ક \\
+            \textbf{B} & 128 - 191 & મધ્યમ નેટવર્ક \\
+            \textbf{C} & 192 - 223 & નાના નેટવર્ક (LAN) \\
+            \textbf{D} & 224 - 239 & મલ્ટીકાસ્ટ \\
+            \textbf{E} & 240 - 255 & રિસર્ચ \\
+            \bottomrule
+        \end{tabulary}
+    \end{center}
+    \begin{mnemonicbox}A થી E ક્લાસ\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(b) OR}{મેશ ટોપોલોજીમાં 11 નોડ હોય તો લિંક શોધો.}{4}
+\begin{solutionbox}
+    \textbf{સૂત્ર:} $L = \frac{n(n-1)}{2}$
+    
+    $n = 11$ માટે:
+    \[ L = \frac{11(10)}{2} = \frac{110}{2} = 55 \]
+
+    \textbf{જવાબ:} 55 લિંક.
+    \begin{mnemonicbox}11 ગુણ્યા 10 ભાગ્યા 2\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(c) OR}{DNS (ડોમેન નેમ સિસ્ટમ) આકૃતિ સાથે સમજાવો.}{7}
+\begin{solutionbox}
+    \textbf{DNS} ડોમેન નેમ (example.com) ને IP એડ્રેસમાં ફેરવે છે.
+
+    \textbf{હાયરાર્કી:}
+    \begin{center}
+        \begin{tikzpicture}[level distance=1.5cm, sibling distance=2.5cm, edge from parent/.style={draw,-latex}]
+            \node[gtu block] {Root (.)}
+                child { node[gtu block] {.com}
+                    child { node[gtu block] {google} }
+                    child { node[gtu block] {example} }
+                }
+                child { node[gtu block] {.org} }
+                child { node[gtu block] {.edu} };
+        \end{tikzpicture}
+    \end{center}
+
+    \textbf{પ્રક્રિયા:}
+    \begin{enumerate}
+        \item ક્લાયન્ટ DNS સર્વરને પૂછે છે.
+        \item DNS સર્વર IP એડ્રેસ શોધે છે.
+        \item સાચું IP એડ્રેસ ક્લાયન્ટને મળે છે.
+    \end{enumerate}
+    \begin{mnemonicbox}નામ પરથી IP શોધે\end{mnemonicbox}
+\end{solutionbox}
+
+\section*{પ્રશ્ન 5}
+
+\questionmarks{5(a)}{IPv6 ની જરૂરિયાત સમજાવો.}{3}
+\begin{solutionbox}
+    \textbf{IPv6 ની જરૂરિયાત:} IPv4 સરનામાં ખૂટી પડવાથી IPv6 બનાવવામાં આવ્યું.
+
+    \begin{center}
+        \begin{tabulary}{\linewidth}{L L L}
+            \toprule
+            \textbf{લક્ષણ} & \textbf{IPv4} & \textbf{IPv6} \\
+            \midrule
+            \textbf{એડ્રેસ સ્પેસ} & 4.3 અબજ ($2^{32}$) & 340 અનડિસિલિયન ($2^{128}$) \\
+            \textbf{સુરક્ષા} & વૈકલ્પિક (IPSec) & બિલ્ટ-ઇન (IPSec) \\
+            \textbf{કોન્ફિગરેશન} & મેન્યુઅલ/DHCP & ઓટોમેટિક (SLAAC) \\
+            \bottomrule
+        \end{tabulary}
+    \end{center}
+    \begin{mnemonicbox}ઈન્ટરનેટ વૃદ્ધિ માટે અનંત સરનામાં\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(b)}{અસમપ્રમાણ (Asymmetric) કી એન્ક્રિપ્શન સમજાવો.}{4}
+\begin{solutionbox}
+    \textbf{અસમપ્રમાણ એન્ક્રિપ્શન} બે કી વાપરે છે: \textbf{પબ્લિક કી} (એન્ક્રિપ્શન માટે) અને \textbf{પ્રાઇવેટ કી} (ડિક્રિપ્શન માટે).
+
+    \textbf{આકૃતિ:}
+    \begin{center}
+        \begin{tikzpicture}[node distance=2.5cm, auto]
+            \node (sender) {\textbf{સેન્ડર}};
+            \node [gtu block, right of=sender] (encrypt) {એન્ક્રિપ્ટ};
+            \node [gtu block, right of=encrypt] (cipher) {સાઇફર ટેક્સ્ટ};
+            \node [gtu block, right of=cipher] (decrypt) {ડિક્રિપ્ટ};
+            \node [right of=decrypt] (receiver) {\textbf{રિસીવર}};
+
+            \draw [gtu arrow] (sender) -- node {Msg} (encrypt);
+            \draw [gtu arrow] (encrypt) -- (cipher);
+            \draw [gtu arrow] (cipher) -- (decrypt);
+            \draw [gtu arrow] (decrypt) -- node {Msg} (receiver);
+
+            % Keys
+            \node [above of=encrypt, node distance=1.5cm] (pubkey) {પબ્લિક કી};
+            \draw [->, dashed] (pubkey) -- (encrypt);
+            
+            \node [above of=decrypt, node distance=1.5cm] (privkey) {પ્રાઇવેટ કી};
+            \draw [->, dashed] (privkey) -- (decrypt);
+            
+            \node [below, font=\small, color=gray] at (pubkey) {(Shared)};
+            \node [below, font=\small, color=gray] at (privkey) {(Secret)};
+        \end{tikzpicture}
+    \end{center}
+
+    \textbf{રીત:}
+    \begin{enumerate}
+        \item રિસીવર પોતાની પબ્લિક કી બધાને આપે છે.
+        \item સેન્ડર રિસીવરની પબ્લિક કી થી મેસેજ લોક કરે છે.
+        \item માત્ર રિસીવર પોતાની પ્રાઇવેટ કી થી મેસેજ ખોલી શકે છે.
+    \end{enumerate}
+    \begin{mnemonicbox}પબ્લિક લોક કરે, પ્રાઇવેટ અનલોક કરે\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(c)}{મેન-ઇન-ધ-મિડલ (MiTM) હુમલો ઉદાહરણ સાથે સમજાવો.}{7}
+\begin{solutionbox}
+    \textbf{MiTM હુમલો}: બે પક્ષો વચ્ચેની વાતચીતને ત્રીજો વ્યક્તિ અટકાવે છે અને બદલી શકે છે.
+
+    \textbf{આકૃતિ:}
+    \begin{center}
+        \begin{tikzpicture}[node distance=3cm, auto]
+            \node (alice) [gtu state] {Alice};
+            \node (mallory) [gtu state, fill=red!20, right of=alice] {Mallory\\(Attacker)};
+            \node (bob) [gtu state, right of=mallory] {Bob};
+
+            \draw [->, thick, bend left] (alice) to node {Hello Bob} (mallory);
+            \draw [->, thick, bend left] (mallory) to node {Hello Bob (Fake)} (bob);
+            
+            \draw [->, thick, bend left] (bob) to node {Hi Alice} (mallory);
+            \draw [->, thick, bend left] (mallory) to node {Hi Alice (Fake)} (alice);
+        \end{tikzpicture}
+    \end{center}
+
+    \textbf{ઉદાહરણ:}
+    \begin{itemize}
+        \item Alice બેંકને પાસવર્ડ મોકલે છે.
+        \item Mallory વચ્ચેથી પાસવર્ડ ચોરી લે છે.
+        \item જે Public WiFi પર વધુ થાય છે.
+    \end{itemize}
+    \begin{mnemonicbox}વચ્ચે વાળો માણસ વાત સાંભળે\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(a) OR}{નીચેના ઉપકરણો માટે OSI મોડેલના લેયરના નામ આપો: 1. રિપીટર 2. રાઉટર 3. સ્વિચ}{3}
+\begin{solutionbox}
+    \textbf{ડિવાઈસ લેયર મેપિંગ:}
+    \begin{center}
+        \begin{tabulary}{\linewidth}{C L L}
+            \toprule
+            \textbf{ઉપકરણ} & \textbf{OSI લેયર} & \textbf{કાર્ય} \\
+            \midrule
+            \textbf{રિપીટર} & લેયર 1 (ફિઝિકલ) & સિગ્નલ રિજનરેટ કરે \\
+            \textbf{સ્વિચ} & લેયર 2 (ડેટા લિંક) & MAC એડ્રેસ પરથી ફ્રેમ મોકલે \\
+            \textbf{રાઉટર} & લેયર 3 (નેટવર્ક) & IP એડ્રેસ પરથી પેકેટ રૂટ કરે \\
+            \bottomrule
+        \end{tabulary}
+    \end{center}
+    \begin{mnemonicbox}રિપીટર ફિઝિકલ, સ્વિચ ડેટા, રાઉટર નેટવર્ક\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(b) OR}{સપ્રમાણ (Symmetric) કી એન્ક્રિપ્શન સમજાવો.}{4}
+\begin{solutionbox}
+    \textbf{સપ્રમાણ એન્ક્રિપ્શન} એન્ક્રિપ્શન અને ડિક્રિપ્શન બંને માટે \textbf{એક જ શેર્ડ કી} (Shared Key) વાપરે છે.
+
+    \textbf{પ્રક્રિયા:}
+    \begin{center}
+        \begin{tikzpicture}[node distance=2cm, auto]
+            \node (pt) {પ્લેઈન ટેક્સ્ટ};
+            \node [gtu block, right of=pt] (enc) {એન્ક્રિપ્શન};
+            \node [gtu block, right of=enc] (ct) {સાઈફર ટેક્સ્ટ};
+            \node [gtu block, right of=ct] (dec) {ડિક્રિપ્શન};
+            \node [right of=dec] (pt2) {પ્લેઈન ટેક્સ્ટ};
+            
+            \draw [gtu arrow] (pt) -- (enc);
+            \draw [gtu arrow] (enc) -- (ct);
+            \draw [gtu arrow] (ct) -- (dec);
+            \draw [gtu arrow] (dec) -- (pt2);
+            
+            \node [below of=enc, node distance=1.5cm] (key1) {શેર્ડ કી};
+            \node [below of=dec, node distance=1.5cm] (key2) {શેર્ડ કી};
+            
+            \draw [->, dashed] (key1) -- (enc);
+            \draw [->, dashed] (key2) -- (dec);
+            \draw [dashed] (key1) -- (key2);
+        \end{tikzpicture}
+    \end{center}
+
+    \textbf{ફાયદા/ગેરફાયદા:}
+    \begin{itemize}
+        \item \textbf{ઝડપ}: અસમપ્રમાણ કરતા ખૂબ ઝડપી છે.
+        \item \textbf{જોખમ}: કી વહેંચવી અઘરી છે (જો કી ચોરાય તો ડેટા ગયો).
+    \end{itemize}
+    \begin{mnemonicbox}એક જ કી બધું કરે\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(c) OR}{ડિનાયલ ઓફ સર્વિસ (DoS) હુમલો સમજાવો.}{7}
+\begin{solutionbox}
+    \textbf{DoS (ડિનાયલ ઓફ સર્વિસ)} હુમલો ટાર્ગેટ પર એટલો બધો ટ્રાફિક મોકલે છે કે તે સાચા યુઝર માટે કામ કરતું બંધ થઈ જાય.
+
+    \textbf{હુમલાના પ્રકારો:}
+    \begin{center}
+        \begin{tikzpicture}[level distance=1.5cm, sibling distance=4cm, edge from parent/.style={draw,-latex}]
+            \node[gtu block] {DoS હુમલા}
+                child { node[gtu block] {વોલ્યુમ આધારિત}
+                    child { node {UDP ફ્લડ} }
+                    child { node {ICMP ફ્લડ} }
+                }
+                child { node[gtu block] {પ્રોટોકોલ આધારિત}
+                    child { node {SYN ફ્લડ} }
+                    child { node {પિંગ ઓફ ડેથ} }
+                }
+                child { node[gtu block] {એપ લેયર}
+                    child { node {HTTP ફ્લડ} }
+                    child { node {સ્લોલોરિસ} }
+                };
+        \end{tikzpicture}
+    \end{center}
+
+    \textbf{હુમલાના વર્ગો (Categories):}
+    \begin{center}
+        \begin{tabulary}{\linewidth}{L L L L}
+            \toprule
+            \textbf{પ્રકાર} & \textbf{પદ્ધતિ} & \textbf{ટાર્ગેટ} & \textbf{અસર} \\
+            \midrule
+            \textbf{વોલ્યુમ આધારિત} & ટ્રાફિકનો મારો & બેન્ડવિડ્થ & નેટવર્ક જામ \\
+            \textbf{પ્રોટોકોલ આધારિત} & પ્રોટોકોલ ખામી & સર્વર & સેવા બંધ \\
+            \textbf{એપ્લિકેશન આધારિત} & એપ લેયર પર હુમલો & એપ સર્વર & સેવા ધીમી \\
+            \bottomrule
+        \end{tabulary}
+    \end{center}
+
+    \textbf{ઉદાહરણ - E-commerce પર DDoS:}
+    \begin{itemize}
+        \item \textbf{ટાર્ગેટ}: સેલ દરમિયાન શોપિંગ વેબસાઇટ.
+        \item \textbf{પદ્ધતિ}: 10,000 વાયરસવાળા કમ્પ્યુટરનું નેટવર્ક (Botnet).
+        \item \textbf{હુમલો}: દરેક બોટ 100 રિક્વેસ્ટ/સેકન્ડ મોકલે છે.
+        \item \textbf{પરિણામ}: 1 મિલિયન રિક્વેસ્ટ/સેકન્ડ સર્વર પર આવે છે.
+        \item \textbf{અસર}: વેબસાઇટ ક્રેશ થાય છે, ગ્રાહકો ખરીદી શકતા નથી.
+    \end{itemize}
+
+    \textbf{સામાન્ય તકનીકો:}
+    \begin{itemize}
+        \item \textbf{SYN Flood}: TCP હેન્ડશેક અધૂરા છોડી દે છે.
+        \item \textbf{UDP Flood}: મોટા પ્રમાણમાં UDP પેકેટ મોકલે છે.
+        \item \textbf{Ping of Death}: મોટી સાઈઝના પિંગ પેકેટથી સિસ્ટમ ક્રેશ કરે છે.
+    \end{itemize}
+
+    \textbf{બચાવ (Defense Strategies):}
+    \begin{itemize}
+        \item \textbf{Rate Limiting}: IP એડ્રેસ પર લિમિટ મૂકવી.
+        \item \textbf{Firewall}: શંકાસ્પદ ટ્રાફિક બ્લોક કરવો.
+        \item \textbf{DDoS Protection}: CloudFlare જેવી સર્વિસ વાપરવી.
+    \end{itemize}
+
+    \textbf{વ્યવસાય પર અસર:}
+    \begin{itemize}
+        \item \textbf{આવકમાં નુકસાન}: ગ્રાહકો સેવા વાપરી શકતા નથી.
+        \item \textbf{પ્રતિષ્ઠા}: ભરોસો તૂટે છે.
+    \end{itemize}
+    \begin{mnemonicbox}ટ્રાફિક જામ કરી દેવો\end{mnemonicbox}
+\end{solutionbox}
+
+\end{document}

@@ -1,0 +1,972 @@
+\documentclass{article}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/preamble.tex}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/gujarati-boxes.tex}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/commands.tex}
+
+\title{Fundamentals of Machine Learning (4341603) - Summer 2024 Solution}
+\date{June 15, 2024}
+
+\begin{document}
+\maketitle
+
+\questionmarks{1(a)}{3}{Define Machine Learning using suitable example?}
+\begin{solutionbox}
+
+મશીન લર્નિંગ આર્ટિફિશિયલ ઇન્ટેલિજન્સનો એક ભાગ છે જે કમ્પ્યુટર્સને ડેટામાંથી શીખવા અને દરેક કાર્ય માટે સ્પષ્ટ રીતે પ્રોગ્રામ કર્યા વિના નિર્ણયો લેવા માટે સક્ષમ બનાવે છે.
+
+\begin{center}
+\captionof{table}{મશીન લર્નિંગના મુખ્ય ઘટકો}
+\begin{tabulary}{\linewidth}{L L}
+\hline
+\textbf{ઘટક} & \textbf{વર્ણન} \\
+\hline
+\textbf{Data} & ટ્રેનિંગ માટે ઉપયોગમાં લેવાતી ઇનપુટ માહિતી \\
+\textbf{Algorithm} & પેટર્ન શીખતા ગાણિતિક મોડેલ \\
+\textbf{Training} & અલ્ગોરિધમને શીખવવાની પ્રક્રિયા \\
+\textbf{Prediction} & શીખેલા પેટર્ન આધારિત આઉટપુટ \\
+\hline
+\end{tabulary}
+\end{center}
+
+\textbf{ઉદાહરણ}: ઇમેઇલ સ્પામ ડિટેક્શન સિસ્ટમ હજારો ઇમેઇલોમાંથી "Spam" અથવા "Not Spam" તરીકે લેબલ કરેલા ઇમેઇલોમાંથી શીખે છે અને નવા ઇમેઇલોને આપોઆપ વર્ગીકૃત કરે છે.
+
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Data Drives Decisions - ડેટા અલ્ગોરિધમને બુદ્ધિશાળી નિર્ણયો લેવા માટે પ્રશિક્ષિત કરે છે}
+\end{mnemonicbox}
+
+\questionmarks{1(b)}{4}{Explain the process of machine learning with the help of schematic representation}
+\begin{solutionbox}
+
+મશીન લર્નિંગ પ્રક્રિયામાં ડેટા સંગ્રહથી લઈને મોડેલ ડિપ્લોયમેન્ટ સુધીના વ્યવસ્થિત પગલાંઓનો સમાવેશ થાય છે.
+
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm, auto]
+    \node [gtu block] (Data) {ડેટા સંગ્રહ};
+    \node [gtu block, below=0.8cm of Data] (Pre) {ડેટા પ્રીપ્રોસેસિંગ};
+    \node [gtu block, below=0.8cm of Pre] (Feature) {ફીચર સિલેક્શન};
+    \node [gtu block, below=0.8cm of Feature] (Model) {મોડેલ સિલેક્શન};
+    \node [gtu block, below=0.8cm of Model] (Train) {ટ્રેનિંગ};
+    \node [gtu block, below=0.8cm of Train] (Valid) {વેલિડેશન};
+    \node [diamond, draw, aspect=2, below=1cm of Valid, align=center] (Check) {પરફોર્મન્સ\\સારું?};
+    \node [gtu block, below=1.5cm of Check] (Test) {ટેસ્ટિંગ};
+    \node [gtu block, below=0.8cm of Test] (Deploy) {ડિપ્લોયમેન્ટ};
+
+    \path [gtu arrow] (Data) -- (Pre);
+    \path [gtu arrow] (Pre) -- (Feature);
+    \path [gtu arrow] (Feature) -- (Model);
+    \path [gtu arrow] (Model) -- (Train);
+    \path [gtu arrow] (Train) -- (Valid);
+    \path [gtu arrow] (Valid) -- (Check);
+    \path [gtu arrow] (Check) -- node[right] {હા} (Test);
+    \path [gtu arrow] (Check.east) -- ++(1,0) |- node[near start, right] {ના} (Model.east);
+    \path [gtu arrow] (Test) -- (Deploy);
+\end{tikzpicture}
+\captionof{figure}{મશીન લર્નિંગ પ્રક્રિયા}
+\end{center}
+
+\textbf{પ્રક્રિયાના પગલાં:}
+\begin{itemize}
+    \item \keyword{Data Collection}: સંબંધિત ડેટાસેટ એકત્રિત કરવું
+    \item \keyword{Preprocessing}: ડેટાને સાફ અને તૈયાર કરવું
+    \item \keyword{Training}: ટ્રેનિંગ ડેટાનો ઉપયોગ કરીને અલ્ગોરિધમને શીખવવું
+    \item \keyword{Validation}: મોડેલની કામગીરીને ચકાસવી
+    \item \keyword{Deployment}: વાસ્તવિક પ્રિડિક્શન માટે મોડેલનો ઉપયોગ
+\end{itemize}
+
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Computers Can Truly Think - Collect, Clean, Train, Test}
+\end{mnemonicbox}
+
+\questionmarks{1(c)}{7}{Explain different types of machine learning with suitable application.}
+\begin{solutionbox}
+
+મશીન લર્નિંગ અલ્ગોરિધમ્સને લર્નિંગ એપ્રોચ અને ઉપલબ્ધ ડેટાના આધારે વર્ગીકૃત કરવામાં આવે છે.
+
+\begin{center}
+\captionof{table}{મશીન લર્નિંગના પ્રકારો}
+\begin{tabulary}{\linewidth}{L L L L}
+\hline
+\textbf{પ્રકાર} & \textbf{લર્નિંગ મેથડ} & \textbf{ડેટા આવશ્યકતા} & \textbf{ઉદાહરણ એપ્લિકેશન} \\
+\hline
+\textbf{Supervised} & લેબલ્ડ ડેટાનો ઉપયોગ & ઇનપુટ-આઉટપુટ જોડીઓ & ઇમેઇલ ક્લાસિફિકેશન \\
+\textbf{Unsupervised} & છુપાયેલા પેટર્ન શોધે & માત્ર ઇનપુટ ડેટા & કસ્ટમર સેગમેન્ટેશન \\
+\textbf{Reinforcement} & રિવોર્ડ્સ દ્વારા શીખે & એન્વાયર્નમેન્ટ ફીડબેક & ગેમ પ્લેઇંગ AI \\
+\hline
+\end{tabulary}
+\end{center}
+
+\textbf{એપ્લિકેશન્સ:}
+\begin{itemize}
+    \item \textbf{Supervised Learning}: મેડિકલ ડાયગ્નોસિસ, ઇમેજ રેકોગ્નિશન, ફ્રોડ ડિટેક્શન
+    \item \textbf{Unsupervised Learning}: માર્કેટ રિસર્ચ, એનોમેલી ડિટેક્શન, રેકમેન્ડેશન સિસ્ટમ્સ
+    \item \textbf{Reinforcement Learning}: ઓટોનોમસ વેહિકલ્સ, રોબોટિક્સ, સ્ટ્રેટેજિક ગેમ્સ
+\end{itemize}
+
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm]
+    \node [gtu block] (Root) {મશીન લર્નિંગ};
+    
+    \node [gtu block, below left=1.5cm and 1cm of Root] (Super) {Supervised};
+    \node [gtu block, below=1.5cm of Root] (Unsuper) {Unsupervised};
+    \node [gtu block, below right=1.5cm and 1cm of Root] (Reinf) {Reinforcement};
+    
+    \node [gtu state, below=0.8cm of Super, text width=2.5cm] (S1) {Classification\\Regression};
+    \node [gtu state, below=0.8cm of Unsuper, text width=2.5cm] (U1) {Clustering\\Association};
+    \node [gtu state, below=0.8cm of Reinf, text width=2.5cm] (R1) {Policy Learning\\Value Function};
+
+    \path [gtu arrow] (Root) -- (Super);
+    \path [gtu arrow] (Root) -- (Unsuper);
+    \path [gtu arrow] (Root) -- (Reinf);
+    \path [gtu arrow] (Super) -- (S1);
+    \path [gtu arrow] (Unsuper) -- (U1);
+    \path [gtu arrow] (Reinf) -- (R1);
+\end{tikzpicture}
+\captionof{figure}{મશીન લર્નિંગના પ્રકારો}
+\end{center}
+
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Students Usually Remember - Supervised, Unsupervised, Reinforcement}
+\end{mnemonicbox}
+
+\questionmarks{1(c) OR}{7}{What are various issues with machine learning? List three problems that are not to be solved using machine learning.}
+\begin{solutionbox}
+
+\begin{center}
+\captionof{table}{મશીન લર્નિંગની સમસ્યાઓ}
+\begin{tabulary}{\linewidth}{L L L}
+\hline
+\textbf{સમસ્યા કેટેગરી} & \textbf{વર્ણન} & \textbf{અસર} \\
+\hline
+\textbf{Data Quality} & અધૂરો, નોઇઝી, પક્ષપાતી ડેટા & નબળું મોડેલ પરફોર્મન્સ \\
+\textbf{Overfitting} & મોડેલ ટ્રેનિંગ ડેટાને યાદ રાખે છે & નબળું જનરલાઇઝેશન \\
+\textbf{Computational} & ઉચ્ચ પ્રોસેસિંગ આવશ્યકતાઓ & રિસોર્સ મર્યાદાઓ \\
+\textbf{Interpretability} & બ્લેક બોક્સ મોડેલ્સ & પારદર્શિતાનો અભાવ \\
+\hline
+\end{tabulary}
+\end{center}
+
+\textbf{ML માટે અનુપયુક્ત સમસ્યાઓ:}
+\begin{enumerate}
+    \item \textbf{Simple rule-based tasks} - મૂળભૂત ગણતરીઓ, સિમ્પલ if-then લોજિક
+    \item \textbf{Ethical decisions} - માનવીય મૂલ્યોની આવશ્યકતા ધરાવતા નૈતિક નિર્ણયો
+    \item \textbf{Creative expression} - માનવીય લાગણીની આવશ્યકતા ધરાવતી મૂળ કલાત્મક સર્જના
+\end{enumerate}
+
+\textbf{અન્ય સમસ્યાઓ:}
+\begin{itemize}
+    \item \keyword{Privacy concerns}: સંવેદનશીલ ડેટા હેન્ડલિંગ
+    \item \keyword{Bias propagation}: અન્યાયકારક અલ્ગોરિધમિક નિર્ણયો
+    \item \keyword{Feature selection}: સંબંધિત ઇનપુટ વેરિએબલ્સ પસંદ કરવા
+\end{itemize}
+
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Data Drives Quality - ડેટા ક્વોલિટી સીધી રીતે મોડેલ ક્વોલિટીને અસર કરે છે}
+\end{mnemonicbox}
+
+\questionmarks{2(a)}{3}{Give a summarized view of different types of data in a typical machine learning problem.}
+\begin{solutionbox}
+
+\begin{center}
+\captionof{table}{મશીન લર્નિંગમાં ડેટા પ્રકારો}
+\begin{tabulary}{\linewidth}{L L L}
+\hline
+\textbf{ડેટા પ્રકાર} & \textbf{વર્ણન} & \textbf{ઉદાહરણ} \\
+\hline
+\textbf{Numerical} & માત્રાત્મક મૂલ્યો & ઉંમર: 25, ઊંચાઈ: 170cm \\
+\textbf{Categorical} & અસ્પષ્ટ કેટેગરીઓ & રંગ: લાલ, વાદળી, લીલો \\
+\textbf{Ordinal} & ક્રમબદ્ધ કેટેગરીઓ & રેટિંગ: નબળું, સારું, ઉત્તમ \\
+\textbf{Binary} & બે શક્ય મૂલ્યો & લિંગ: પુરુષ/સ્ત્રી \\
+\hline
+\end{tabulary}
+\end{center}
+
+\textbf{લક્ષણો:}
+\begin{itemize}
+    \item \textbf{Structured}: ટેબલોમાં વ્યવસ્થિત (ડેટાબેસેસ, સ્પ્રેડશીટ્સ)
+    \item \textbf{Unstructured}: ઇમેજ, ટેક્સ્ટ, ઓડિયો ફાઇલો
+    \item \textbf{Time-series}: સમય પર ડેટા પોઇન્ટ્સ
+\end{itemize}
+
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Numbers Count Better Than Words - Numerical, Categorical, Binary, Text}
+\end{mnemonicbox}
+
+\questionmarks{2(b)}{4}{Calculate variance for both attributes. Determine which attribute is spread out around mean.}
+\begin{solutionbox}
+
+\textbf{આપેલ ડેટા:}
+\begin{itemize}
+    \item Attribute 1: 32, 37, 47, 50, 59
+    \item Attribute 2: 48, 40, 41, 47, 49
+\end{itemize}
+
+\textbf{ગણતરીઓ:}
+
+\textbf{Attribute 1:}
+\begin{itemize}
+    \item Mean = $(32+37+47+50+59)/5 = 225/5 = 45$
+    \item Variance = $[(32-45)^2 + (37-45)^2 + (47-45)^2 + (50-45)^2 + (59-45)^2]/5$
+    \item Variance = $[169 + 64 + 4 + 25 + 196]/5 = 458/5 = 91.6$
+\end{itemize}
+
+\textbf{Attribute 2:}
+\begin{itemize}
+    \item Mean = $(48+40+41+47+49)/5 = 225/5 = 45$
+    \item Variance = $[(48-45)^2 + (40-45)^2 + (41-45)^2 + (47-45)^2 + (49-45)^2]/5$
+    \item Variance = $[9 + 25 + 16 + 4 + 16]/5 = 70/5 = 14$
+\end{itemize}
+
+\textbf{પરિણામ}: Attribute 1 (variance = 91.6) એ Attribute 2 (variance = 14) કરતાં વધુ સ્પ્રેડ આઉટ છે.
+
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Higher Variance Shows Spread - વધુ વેરિયન્સ વધુ વિખેરાઈને દર્શાવે છે}
+\end{mnemonicbox}
+
+\questionmarks{2(c)}{7}{List Factors that lead to data quality issue. How to handle outliers and missing values.}
+\begin{solutionbox}
+
+\begin{center}
+\captionof{table}{ડેટા ગુણવત્તા સમસ્યાઓ}
+\begin{tabulary}{\linewidth}{L L L}
+\hline
+\textbf{ફેક્ટર} & \textbf{કારણ} & \textbf{સોલ્યુશન} \\
+\hline
+\textbf{Incompleteness} & મિસિંગ ડેટા કલેક્શન & ઇમ્પ્યુટેશન ટેકનિક્સ \\
+\textbf{Inconsistency} & વિવિધ ડેટા ફોર્મેટ્સ & સ્ટેન્ડર્ડાઇઝેશન \\
+\textbf{Inaccuracy} & હ્યુમન/સેન્સર એરર્સ & વેલિડેશન રૂલ્સ \\
+\textbf{Noise} & રેન્ડમ વેરિએશન્સ & ફિલ્ટરિંગ મેથડ્સ \\
+\hline
+\end{tabulary}
+\end{center}
+
+\textbf{આઉટલાયર્સ હેન્ડલ કરવું:}
+\begin{itemize}
+    \item \textbf{Detection}: સ્ટેટિસ્ટિકલ મેથડ્સ (Z-score, IQR)
+    \item \textbf{Treatment}: એક્સ્ટ્રીમ વેલ્યુઝને દૂર, ટ્રાન્સફોર્મ, અથવા કેપ કરવી
+    \item \textbf{Visualization}: બોક્સ પ્લોટ્સ, સ્કેટર પ્લોટ્સ
+\end{itemize}
+
+\textbf{મિસિંગ વેલ્યુઝ હેન્ડલ કરવું:}
+\begin{itemize}
+    \item \textbf{Deletion}: અપૂર્ણ રેકોર્ડ્સ રીમૂવ કરવા
+    \item \textbf{Imputation}: મીન, મીડિયન, અથવા મોડ સાથે ભરવું
+    \item \textbf{Prediction}: મિસિંગ વેલ્યુઝની આગાહી કરવા માટે ML નો ઉપયોગ
+\end{itemize}
+
+\textbf{કોડ ઉદાહરણ:}
+\begin{lstlisting}[language=Python]
+# Handle missing values
+df.fillna(df.mean())  # Mean imputation
+df.dropna()          # Remove missing rows
+\end{lstlisting}
+
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Clean Data Makes Models - સાફ ડેટા બેહતર મોડેલ્સ બનાવે છે}
+\end{mnemonicbox}
+
+\questionmarks{2(a) OR}{3}{Give different machine learning activities.}
+\begin{solutionbox}
+
+\begin{center}
+\captionof{table}{મશીન લર્નિંગ પ્રવૃત્તિઓ}
+\begin{tabulary}{\linewidth}{L L L}
+\hline
+\textbf{પ્રવૃત્તિ} & \textbf{હેતુ} & \textbf{ઉદાહરણ} \\
+\hline
+\textbf{Data Collection} & સંબંધિત માહિતી એકત્રિત કરવી & સર્વે, સેન્સર્સ, ડેટાબેસેસ \\
+\textbf{Data Preprocessing} & ડેટાને સાફ અને તૈયાર કરવું & નોઇઝ રીમૂવ કરવું, મિસિંગ વેલ્યુઝ \\
+\textbf{Feature Engineering} & અર્થપૂર્ણ વેરિએબલ્સ બનાવવા & રો ડેટામાંથી ફીચર્સ એક્સ્ટ્રેક્ટ કરવા \\
+\textbf{Model Training} & અલ્ગોરિધમને પેટર્ન શીખવવા & ટ્રેનિંગ ડેટાસેટનો ઉપયોગ \\
+\textbf{Model Evaluation} & પરફોર્મન્સ આકારણી & ટેસ્ટ એક્યુરસી, પ્રિસિઝન, રિકોલ \\
+\textbf{Model Deployment} & મોડેલને પ્રોડક્શનમાં મૂકવું & વેબ સર્વિસેસ, મોબાઇલ એપ્સ \\
+\hline
+\end{tabulary}
+\end{center}
+
+\textbf{મુખ્ય પ્રવૃત્તિઓ:}
+\begin{itemize}
+    \item \keyword{Exploratory Data Analysis}: ડેટા પેટર્ન સમજવા
+    \item \keyword{Hyperparameter Tuning}: મોડેલ સેટિંગ્સ ઓપ્ટિમાઇઝ કરવા
+    \item \keyword{Cross-validation}: મજબૂત પરફોર્મન્સ આકારણી
+\end{itemize}
+
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Data Models Perform Excellently - Data preparation, Model building, Performance evaluation, Execution}
+\end{mnemonicbox}
+
+\questionmarks{2(b) OR}{4}{Calculate mean and median of the following numbers: 12,15,18,20,22,24,28,30}
+\begin{solutionbox}
+
+\textbf{આપેલ સંખ્યાઓ:} 12, 15, 18, 20, 22, 24, 28, 30
+
+\textbf{Mean ગણતરી:}
+Mean = $(12+15+18+20+22+24+28+30)/8 = 169/8 = 21.125$
+
+\textbf{Median ગણતરી:}
+\begin{itemize}
+    \item સંખ્યાઓ પહેલેથી સૉર્ટ કરેલી છે: 12, 15, 18, 20, 22, 24, 28, 30
+    \item સમ સંખ્યા (8 સંખ્યાઓ)
+    \item Median = (4મી સંખ્યા + 5મી સંખ્યા)/2 = $(20 + 22)/2 = 21$
+\end{itemize}
+
+\begin{center}
+\captionof{table}{સ્ટેટિસ્ટિકલ સમરી}
+\begin{tabulary}{\linewidth}{L L L}
+\hline
+\textbf{માપદંડ} & \textbf{મૂલ્ય} & \textbf{વર્ણન} \\
+\hline
+\textbf{Mean} & 21.125 & સરેરાશ મૂલ્ય \\
+\textbf{Median} & 21 & મધ્યમ મૂલ્ય \\
+\textbf{Count} & 8 & કુલ સંખ્યાઓ \\
+\hline
+\end{tabulary}
+\end{center}
+
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Middle Makes Median - Middle value gives median}
+\end{mnemonicbox}
+
+\questionmarks{2(c) OR}{7}{Write a short note on dimensionality reduction and feature subset selection in context with data preprocessing.}
+\begin{solutionbox}
+
+\keyword{Dimensionality Reduction} અપ્રસ્તુત ફીચર્સને દૂર કરે છે અને કોમ્પ્યુટેશનલ જટિલતા ઘટાડે છે જ્યારે મહત્વપૂર્ણ માહિતી જાળવી રાખે છે.
+
+\begin{center}
+\captionof{table}{ડાયમેન્શનાલિટી રિડક્શન ટેકનિક્સ}
+\begin{tabulary}{\linewidth}{L L L}
+\hline
+\textbf{ટેકનિક} & \textbf{મેથડ} & \textbf{વપરાશ} \\
+\hline
+\textbf{PCA} & Principal Component Analysis & લીનિયર રિડક્શન \\
+\textbf{LDA} & Linear Discriminant Analysis & ક્લાસિફિકેશન ટાસ્ક્સ \\
+\textbf{t-SNE} & Non-linear embedding & વિઝ્યુઅલાઇઝેશન \\
+\textbf{Feature Selection} & મહત્વપૂર્ણ ફીચર્સ પસંદ કરવા & ઓવરફિટિંગ ઘટાડવું \\
+\hline
+\end{tabulary}
+\end{center}
+
+\textbf{Feature Subset Selection Methods:}
+\begin{itemize}
+    \item \keyword{Filter Methods}: Statistical tests, correlation analysis
+    \item \keyword{Wrapper Methods}: Forward/backward selection
+    \item \keyword{Embedded Methods}: LASSO, Ridge regression
+\end{itemize}
+
+\textbf{ફાયદાઓ:}
+\begin{itemize}
+    \item \textbf{Computational Efficiency}: ઝડપી ટ્રેનિંગ અને પ્રિડિક્શન
+    \item \textbf{Storage Reduction}: ઓછી મેમરી આવશ્યકતાઓ
+    \item \textbf{Noise Reduction}: અપ્રસ્તુત ફીચર્સ દૂર કરવા
+    \item \textbf{Visualization}: 2D/3D પ્લોટિંગ સક્ષમ કરવું
+\end{itemize}
+
+\begin{lstlisting}[language=Python]
+from sklearn.decomposition import PCA
+pca = PCA(n_components=2)
+reduced_data = pca.fit_transform(data)
+\end{lstlisting}
+
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Reduce Features, Improve Performance - ઓછા ફીચર્સ ઘણીવાર બેહતર મોડેલ્સ તરફ દોરી જાય છે}
+\end{mnemonicbox}
+
+\questionmarks{3(a)}{3}{Does bias affect the performance of the ML model? Explain briefly.}
+\begin{solutionbox}
+
+હા, બાયસ પ્રિડિક્શન્સમાં સિસ્ટેમેટિક એરર્સ બનાવીને ML મોડેલના પરફોર્મન્સને નોંધપાત્ર રીતે અસર કરે છે.
+
+\begin{center}
+\captionof{table}{બાયસના પ્રકારો}
+\begin{tabulary}{\linewidth}{L L L}
+\hline
+\textbf{બાયસ પ્રકાર} & \textbf{વર્ણન} & \textbf{અસર} \\
+\hline
+\textbf{Selection Bias} & બિન-પ્રતિનિધિત્વકારી ડેટા & નબળું જનરલાઇઝેશન \\
+\textbf{Confirmation Bias} & અપેક્ષિત પરિણામોની તરફેણ & ત્રાંસા નિષ્કર્ષો \\
+\textbf{Algorithmic Bias} & મોડેલ ધારણાઓ & અન્યાયકારક પ્રિડિક્શન્સ \\
+\hline
+\end{tabulary}
+\end{center}
+
+\textbf{પરફોર્મન્સ પર અસરો:}
+\begin{itemize}
+    \item \keyword{Underfitting}: ઉચ્ચ બાયસ અતિ સરળ મોડેલ્સ તરફ દોરી જાય છે
+    \item \keyword{Poor Accuracy}: સિસ્ટેમેટિક એરર્સ એકંદર પરફોર્મન્સ ઘટાડે છે
+    \item \keyword{Unfair Decisions}: પક્ષપાતી મોડેલ્સ જૂથો સામે ભેદભાવ કરે છે
+\end{itemize}
+
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Bias Breaks Better Performance - બાયસ મોડેલની અસરકારકતા ઘટાડે છે}
+\end{mnemonicbox}
+
+\questionmarks{3(b)}{4}{Compare cross-validation and bootstrap sampling}
+\begin{solutionbox}
+
+\begin{center}
+\captionof{table}{Cross-validation vs Bootstrap Sampling}
+\begin{tabulary}{\linewidth}{L L L}
+\hline
+\textbf{પાસું} & \textbf{Cross-validation} & \textbf{Bootstrap Sampling} \\
+\hline
+\textbf{મેથડ} & ડેટાને ફોલ્ડ્સમાં વિભાજિત કરવું & રિપ્લેસમેન્ટ સાથે સેમ્પલ કરવું \\
+\textbf{ડેટા ઉપયોગ} & બધો ડેટા વાપરે છે & મલ્ટિપલ સેમ્પલ્સ બનાવે છે \\
+\textbf{હેતુ} & મોડેલ ઇવેલ્યુએશન & અનિશ્ચિતતાનો અંદાજ \\
+\textbf{ઓવરલેપ} & સેટ્સ વચ્ચે કોઈ ઓવરલેપ નથી & ડુપ્લિકેટ સેમ્પલ્સની મંજૂરી \\
+\hline
+\end{tabulary}
+\end{center}
+
+\textbf{મુખ્ય તફાવત:}
+\begin{itemize}
+    \item \textbf{Cross-validation}: ડેટાને k સમાન ભાગોમાં વહેંચે છે. k-1 ભાગોમાં ટ્રેન કરે છે, 1 ભાગમાં ટેસ્ટ કરે છે.
+    \item \textbf{Bootstrap Sampling}: રિપ્લેસમેન્ટ સાથે રેન્ડમ સેમ્પલ્સ બનાવે છે. સમાન સાઇઝના મલ્ટિપલ ડેટાસેટ્સ જનરેટ કરે છે.
+\end{itemize}
+
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Cross Checks, Bootstrap Builds - Cross-validation checks performance, Bootstrap builds confidence}
+\end{mnemonicbox}
+
+\questionmarks{3(c)}{7}{Confusion Matrix Calculation and Metrics}
+\begin{solutionbox}
+
+\textbf{આપેલ માહિતી:}
+\begin{itemize}
+    \item True Positive (TP): 83
+    \item False Positive (FP): 7
+    \item False Negative (FN): 5
+    \item True Negative (TN): 5
+\end{itemize}
+
+\begin{center}
+\begin{tabulary}{\linewidth}{L L L}
+\hline
+ & \textbf{Predicted Buy} & \textbf{Predicted No Buy} \\
+\hline
+\textbf{Actually Buy} & 83 (TP) & 5 (FN) \\
+\textbf{Actually No Buy} & 7 (FP) & 5 (TN) \\
+\hline
+\end{tabulary}
+\end{center}
+
+\textbf{ગણતરીઓ:}
+
+\textbf{a) Error Rate:}
+Error Rate = $(FP + FN) / Total = (7 + 5) / 100 = 0.12 = 12\%$
+
+\textbf{b) Precision:}
+Precision = $TP / (TP + FP) = 83 / (83 + 7) = 83/90 = 0.922 = 92.2\%$
+
+\textbf{c) Recall:}
+Recall = $TP / (TP + FN) = 83 / (83 + 5) = 83/88 = 0.943 = 94.3\%$
+
+\textbf{d) F-measure:}
+F-measure = $2 \times (Precision \times Recall) / (Precision + Recall)$
+F-measure = $2 \times (0.922 \times 0.943) / (0.922 + 0.943) = 0.932 = 93.2\%$
+
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Perfect Recall Finds Everyone - Precision measures accuracy, Recall finds all positives}
+\end{mnemonicbox}
+
+\questionmarks{3(a) OR}{3}{Define in brief: a) Target function b) Cost function c) Loss Function}
+\begin{solutionbox}
+
+\begin{center}
+\captionof{table}{ફંક્શન વ્યાખ્યાઓ}
+\begin{tabulary}{\linewidth}{L L L}
+\hline
+\textbf{ફંક્શન} & \textbf{વ્યાખ્યા} & \textbf{હેતુ} \\
+\hline
+\textbf{Target Function} & ઇનપુટથી આઉટપુટ સુધીની આદર્શ મેપિંગ & આપણે શું શીખવા માગીએ છીએ \\
+\textbf{Cost Function} & એકંદર મોડેલ એરરને માપે છે & કુલ પરફોર્મન્સનું મૂલ્યાંકન \\
+\textbf{Loss Function} & એક પ્રિડિક્શન માટે એરર માપે છે & વ્યક્તિગત પ્રિડિક્શન એરર \\
+\hline
+\end{tabulary}
+\end{center}
+
+\textbf{સંબંધ}: Cost function સામાન્ય રીતે તમામ ટ્રેનિંગ ઉદાહરણોમાં લોસ ફંક્શન્સની સરેરાશ હોય છે.
+
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Target Costs Less - Target function is ideal, Cost function measures overall error, Loss function measures individual error}
+\end{mnemonicbox}
+
+\questionmarks{3(b) OR}{4}{Explain balanced fit, underfit and overfit}
+\begin{solutionbox}
+
+\begin{center}
+\captionof{table}{મોડેલ ફિટિંગ પ્રકારો}
+\begin{tabulary}{\linewidth}{L L L L}
+\hline
+\textbf{ફિટ પ્રકાર} & \textbf{Training Error} & \textbf{Validation Error} & \textbf{લક્ષણો} \\
+\hline
+\textbf{Underfit} & ઊંચો & ઊંચો & ખૂબ સાદું મોડેલ \\
+\textbf{Balanced Fit} & નીચો & નીચો & આદર્શ જટિલતા \\
+\textbf{Overfit} & ખૂબ નીચો & ઊંચો & ખૂબ જટિલ મોડેલ \\
+\hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto]
+    \node [gtu block] (Under) {Underfit\\(High Bias)};
+    \node [gtu block, right=of Under] (Bal) {Balanced Fit\\(Optimal)};
+    \node [gtu block, right=of Bal] (Over) {Overfit\\(High Variance)};
+    
+    \path [gtu arrow] (Under) -- (Bal);
+    \path [gtu arrow] (Bal) -- (Over);
+\end{tikzpicture}
+\captionof{figure}{મોડેલ જટિલતા સ્પેક્ટ્રમ}
+\end{center}
+
+\textbf{સોલ્યુશન્સ:}
+\begin{itemize}
+    \item \textbf{Underfit}: મોડેલ જટિલતા વધારવી, ફીચર્સ ઉમેરવા
+    \item \textbf{Overfit}: રેગ્યુલરાઇઝેશન, ક્રોસ-વેલિડેશન, વધુ ડેટા
+\end{itemize}
+
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Balance Brings Best Results - સંતુલિત મોડેલ્સ નવા ડેટા પર શ્રેષ્ઠ પરફોર્મ કરે છે}
+\end{mnemonicbox}
+
+\questionmarks{4(a)}{3}{Give classification learning steps.}
+\begin{solutionbox}
+
+\begin{center}
+\captionof{table}{ક્લાસિફિકેશન લર્નિંગ સ્ટેપ્સ}
+\begin{tabulary}{\linewidth}{L L L}
+\hline
+\textbf{સ્ટેપ} & \textbf{વર્ણન} & \textbf{હેતુ} \\
+\hline
+\textbf{Data Collection} & લેબલ્ડ ઉદાહરણો એકત્રિત કરવા & ટ્રેનિંગ મટેરિયલ પ્રદાન કરવું \\
+\textbf{Preprocessing} & ડેટાને સાફ અને તૈયાર કરવું & ડેટા ગુણવત્તા સુધારવી \\
+\textbf{Feature Selection} & સંબંધિત એટ્રિબ્યુટ્સ પસંદ કરવા & જટિલતા ઘટાડવી \\
+\textbf{Model Training} & ટ્રેનિંગ ડેટામાંથી શીખવું & ક્લાસિફાયર બનાવવું \\
+\textbf{Evaluation} & મોડેલ પરફોર્મન્સ ટેસ્ટ કરવું & ચોકસાઈ આકારવી \\
+\textbf{Deployment} & નવી આગાહીઓ માટે ઉપયોગ & પ્રેક્ટિકલ એપ્લિકેશન \\
+\hline
+\end{tabulary}
+\end{center}
+
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Data Preparation Facilitates Model Excellence - Data prep, Feature selection, Model training, Evaluation}
+\end{mnemonicbox}
+
+\questionmarks{4(b)}{4}{Linear Relationship Calculation}
+\begin{solutionbox}
+
+\textbf{આપેલ ડેટા:} Hours (X) vs Exam Score (Y)
+
+\textbf{Linear Regression ગણતરી:}
+
+\textbf{સ્ટેપ 1: Mean કેલ્ક્યુલેટ કરવા}
+\begin{itemize}
+    \item $\bar{X} = (2+3+4+5+6)/5 = 4$
+    \item $\bar{Y} = (85+80+75+70+60)/5 = 74$
+\end{itemize}
+
+\textbf{સ્ટેપ 2: Slope (b) કેલ્ક્યુલેટ કરવું}
+\begin{itemize}
+    \item ન્યુમેરેટર = $\sum(X-\bar{X})(Y-\bar{Y}) = -60$
+    \item ડિનોમિનેટર = $\sum(X-\bar{X})^2 = 10$
+    \item $b = -60/10 = -6$
+\end{itemize}
+
+\textbf{સ્ટેપ 3: Intercept (a) કેલ્ક્યુલેટ કરવું}
+\begin{itemize}
+    \item $a = \bar{Y} - b\times\bar{X} = 74 - (-6)\times4 = 74 + 24 = 98$
+\end{itemize}
+
+\textbf{Linear Equation}: $Y = 98 - 6X$
+
+\textbf{અર્થઘટન}: સ્માર્ટફોન ઉપયોગના દરેક વધારાના કલાક માટે, પરીક્ષા સ્કોર 6 પોઇન્ટ ઘટે છે.
+
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{More Phone, Less Score - Negative correlation between phone use and grades}
+\end{mnemonicbox}
+
+\questionmarks{4(c)}{7}{Explain classification steps in detail}
+\begin{solutionbox}
+
+Classification એ સુપરવાઇઝ્ડ લર્નિંગ પ્રક્રિયા છે જે ઇનપુટ ડેટાને પૂર્વનિર્ધારિત કેટેગરીઓમાં સોંપે છે.
+
+\textbf{વિગતવાર ક્લાસિફિકેશન સ્ટેપ્સ:}
+
+\textbf{1. Problem Definition}
+\begin{itemize}
+    \item ક્લાસો અને ઉદ્દેશ્યો વ્યાખ્યાયિત કરવા
+    \item ઇનપુટ ફીચર્સ અને ટાર્ગેટ વેરિએબલ ઓળખવા
+\end{itemize}
+
+\textbf{2. Data Collection and Preparation}
+\begin{center}
+\begin{tikzpicture}[node distance=1.2cm, auto]
+    \node [gtu block] (Raw) {રો ડેટા};
+    \node [gtu block, right=0.5cm of Raw] (Clean) {ડેટા ક્લીન};
+    \node [gtu block, right=0.5cm of Clean] (Feat) {ફીચર્સ};
+    \node [gtu block, right=0.5cm of Feat] (Split) {સ્પ્લિટ};
+    
+    \path [gtu arrow] (Raw) -- (Clean);
+    \path [gtu arrow] (Clean) -- (Feat);
+    \path [gtu arrow] (Feat) -- (Split);
+\end{tikzpicture}
+\end{center}
+
+\textbf{3. Feature Engineering}
+\begin{itemize}
+    \item \textbf{Feature Selection}: સંબંધિત એટ્રિબ્યુટ્સ પસંદ કરવા
+    \item \textbf{Normalization}: ફીચર્સને સમાન રેન્જમાં સ્કેલ કરવા
+\end{itemize}
+
+\textbf{4. Model Selection and Training}
+\begin{center}
+\captionof{table}{સામાન્ય ક્લાસિફિકેશન અલ્ગોરિધમ્સ}
+\begin{tabulary}{\linewidth}{L L L}
+\hline
+\textbf{અલ્ગોરિધમ} & \textbf{શ્રેષ્ઠ માટે} & \textbf{ફાયદાઓ} \\
+\hline
+\textbf{Decision Tree} & ઇન્ટરપ્રિટેબલ રૂલ્સ & સમજવામાં સરળ \\
+\textbf{SVM} & હાઇ-ડાયમેન્શનલ ડેટા & સારું જનરલાઇઝેશન \\
+\textbf{Neural Networks} & જટિલ પેટર્ન્સ & ઉચ્ચ ચોકસાઈ \\
+\hline
+\end{tabulary}
+\end{center}
+
+\textbf{5. Model Evaluation}
+\begin{itemize}
+    \item \textbf{Confusion Matrix}: વિગતવાર પરફોર્મન્સ એનાલિસિસ
+    \item \textbf{Metrics}: Accuracy, Precision, Recall, F1-score
+\end{itemize}
+
+\textbf{6. Final Evaluation and Deployment}
+\begin{itemize}
+    \item અદ્રશ્ય ડેટા પર ટેસ્ટ કરવું
+    \item પ્રોડક્શન ઉપયોગ માટે મોડેલ ડિપ્લોય કરવું
+\end{itemize}
+
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Proper Data Modeling Evaluates Performance Thoroughly - Problem definition, Data prep, Modeling, Evaluation, Performance testing, Tuning}
+\end{mnemonicbox}
+
+\questionmarks{4(a) OR}{3}{Does the choice of the k value influence the performance of the KNN algorithm? Explain briefly}
+\begin{solutionbox}
+
+હા, k વેલ્યુ KNN અલ્ગોરિધમના પરફોર્મન્સને નોંધપાત્ર રીતે પ્રભાવિત કરે છે.
+
+\begin{center}
+\captionof{table}{K વેલ્યુની અસર}
+\begin{tabulary}{\linewidth}{L L L}
+\hline
+\textbf{K વેલ્યુ} & \textbf{અસર} & \textbf{પરફોર્મન્સ} \\
+\hline
+\textbf{Small K (k=1)} & નોઇઝ પ્રત્યે સંવેદનશીલ & High variance, low bias \\
+\textbf{Medium K} & સંતુલિત નિર્ણયો & આદર્શ પરફોર્મન્સ \\
+\textbf{Large K} & સ્મૂથ બાઉન્ડરીઝ & Low variance, high bias \\
+\hline
+\end{tabulary}
+\end{center}
+
+\textbf{સિલેક્શન વ્યૂહરચના:} આદર્શ k શોધવા માટે ક્રોસ-વેલિડેશનનો ઉપયોગ કરો, ઘણીવાર $k = \sqrt{n}$ થી શરૂઆત.
+
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Small K Varies, Large K Smooths - Small k creates variance, large k creates smooth boundaries}
+\end{mnemonicbox}
+
+\questionmarks{4(b) OR}{4}{Define Support Vectors in the SVM model.}
+\begin{solutionbox}
+
+Support Vectors એ મહત્વપૂર્ણ ડેટા પોઇન્ટ્સ છે જે ડિસિઝન બાઉન્ડરી (hyperplane)ની સૌથી નજીક આવેલા હોય છે.
+
+\begin{center}
+\captionof{table}{Support Vector લક્ષણો}
+\begin{tabulary}{\linewidth}{L L L}
+\hline
+\textbf{પાસું} & \textbf{વર્ણન} & \textbf{મહત્વ} \\
+\hline
+\textbf{Link} & હાયપરપ્લેનની સૌથી નજીકના પોઇન્ટ્સ & ડિસિઝન બાઉન્ડરી વ્યાખ્યાયિત કરે \\
+\textbf{Distance} & બાઉન્ડરીથી સમાન અંતર & Maximize margin \\
+\textbf{Role} & હાયપરપ્લેનને સપોર્ટ કરે & આદર્શ વિભાજન નક્કી કરે \\
+\hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}
+    % Axes
+    \draw[->] (0,0) -- (4,0) node[right] {$x_1$};
+    \draw[->] (0,0) -- (0,4) node[above] {$x_2$};
+    
+    % Points Class A (Circles)
+    \foreach \p in {(1.5, 3), (2, 3.5), (1, 2.5)}
+        \node[circle, draw, fill=white, inner sep=1.5pt] at \p {};
+        
+    % Points Class B (Crosses/Filled) - Using filled squares for B
+    \foreach \p in {(3.5, 1), (3, 0.5), (4, 1.5)}
+        \node[rectangle, draw, fill=black, inner sep=1.5pt] at \p {};
+        
+    % Support Vectors (closest ones)
+    % A: (2.5, 2.5) approx
+    % B: (3.5, 1.5) approx
+    
+    % Hyperplane y = -x + 4.5  (passing through 2.25, 2.25)
+    \draw[thick] (1, 3.5) -- (3.5, 1);
+    
+    % Margins
+    \draw[dashed] (0.5, 3) -- (3, 0.5);
+    \draw[dashed] (1.5, 4) -- (4, 1.5);
+    
+    % Labels
+    \node[right] at (3.5, 3.5) {Hyperplane};
+    \draw[->] (3.5, 3.5) -- (2.25, 2.25);
+    \node[below] at (2,0.5) {Support Vectors};
+\end{tikzpicture}
+\captionof{figure}{SVM હાયપરપ્લેન અને સપોર્ટ વેક્ટર્સ}
+\end{center}
+
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Support Vectors Support Decisions - These vectors support the decision boundary}
+\end{mnemonicbox}
+
+\questionmarks{4(c) OR}{7}{Explain logistic regression in detail.}
+\begin{solutionbox}
+
+Logistic Regression એ બાઇનરી ક્લાસિફિકેશન માટે વપરાતી સ્ટેટિસ્ટિકલ મેથડ છે.
+
+\textbf{ગાણિતિક આધાર:}
+\textbf{Sigmoid Function:} $\sigma(z) = 1 / (1 + e^{-z})$ જયાં $z = \beta_0 + \beta_1x_1 + ...$
+
+\begin{center}
+\captionof{table}{Linear vs Logistic Regression}
+\begin{tabulary}{\linewidth}{L L L}
+\hline
+\textbf{પાસું} & \textbf{Linear Regression} & \textbf{Logistic Regression} \\
+\hline
+\textbf{Output} & સતત મૂલ્યો & સંભાવનાઓ (0-1) \\
+\textbf{Function} & Linear & Sigmoid (S-curve) \\
+\textbf{Purpose} & આગાહી & ક્લાસિફિકેશન \\
+\textbf{Error} & Mean Squared Error & Log-likelihood \\
+\hline
+\end{tabulary}
+\end{center}
+
+\textbf{મુખ્ય ઘટકો:}
+\begin{itemize}
+    \item \textbf{Logistic Function}: S-આકારનો કર્વ જે મૂલ્યોને [0,1] માં મેપ કરે છે.
+    \item \textbf{Decision Rule}: જો $P(y=1|x) > 0.5$, તો પોઝિટિવ તરીકે ક્લાસિફાય કરવું.
+    \item \textbf{Training}: Maximum Likelihood Estimation નો ઉપયોગ કરે છે.
+\end{itemize}
+
+\textbf{એપ્લિકેશન્સ:} મેડિકલ ડાયગ્નોસિસ, ઇમેઇલ સ્પામ ડિટેક્શન, ક્રેડિટ એપ્રૂવલ.
+
+\begin{lstlisting}[language=Python]
+from sklearn.linear_model import LogisticRegression
+model = LogisticRegression()
+model.fit(X_train, y_train)
+probabilities = model.predict_proba(X_test)
+\end{lstlisting}
+
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Sigmoid Squashes Infinite Input - Sigmoid function converts any real number to probability}
+\end{mnemonicbox}
+
+\questionmarks{5(a)}{3}{Write a short note on Matplotlib python library.}
+\begin{solutionbox}
+
+Matplotlib એ વિઝ્યુઅલાઇઝેશન બનાવવા માટેની વ્યાપક Python લાઇબ્રેરી છે.
+
+\begin{center}
+\captionof{table}{Matplotlib મુખ્ય ફીચર્સ}
+\begin{tabulary}{\linewidth}{L L L}
+\hline
+\textbf{ફીચર} & \textbf{હેતુ} & \textbf{ઉદાહરણ} \\
+\hline
+\textbf{Pyplot} & MATLAB-જેવું ઇન્ટરફેસ & લાઇન પ્લોટ્સ \\
+\textbf{Formats} & વિવિધ ફોર્મેટમાં સેવ કરવું & PNG, PDF, SVG \\
+\textbf{Subplots} & એક ફિગરમાં મલ્ટિપલ પ્લોટ્સ & ગ્રિડ એરેન્જમેન્ટ્સ \\
+\hline
+\end{tabulary}
+\end{center}
+
+\textbf{મૂળભૂત ઉપયોગ:}
+\begin{lstlisting}[language=Python]
+import matplotlib.pyplot as plt
+plt.plot(x, y)
+plt.show()
+\end{lstlisting}
+
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Matplotlib Makes Pretty Plots - Essential tool for data visualization}
+\end{mnemonicbox}
+
+\questionmarks{5(b)}{4}{K-means clustering for two-dimensional data}
+\begin{solutionbox}
+
+\textbf{આપેલ પોઇન્ટ્સ:} બે જૂથો સ્પષ્ટ રીતે અલગ પડે છે.
+Group 1: (2,3) થી (8,3). Group 2: (25,20) થી (30,20).
+
+\textbf{અલ્ગોરિધમ સ્ટેપ્સ:}
+\textbf{Step 1: સેન્ટ્રોઇડ્સ ઇનિશિયલાઇઝ કરવા}
+C1 = (4, 3), C2 = (27, 20)
+
+\textbf{Step 2: પોઇન્ટ્સ સોંપવા}
+પોઇન્ટ્સ (2,3)...(8,3) C1 ની નજીક છે.
+પોઇન્ટ્સ (25,20)...(30,20) C2 ની નજીક છે.
+
+\textbf{Step 3: સેન્ટ્રોઇડ્સ અપડેટ કરવા}
+નવું C1 = Group 1 નું Average = (5, 3)
+નવું C2 = Group 2 નું Average = (27.5, 20)
+
+\textbf{અંતિમ ક્લસ્ટર્સ:}
+Cluster 1: ડાબા જૂથના પોઇન્ટ્સ. Cluster 2: જમણા જૂથના પોઇન્ટ્સ.
+
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Centroids Attract Nearest Neighbors - Points join closest centroid}
+\end{mnemonicbox}
+
+\questionmarks{5(c)}{7}{Give functions and its use of Scikit-learn}
+\begin{solutionbox}
+
+\textbf{a) Data Preprocessing:}
+\begin{itemize}
+    \item \code{StandardScaler()}: ફીચર્સને નોર્મલાઇઝ કરવા
+    \item \code{train\_test\_split()}: ડેટાસેટ સ્પ્લિટ કરવું
+\end{itemize}
+
+\textbf{b) Model Selection:}
+\begin{itemize}
+    \item \code{GridSearchCV()}: હાયપરપેરામીટર ટ્યુનિંગ
+    \item \code{cross\_val\_score()}: ક્રોસ-વેલિડેશન
+\end{itemize}
+
+\textbf{c) Model Evaluation:}
+\begin{itemize}
+    \item \code{accuracy\_score()}: એકંદર ચોકસાઈ
+    \item \code{confusion\_matrix()}: એરર એનાલિસિસ
+    \item \code{classification\_report()}: વ્યાપક મેટ્રિક્સ
+\end{itemize}
+
+\begin{lstlisting}[language=Python]
+from sklearn.metrics import classification_report
+print(classification_report(y_true, y_pred))
+\end{lstlisting}
+
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Preprocess, Select, Evaluate - Complete ML workflow in Scikit-learn}
+\end{mnemonicbox}
+
+\questionmarks{5(a) OR}{3}{List out the major features of Numpy.}
+\begin{solutionbox}
+
+NumPy વૈજ્ઞાનિક કોમ્પ્યુટિંગ માટેનું મૂળભૂત પેકેજ છે.
+
+\begin{itemize}
+    \item \textbf{N-dimensional Arrays}: કાર્યક્ષમ એરે ઓબ્જેક્ટ્સ
+    \item \textbf{Broadcasting}: વિવિધ સાઇઝના એરે પર ઓપરેશન્સ
+    \item \textbf{Linear Algebra}: મેટ્રિક્સ ઓપરેશન્સ
+    \item \textbf{Random Numbers}: સ્ટેટિસ્ટિકલ સિમ્યુલેશન્સ
+\end{itemize}
+
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Numbers Need Numpy's Power - Essential for numerical computations}
+\end{mnemonicbox}
+
+\questionmarks{5(b) OR}{4}{K-means clustering for one-dimensional data}
+\begin{solutionbox}
+
+\textbf{Dataset:} {1,2,4,5,7,8,10,11,12,14,15,17}
+
+\textbf{K-means (k=3):}
+\begin{itemize}
+    \item \textbf{Cluster 1}: {1, 2, 4, 5} (Centroid $\approx$ 3)
+    \item \textbf{Cluster 2}: {7, 8, 10, 11, 12} (Centroid $\approx$ 9.6)
+    \item \textbf{Cluster 3}: {14, 15, 17} (Centroid $\approx$ 15.3)
+\end{itemize}
+
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Groups Gather by Distance - Similar points form natural clusters}
+\end{mnemonicbox}
+
+\questionmarks{5(c) OR}{7}{Give function and its use of Pandas library}
+\begin{solutionbox}
+
+\textbf{a) Preprocessing:}
+\begin{itemize}
+    \item \code{read\_csv()}: ડેટા લોડ કરવા
+    \item \code{head()}, \code{tail()}: ડેટા જોવા
+\end{itemize}
+
+\textbf{b) Inspection:}
+\begin{itemize}
+    \item \code{info()}: ડેટા ટાઇપ્સ, મેમરી
+    \item \code{describe()}: સ્ટેટિસ્ટિકલ સમરી
+    \item \code{isnull()}: મિસિંગ વેલ્યુઝ ચેક કરવા
+\end{itemize}
+
+\textbf{c) Cleaning:}
+\begin{itemize}
+    \item \code{dropna()}, \code{fillna()}: મિસિંગ ડેટા હેન્ડલ કરવા
+    \item \code{groupby()}: ડેટા એગ્રીગેટ કરવા
+\end{itemize}
+
+\begin{lstlisting}[language=Python]
+df = pd.read_csv('data.csv')
+print(df.describe())
+\end{lstlisting}
+
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Pandas Processes Data Perfectly - Comprehensive data manipulation tool}
+\end{mnemonicbox}
+
+\end{document}
