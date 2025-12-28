@@ -1,0 +1,1185 @@
+\documentclass{article}
+\input{../../../../../../latex-templates/gtu-solutions/preamble.tex}
+\input{../../../../../../latex-templates/gtu-solutions/english-boxes.tex}
+\input{../../../../../../latex-templates/gtu-solutions/commands.tex}
+
+\usetikzlibrary{calc,positioning,shapes,arrows,automata,fit,shapes.multipart}
+\tikzset{
+    entity/.style={rectangle, draw, fill=white, align=center, minimum height=2em, font=\small, thick},
+    relationship/.style={diamond, draw, fill=white, align=center, aspect=2, font=\small, thick},
+    attribute/.style={ellipse, draw, fill=white, align=center, font=\small},
+    multi attribute/.style={ellipse, draw, double, fill=white, align=center, font=\small},
+    gtu line/.style={draw, thick},
+    gtu arrow/.style={draw, -latex, thick}
+}
+
+\title{Database Management System (1333204) - Winter 2023 Solution}
+\date{January 20, 2024}
+
+\begin{document}
+\maketitle
+
+\questionmarks{1(a)}{3}{Define: Field, Record, Metadata}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{Basic Database Terms}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Term} & \textbf{Definition} \\
+        \midrule
+        \textbf{Field} & A single unit of data representing a specific attribute in a database table (e.g., name, age, ID) \\
+        \textbf{Record} & A complete set of related fields that represents one entity instance (a row in a table) \\
+        \textbf{Metadata} & Data that describes the structure, properties, and relationships of other data ("data about data") \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "FRM: Fields Row-up as Metadata"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{1(b)}{4}{Define (i) E-R model (ii) Entity (iii) Entity set and (iv) attributes}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{E-R Model Terminology}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Term} & \textbf{Definition} \\
+        \midrule
+        \textbf{E-R Model} & A graphical approach to database design that models entities, their attributes, and relationships \\
+        \textbf{Entity} & A real-world object, concept, or thing that has an independent existence \\
+        \textbf{Entity Set} & A collection of similar entities that share the same attributes (represented as a table) \\
+        \textbf{Attributes} & Properties or characteristics that describe an entity (represented as columns in tables) \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=2.5cm]
+    \node [gtu block, fill=blue!10] (es) {ENTITY SET};
+    \node [gtu block, right of=es, xshift=2cm] (e) {ENTITY};
+    \node [attribute, below of=e, xshift=-1cm] (a1) {attribute1};
+    \node [attribute, below of=e, xshift=1cm] (a2) {attribute2};
+
+    \draw [gtu line] (es) -- node[above] {contains} (e);
+    \draw [gtu line] (e) -- (a1);
+    \draw [gtu line] (e) -- (a2);
+\end{tikzpicture}
+\captionof{figure}{Entity and Entity Set Relationship}
+\end{center}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "EEAA: Entities Exist As Attributes"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{1(c)}{7}{List the advantages and disadvantages of DBMS.}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{DBMS Advantages vs Disadvantages}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Advantages} & \textbf{Disadvantages} \\
+        \midrule
+        \textbf{Data sharing}: Multiple users can access simultaneously & \textbf{Cost}: Expensive hardware/software requirements \\
+        \textbf{Data integrity}: Maintains accuracy through constraints & \textbf{Complexity}: Requires specialized training \\
+        \textbf{Data security}: Controls access through permissions & \textbf{Performance}: Can be slow for large databases \\
+        \textbf{Data independence}: Changes to storage don't affect apps & \textbf{Vulnerability}: Central failure point risks data loss \\
+        \textbf{Reduced redundancy}: Eliminates duplicate data & \textbf{Conversion costs}: Migrating from file systems is expensive \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "SIDSR vs CCPVC" (Sharing, Integrity, Data independence, Security, Redundancy vs Cost, Complexity, Performance, Vulnerability, Conversion)
+\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{1(c)}{7}{Write the full form of DBA. Explain the roles and responsibilities of DBA.}
+\begin{solutionbox}
+\textbf{DBA}: Database Administrator
+
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=5cm]
+    \node [gtu block, fill=orange!20, minimum height=3em, minimum width=3em] (dba) {\textbf{DBA}};
+    
+    \node [gtu block, above of=dba, node distance=2.5cm] (design) {Database Design};
+    \node [gtu block, above right of=dba, node distance=3cm] (security) {Security Management};
+    \node [gtu block, right of=dba, node distance=3.5cm] (perf) {Performance Tuning};
+    \node [gtu block, below right of=dba, node distance=3cm] (backup) {Backup \& Recovery};
+    \node [gtu block, below of=dba, node distance=2.5cm] (maint) {Maintenance};
+    \node [gtu block, below left of=dba, node distance=3cm] (trouble) {Troubleshooting};
+    \node [gtu block, left of=dba, node distance=3.5cm] (support) {User Support};
+
+    \draw [gtu arrow] (dba) -- (design);
+    \draw [gtu arrow] (dba) -- (security);
+    \draw [gtu arrow] (dba) -- (perf);
+    \draw [gtu arrow] (dba) -- (backup);
+    \draw [gtu arrow] (dba) -- (maint);
+    \draw [gtu arrow] (dba) -- (trouble);
+    \draw [gtu arrow] (dba) -- (support);
+\end{tikzpicture}
+\captionof{figure}{Roles of DBA}
+\end{center}
+
+\begin{table}[H]
+    \centering
+    \caption{Responsibilities of DBA}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Role} & \textbf{Description} \\
+        \midrule
+        \textbf{Database design} & Creates efficient database schema \\
+        \textbf{Security management} & Sets up user access controls \\
+        \textbf{Performance tuning} & Optimizes queries and indexes \\
+        \textbf{Backup \& recovery} & Implements data protection plans \\
+        \textbf{Maintenance} & Updates software and applies patches \\
+        \textbf{Troubleshooting} & Resolves database issues \\
+        \textbf{User support} & Trains and assists database users \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "SPBT-MUS" (Security, Performance, Backup, Troubleshooting, Maintenance, User support)
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(a)}{3}{Explain single valued v/s multi-valued attributes with suitable examples}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{Single vs Multi-valued Attributes}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Attribute Type} & \textbf{Description} & \textbf{Examples} \\
+        \midrule
+        \textbf{Single-valued} & Holds only one value for each entity instance & Employee ID, Birth Date, Name \\
+        \textbf{Multi-valued} & Can hold multiple values for the same entity & Phone Numbers, Skills, Email Addresses \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=3cm]
+    \node [entity] (emp) {EMPLOYEE};
+    
+    \node [attribute, above left of=emp] (id) {emp\_id};
+    \node [attribute, above of=emp] (name) {name};
+    \node [attribute, above right of=emp] (dob) {birth\_date};
+    
+    \node [multi attribute, below left of=emp] (phone) {phone\_numbers};
+    \node [multi attribute, below right of=emp] (skills) {skills};
+    
+    \draw [gtu line] (emp) -- (id);
+    \draw [gtu line] (emp) -- (name);
+    \draw [gtu line] (emp) -- (dob);
+    \draw [gtu line] (emp) -- (phone);
+    \draw [gtu line] (emp) -- (skills);
+\end{tikzpicture}
+\captionof{figure}{Attribute Types Example}
+\end{center}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "SIM: Single Is Minimal, Multi Is Many"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(b)}{4}{Explain Key Constraints for E-R diagram}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{Key Constraints}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Key Constraint} & \textbf{Description} \\
+        \midrule
+        \textbf{Primary Key} & Uniquely identifies each entity in an entity set \\
+        \textbf{Candidate Key} & Any attribute that could serve as a primary key \\
+        \textbf{Foreign Key} & References primary key of another entity set \\
+        \textbf{Super Key} & Any set of attributes that uniquely identifies an entity \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=2.5cm]
+    \node [entity] (student) {STUDENT};
+    \node [attribute, above left of=student] (sid) {\underline{student\_id}};
+    \node [attribute, above of=student] (sname) {name};
+    
+    \node [entity, right of=student, xshift=4cm] (course) {COURSE};
+    \node [attribute, above right of=course] (cid) {\underline{course\_id}};
+    \node [attribute, above of=course] (ctitle) {title};
+    
+    \node [relationship, below of=student, xshift=3cm] (enroll) {ENROLLMENT};
+    \node [attribute, below of=enroll] (edate) {enroll\_date};
+    
+    \draw [gtu line] (student) -- (sid);
+    \draw [gtu line] (student) -- (sname);
+    \draw [gtu line] (course) -- (cid);
+    \draw [gtu line] (course) -- (ctitle);
+    
+    \draw [gtu line] (student) -- node[above, sloped] {has} (enroll);
+    \draw [gtu line] (course) -- node[above, sloped] {includes} (enroll);
+    \draw [gtu line] (enroll) -- (edate);
+\end{tikzpicture}
+\captionof{figure}{Key Constraints Example}
+\end{center}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "PCFS: Primary Candidates Find Superkeys"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(c)}{7}{Construct an E-R diagram for banking management system.}
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=3cm]
+    \node [entity] (cust) {CUSTOMER};
+    \node [relationship, right of=cust] (has) {has};
+    \node [entity, right of=has] (acc) {ACCOUNT};
+    \node [relationship, right of=acc] (includes) {includes};
+    \node [entity, right of=includes] (trans) {TRANSACTION};
+    
+    \node [relationship, below of=acc] (manages) {manages};
+    \node [entity, below of=manages] (branch) {BRANCH};
+    
+    % Customer attributes
+    \node [attribute, above left of=cust] (cid) {\underline{customer\_id}};
+    \node [attribute, below left of=cust] (cname) {name};
+    \node [attribute, below of=cust] (caddr) {address};
+    
+    % Account attributes
+    \node [attribute, above of=acc] (ano) {\underline{account\_no}};
+    \node [attribute, above right of=acc] (bal) {balance};
+    
+    % Transaction attributes
+    \node [attribute, above of=trans] (tid) {\underline{trans\_id}};
+    \node [attribute, right of=trans] (amt) {amount};
+    
+    % Branch attributes
+    \node [attribute, left of=branch] (bid) {\underline{branch\_id}};
+    \node [attribute, right of=branch] (bname) {location};
+    
+    % Connections
+    \draw [gtu line] (cust) -- (has);
+    \draw [gtu line] (has) -- (acc);
+    \draw [gtu line] (acc) -- (includes);
+    \draw [gtu line] (includes) -- (trans);
+    \draw [gtu line] (branch) -- (manages);
+    \draw [gtu line] (manages) -- (acc);
+    
+    % Attribute connections
+    \draw [gtu line] (cust) -- (cid);
+    \draw [gtu line] (cust) -- (cname);
+    \draw [gtu line] (cust) -- (caddr);
+    
+    \draw [gtu line] (acc) -- (ano);
+    \draw [gtu line] (acc) -- (bal);
+    
+    \draw [gtu line] (trans) -- (tid);
+    \draw [gtu line] (trans) -- (amt);
+    
+    \draw [gtu line] (branch) -- (bid);
+    \draw [gtu line] (branch) -- (bname);
+\end{tikzpicture}
+\captionof{figure}{Banking Management System ER Diagram}
+\end{center}
+
+\textbf{Key Entities and Relationships}:
+\begin{itemize}
+    \item \textbf{Customer}: Stores customer information
+    \item \textbf{Account}: Different account types (savings, checking)
+    \item \textbf{Transaction}: Records deposits, withdrawals
+    \item \textbf{Branch}: Different bank locations
+    \item \textbf{Relationships}: Customers have accounts, accounts have transactions, branches manage accounts
+\end{itemize}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "CATB: Customers Access Transactions at Branches"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{2(a)}{3}{Explain specialization v/s generalization with suitable examples}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{Specialization vs Generalization}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Concept} & \textbf{Direction} & \textbf{Description} \\
+        \midrule
+        \textbf{Specialization} & Top-down & Breaking a general entity into more specific sub-entities (Person $\to$ Student, Employee) \\
+        \textbf{Generalization} & Bottom-up & Combining similar entities into a higher-level entity (Car, Truck $\to$ Vehicle) \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=2cm]
+    \node [entity] (person) {PERSON};
+    \node [relationship, below of=person] (isa) {IS-A};
+    \node [entity, below left of=isa, xshift=-1cm] (stud) {STUDENT};
+    \node [entity, below right of=isa, xshift=1cm] (emp) {EMPLOYEE};
+    
+    \draw [gtu line] (person) -- (isa);
+    \draw [gtu line] (isa) -- (stud);
+    \draw [gtu line] (isa) -- (emp);
+    
+    \node [attribute, left of=person] {person\_id};
+    \node [attribute, left of=stud] {major};
+    \node [attribute, right of=emp] {salary};
+    
+    \draw [gtu line] (person) -- ++(-1.5,0);
+\end{tikzpicture}
+\captionof{figure}{Specialization/Generalization Example}
+\end{center}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "SG-TD-BU: Specialization Goes Top-Down, Generalization Builds Up"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{2(b)}{4}{Define Chasp trap. Explain when it occurs. Explain the solution for Chasp trap}
+\begin{solutionbox}
+\textbf{Chasp trap}: A problem that occurs in ER diagrams when there are multiple paths between entities, causing ambiguity in relationship interpretations.
+
+\begin{table}[H]
+    \centering
+    \caption{Chasp Trap Details}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Aspect} & \textbf{Description} \\
+        \midrule
+        \textbf{Occurrence} & When there are two or more distinct paths between entity types creating a cycle \\
+        \textbf{Problem} & Leads to incorrect or ambiguous query results \\
+        \textbf{Solution} & Break one of the relationships or add constraints to clarify the intended path \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=2.5cm]
+    \node [entity] (student) {STUDENT};
+    \node [relationship, right of=student] (enroll) {enrolled\_in};
+    \node [entity, right of=enroll] (section) {SECTION};
+    \node [relationship, below of=section] (part) {part\_of};
+    \node [entity, below of=part] (course) {COURSE};
+    \node [relationship, left of=course] (studies) {studies};
+    
+    \draw [gtu line] (student) -- (enroll);
+    \draw [gtu line] (enroll) -- (section);
+    \draw [gtu line] (section) -- (part);
+    \draw [gtu line] (part) -- (course);
+    \draw [gtu line, dashed, red] (student) |- (studies);
+    \draw [gtu line, dashed, red] (studies) -- (course);
+\end{tikzpicture}
+\captionof{figure}{Chasp Trap (Cycle) Example}
+\end{center}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "COP: Cycles Of Paths need breaking"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{2(c)}{7}{Construct an E-R diagram for college management system.}
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=2.5cm]
+    \node [entity] (dept) {DEPARTMENT};
+    \node [relationship, above of=dept] (belongs) {belongs\_to};
+    \node [entity, above of=belongs] (stud) {STUDENT};
+    
+    \node [relationship, right of=dept, xshift=1cm] (works) {works\_in};
+    \node [entity, right of=works, xshift=1cm] (faculty) {FACULTY};
+    
+    \node [relationship, below of=dept] (offers) {offers};
+    \node [entity, below of=offers] (course) {COURSE};
+    
+    \node [relationship, right of=course, xshift=1cm] (teaches) {teaches};
+    % Faculty teaches course
+    
+    \node [relationship, left of=course, xshift=-1cm] (enrolls) {enrolls};
+    % Student enrolls course
+    
+    \node [relationship, below of=course] (has) {has};
+    \node [entity, below of=has] (exam) {EXAM};
+    
+    \node [relationship, left of=exam, xshift=-1cm] (takes) {takes};
+    % Student takes exam
+    
+    % Connections
+    \draw [gtu line] (stud) -- (belongs);
+    \draw [gtu line] (belongs) -- (dept);
+    
+    \draw [gtu line] (faculty) -- (works);
+    \draw [gtu line] (works) -- (dept);
+    
+    \draw [gtu line] (dept) -- (offers);
+    \draw [gtu line] (offers) -- (course);
+    
+    \draw [gtu line] (faculty) |- (teaches);
+    \draw [gtu line] (teaches) -- (course);
+    
+    \draw [gtu line] (stud) -| (enrolls);
+    \draw [gtu line] (enrolls) |- (course);
+    
+    \draw [gtu line] (course) -- (has);
+    \draw [gtu line] (has) -- (exam);
+    
+    \draw [gtu line] (stud) |- (takes) -| (exam);
+    
+\end{tikzpicture}
+\captionof{figure}{College Management System}
+\end{center}
+
+\textbf{Key Entities and Relationships}:
+\begin{itemize}
+    \item \textbf{Student}: Stores student details
+    \item \textbf{Department}: Academic divisions
+    \item \textbf{Faculty}: Teachers and professors
+    \item \textbf{Course}: Subjects taught
+    \item \textbf{Exam}: Evaluation events
+    \item \textbf{Relationships}: Students enroll in courses, faculty teach courses, departments offer courses
+\end{itemize}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "SDFCE: Students Delight Faculty by Completing Exams"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3(a)}{3}{Explain GROUP BY clause with example.}
+\begin{solutionbox}
+\textbf{GROUP BY} clause groups rows that have the same values into summary rows.
+
+\begin{table}[H]
+    \centering
+    \caption{GROUP BY Clause}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Feature} & \textbf{Description} \\
+        \midrule
+        \textbf{Purpose} & Arranges identical data into groups for aggregate functions \\
+        \textbf{Usage} & Used with aggregate functions (COUNT, SUM, AVG, MAX, MIN) \\
+        \textbf{Syntax} & \code{SELECT column1, COUNT(*) FROM table GROUP BY column1;} \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{lstlisting}[language=SQL]
+SELECT department, AVG(salary) 
+FROM employees
+GROUP BY department;
+\end{lstlisting}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "GAS: Group And Summarize"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3(b)}{4}{List Data Definition Language (DDL) commands. Explain any two DDL commands with examples.}
+\begin{solutionbox}
+\textbf{DDL Commands}: CREATE, ALTER, DROP, TRUNCATE, RENAME
+
+\begin{table}[H]
+    \centering
+    \caption{DDL Commands}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Command} & \textbf{Description} & \textbf{Example} \\
+        \midrule
+        \textbf{CREATE} & Creates database objects like tables, views, indexes & \code{CREATE TABLE students (id INT PRIMARY KEY, name VARCHAR(50));} \\
+        \textbf{ALTER} & Modifies existing database objects & \code{ALTER TABLE students ADD COLUMN email VARCHAR(100);} \\
+        \textbf{DROP} & Removes database objects & \code{DROP TABLE students;} \\
+        \textbf{TRUNCATE} & Removes all records from a table & \code{TRUNCATE TABLE students;} \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "CADTR: Create, Alter, Drop, Truncate, Rename"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3(c)}{7}{Perform the following Query on the "Students" table having the field's enr\_no, name, percent, branch in SQL.}
+\begin{solutionbox}
+\begin{lstlisting}[language=SQL]
+-- 1. Display all records in Students table
+SELECT * FROM Students;
+
+-- 2. Display only branch without duplicate value
+SELECT DISTINCT branch FROM Students;
+
+-- 3. Display all records sorted in descending order of name
+SELECT * FROM Students ORDER BY name DESC;
+
+-- 4. Add one new column to store address, named "address"
+ALTER TABLE Students ADD address VARCHAR(100);
+
+-- 5. Display all students belongs to branch "ICT"
+SELECT * FROM Students WHERE branch = 'ICT';
+
+-- 6. Delete all students having percent less than 60
+DELETE FROM Students WHERE percent < 60;
+
+-- 7. Display the students names starts with "S"
+SELECT * FROM Students WHERE name LIKE 'S%';
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \caption{Query Explanations}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Query} & \textbf{Purpose} \\
+        \midrule
+        \textbf{SELECT} & Retrieves data from tables \\
+        \textbf{DISTINCT} & Eliminates duplicate values \\
+        \textbf{ORDER BY} & Sorts results in specified order \\
+        \textbf{ALTER TABLE} & Modifies table structure \\
+        \textbf{WHERE} & Filters records based on conditions \\
+        \textbf{DELETE} & Removes records matching conditions \\
+        \textbf{LIKE} & Pattern matching in string comparison \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "SDOAWDL: Select Distinct Order Alter Where Delete Like"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{3(a)}{3}{Explain GRANT command with syntax and example.}
+\begin{solutionbox}
+\textbf{GRANT} command gives specific privileges to users on database objects.
+
+\begin{table}[H]
+    \centering
+    \caption{GRANT Command}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Component} & \textbf{Description} \\
+        \midrule
+        \textbf{Syntax} & \code{GRANT privilege(s) ON object TO user [WITH GRANT OPTION];} \\
+        \textbf{Privileges} & SELECT, INSERT, UPDATE, DELETE, ALL PRIVILEGES \\
+        \textbf{Objects} & Tables, views, sequences, etc. \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{lstlisting}[language=SQL]
+GRANT SELECT, UPDATE ON employees TO user1;
+GRANT ALL PRIVILEGES ON database_name.* TO user2 WITH GRANT OPTION;
+\end{lstlisting}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "GPO: Grant Privileges to Others"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{3(b)}{4}{Compare Truncate command and Drop command.}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{TRUNCATE vs DROP}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Feature} & \textbf{TRUNCATE} & \textbf{DROP} \\
+        \midrule
+        \textbf{Purpose} & Removes all rows from table & Removes entire table structure \\
+        \textbf{Structure} & Keeps table structure intact & Deletes table definition completely \\
+        \textbf{Recovery} & Cannot be easily rolled back & Can be recovered until committed \\
+        \textbf{Speed} & Faster than DELETE & Quick operation \\
+        \textbf{Triggers} & Does not activate triggers & Does not activate triggers \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{lstlisting}[language=SQL]
+-- Truncate example
+TRUNCATE TABLE students;
+
+-- Drop example
+DROP TABLE students;
+\end{lstlisting}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "TRC-DST: Truncate Removes Contents, Drop Destroys Structure Totally"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{3(c)}{7}{Write the Output of Following Query.}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{SQL Query Outputs}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Query} & \textbf{Output} & \textbf{Explanation} \\
+        \midrule
+        \textbf{ABS(-23), ABS(49)} & 23, 49 & Returns absolute value \\
+        \textbf{SQRT(25), SQRT(81)} & 5, 9 & Returns square root \\
+        \textbf{POWER(3,2), POWER(-2,3)} & 9, -8 & Returns $x^y$ \\
+        \textbf{MOD(15,4), MOD(21,3)} & 3, 0 & Returns remainder after division \\
+        \textbf{ROUND(123.446,1), ROUND(123.456,2)} & 123.4, 123.46 & Rounds to specified decimal places \\
+        \textbf{CEIL(234.45), CEIL(-234.45)} & 235, -234 & Rounds up to nearest integer \\
+        \textbf{FLOOR(-12.7), FLOOR(12.7)} & -13, 12 & Rounds down to nearest integer \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{lstlisting}[language=SQL]
+SELECT ABS(-23), ABS(49);          -- 23, 49
+SELECT SQRT(25), SQRT(81);         -- 5, 9
+SELECT POWER(3,2), POWER(-2,3);    -- 9, -8
+SELECT MOD(15,4), MOD(21,3);       -- 3, 0
+SELECT ROUND(123.446,1), ROUND(123.456,2); -- 123.4, 123.46
+SELECT CEIL(234.45), CEIL(-234.45);  -- 235, -234
+SELECT FLOOR(-12.7), FLOOR(12.7);    -- -13, 12
+\end{lstlisting}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "ASPMRCF: Absolute Square Power Modulo Round Ceiling Floor"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(a)}{3}{List data types in SQL. Explain any two data types with example.}
+\begin{solutionbox}
+\textbf{SQL Data Types}: INTEGER, FLOAT, VARCHAR, CHAR, DATE, DATETIME, BOOLEAN, BLOB
+
+\begin{table}[H]
+    \centering
+    \caption{SQL Data Types}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Data Type} & \textbf{Description} & \textbf{Example} \\
+        \midrule
+        \textbf{INTEGER} & Whole numbers without decimal points & \code{id INTEGER = 101} \\
+        \textbf{VARCHAR} & Variable-length character string & \code{name VARCHAR(50) = 'John'} \\
+        \textbf{DATE} & Stores date values (YYYY-MM-DD) & \code{birth\_date DATE = '2000-05-15'} \\
+        \textbf{FLOAT} & Decimal numbers with floating point & \code{salary FLOAT = 45000.50} \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{lstlisting}[language=SQL]
+CREATE TABLE employees (
+    id INTEGER,
+    name VARCHAR(50),
+    salary FLOAT
+);
+\end{lstlisting}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "IVDB: Integers \& Varchars are Database Basics"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(b)}{4}{Explain Full function dependency with example.}
+\begin{solutionbox}
+\textbf{Full Function Dependency}: When Y is functionally dependent on X, but not on any subset of X.
+
+\begin{table}[H]
+    \centering
+    \caption{Full Function Dependency}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Concept} & \textbf{Description} & \textbf{Example} \\
+        \midrule
+        \textbf{Definition} & Attribute B is fully functionally dependent on A if B depends on all of A & Student\_ID $\to$ Name (full dependency) \\
+        \textbf{Non-example} & When attribute depends only on part of composite key & \{Student\_ID, Course\_ID\} $\to$ Student\_Name (partial) \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=2.5cm]
+    \node [attribute] (sid) {Student\_ID};
+    \node [attribute, right of=sid] (sname) {Student\_Name};
+    \draw [gtu arrow] (sid) -- (sname);
+    
+    \node [gtu container, fit=(sid) (sname), label=below:Full Dependency] {};
+    
+    \node [attribute, below of=sid] (cid) {Course\_ID};
+    \node [attribute, right of=cid] (cname) {Course\_Name};
+    \draw [gtu arrow] (cid) -- (cname);
+    
+    \node [gtu container, fit=(cid) (cname), label=below:Full Dependency] {};
+    
+    \node [attribute, right of=sname, xshift=1cm] (sid2) {Student\_ID};
+    \node [attribute, right of=cname, xshift=1cm] (cid2) {Course\_ID};
+    \node [attribute, right of=sid2, yshift=-1.25cm] (grade) {Grade};
+    
+    \draw [gtu arrow] (sid2) -- (grade);
+    \draw [gtu arrow] (cid2) -- (grade);
+    
+    \node [gtu container, fit=(sid2) (cid2) (grade), label=below:Full Dependency (Composite Key)] {};
+\end{tikzpicture}
+\captionof{figure}{Full Functional Dependency}
+\end{center}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "FFD: Full, not Fraction of Dependency"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(c)}{7}{Define normalization. Explain 2NF (Second Normal Form) with example and solution.}
+\begin{solutionbox}
+\textbf{Normalization}: Process of organizing database to minimize redundancy and dependency by dividing large tables into smaller tables and defining relationships between them.
+
+\textbf{2NF (Second Normal Form)}:
+\begin{itemize}
+    \item A table is in 2NF if it is in 1NF and no non-prime attribute is dependent on any proper subset of candidate key.
+\end{itemize}
+
+\begin{table}[H]
+    \centering
+    \caption{2NF Violation}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Table Schema} & \textbf{Problem} \\
+        \midrule
+        \textbf{Order(Order\_ID, Product\_ID, Product\_Name, Quantity, Price)} & Product\_Name depends on only Product\_ID, not full key \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \caption{2NF Solution}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{New Schema} & \textbf{Solution} \\
+        \midrule
+        \textbf{Order(Order\_ID, Product\_ID, Quantity)} & Only full key dependencies \\
+        \textbf{Product(Product\_ID, Product\_Name, Price)} & Product details depend only on Product\_ID \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=3cm]
+    \node [entity] (order) {ORDER};
+    \node [attribute, above left of=order] (oid) {\underline{order\_id}};
+    \node [attribute, above of=order] (pid) {\underline{product\_id}};
+    \node [attribute, above right of=order] (qty) {quantity};
+    
+    \node [entity, right of=order, xshift=2cm] (prod) {PRODUCT};
+    \node [attribute, above left of=prod] (pid2) {\underline{product\_id}};
+    \node [attribute, above of=prod] (pname) {product\_name};
+    \node [attribute, above right of=prod] (price) {price};
+    
+    \node [relationship, between=order and prod] (contains) {contains};
+    
+    \draw [gtu line] (order) -- (oid);
+    \draw [gtu line] (order) -- (pid);
+    \draw [gtu line] (order) -- (qty);
+    
+    \draw [gtu line] (prod) -- (pid2);
+    \draw [gtu line] (prod) -- (pname);
+    \draw [gtu line] (prod) -- (price);
+    
+    \draw [gtu line] (order) -- (contains);
+    \draw [gtu line] (contains) -- (prod);
+\end{tikzpicture}
+\captionof{figure}{2NF Solution ER Diagram}
+\end{center}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "2NF-PPD: Partial dependency Problems Divided"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{4(a)}{3}{Explain commands: 1) To\_Number() 2) To\_Char()}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{Conversion Functions}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Function} & \textbf{Purpose} & \textbf{Syntax} & \textbf{Example} \\
+        \midrule
+        \textbf{TO\_NUMBER()} & Converts string to number & \code{TO\_NUMBER(s, [fmt])} & \code{TO\_NUMBER('123.45')} \\
+        \textbf{TO\_CHAR()} & Converts number/date to string & \code{TO\_CHAR(v, [fmt])} & \code{TO\_CHAR(1234, '9999')} \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{lstlisting}[language=SQL]
+-- Convert string to number
+SELECT TO_NUMBER('123.45') FROM dual;  -- 123.45
+
+-- Convert date to formatted string
+SELECT TO_CHAR(SYSDATE, 'DD-MON-YYYY') FROM dual;  -- 20-JAN-2024
+
+-- Convert number to formatted string
+SELECT TO_CHAR(1234.56, '$9,999.99') FROM dual;  -- $1,234.56
+\end{lstlisting}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "NC: Numbers and Characters conversion"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{4(b)}{4}{Explain 1NF (First Normal Form) with example and solution.}
+\begin{solutionbox}
+\textbf{1NF (First Normal Form)}: A relation is in 1NF if it contains no repeating groups or arrays.
+
+\begin{table}[H]
+    \centering
+    \caption{1NF Example}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{State} & \textbf{Schema/Example} & \textbf{Remark} \\
+        \midrule
+        \textbf{Before 1NF} & **Student(ID, Name, Courses)** & Multi-valued attribute \\
+         & (101, John, "Math,Science,History") & Problem \\
+        \textbf{After 1NF} & **Student(ID, Name, Course)** & Atomic values \\
+         & (101, John, Math), (101, John, Science)... & Solution \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=2.5cm]
+    \node [entity, dashed] (before) {STUDENT (Unnormalized)};
+    \node [multi attribute, below of=before] (courses) {courses};
+    \draw [gtu line, dashed] (before) -- (courses);
+    
+    \node [right of=before, xshift=2cm] (arrow) {$\implies$};
+    
+    \node [entity, right of=arrow, xshift=2cm] (after) {STUDENT (1NF)};
+    \node [attribute, below of=after] (course) {course};
+    \draw [gtu line] (after) -- (course);
+    
+    \node [attribute, above of=after] (id) {id};
+    \node [attribute, right of=after] (name) {name};
+    \draw [gtu line] (after) -- (id);
+    \draw [gtu line] (after) -- (name);
+\end{tikzpicture}
+\captionof{figure}{1NF Conversion}
+\end{center}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "1NF-ARM: Atomic values Remove Multivalues"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{4(c)}{7}{Explain function dependency in SQL. Explain Partial function dependency with example.}
+\begin{solutionbox}
+\textbf{Functional Dependency}: A relationship where one attribute determines the value of another attribute.
+\textbf{Notation}: $X \to Y$ (X determines Y)
+
+\textbf{Partial Functional Dependency}: When an attribute depends on only part of a composite primary key.
+
+\begin{table}[H]
+    \centering
+    \caption{Partial Dependency}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Concept} & \textbf{Example} & \textbf{Explanation} \\
+        \midrule
+        \textbf{Composite Key} & \{Student\_ID, Course\_ID\} & Together forms primary key \\
+        \textbf{Partial Dependency} & \{Student\_ID, Course\_ID\} $\to$ Student\_Name & Student\_Name depends only on Student\_ID \\
+        \textbf{Problem} & Update anomalies, data redundancy & Same student name repeated for multiple courses \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=2.5cm]
+    \node [attribute] (sid) {Student\_ID};
+    \node [attribute, right of=sid, xshift=2cm] (cid) {Course\_ID};
+    \node [attribute, below of=sid] (sname) {Student\_Name};
+    \node [attribute, below of=cid] (cname) {Course\_Name};
+    \node [attribute, below right of=sname, xshift=1cm] (grade) {Grade};
+    
+    \draw [gtu arrow, red] (sid) -- (sname);
+    \node [below of=sname, node distance=0.8cm, font=\small, red] {Partial Dependency};
+    
+    \draw [gtu arrow] (cid) -- (cname);
+    
+    \draw [gtu arrow] (sid) -- (grade);
+    \draw [gtu arrow] (cid) -- (grade);
+    
+    \node [gtu container, fit=(sid) (cid) (grade), label=above:Full Dependency (PK to Grade)] {};
+\end{tikzpicture}
+\captionof{figure}{Partial Functional Dependency}
+\end{center}
+
+\textbf{Solution}: Decompose into separate tables where each non-key attribute is fully dependent on the key.
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "PD-CPK: Partial Dependency - Component of Primary Key"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(a)}{3}{Explain the properties of Transaction with example.}
+\begin{solutionbox}
+\textbf{Transaction Properties} (ACID):
+
+\begin{table}[H]
+    \centering
+    \caption{ACID Properties}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Property} & \textbf{Description} & \textbf{Example} \\
+        \midrule
+        \textbf{Atomicity} & All operations complete successfully or none does & Bank transfer: debit and credit both happen or neither \\
+        \textbf{Consistency} & Database remains in valid state before and after & Account balance constraints remain valid \\
+        \textbf{Isolation} & Transactions execute as if they were the only one & Two users updating same record don't interfere \\
+        \textbf{Durability} & Committed changes survive system failure & Deposit remains even after power loss \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{center}
+\begin{tikzpicture}[gtu flow]
+    \node [gtu start] (start) {START};
+    \node [gtu process, below of=start] (debit) {Debit Account A};
+    \node [gtu process, below of=debit] (credit) {Credit Account B};
+    \node [gtu decision, below of=credit] (check) {Success?};
+    \node [gtu stop, below left of=check, xshift=-1cm] (commit) {COMMIT};
+    \node [gtu stop, below right of=check, xshift=1cm] (rollback) {ROLLBACK};
+    
+    \draw [gtu arrow] (start) -- (debit);
+    \draw [gtu arrow] (debit) -- (credit);
+    \draw [gtu arrow] (credit) -- (check);
+    \draw [gtu arrow] (check) -| node[near start] {Yes} (commit);
+    \draw [gtu arrow] (check) -| node[near start] {No} (rollback);
+\end{tikzpicture}
+\captionof{figure}{Atomicity Flowchart}
+\end{center}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "ACID: Atomicity, Consistency, Isolation, Durability"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(b)}{4}{Write the Queries using set operators to find following using given "Student" and "CR" (Class Representative) tables.}
+\begin{solutionbox}
+\begin{lstlisting}[language=SQL]
+-- 1. List the name of the persons who are either a student or a CR
+SELECT Stnd_Name FROM Student
+UNION
+SELECT CR_Name FROM CR;
+
+-- 2. List the name of the persons who are a student as well as a CR
+SELECT Stnd_Name FROM Student
+INTERSECT
+SELECT CR_Name FROM CR;
+
+-- 3. List the name of the persons who are only a student and not a CR
+SELECT Stnd_Name FROM Student
+MINUS
+SELECT CR_Name FROM CR;
+
+-- 4. List the name of the persons who are only a CR and not a student
+SELECT CR_Name FROM CR
+MINUS
+SELECT Stnd_Name FROM Student;
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \caption{Set Operators}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Set Operator} & \textbf{Purpose} & \textbf{Result for Example} \\
+        \midrule
+        \textbf{UNION} & Combines all distinct rows & Manoj, Rahil, Jiya, Rina, Jitesh, Priya \\
+        \textbf{INTERSECT} & Returns only common rows & Manoj, Rina \\
+        \textbf{MINUS} & Returns rows in first set but not second & Rahil, Jiya \\
+        \textbf{MINUS (reversed)} & Returns rows in second set but not first & Jitesh, Priya \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "UIMD: Union Includes, Minus Divides"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(c)}{7}{Explain Conflict Serializability in detail.}
+\begin{solutionbox}
+\textbf{Conflict Serializability}: A schedule is conflict serializable if it can be transformed into a serial schedule by swapping non-conflicting operations.
+
+\begin{table}[H]
+    \centering
+    \caption{Conflict Serializability Concepts}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Concept} & \textbf{Description} \\
+        \midrule
+        \textbf{Conflict operations} & Two operations conflict if they access same data item and at least one is write \\
+        \textbf{Precedence graph} & Directed graph showing conflicts between transactions \\
+        \textbf{Serializable} & If precedence graph has no cycles, schedule is conflict serializable \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=3cm]
+    \node [gtu state] (t1) {T1};
+    \node [gtu state, right of=t1] (t2) {T2};
+    
+    \draw [gtu arrow] (t1) -- node[above] {Conflict: W(X) $\to$ R(X)} (t2);
+    \draw [gtu arrow, bend right] (t2) to node[below] {Conflict (if cyclic)} (t1);
+    
+    \node [below of=t1, yshift=1cm] {No Cycle $\implies$ Serializable};
+\end{tikzpicture}
+\captionof{figure}{Precedence Graph Concept}
+\end{center}
+
+\textbf{Example}:
+\begin{itemize}
+    \item T1: R(X), W(X)
+    \item T2: R(X), W(X)
+    \item \textbf{Serializable}: T1 $\to$ T2 or T2 $\to$ T1
+    \item \textbf{Non-serializable}: R1(X), R2(X), W1(X), W2(X) (Creates cycle)
+\end{itemize}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "COPS: Conflict Operations Produce Serializability"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{5(a)}{3}{Explain the concept of Transaction with example.}
+\begin{solutionbox}
+\textbf{Transaction}: A logical unit of work that must be either completely performed or completely undone.
+
+\begin{table}[H]
+    \centering
+    \caption{Transaction Phases}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Phase} & \textbf{Description} & \textbf{Example} \\
+        \midrule
+        \textbf{BEGIN} & Marks start of transaction & START TRANSACTION \\
+        \textbf{Execute} & Database operations (read/write) & UPDATE account... \\
+        \textbf{COMMIT/ROLLBACK} & End transaction with success/failure & COMMIT / ROLLBACK \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{center}
+\begin{tikzpicture}[gtu flow]
+    \node [gtu start] (start) {BEGIN};
+    \node [gtu process, below of=start] (read) {Read Balance};
+    \node [gtu decision, below of=read] (check) {Sufficient?};
+    \node [gtu process, below of=check] (update) {Update Balance};
+    \node [gtu process, below of=update] (rec) {Log Record};
+    \node [gtu stop, below of=rec] (commit) {COMMIT};
+    \node [gtu stop, right of=check, xshift=2cm] (rollback) {ROLLBACK};
+    
+    \draw [gtu arrow] (start) -- (read);
+    \draw [gtu arrow] (read) -- (check);
+    \draw [gtu arrow] (check) -- node[left] {Yes} (update);
+    \draw [gtu arrow] (check) -- node[above] {No} (rollback);
+    \draw [gtu arrow] (update) -- (rec);
+    \draw [gtu arrow] (rec) -- (commit);
+\end{tikzpicture}
+\captionof{figure}{Transaction Life Cycle}
+\end{center}
+
+\begin{lstlisting}[language=SQL]
+BEGIN TRANSACTION;
+UPDATE accounts SET balance = balance - 1000 WHERE acc_no = 123;
+UPDATE accounts SET balance = balance + 1000 WHERE acc_no = 456;
+COMMIT;
+\end{lstlisting}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "BEC: Begin, Execute, Commit"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{5(b)}{4}{Explain equi-join with syntax and example.}
+\begin{solutionbox}
+\textbf{Equi-join}: A join operation that uses equality comparison operator.
+
+\begin{table}[H]
+    \centering
+    \caption{Equi-join}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Feature} & \textbf{Description} \\
+        \midrule
+        \textbf{Syntax} & \code{SELECT * FROM t1, t2 WHERE t1.c = t2.c;} \\
+        \textbf{Condition} & Uses \code{=} operator \\
+        \textbf{Columns} & Includes columns from both tables \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{lstlisting}[language=SQL]
+SELECT name, course_name 
+FROM students s, courses c 
+WHERE s.course_id = c.course_id;
+\end{lstlisting}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "EJE: Equi Join Equation (=)"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{5(c)}{7}{Explain View Serializability in detail.}
+\begin{solutionbox}
+\textbf{View Serializability}: A schedule is view serializable if it is view equivalent to some serial schedule.
+
+\begin{table}[H]
+    \centering
+    \caption{View Equivalency Conditions}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Condition} & \textbf{Description} \\
+        \midrule
+        \textbf{Initial read} & If T1 reads initial value of data item X in schedule S, it must also read initial value in schedule S' \\
+        \textbf{Final write} & If T1 performs final write of data item X in S, it must also perform final write in S' \\
+        \textbf{Dependency preservation} & If T1 reads value of X written by T2 in S, it must also read from T2 in S' \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{center}
+\begin{tikzpicture}[gtu flow]
+    \node [gtu start] (start) {Schedule S};
+    \node [gtu decision, below of=start] (check) {View Equivalent?};
+    \node [gtu stop, below left of=check, xshift=-1cm] (yes) {View Serializable};
+    \node [gtu stop, below right of=check, xshift=1cm] (no) {Not View Serializable};
+    
+    \draw [gtu arrow] (start) -- (check);
+    \draw [gtu arrow] (check) -| node[near start] {Yes} (yes);
+    \draw [gtu arrow] (check) -| node[near start] {No} (no);
+    
+    \node [gtu block, right of=start, xshift=4cm] (analysis) {Read-Write Analysis};
+    \node [below of=analysis, yshift=0.5cm, align=left] {1. Initial Read Check\\2. Final Write Check\\3. Read-from-Write Check};
+    
+    \draw [gtu line, dashed] (start) -- (analysis);
+\end{tikzpicture}
+\captionof{figure}{View Serializability Check}
+\end{center}
+
+\textbf{Comparison}:
+\begin{itemize}
+    \item \textbf{Conflict serializability}: More restrictive, easier to test (precedence graph)
+    \item \textbf{View serializability}: More general, harder to test (NP-complete)
+\end{itemize}
+
+\textbf{Example of view serializable but not conflict serializable}:
+\begin{itemize}
+    \item T1: W(X), T2: W(X), T3: R(X)
+    \item Schedule: W1(X), W2(X), R3(X) is view equivalent to serial schedule T2,T1,T3
+\end{itemize}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "VIR-FF: View preserves Initial Reads and Final writes"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\end{document}

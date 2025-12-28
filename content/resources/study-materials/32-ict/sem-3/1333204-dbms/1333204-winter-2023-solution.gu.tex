@@ -1,0 +1,1182 @@
+\documentclass{article}
+\input{../../../../../../latex-templates/gtu-solutions/preamble.tex}
+\input{../../../../../../latex-templates/gtu-solutions/gujarati-boxes.tex}
+\input{../../../../../../latex-templates/gtu-solutions/commands.tex}
+
+\usetikzlibrary{calc,positioning,shapes,arrows,automata,fit,shapes.multipart}
+\tikzset{
+    entity/.style={rectangle, draw, fill=white, align=center, minimum height=2em, font=\small, thick},
+    relationship/.style={diamond, draw, fill=white, align=center, aspect=2, font=\small, thick},
+    attribute/.style={ellipse, draw, fill=white, align=center, font=\small},
+    multi attribute/.style={ellipse, draw, double, fill=white, align=center, font=\small},
+    gtu line/.style={draw, thick},
+    gtu arrow/.style={draw, -latex, thick}
+}
+
+\title{Database Management System (1333204) - Winter 2023 Solution}
+\date{January 20, 2024}
+
+\begin{document}
+\maketitle
+
+\questionmarks{1(અ)}{3}{વ્યાખ્યા આપો: ફિલ્ડ, રેકોર્ડ, મેટાડેટા}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{મૂળભૂત ડેટાબેઝ શરતો}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{શબ્દ} & \textbf{વ્યાખ્યા} \\
+        \midrule
+        \textbf{ફિલ્ડ} & ડેટાબેઝ ટેબલમાં ચોક્કસ એટ્રિબ્યુટને રજૂ કરતી ડેટાની એક એકલ એકમ (દા.ત. નામ, ઉંમર, ID) \\
+        \textbf{રેકોર્ડ} & સંબંધિત ફિલ્ડ્સનો સંપૂર્ણ સેટ જે એક એન્ટિટી ઇન્સ્ટન્સને રજૂ કરે છે (ટેબલમાં એક રો) \\
+        \textbf{મેટાડેટા} & ડેટા જે અન્ય ડેટાની રચના, ગુણધર્મો અને સંબંધોનું વર્ણન કરે છે ("ડેટા વિશે ડેટા") \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{mnemonicbox}
+    \textbf{મેમરી ટ્રીક:} "FRM: ફિલ્ડ્સ રો-અપ એઝ મેટાડેટા"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{1(બ)}{4}{વ્યાખ્યા લખો (i) E-R મોડલ (ii) એન્ટિટી (iii) એન્ટિટી સેટ અને (iv) એટ્રીબ્યુટ્સ}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{E-R મોડલ પરિભાષા}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{શબ્દ} & \textbf{વ્યાખ્યા} \\
+        \midrule
+        \textbf{E-R મોડલ} & ડેટાબેઝ ડિઝાઇનનો ગ્રાફિકલ અભિગમ જે એન્ટિટીઝ, તેમના એટ્રિબ્યુટ્સ અને રિલેશનશીપને મોડેલ કરે છે \\
+        \textbf{એન્ટિટી} & એક વાસ્તવિક-વિશ્વ વસ્તુ, વિચાર અથવા ચીજ જેનું સ્વતંત્ર અસ્તિત્વ છે \\
+        \textbf{એન્ટિટી સેટ} & સમાન એન્ટિટીઓનો સંગ્રહ જે સમાન એટ્રિબ્યુટ્સ ધરાવે છે (ટેબલ તરીકે રજૂ કરાય છે) \\
+        \textbf{એટ્રિબ્યુટ્સ} & ગુણધર્મો અથવા લક્ષણો જે એન્ટિટીનું વર્ણન કરે છે (ટેબલના કોલમ તરીકે રજૂ કરાય છે) \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=2.5cm]
+    \node [gtu block, fill=blue!10] (es) {ENTITY SET};
+    \node [gtu block, right of=es, xshift=2cm] (e) {ENTITY};
+    \node [attribute, below of=e, xshift=-1cm] (a1) {attribute1};
+    \node [attribute, below of=e, xshift=1cm] (a2) {attribute2};
+
+    \draw [gtu line] (es) -- node[above] {contains} (e);
+    \draw [gtu line] (e) -- (a1);
+    \draw [gtu line] (e) -- (a2);
+\end{tikzpicture}
+\captionof{figure}{એન્ટિટી અને એન્ટિટી સેટ સંબંધ}
+\end{center}
+
+\begin{mnemonicbox}
+    \textbf{મેમરી ટ્રીક:} "EEAA: એન્ટિટીસ એક્ઝિસ્ટ એઝ એટ્રિબ્યુટ્સ"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{1(ક)}{7}{DBMS નાં ફાયદા અને ગેરફાયદા જણાવો.}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{DBMS નાં ફાયદા અને ગેરફાયદા}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{ફાયદા} & \textbf{ગેરફાયદા} \\
+        \midrule
+        \textbf{ડેટા શેરિંગ}: ઘણા વપરાશકર્તાઓ એક સાથે એક્સેસ કરી શકે છે & \textbf{ખર્ચ}: મોંઘા હાર્ડવેર/સોફ્ટવેર જરૂરિયાતો \\
+        \textbf{ડેટા ઇન્ટિગ્રિટી}: કન્સ્ટ્રેન્ટ્સ દ્વારા ચોકસાઈ જાળવે છે & \textbf{જટિલતા}: વિશિષ્ટ તાલીમની જરૂર પડે છે \\
+        \textbf{ડેટા સિક્યુરિટી}: પરમિશન દ્વારા એક્સેસ નિયંત્રિત કરે છે & \textbf{પ્રદર્શન}: મોટા ડેટાબેઝ માટે ધીમું હોઈ શકે છે \\
+        \textbf{ડેટા ઇન્ડિપેન્ડન્સ}: સ્ટોરેજ બદલવાથી એપ્લિકેશન પર અસ & \textbf{નબળાઈ}: કેન્દ્રીય નિષ્ફળતા બિંદુ ડેટા લોસનું જોખમ છે \\
+        \textbf{ઘટાડેલ રિડન્ડન્સી}: ડુપ્લીકેટ ડેટા દૂર કરે છે & \textbf{કન્વર્ઝન ખર્ચ}: ફાઇલ સિસ્ટમથી માઇગ્રેટ કરવું ખર્ચાળ છે \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{mnemonicbox}
+    \textbf{મેમરી ટ્રીક:} "SIDSR vs CCPVC" (શેરિંગ, ઇન્ટિગ્રિટી, ડેટા ઇન્ડિપેન્ડન્સ, સિક્યુરિટી, રિડન્ડન્સી vs કોસ્ટ, કોમ્પ્લેક્સિટી, પરફોર્મન્સ, વલ્નરેબિલિટી, કન્વર્ઝન)
+\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{1(ક)}{7}{DBA નું પુરુનામ લખો. DBAની ભૂમિકા અને જવાબદારીઓ સમજાવો.}
+\begin{solutionbox}
+\textbf{DBA}: Database Administrator (ડેટાબેઝ એડમિનિસ્ટ્રેટર)
+
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=5cm]
+    \node [gtu block, fill=orange!20, minimum height=3em, minimum width=3em] (dba) {\textbf{DBA}};
+    
+    \node [gtu block, above of=dba, node distance=2.5cm] (design) {ડેટાબેઝ ડિઝાઇન};
+    \node [gtu block, above right of=dba, node distance=3cm] (security) {સિક્યુરિટી મેનેજમેન્ટ};
+    \node [gtu block, right of=dba, node distance=3.5cm] (perf) {પ્રદર્શન ટ્યુનિંગ};
+    \node [gtu block, below right of=dba, node distance=3cm] (backup) {બેકઅપ અને રિકવરી};
+    \node [gtu block, below of=dba, node distance=2.5cm] (maint) {મેઇન્ટેનન્સ};
+    \node [gtu block, below left of=dba, node distance=3cm] (trouble) {ટ્રબલશૂટિંગ};
+    \node [gtu block, left of=dba, node distance=3.5cm] (support) {યુઝર સપોર્ટ};
+
+    \draw [gtu arrow] (dba) -- (design);
+    \draw [gtu arrow] (dba) -- (security);
+    \draw [gtu arrow] (dba) -- (perf);
+    \draw [gtu arrow] (dba) -- (backup);
+    \draw [gtu arrow] (dba) -- (maint);
+    \draw [gtu arrow] (dba) -- (trouble);
+    \draw [gtu arrow] (dba) -- (support);
+\end{tikzpicture}
+\captionof{figure}{DBA ની ભૂમિકાઓ}
+\end{center}
+
+\begin{table}[H]
+    \centering
+    \caption{DBA ની જવાબદારીઓ}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{ભૂમિકા} & \textbf{વર્ણન} \\
+        \midrule
+        \textbf{ડેટાબેઝ ડિઝાઇન} & કાર્યક્ષમ ડેટાબેઝ સ્કીમા બનાવે છે \\
+        \textbf{સિક્યુરિટી મેનેજમેન્ટ} & યુઝર એક્સેસ કંટ્રોલ સેટ કરે છે \\
+        \textbf{પ્રદર્શન ટ્યુનિંગ} & ક્વેરી અને ઇન્ડેક્સને ઓપ્ટિમાઇઝ કરે છે \\
+        \textbf{બેકઅપ અને રિકવરી} & ડેટા સુરક્ષા યોજનાઓ લાગુ કરે છે \\
+        \textbf{મેઇન્ટેનન્સ} & સોફ્ટવેર અપડેટ કરે છે અને પેચ લાગુ કરે છે \\
+        \textbf{ટ્રબલશૂટિંગ} & ડેટાબેઝ સમસ્યાઓનો ઉકેલ કરે છે \\
+        \textbf{યુઝર સપોર્ટ} & ડેટાબેઝ વપરાશકર્તાઓને તાલીમ આપે છે અને સહાય કરે છે \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{mnemonicbox}
+    \textbf{મેમરી ટ્રીક:} "SPBT-MUS" (સિક્યુરિટી, પરફોર્મન્સ, બેકઅપ, ટ્રબલશૂટિંગ, મેઇન્ટેનન્સ, યુઝર સપોર્ટ)
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(અ)}{3}{યોગ્ય ઉદાહરણ સાથે સિંગલ વેલ્યુડ અને મલ્ટી વેલ્યુડ એટ્રીબ્યુટ્સ વચ્ચેનો તફાવત સમજાવો}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{સિંગલ અને મલ્ટી-વેલ્યુડ એટ્રિબ્યુટ્સ}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{એટ્રિબ્યુટ પ્રકાર} & \textbf{વર્ણન} & \textbf{ઉદાહરણો} \\
+        \midrule
+        \textbf{સિંગલ-વેલ્યુડ} & દરેક એન્ટિટી ઇન્સ્ટન્સ માટે માત્ર એક મૂલ્ય ધરાવે છે & Employee ID, જન્મતારીખ, નામ \\
+        \textbf{મલ્ટી-વેલ્યુડ} & એક જ એન્ટિટી માટે ઘણા મૂલ્યો ધરાવી શકે છે & ફોન નંબર, કૌશલ્યો, ઇમેઇલ એડ્રેસ \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=3cm]
+    \node [entity] (emp) {EMPLOYEE};
+    
+    \node [attribute, above left of=emp] (id) {emp\_id};
+    \node [attribute, above of=emp] (name) {name};
+    \node [attribute, above right of=emp] (dob) {birth\_date};
+    
+    \node [multi attribute, below left of=emp] (phone) {phone\_numbers};
+    \node [multi attribute, below right of=emp] (skills) {skills};
+    
+    \draw [gtu line] (emp) -- (id);
+    \draw [gtu line] (emp) -- (name);
+    \draw [gtu line] (emp) -- (dob);
+    \draw [gtu line] (emp) -- (phone);
+    \draw [gtu line] (emp) -- (skills);
+\end{tikzpicture}
+\captionof{figure}{એટ્રિબ્યુટ પ્રકારોનું ઉદાહરણ}
+\end{center}
+
+\begin{mnemonicbox}
+    \textbf{મેમરી ટ્રીક:} "SIM: સિંગલ ઇઝ મિનિમલ, મલ્ટી ઇઝ મેની"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(બ)}{4}{E-R ડાયાગ્રામ માટે કી કન્સ્ટ્રેન્ટ્સ સમજાવો}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{કી કન્સ્ટ્રેન્ટ્સ}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{કી કન્સ્ટ્રેન્ટ} & \textbf{વર્ણન} \\
+        \midrule
+        \textbf{પ્રાઇમરી કી} & એન્ટિટી સેટમાં દરેક એન્ટિટીને અનન્ય રીતે ઓળખે છે \\
+        \textbf{કેન્ડિડેટ કી} & કોઈપણ એટ્રિબ્યુટ જે પ્રાઇમરી કી તરીકે કામ કરી શકે \\
+        \textbf{ફોરેન કી} & અન્ય એન્ટિટી સેટની પ્રાઇમરી કીનો સંદર્ભ આપે છે \\
+        \textbf{સુપર કી} & એટ્રિબ્યુટ્સનો કોઈપણ સેટ જે અનન્ય રીતે એન્ટિટીને ઓળખે છે \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=2.5cm]
+    \node [entity] (student) {STUDENT};
+    \node [attribute, above left of=student] (sid) {\underline{student\_id}};
+    \node [attribute, above of=student] (sname) {name};
+    
+    \node [entity, right of=student, xshift=4cm] (course) {COURSE};
+    \node [attribute, above right of=course] (cid) {\underline{course\_id}};
+    \node [attribute, above of=course] (ctitle) {title};
+    
+    \node [relationship, below of=student, xshift=3cm] (enroll) {ENROLLMENT};
+    \node [attribute, below of=enroll] (edate) {enroll\_date};
+    
+    \draw [gtu line] (student) -- (sid);
+    \draw [gtu line] (student) -- (sname);
+    \draw [gtu line] (course) -- (cid);
+    \draw [gtu line] (course) -- (ctitle);
+    
+    \draw [gtu line] (student) -- node[above, sloped] {has} (enroll);
+    \draw [gtu line] (course) -- node[above, sloped] {includes} (enroll);
+    \draw [gtu line] (enroll) -- (edate);
+\end{tikzpicture}
+\captionof{figure}{કી કન્સ્ટ્રેન્ટ્સ ઉદાહરણ}
+\end{center}
+
+\begin{mnemonicbox}
+    \textbf{મેમરી ટ્રીક:} "PCFS: પ્રાઇમરી કેન્ડિડેટ્સ ફાઇન્ડ સુપરકીઝ"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(ક)}{7}{બેંકિંગ મેનેજમેન્ટ સિસ્ટમ માટે E-R ડાયાગ્રામ બનાવો}
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=3cm]
+    \node [entity] (cust) {CUSTOMER};
+    \node [relationship, right of=cust] (has) {has};
+    \node [entity, right of=has] (acc) {ACCOUNT};
+    \node [relationship, right of=acc] (includes) {includes};
+    \node [entity, right of=includes] (trans) {TRANSACTION};
+    
+    \node [relationship, below of=acc] (manages) {manages};
+    \node [entity, below of=manages] (branch) {BRANCH};
+    
+    % Customer attributes
+    \node [attribute, above left of=cust] (cid) {\underline{customer\_id}};
+    \node [attribute, below left of=cust] (cname) {name};
+    \node [attribute, below of=cust] (caddr) {address};
+    
+    % Account attributes
+    \node [attribute, above of=acc] (ano) {\underline{account\_no}};
+    \node [attribute, above right of=acc] (bal) {balance};
+    
+    % Transaction attributes
+    \node [attribute, above of=trans] (tid) {\underline{trans\_id}};
+    \node [attribute, right of=trans] (amt) {amount};
+    
+    % Branch attributes
+    \node [attribute, left of=branch] (bid) {\underline{branch\_id}};
+    \node [attribute, right of=branch] (bname) {location};
+    
+    % Connections
+    \draw [gtu line] (cust) -- (has);
+    \draw [gtu line] (has) -- (acc);
+    \draw [gtu line] (acc) -- (includes);
+    \draw [gtu line] (includes) -- (trans);
+    \draw [gtu line] (branch) -- (manages);
+    \draw [gtu line] (manages) -- (acc);
+    
+    % Attribute connections
+    \draw [gtu line] (cust) -- (cid);
+    \draw [gtu line] (cust) -- (cname);
+    \draw [gtu line] (cust) -- (caddr);
+    
+    \draw [gtu line] (acc) -- (ano);
+    \draw [gtu line] (acc) -- (bal);
+    
+    \draw [gtu line] (trans) -- (tid);
+    \draw [gtu line] (trans) -- (amt);
+    
+    \draw [gtu line] (branch) -- (bid);
+    \draw [gtu line] (branch) -- (bname);
+\end{tikzpicture}
+\captionof{figure}{બેંકિંગ મેનેજમેન્ટ સિસ્ટમ ER ડાયાગ્રામ}
+\end{center}
+
+\textbf{મુખ્ય એન્ટિટીઝ અને રિલેશનશિપ્સ}:
+\begin{itemize}
+    \item \textbf{ગ્રાહક}: ગ્રાહક માહિતી સંગ્રહિત કરે છે
+    \item \textbf{એકાઉન્ટ}: વિવિધ એકાઉન્ટ પ્રકારો (સેવિંગ્સ, ચેકિંગ)
+    \item \textbf{ટ્રાન્ઝેક્શન}: ડિપોઝિટ, વિડ્રોઅલ રેકોર્ડ કરે છે
+    \item \textbf{બ્રાન્ચ}: વિવિધ બેંક સ્થાનો
+    \item \textbf{રિલેશનશિપ્સ}: ગ્રાહકો પાસે એકાઉન્ટ છે, એકાઉન્ટમાં ટ્રાન્ઝેક્શન છે, બ્રાન્ચ એકાઉન્ટ મેનેજ કરે છે
+\end{itemize}
+
+\begin{mnemonicbox}
+    \textbf{મેમરી ટ્રીક:} "CATB: કસ્ટમર્સ એક્સેસ ટ્રાન્ઝેક્શન્સ એટ બ્રાન્ચીસ"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{2(અ)}{3}{યોગ્ય ઉદાહરણ સાથે સ્પેશિયલાઈઝેશન અને જનરલાઈઝેશન વચ્ચેનો તફાવત સમજાવો}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{સ્પેશિયલાઈઝેશન vs જનરલાઈઝેશન}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{વિચાર} & \textbf{દિશા} & \textbf{વર્ણન} \\
+        \midrule
+        \textbf{સ્પેશિયલાઈઝેશન} & ટોપ-ડાઉન & સામાન્ય એન્ટિટીને વધુ ચોક્કસ સબ-એન્ટિટીઓમાં વિભાજિત કરવું (વ્યક્તિ $\to$ વિદ્યાર્થી, કર્મચારી) \\
+        \textbf{જનરલાઈઝેશન} & બોટમ-અપ & સમાન એન્ટિટીઓને ઉચ્ચ-સ્તરીય એન્ટિટીમાં જોડવું (કાર, ટ્રક $\to$ વાહન) \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=2cm]
+    \node [entity] (person) {PERSON};
+    \node [relationship, below of=person] (isa) {IS-A};
+    \node [entity, below left of=isa, xshift=-1cm] (stud) {STUDENT};
+    \node [entity, below right of=isa, xshift=1cm] (emp) {EMPLOYEE};
+    
+    \draw [gtu line] (person) -- (isa);
+    \draw [gtu line] (isa) -- (stud);
+    \draw [gtu line] (isa) -- (emp);
+    
+    \node [attribute, left of=person] {person\_id};
+    \node [attribute, left of=stud] {major};
+    \node [attribute, right of=emp] {salary};
+    
+    \draw [gtu line] (person) -- ++(-1.5,0);
+\end{tikzpicture}
+\captionof{figure}{સ્પેશિયલાઈઝેશન/જનરલાઈઝેશન ઉદાહરણ}
+\end{center}
+
+\begin{mnemonicbox}
+    \textbf{મેમરી ટ્રીક:} "SG-TD-BU: સ્પેશિયલાઈઝેશન ગોઝ ટોપ-ડાઉન, જનરલાઈઝેશન બિલ્ડ્સ અપ"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{2(બ)}{4}{ચાસ્પ ટ્રેપની વ્યાખ્યા લખો. તે ક્યારે ઉદ્ભવે છે તે સમજાવો. ચાસ્પ ટ્રેપ માટેનો ઉપાય સમજાવો}
+\begin{solutionbox}
+\textbf{ચાસ્પ ટ્રેપ}: ER ડાયાગ્રામમાં ઉદ્ભવતી સમસ્યા જ્યારે એન્ટિટીઓ વચ્ચે મલ્ટિપલ પાથ હોય છે, જેથી રિલેશનશિપના અર્થઘટનમાં અસ્પષ્ટતા આવે છે.
+
+\begin{table}[H]
+    \centering
+    \caption{ચાસ્પ ટ્રેપ વિગતો}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{પાસું} & \textbf{વર્ણન} \\
+        \midrule
+        \textbf{ઉદ્ભવ} & જ્યારે એન્ટિટી પ્રકારો વચ્ચે બે અથવા વધુ અલગ પાથ હોય જે ચક્ર બનાવે છે \\
+        \textbf{સમસ્યા} & અયોગ્ય અથવા અસ્પષ્ટ ક્વેરી પરિણામો તરફ દોરી જાય છે \\
+        \textbf{ઉકેલ} & એક રિલેશનશિપને તોડવું અથવા ઇચ્છિત પાથને સ્પષ્ટ કરવા માટે કન્સ્ટ્રેન્ટ્સ ઉમેરવા \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=2.5cm]
+    \node [entity] (student) {STUDENT};
+    \node [relationship, right of=student] (enroll) {enrolled\_in};
+    \node [entity, right of=enroll] (section) {SECTION};
+    \node [relationship, below of=section] (part) {part\_of};
+    \node [entity, below of=part] (course) {COURSE};
+    \node [relationship, left of=course] (studies) {studies};
+    
+    \draw [gtu line] (student) -- (enroll);
+    \draw [gtu line] (enroll) -- (section);
+    \draw [gtu line] (section) -- (part);
+    \draw [gtu line] (part) -- (course);
+    \draw [gtu line, dashed, red] (student) |- (studies);
+    \draw [gtu line, dashed, red] (studies) -- (course);
+\end{tikzpicture}
+\captionof{figure}{ચાસ્પ ટ્રેપ (સાયકલ) ઉદાહરણ}
+\end{center}
+
+\begin{mnemonicbox}
+    \textbf{મેમરી ટ્રીક:} "COP: સાયકલ્સ ઓફ પાથસ નીડ બ્રેકિંગ"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{2(ક)}{7}{કોલેજ મેનેજમેન્ટ સિસ્ટમ માટે E-R ડાયાગ્રામ બનાવો}
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=2.5cm]
+    \node [entity] (dept) {DEPARTMENT};
+    \node [relationship, above of=dept] (belongs) {belongs\_to};
+    \node [entity, above of=belongs] (stud) {STUDENT};
+    
+    \node [relationship, right of=dept, xshift=1cm] (works) {works\_in};
+    \node [entity, right of=works, xshift=1cm] (faculty) {FACULTY};
+    
+    \node [relationship, below of=dept] (offers) {offers};
+    \node [entity, below of=offers] (course) {COURSE};
+    
+    \node [relationship, right of=course, xshift=1cm] (teaches) {teaches};
+    
+    \node [relationship, left of=course, xshift=-1cm] (enrolls) {enrolls};
+    
+    \node [relationship, below of=course] (has) {has};
+    \node [entity, below of=has] (exam) {EXAM};
+    
+    \node [relationship, left of=exam, xshift=-1cm] (takes) {takes};
+    
+    % Connections
+    \draw [gtu line] (stud) -- (belongs);
+    \draw [gtu line] (belongs) -- (dept);
+    
+    \draw [gtu line] (faculty) -- (works);
+    \draw [gtu line] (works) -- (dept);
+    
+    \draw [gtu line] (dept) -- (offers);
+    \draw [gtu line] (offers) -- (course);
+    
+    \draw [gtu line] (faculty) |- (teaches);
+    \draw [gtu line] (teaches) -- (course);
+    
+    \draw [gtu line] (stud) -| (enrolls);
+    \draw [gtu line] (enrolls) |- (course);
+    
+    \draw [gtu line] (course) -- (has);
+    \draw [gtu line] (has) -- (exam);
+    
+    \draw [gtu line] (stud) |- (takes) -| (exam);
+    
+\end{tikzpicture}
+\captionof{figure}{કોલેજ મેનેજમેન્ટ સિસ્ટમ}
+\end{center}
+
+\textbf{મુખ્ય એન્ટિટીઝ અને રિલેશનશિપ્સ}:
+\begin{itemize}
+    \item \textbf{વિદ્યાર્થી (Student)}: વિદ્યાર્થી વિગતો સંગ્રહિત કરે છે
+    \item \textbf{વિભાગ (Department)}: શૈક્ષણિક વિભાગો
+    \item \textbf{ફેકલ્ટી (Faculty)}: શિક્ષકો અને પ્રોફેસરો
+    \item \textbf{કોર્સ (Course)}: ભણાવવામાં આવતા વિષયો
+    \item \textbf{પરીક્ષા (Exam)}: મૂલ્યાંકન કાર્યક્રમો
+    \item \textbf{રિલેશનશિપ્સ}: વિદ્યાર્થીઓ કોર્સમાં એનરોલ થાય છે, ફેકલ્ટી કોર્સ શીખવે છે, વિભાગો કોર્સ ઓફર કરે છે
+\end{itemize}
+
+\begin{mnemonicbox}
+    \textbf{મેમરી ટ્રીક:} "SDFCE: સ્ટુડન્ટ્સ ડિલાઇટ ફેકલ્ટી બાય કમ્પ્લીટિંગ એક્ઝામ્સ"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3(અ)}{3}{GROUP BY ક્લોઝ ઉદાહરણ સાથે સમજાવો.}
+\begin{solutionbox}
+\textbf{GROUP BY} ક્લોઝ સમાન મૂલ્યો ધરાવતી રો સારાંશ રોમાં જૂથ કરે છે.
+
+\begin{table}[H]
+    \centering
+    \caption{GROUP BY ક્લોઝ}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{ફીચર} & \textbf{વર્ણન} \\
+        \midrule
+        \textbf{હેતુ} & એકસરખા ડેટાને એગ્રીગેટ ફંક્શન માટે જૂથોમાં ગોઠવે છે \\
+        \textbf{ઉપયોગ} & એગ્રીગેટ ફંક્શન (COUNT, SUM, AVG, MAX, MIN) સાથે વપરાય છે \\
+        \textbf{સિન્ટેક્સ} & \code{SELECT column1, COUNT(*) FROM table GROUP BY column1;} \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{lstlisting}[language=SQL]
+SELECT department, AVG(salary) 
+FROM employees
+GROUP BY department;
+\end{lstlisting}
+
+\begin{mnemonicbox}
+    \textbf{મેમરી ટ્રીક:} "GAS: ગ્રુપ એન્ડ સમરાઈઝ"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3(બ)}{4}{Data Definition Language (DDL) કમાન્ડની યાદી બનાવો. કોઈ પણ ૨ DDL કમાન્ડ ઉદાહરણ સાથે સમજાવો.}
+\begin{solutionbox}
+\textbf{DDL કમાન્ડ્સ}: CREATE, ALTER, DROP, TRUNCATE, RENAME
+
+\begin{table}[H]
+    \centering
+    \caption{DDL કમાન્ડ્સ}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{કમાન્ડ} & \textbf{વર્ણન} & \textbf{ઉદાહરણ} \\
+        \midrule
+        \textbf{CREATE} & ડેટાબેઝ ઓબ્જેક્ટ્સ જેમ કે ટેબલ, વ્યૂ, ઇન્ડેક્સ બનાવે છે & \code{CREATE TABLE s (id INT PK, n TEXT);} \\
+        \textbf{ALTER} & મૌજૂદા ડેટાબેઝ ઓબ્જેક્ટ્સ સુધારે છે & \code{ALTER TABLE s ADD COLUMN e TEXT;} \\
+        \textbf{DROP} & ડેટાબેઝ ઓબ્જેક્ટ્સ દૂર કરે છે & \code{DROP TABLE s;} \\
+        \textbf{TRUNCATE} & ટેબલમાંથી બધા રેકોર્ડ્સ દૂર કરે છે & \code{TRUNCATE TABLE s;} \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{mnemonicbox}
+    \textbf{મેમરી ટ્રીક:} "CADTR: ક્રિએટ, ઓલ્ટર, ડ્રોપ, ટ્રન્કેટ, રીનેમ"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3(ક)}{7}{enr\_no, name, percent, branch ફિલ્ડ ધરાવતા Students ટેબલ પર નીચેની Query perform કરો.}
+\begin{solutionbox}
+\begin{lstlisting}[language=SQL]
+-- ૧. Students ટેબલના તમામ રેકોર્ડ ડિસ્પ્લે કરો.
+SELECT * FROM Students;
+
+-- ૨. ડુપ્લીકેટ વેલ્યુ સિવાય માત્ર branch ડિસ્પ્લે કરો.
+SELECT DISTINCT branch FROM Students;
+
+-- ૩. name નાં ઉતરતા ક્રમમાં તમામ રેકોર્ડ ડિસ્પ્લે કરો.
+SELECT * FROM Students ORDER BY name DESC;
+
+-- ૪. સરનામું સ્ટોર કરવા માટે "address" નામથી નવી કોલમ ઉમેરો.
+ALTER TABLE Students ADD address VARCHAR(100);
+
+-- ૫. "ICT" બ્રાંચ ધરાવતા બધા વિદ્યાર્થીને ડિસ્પ્લે કરો.
+SELECT * FROM Students WHERE branch = 'ICT';
+
+-- ૬. ૬૦ કરતા ઓછા percent ધરાવતા વિદ્યાર્થીઓને ડીલીટ કરો.
+DELETE FROM Students WHERE percent < 60;
+
+-- ૭. "S" થી શરૂ થતા તમામ વિદ્યાર્થીઓના નામ ડિસ્પ્લે કરો.
+SELECT * FROM Students WHERE name LIKE 'S%';
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \caption{ક્વેરી સમજૂતી}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{ક્વેરી} & \textbf{હેતુ} \\
+        \midrule
+        \textbf{SELECT} & ટેબલમાંથી ડેટા મેળવે છે \\
+        \textbf{DISTINCT} & ડુપ્લિકેટ મૂલ્યો દૂર કરે છે \\
+        \textbf{ORDER BY} & પરિણામોને ચોક્કસ ક્રમમાં ગોઠવે છે \\
+        \textbf{ALTER TABLE} & ટેબલ સ્ટ્રક્ચર સુધારે છે \\
+        \textbf{WHERE} & શરતો પર આધારિત રેકોર્ડ્સ ફિલ્ટર કરે છે \\
+        \textbf{DELETE} & શરતો મેળવતા રેકોર્ડ્સ દૂર કરે છે \\
+        \textbf{LIKE} & સ્ટ્રિંગ તુલનામાં પેટર્ન મેચિંગ \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{mnemonicbox}
+    \textbf{મેમરી ટ્રીક:} "SDOAWDL: સિલેક્ટ ડિસ્ટિંક્ટ ઓર્ડર ઓલ્ટર વ્હેર ડિલીટ લાઇક"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{3(અ)}{3}{સિન્ટેક્સ અને ઉદાહરણ સાથે GRANT કમાન્ડ સમજાવો.}
+\begin{solutionbox}
+\textbf{GRANT} કમાન્ડ વપરાશકર્તાઓને ડેટાબેઝ ઓબ્જેક્ટ્સ પર ચોક્કસ અધિકારો આપે છે.
+
+\begin{table}[H]
+    \centering
+    \caption{GRANT કમાન્ડ}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{ઘટક} & \textbf{વર્ણન} \\
+        \midrule
+        \textbf{સિન્ટેક્સ} & \code{GRANT privilege ON object TO user;} \\
+        \textbf{પ્રિવિલેજીસ} & SELECT, INSERT, UPDATE, DELETE \\
+        \textbf{ઓબ્જેક્ટ્સ} & ટેબલ્સ, વ્યૂ, સિક્વેન્સિસ, વગેરે \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{lstlisting}[language=SQL]
+GRANT SELECT, UPDATE ON employees TO user1;
+GRANT ALL PRIVILEGES ON db.* TO user2 WITH GRANT OPTION;
+\end{lstlisting}
+
+\begin{mnemonicbox}
+    \textbf{મેમરી ટ્રીક:} "GPO: ગ્રાન્ટ પ્રિવિલેજીસ ટુ અધર્સ"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{3(બ)}{4}{Truncate અને Drop કમાન્ડનો તફાવત લખો.}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{TRUNCATE vs DROP}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{ફીચર} & \textbf{TRUNCATE} & \textbf{DROP} \\
+        \midrule
+        \textbf{હેતુ} & ટેબલથી બધી પંક્તિઓ દૂર કરે છે & સંપૂર્ણ ટેબલ સ્ટ્રક્ચર દૂર કરે છે \\
+        \textbf{સ્ટ્રક્ચર} & ટેબલ સ્ટ્રક્ચર જાળવી રાખે છે & ટેબલની વ્યાખ્યા સંપૂર્ણપણે દૂર કરે છે \\
+        \textbf{રિકવરી} & સરળતાથી રોલબેક નથી કરી શકાતું & કમિટ થાય ત્યાં સુધી પુનઃપ્રાપ્ત કરી શકાય છે \\
+        \textbf{સ્પીડ} & DELETE કરતાં ઝડપી & ઝડપી ઓપરેશન \\
+        \textbf{ટ્રિગર્સ} & ટ્રિગર્સ સક્રિય કરતું નથી & ટ્રિગર્સ સક્રિય કરતું નથી \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{lstlisting}[language=SQL]
+-- Truncate ઉદાહરણ
+TRUNCATE TABLE students;
+
+-- Drop ઉદાહરણ
+DROP TABLE students;
+\end{lstlisting}
+
+\begin{mnemonicbox}
+    \textbf{મેમરી ટ્રીક:} "TRC-DST: ટ્રન્કેટ રિમૂવ્સ કન્ટેન્ટ્સ, ડ્રોપ ડિસ્ટ્રોય્સ સ્ટ્રક્ચર ટોટલી"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{3(ક)}{7}{નીચેની Query ના આઉટપુટ લખો.}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{SQL ક્વેરી આઉટપુટ}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{ક્વેરી} & \textbf{આઉટપુટ} & \textbf{સમજૂતી} \\
+        \midrule
+        \textbf{ABS(-23), ABS(49)} & 23, 49 & નિરપેક્ષ મૂલ્ય પાછું આપે છે \\
+        \textbf{SQRT(25), SQRT(81)} & 5, 9 & વર્ગમૂળ પાછું આપે છે \\
+        \textbf{POWER(3,2), POWER(-2,3)} & 9, -8 & $x^y$ \\
+        \textbf{MOD(15,4), MOD(21,3)} & 3, 0 & વિભાજન પછી શેષ પાછો આપે છે \\
+        \textbf{ROUND(123.446,1), ROUND(123.456,2)} & 123.4, 123.46 & ચોક્કસ દશાંશ જગ્યાઓ પર રાઉન્ડ કરે છે \\
+        \textbf{CEIL(234.45), CEIL(-234.45)} & 235, -234 & નજીકના પૂર્ણાંક સુધી ઉપર રાઉન્ડ કરે છે \\
+        \textbf{FLOOR(-12.7), FLOOR(12.7)} & -13, 12 & નજીકના પૂર્ણાંક સુધી નીચે રાઉન્ડ કરે છે \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{lstlisting}[language=SQL]
+SELECT ABS(-23), ABS(49);          -- 23, 49
+SELECT SQRT(25), SQRT(81);         -- 5, 9
+SELECT POWER(3,2), POWER(-2,3);    -- 9, -8
+SELECT MOD(15,4), MOD(21,3);       -- 3, 0
+SELECT ROUND(123.446,1), ROUND(123.456,2); -- 123.4, 123.46
+SELECT CEIL(234.45), CEIL(-234.45);  -- 235, -234
+SELECT FLOOR(-12.7), FLOOR(12.7);    -- -13, 12
+\end{lstlisting}
+
+\begin{mnemonicbox}
+    \textbf{મેમરી ટ્રીક:} "ASPMRCF: એબ્સોલ્યુટ સ્ક્વેર પાવર મોડ્યુલો રાઉન્ડ સીલિંગ ફ્લોર"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(અ)}{3}{SQLમાં ડેટા ટાઈપની યાદી બનાવો. કોઈ પણ ૨ ડેટા ટાઈપ ઉદાહરણ સાથે સમજાવો.}
+\begin{solutionbox}
+\textbf{SQL ડેટા ટાઈપ}: INTEGER, FLOAT, VARCHAR, CHAR, DATE, DATETIME, BOOLEAN, BLOB
+
+\begin{table}[H]
+    \centering
+    \caption{SQL ડેટા ટાઈપ}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{ડેટા ટાઈપ} & \textbf{વર્ણન} & \textbf{ઉદાહરણ} \\
+        \midrule
+        \textbf{INTEGER} & દશાંશ પોઇન્ટ વિના પૂર્ણ સંખ્યાઓ & \code{id INTEGER = 101} \\
+        \textbf{VARCHAR} & પરિવર્તનશીલ-લંબાઈ સ્ટ્રિંગ & \code{name VARCHAR(50) = 'John'} \\
+        \textbf{DATE} & તારીખ મૂલ્યો સંગ્રહિત કરે છે (YYYY-MM-DD) & \code{birth\_date DATE = '2000-05-15'} \\
+        \textbf{FLOAT} & ફ્લોટિંગ પોઇન્ટ સાથે દશાંશ સંખ્યાઓ & \code{salary FLOAT = 45000.50} \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{lstlisting}[language=SQL]
+CREATE TABLE employees (
+    id INTEGER,
+    name VARCHAR(50),
+    salary FLOAT
+);
+\end{lstlisting}
+
+\begin{mnemonicbox}
+    \textbf{મેમરી ટ્રીક:} "IVDB: ઈન્ટિજર અને વારચાર આર ડેટાબેઝ બેસિક્સ"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(બ)}{4}{Full function dependency ઉદાહરણ સાથે સમજાવો.}
+\begin{solutionbox}
+\textbf{Full Function Dependency}: જ્યારે Y, X પર ફંક્શનલી ડિપેન્ડન્ટ હોય, પરંતુ X ના કોઈ સબસેટ પર નહીં.
+
+\begin{table}[H]
+    \centering
+    \caption{પૂર્ણ ફંક્શન ડિપેન્ડન્સી}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{વિચાર} & \textbf{વર્ણન} & \textbf{ઉદાહરણ} \\
+        \midrule
+        \textbf{વ્યાખ્યા} & એટ્રિબ્યુટ B, A પર પૂર્ણપણે ફંક્શનલી ડિપેન્ડન્ટ છે જો B સંપૂર્ણ A પર આધાર રાખે છે & Student\_ID $\to$ Name (પૂર્ણ ડિપેન્ડન્સી) \\
+        \textbf{નોન-ઉદાહરણ} & જ્યારે એટ્રિબ્યુટ કોમ્પોઝિટ કીના માત્ર ભાગ પર આધાર રાખે છે & \{Student\_ID, Course\_ID\} $\to$ Student\_Name (આંશિક) \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=2.5cm]
+    \node [attribute] (sid) {Student\_ID};
+    \node [attribute, right of=sid] (sname) {Student\_Name};
+    \draw [gtu arrow] (sid) -- (sname);
+    
+    \node [gtu container, fit=(sid) (sname), label=below:Full Dependency] {};
+    
+    \node [attribute, below of=sid] (cid) {Course\_ID};
+    \node [attribute, right of=cid] (cname) {Course\_Name};
+    \draw [gtu arrow] (cid) -- (cname);
+    
+    \node [gtu container, fit=(cid) (cname), label=below:Full Dependency] {};
+    
+    \node [attribute, right of=sname, xshift=1cm] (sid2) {Student\_ID};
+    \node [attribute, right of=cname, xshift=1cm] (cid2) {Course\_ID};
+    \node [attribute, right of=sid2, yshift=-1.25cm] (grade) {Grade};
+    
+    \draw [gtu arrow] (sid2) -- (grade);
+    \draw [gtu arrow] (cid2) -- (grade);
+    
+    \node [gtu container, fit=(sid2) (cid2) (grade), label=below:Full Dependency (Composite Key)] {};
+\end{tikzpicture}
+\captionof{figure}{Full Functional Dependency}
+\end{center}
+
+\begin{mnemonicbox}
+    \textbf{મેમરી ટ્રીક:} "FFD: ફુલ, નોટ ફ્રેક્શન ઓફ ડિપેન્ડન્સી"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(ક)}{7}{નોર્મલાઇઝેશનની વ્યાખ્યા આપો. 2NF (સેકન્ડ નોર્મલ ફોર્મ) ઉદાહરણ અને ઉકેલ સાથે સમજાવો.}
+\begin{solutionbox}
+\textbf{નોર્મલાઈઝેશન}: ડેટાબેઝની રચના કરવાની પ્રક્રિયા જેથી મોટા ટેબલને નાના ટેબલોમાં વિભાજિત કરીને અને તેમની વચ્ચે સંબંધો વ્યાખ્યાયિત કરીને, રિડન્ડન્સી અને ડિપેન્ડન્સી ઘટાડવામાં આવે.
+
+\textbf{2NF (સેકન્ડ નોર્મલ ફોર્મ)}:
+\begin{itemize}
+    \item ટેબલ 2NF માં છે જો તે 1NF માં હોય અને કોઈ નોન-પ્રાઇમ એટ્રિબ્યુટ કેન્ડિડેટ કીના કોઈ પણ યોગ્ય સબસેટ પર આધાર રાખતું ન હોય.
+\end{itemize}
+
+\begin{table}[H]
+    \centering
+    \caption{2NF પહેલાં (સમસ્યા)}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{ટેબલ સ્કીમા} & \textbf{સમસ્યા} \\
+        \midrule
+        \textbf{Order(Order\_ID, Product\_ID, Product\_Name, Quantity, Price)} & Product\_Name માત્ર Product\_ID પર આધાર રાખે છે, સંપૂર્ણ કી પર નહીં \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \caption{2NF પછી (ઉકેલ)}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{નવી સ્કીમા} & \textbf{ઉકેલ} \\
+        \midrule
+        \textbf{Order(Order\_ID, Product\_ID, Quantity)} & માત્ર પૂર્ણ કી ડિપેન્ડન્સી \\
+        \textbf{Product(Product\_ID, Product\_Name, Price)} & પ્રોડક્ટ વિગતો માત્ર Product\_ID પર આધાર રાખે છે \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=3cm]
+    \node [entity] (order) {ORDER};
+    \node [attribute, above left of=order] (oid) {\underline{order\_id}};
+    \node [attribute, above of=order] (pid) {\underline{product\_id}};
+    \node [attribute, above right of=order] (qty) {quantity};
+    
+    \node [entity, right of=order, xshift=2cm] (prod) {PRODUCT};
+    \node [attribute, above left of=prod] (pid2) {\underline{product\_id}};
+    \node [attribute, above of=prod] (pname) {product\_name};
+    \node [attribute, above right of=prod] (price) {price};
+    
+    \node [relationship, between=order and prod] (contains) {contains};
+    
+    \draw [gtu line] (order) -- (oid);
+    \draw [gtu line] (order) -- (pid);
+    \draw [gtu line] (order) -- (qty);
+    
+    \draw [gtu line] (prod) -- (pid2);
+    \draw [gtu line] (prod) -- (pname);
+    \draw [gtu line] (prod) -- (price);
+    
+    \draw [gtu line] (order) -- (contains);
+    \draw [gtu line] (contains) -- (prod);
+\end{tikzpicture}
+\captionof{figure}{2NF ઉકેલ ER ડાયાગ્રામ}
+\end{center}
+
+\begin{mnemonicbox}
+    \textbf{મેમરી ટ્રીક:} "2NF-PPD: પાર્શિયલ ડિપેન્ડન્સી પ્રોબ્લેમ્સ ડિવાઇડેડ"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{4(અ)}{3}{કમાન્ડ સમજાવવો. ૧) To\_Number (), ૨) To\_Char()}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{કન્વર્ઝન ફંક્શન}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{ફંક્શન} & \textbf{હેતુ} & \textbf{સિન્ટેક્સ} & \textbf{ઉદાહરણ} \\
+        \midrule
+        \textbf{TO\_NUMBER()} & સ્ટ્રિંગને નંબરમાં રૂપાંતરિત કરે છે & \code{TO\_NUMBER(s, [fmt])} & \code{TO\_NUMBER('123.45')} \\
+        \textbf{TO\_CHAR()} & નંબર/તારીખને સ્ટ્રિંગમાં રૂપાંતરિત કરે છે & \code{TO\_CHAR(v, [fmt])} & \code{TO\_CHAR(1234, '9999')} \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{lstlisting}[language=SQL]
+-- સ્ટ્રિંગને નંબરમાં રૂપાંતરિત કરે છે
+SELECT TO_NUMBER('123.45') FROM dual;  -- 123.45
+
+-- તારીખને ફોર્મેટેડ સ્ટ્રિંગમાં રૂપાંતરિત કરે છે
+SELECT TO_CHAR(SYSDATE, 'DD-MON-YYYY') FROM dual;  -- 20-JAN-2024
+
+-- નંબરને ફોર્મેટેડ સ્ટ્રિંગમાં રૂપાંતરિત કરે છે
+SELECT TO_CHAR(1234.56, '$9,999.99') FROM dual;  -- $1,234.56
+\end{lstlisting}
+
+\begin{mnemonicbox}
+    \textbf{મેમરી ટ્રીક:} "NC: નંબર્સ એન્ડ કેરેક્ટર્સ કન્વર્ઝન"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{4(બ)}{4}{1NF (ફર્સ્ટ નોર્મલ ફોર્મ) ઉદાહરણ અને ઉકેલ સાથે સમજાવો.}
+\begin{solutionbox}
+\textbf{1NF (ફર્સ્ટ નોર્મલ ફોર્મ)}: એક રિલેશન 1NF માં છે જો તેમાં કોઈ રિપીટિંગ ગ્રુપ્સ અથવા એરે ન હોય.
+
+\begin{table}[H]
+    \centering
+    \caption{1NF ઉદાહરણ}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{સ્ટેટ} & \textbf{સ્કીમા/ઉદાહરણ} & \textbf{રીમાર્ક} \\
+        \midrule
+        \textbf{1NF પહેલાં} & **Student(ID, Name, Courses)** & મલ્ટિપલ વેલ્યુ છે \\
+         & (101, John, "Math,Science,History") & સમસ્યા \\
+        \textbf{1NF પછી} & **Student(ID, Name, Course)** & એટોમિક વેલ્યુઝ \\
+         & (101, John, Math), (101, John, Science)... & ઉકેલ \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=2.5cm]
+    \node [entity, dashed] (before) {STUDENT (Unnormalized)};
+    \node [multi attribute, below of=before] (courses) {courses};
+    \draw [gtu line, dashed] (before) -- (courses);
+    
+    \node [right of=before, xshift=2cm] (arrow) {$\implies$};
+    
+    \node [entity, right of=arrow, xshift=2cm] (after) {STUDENT (1NF)};
+    \node [attribute, below of=after] (course) {course};
+    \draw [gtu line] (after) -- (course);
+    
+    \node [attribute, above of=after] (id) {id};
+    \node [attribute, right of=after] (name) {name};
+    \draw [gtu line] (after) -- (id);
+    \draw [gtu line] (after) -- (name);
+\end{tikzpicture}
+\captionof{figure}{1NF Conversion}
+\end{center}
+
+\begin{mnemonicbox}
+    \textbf{મેમરી ટ્રીક:} "1NF-ARM: એટોમિક વેલ્યુઝ રિમૂવ મલ્ટિવેલ્યુઝ"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{4(ક)}{7}{SQL માં Function dependency સમજાવો. Partial function dependency ઉદાહરણ સાથે સમજાવો.}
+\begin{solutionbox}
+\textbf{ફંક્શનલ ડિપેન્ડન્સી}: એક સંબંધ જ્યાં એક એટ્રિબ્યુટ બીજા એટ્રિબ્યુટનું મૂલ્ય નક્કી કરે છે.
+\textbf{નોટેશન}: $X \to Y$ (X, Y ને નક્કી કરે છે)
+
+\textbf{પાર્શિયલ ફંક્શનલ ડિપેન્ડન્સી}: જ્યારે એક એટ્રિબ્યુટ કમ્પોઝિટ પ્રાઇમરી કીના માત્ર એક ભાગ પર આધાર રાખે છે.
+
+\begin{table}[H]
+    \centering
+    \caption{પાર્શિયલ ડિપેન્ડન્સી}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{વિચાર} & \textbf{ઉદાહરણ} & \textbf{સમજૂતી} \\
+        \midrule
+        \textbf{કમ્પોઝિટ કી} & \{Student\_ID, Course\_ID\} & સાથે મળીને પ્રાઇમરી કી બનાવે છે \\
+        \textbf{પાર્શિયલ ડિપેન્ડન્સી} & \{Student\_ID, Course\_ID\} $\to$ Student\_Name & Student\_Name માત્ર Student\_ID પર આધાર રાખે છે \\
+        \textbf{સમસ્યા} & અપડેટ એનોમલીઝ, ડેટા રિડન્ડન્સી & એક જ વિદ્યાર્થીનું નામ ઘણા બધા કોર્સ માટે પુનરાવર્તિત થાય છે \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=2.5cm]
+    \node [attribute] (sid) {Student\_ID};
+    \node [attribute, right of=sid, xshift=2cm] (cid) {Course\_ID};
+    \node [attribute, below of=sid] (sname) {Student\_Name};
+    \node [attribute, below of=cid] (cname) {Course\_Name};
+    \node [attribute, below right of=sname, xshift=1cm] (grade) {Grade};
+    
+    \draw [gtu arrow, red] (sid) -- (sname);
+    \node [below of=sname, node distance=0.8cm, font=\small, red] {Partial Dependency};
+    
+    \draw [gtu arrow] (cid) -- (cname);
+    
+    \draw [gtu arrow] (sid) -- (grade);
+    \draw [gtu arrow] (cid) -- (grade);
+    
+    \node [gtu container, fit=(sid) (cid) (grade), label=above:Full Dependency (PK to Grade)] {};
+\end{tikzpicture}
+\captionof{figure}{Partial Functional Dependency}
+\end{center}
+
+\textbf{ઉકેલ}: અલગ ટેબલોમાં વિભાજિત કરો જ્યાં દરેક નોન-કી એટ્રિબ્યુટ કી પર સંપૂર્ણપણે આધારિત હોય.
+
+\begin{mnemonicbox}
+    \textbf{મેમરી ટ્રીક:} "PD-CPK: પાર્શિયલ ડિપેન્ડન્સી - કમ્પોનન્ટ ઓફ પ્રાઇમરી કી"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(અ)}{3}{Transaction નાં ગુણધર્મો ઉદાહરણ સાથે સમજાવો.}
+\begin{solutionbox}
+\textbf{Transaction ગુણધર્મો} (ACID):
+
+\begin{table}[H]
+    \centering
+    \caption{ACID ગુણધર્મો}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{ગુણધર્મ} & \textbf{વર્ણન} & \textbf{ઉદાહરણ} \\
+        \midrule
+        \textbf{એટોમિસિટી} & બધા ઓપરેશનો સફળતાપૂર્વક પૂર્ણ થાય છે અથવા એક પણ થતું નથી & બેંક ટ્રાન્સફર: ડેબિટ અને ક્રેડિટ બંને થાય અથવા બંને ન થાય \\
+        \textbf{કન્સિસ્ટન્સી} & ડેટાબેઝ પહેલા અને પછી માન્ય સ્થિતિમાં રહે છે & એકાઉન્ટ બેલેન્સ કન્સ્ટ્રેન્ટ્સ માન્ય રહે છે \\
+        \textbf{આઇસોલેશન} & ટ્રાન્ઝેક્શન એવી રીતે એક્ઝિક્યુટ થાય છે જાણે તે એકમાત્ર હોય & બે યુઝર એક જ રેકોર્ડ અપડેટ કરી રહ્યા હોય ત્યારે દખલ કરતા નથી \\
+        \textbf{ડ્યુરેબિલિટી} & કમિટ કરેલા ફેરફારો સિસ્ટમ નિષ્ફળતા પછી પણ ટકી રહે છે & એકવાર પુષ્ટિ થઈ જાય, પછી વીજળી જતી રહે તો પણ ડિપોઝિટ યથાવત રહે છે \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{center}
+\begin{tikzpicture}[gtu flow]
+    \node [gtu start] (start) {START};
+    \node [gtu process, below of=start] (debit) {Debit Account A};
+    \node [gtu process, below of=debit] (credit) {Credit Account B};
+    \node [gtu decision, below of=credit] (check) {Success?};
+    \node [gtu stop, below left of=check, xshift=-1cm] (commit) {COMMIT};
+    \node [gtu stop, below right of=check, xshift=1cm] (rollback) {ROLLBACK};
+    
+    \draw [gtu arrow] (start) -- (debit);
+    \draw [gtu arrow] (debit) -- (credit);
+    \draw [gtu arrow] (credit) -- (check);
+    \draw [gtu arrow] (check) -| node[near start] {Yes} (commit);
+    \draw [gtu arrow] (check) -| node[near start] {No} (rollback);
+\end{tikzpicture}
+\captionof{figure}{એટોમિસિટી ફ્લોચાર્ટ}
+\end{center}
+
+\begin{mnemonicbox}
+    \textbf{મેમરી ટ્રીક:} "ACID: એટોમિસિટી, કન્સિસ્ટન્સી, આઇસોલેશન, ડ્યુરેબિલિટી"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(બ)}{4}{ઉપર Q.5 (b) માં આપેલ "Students" અને "CR" ટેબલનો ઉપયોગ કરીને સેટ ઓપરેટર દ્વારા નીચેની Query લખો.}
+\begin{solutionbox}
+\begin{lstlisting}[language=SQL]
+-- ૧. Students અથવા CR હોય તેવા વ્યક્તિઓની યાદી બનાવો.
+SELECT Stnd_Name FROM Student
+UNION
+SELECT CR_Name FROM CR;
+
+-- ૨. Students અને CR હોય તેવા વ્યક્તિઓની યાદી બનાવો.
+SELECT Stnd_Name FROM Student
+INTERSECT
+SELECT CR_Name FROM CR;
+
+-- ૩. Students હોય અને CR ન હોય માત્ર તેવા વ્યક્તિઓની યાદી બનાવો.
+SELECT Stnd_Name FROM Student
+MINUS
+SELECT CR_Name FROM CR;
+
+-- ૪. CR હોય અને Student ન હોય માત્ર તેવા વ્યક્તિઓની યાદી બનાવો.
+SELECT CR_Name FROM CR
+MINUS
+SELECT Stnd_Name FROM Student;
+\end{lstlisting}
+
+\begin{table}[H]
+    \centering
+    \caption{સેટ ઓપરેટર}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{સેટ ઓપરેટર} & \textbf{હેતુ} & \textbf{ઉદાહરણ માટે પરિણામ} \\
+        \midrule
+        \textbf{UNION} & બધી અલગ રો જોડે છે & Manoj, Rahil, Jiya, Rina, Jitesh, Priya \\
+        \textbf{INTERSECT} & માત્ર સામાન્ય રો પરત કરે છે & Manoj, Rina \\
+        \textbf{MINUS} & પ્રથમ સેટમાં હોય પણ બીજા સેટમાં ન હોય તે રો & Rahil, Jiya \\
+        \textbf{MINUS (ઊલટું)} & બીજા સેટમાં હોય પણ પહેલા સેટમાં ન હોય તે રો & Jitesh, Priya \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{mnemonicbox}
+    \textbf{મેમરી ટ્રીક:} "UIMD: યુનિયન ઇન્ક્લૂડ્સ, માઈનસ ડિવાઈડ્સ"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(ક)}{7}{Conflict serializability વિસ્તારથી સમજાવો.}
+\begin{solutionbox}
+\textbf{Conflict Serializability}: એક શેડ્યૂલ કન્ફ્લિક્ટ સીરિયલાઇઝેબલ છે જો તેને નોન-કન્ફ્લિક્ટિંગ ઓપરેશન્સને સ્વેપ કરીને સીરિયલ શેડ્યૂલમાં રૂપાંતરિત કરી શકાય.
+
+\begin{table}[H]
+    \centering
+    \caption{Conflict Serializability વિચારો}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{મુખ્ય વિચારો} & \textbf{વર્ણન} \\
+        \midrule
+        \textbf{કન્ફ્લિક્ટ ઓપરેશન્સ} & બે ઓપરેશન કન્ફ્લિક્ટ કરે છે જો તેઓ એક જ ડેટા આઇટમને એક્સેસ કરે છે અને ઓછામાં ઓછું એક રાઇટ હોય \\
+        \textbf{પ્રીસિડન્સ ગ્રાફ} & ટ્રાન્ઝેક્શન વચ્ચેના કન્ફ્લિક્ટને દર્શાવતો ડાયરેક્ટેડ ગ્રાફ \\
+        \textbf{સીરિયલાઇઝેબલ} & જો પ્રીસિડન્સ ગ્રાફમાં કોઈ સાયકલ ન હોય, તો શેડ્યૂલ કન્ફ્લિક્ટ સીરિયલાઇઝેબલ છે \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=3cm]
+    \node [gtu state] (t1) {T1};
+    \node [gtu state, right of=t1] (t2) {T2};
+    
+    \draw [gtu arrow] (t1) -- node[above] {Conflict: W(X) $\to$ R(X)} (t2);
+    \draw [gtu arrow, bend right] (t2) to node[below] {Conflict (if cyclic)} (t1);
+    
+    \node [below of=t1, yshift=1cm] {No Cycle $\implies$ Serializable};
+\end{tikzpicture}
+\captionof{figure}{પ્રીસિડન્સ ગ્રાફ કોન્સેપ્ટ}
+\end{center}
+
+\textbf{ઉદાહરણ}:
+\begin{itemize}
+    \item T1: R(X), W(X)
+    \item T2: R(X), W(X)
+    \item \textbf{સીરિયલાઇઝેબલ શેડ્યૂલ્સ}: T1 $\to$ T2 અથવા T2 $\to$ T1
+    \item \textbf{નોન-સીરિયલાઇઝેબલ}: R1(X), R2(X), W1(X), W2(X) (સાયકલ બનાવે છે)
+\end{itemize}
+
+\begin{mnemonicbox}
+    \textbf{મેમરી ટ્રીક:} "COPS: કન્ફ્લિક્ટ ઓપરેશન્સ પ્રોડ્યુસ સીરિયલાઇઝેબિલિટી"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{5(અ)}{3}{Transaction નો concept ઉદાહરણ સાથે સમજાવો.}
+\begin{solutionbox}
+\textbf{ટ્રાન્ઝેક્શન}: કામની એક તાર્કિક એકમ જે સંપૂર્ણપણે કરવું અથવા સંપૂર્ણપણે અનડૂ કરવું આવશ્યક છે.
+
+\begin{table}[H]
+    \centering
+    \caption{ટ્રાન્ઝેક્શન તબક્કાઓ}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{તબક્કાઓ} & \textbf{વર્ણન} & \textbf{ઉદાહરણ} \\
+        \midrule
+        \textbf{BEGIN} & ટ્રાન્ઝેક્શનની શરૂઆત ચિહ્નિત કરે છે & START TRANSACTION \\
+        \textbf{Execute} & ડેટાબેઝ ઓપરેશન્સ (રીડ/રાઇટ) & UPDATE account... \\
+        \textbf{COMMIT/ROLLBACK} & સફળતા/નિષ્ફળતા સાથે ટ્રાન્ઝેક્શન સમાપ્ત કરે છે & COMMIT / ROLLBACK \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{center}
+\begin{tikzpicture}[gtu flow]
+    \node [gtu start] (start) {BEGIN};
+    \node [gtu process, below of=start] (read) {Read Balance};
+    \node [gtu decision, below of=read] (check) {Sufficient?};
+    \node [gtu process, below of=check] (update) {Update Balance};
+    \node [gtu process, below of=update] (rec) {Log Record};
+    \node [gtu stop, below of=rec] (commit) {COMMIT};
+    \node [gtu stop, right of=check, xshift=2cm] (rollback) {ROLLBACK};
+    
+    \draw [gtu arrow] (start) -- (read);
+    \draw [gtu arrow] (read) -- (check);
+    \draw [gtu arrow] (check) -- node[left] {Yes} (update);
+    \draw [gtu arrow] (check) -- node[above] {No} (rollback);
+    \draw [gtu arrow] (update) -- (rec);
+    \draw [gtu arrow] (rec) -- (commit);
+\end{tikzpicture}
+\captionof{figure}{ટ્રાન્ઝેક્શન જીવન ચક્ર}
+\end{center}
+
+\begin{lstlisting}[language=SQL]
+BEGIN TRANSACTION;
+UPDATE accounts SET balance = balance - 1000 WHERE acc_no = 123;
+UPDATE accounts SET balance = balance + 1000 WHERE acc_no = 456;
+COMMIT;
+\end{lstlisting}
+
+\begin{mnemonicbox}
+    \textbf{મેમરી ટ્રીક:} "BEC: બિગિન, એક્ઝિક્યુટ, કમિટ"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{5(બ)}{4}{Equi-join સિન્ટેક્સ અને ઉદાહરણ સાથે સમજાવો.}
+\begin{solutionbox}
+\textbf{Equi-join}: એક જોઈન ઓપરેશન જે સમાનતા કમ્પેરિઝન ઓપરેટરનો ઉપયોગ કરે છે.
+
+\begin{table}[H]
+    \centering
+    \caption{Equi-join}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{ફીચર} & \textbf{વર્ણન} \\
+        \midrule
+        \textbf{સિન્ટેક્સ} & \code{SELECT * FROM t1, t2 WHERE t1.c = t2.c;} \\
+        \textbf{કન્ડિશન} & \code{=} ઓપરેટર વાપરે છે \\
+        \textbf{કોલમ્સ} & બંને ટેબલમાંથી કોલમનો સમાવેશ કરે છે \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{lstlisting}[language=SQL]
+SELECT name, course_name 
+FROM students s, courses c 
+WHERE s.course_id = c.course_id;
+\end{lstlisting}
+
+\begin{mnemonicbox}
+    \textbf{મેમરી ટ્રીક:} "EJE: ઇક્વિ જોઈન ઇક્વેશન (=)"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{5(ક)}{7}{View serializability વિસ્તારથી સમજાવો.}
+\begin{solutionbox}
+\textbf{View Serializability}: એક શેડ્યૂલ વ્યૂ સીરિયલાઇઝેબલ છે જો તે કોઈ સીરિયલ શેડ્યૂલ સાથે વ્યૂ ઇક્વિવેલન્ટ હોય.
+
+\begin{table}[H]
+    \centering
+    \caption{View Equivalency શરતો}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{શરત} & \textbf{વર્ણન} \\
+        \midrule
+        \textbf{ઇનિશિયલ રીડ} & જો T1 શેડ્યૂલ S માં ડેટા આઇટમ X ની પ્રારંભિક વેલ્યુ વાંચે છે, તો તેણે S' શેડ્યૂલમાં પણ પ્રારંભિક વેલ્યુ વાંચવી જોઈએ \\
+        \textbf{ફાઇનલ રાઇટ} & જો T1, S માં ડેટા આઇટમ X નું અંતિમ લખાણ કરે છે, તો તેણે S' માં પણ અંતિમ લખાણ કરવું જોઈએ \\
+        \textbf{ડિપેન્ડન્સી પ્રિઝર્વેશન} & જો T1, S માં T2 દ્વારા લખાયેલ X ની વેલ્યુ વાંચે છે, તો તેણે S' માં પણ T2 પાસેથી વાંચવું જોઈએ \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{center}
+\begin{tikzpicture}[gtu flow]
+    \node [gtu start] (start) {Schedule S};
+    \node [gtu decision, below of=start] (check) {View Equivalent?};
+    \node [gtu stop, below left of=check, xshift=-1cm] (yes) {View Serializable};
+    \node [gtu stop, below right of=check, xshift=1cm] (no) {Not View Serializable};
+    
+    \draw [gtu arrow] (start) -- (check);
+    \draw [gtu arrow] (check) -| node[near start] {Yes} (yes);
+    \draw [gtu arrow] (check) -| node[near start] {No} (no);
+    
+    \node [gtu block, right of=start, xshift=4cm] (analysis) {Read-Write Analysis};
+    \node [below of=analysis, yshift=0.5cm, align=left] {1. Initial Read Check\\2. Final Write Check\\3. Read-from-Write Check};
+    
+    \draw [gtu line, dashed] (start) -- (analysis);
+\end{tikzpicture}
+\captionof{figure}{View Serializability ચેક}
+\end{center}
+
+\textbf{તુલના}:
+\begin{itemize}
+    \item \textbf{કન્ફ્લિક્ટ સીરિયલાઇઝેબિલિટી}: વધુ પ્રતિબંધિત, પરીક્ષણ કરવું સરળ (પ્રીસિડન્સ ગ્રાફ)
+    \item \textbf{વ્યૂ સીરિયલાઇઝેબિલિટી}: વધુ સામાન્ય, પરીક્ષણ કરવું વધુ મુશ્કેલ (NP-કમ્પ્લીટ)
+\end{itemize}
+
+\textbf{ઉદાહરણ}:
+\begin{itemize}
+    \item T1: W(X), T2: W(X), T3: R(X)
+    \item શેડ્યૂલ: W1(X), W2(X), R3(X) - સીરિયલ શેડ્યૂલ T2,T1,T3 સાથે વ્યૂ ઇક્વિવેલન્ટ
+\end{itemize}
+
+\begin{mnemonicbox}
+    \textbf{મેમરી ટ્રીક:} "VIR-FF: વ્યૂ પ્રિઝર્વ્સ ઇનિશિયલ રીડ્સ એન્ડ ફાઇનલ રાઇટ્સ"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\end{document}

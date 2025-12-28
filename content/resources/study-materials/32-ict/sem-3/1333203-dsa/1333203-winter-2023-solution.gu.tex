@@ -1,0 +1,1594 @@
+\documentclass{article}
+\input{C:/Users/milav/OneDrive/Git/milav-next/latex-templates/gtu-solutions/preamble.tex}
+\input{C:/Users/milav/OneDrive/Git/milav-next/latex-templates/gtu-solutions/gujarati-boxes.tex}
+\input{C:/Users/milav/OneDrive/Git/milav-next/latex-templates/gtu-solutions/commands.tex}
+
+\title{ડેટા સ્ટ્રક્ચર અને એપ્લિકેશન (1333203) - વિન્ટર 2023 સોલ્યુશન}
+\date{જાન્યુઆરી 18, 2024}
+
+\begin{document}
+\maketitle
+
+\questionmarks{1(a)}{3}{લીન્કડ લીસ્ટની વ્યાખ્યા આપો. વિવિધ પ્રકારના લિન્ક્ડ લીસ્ટ ની યાદી આપો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{લિન્ક્ડ લિસ્ટ વ્યાખ્યા અને પ્રકાર}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{વ્યાખ્યા} & \textbf{લિન્ક્ડ લિસ્ટના પ્રકાર} \\ \hline
+લિન્ક્ડ લિસ્ટ એ લીનિયર ડેટા સ્ટ્રક્ચર છે જેમાં એલિમેન્ટ્સ નોડ્સમાં સ્ટોર થાય છે, અને દરેક નોડ ક્રમમાં આગળના નોડને પોઇન્ટ કરે છે & 1. સિંગલી લિન્ક્ડ લિસ્ટ \\
+& 2. ડબલી લિન્ક્ડ લિસ્ટ \\
+& 3. સર્ક્યુલર લિન્ક્ડ લિસ્ટ \\
+& 4. સર્ક્યુલર ડબલી લિન્ક્ડ લિસ્ટ \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[
+    listnode/.style={rectangle, draw=black, minimum size=6mm},
+    ptr/.style={->, >=stealth, thick}
+]
+    % Singly
+    \node[anchor=west] at (-1, 1.5) {Singly:};
+    \node[listnode] (s1) at (1, 1.5) {Data|Next};
+    \node[listnode] (s2) at (3.5, 1.5) {Data|Next};
+    \node[listnode] (s3) at (6, 1.5) {Data|Next};
+    \node (snull) at (8, 1.5) {NULL};
+    \draw[ptr] (s1) -- (s2);
+    \draw[ptr] (s2) -- (s3);
+    \draw[ptr] (s3) -- (snull);
+
+    % Doubly
+    \node[anchor=west] at (-1, 0) {Doubly:};
+    \node[listnode] (d1) at (1.5, 0) {P|D|N};
+    \node[listnode] (d2) at (4, 0) {P|D|N};
+    \node[listnode] (d3) at (6.5, 0) {P|D|N};
+    \node (dnull) at (8.5, 0) {NULL};
+    \draw[ptr] (d1) -- (d2);
+    \draw[ptr] (d2) -- (d1);
+    \draw[ptr] (d2) -- (d3);
+    \draw[ptr] (d3) -- (d2);
+    \draw[ptr] (d3) -- (dnull);
+
+    % Circular
+    \node[anchor=west] at (-1, -1.5) {Circular:};
+    \node[listnode] (c1) at (1, -1.5) {Data|Next};
+    \node[listnode] (c2) at (3.5, -1.5) {Data|Next};
+    \node[listnode] (c3) at (6, -1.5) {Data|Next};
+    \draw[ptr] (c1) -- (c2);
+    \draw[ptr] (c2) -- (c3);
+    \draw[ptr] (c3.south) -- ++(0,-0.3) -| (c1.south);
+\end{tikzpicture}
+\captionof{figure}{લિન્ક્ડ લિસ્ટના પ્રકારો}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{એક, બે, ગોળ, બે-ગોળ}
+\end{mnemonicbox}
+
+\questionmarks{1(b)}{4}{પાયથનમાં લીનીયર અને નોન-લીનીયર ડેટા સ્ટર્ચર ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{લીનીયર વિરુદ્ધ નોન-લીનીયર ડેટા સ્ટ્રક્ચર}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{ડેટા સ્ટ્રક્ચર} & \textbf{વર્ણન} & \textbf{પાયથન ઉદાહરણો} \\ \hline
+\textbf{લીનીયર} & એલિમેન્ટ્સ ક્રમિક રીતે ગોઠવાયેલા હોય છે જેમાં દરેક એલિમેન્ટને એકદમ એક અગાઉનું અને એક પછીનું એલિમેન્ટ હોય છે (પ્રથમ અને છેલ્લા સિવાય) & Lists: \code{[1, 2, 3]} \newline Tuples: \code{(1, 2, 3)} \newline Strings: \code{"abc"} \newline Queue: \code{queue.Queue()} \\ \hline
+\textbf{નોન-લીનીયર} & એલિમેન્ટ્સ ક્રમિક રીતે ગોઠવાયેલા નથી; એક એલિમેન્ટ અનેક એલિમેન્ટ્સ સાથે જોડાઈ શકે છે & Dictionary: \code{\{"a": 1, "b": 2\}} \newline Set: \code{\{1, 2, 3\}} \newline Tree: કસ્ટમ ઇમ્પ્લીમેન્ટેશન \newline Graph: કસ્ટમ ઇમ્પ્લીમેન્ટેશન \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[
+    node distance=1.5cm,
+    level 1/.style={sibling distance=4cm},
+    level 2/.style={sibling distance=2cm}
+]
+    \node[gtu block] {ડેટા સ્ટ્રક્ચર્સ}
+        child {node[gtu block] {લીનીયર}
+            child {node[gtu state] {એરે}}
+            child {node[gtu state] {લિન્ક્ડ લિસ્ટ}}
+            child {node[gtu state] {સ્ટેક}}
+            child {node[gtu state] {ક્યુ}}
+        }
+        child {node[gtu block] {નોન-લીનીયર}
+            child {node[gtu state] {ટ્રી}}
+            child {node[gtu state] {ગ્રાફ}}
+            child {node[gtu state] {હેશ ટેબલ}}
+        };
+\end{tikzpicture}
+\captionof{figure}{ડેટા સ્ટ્રક્ચર્સનું વર્ગીકરણ}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{લીનીયર લાઈનમાં, નોન-લીનીયર ચારે બાજુ}
+\end{mnemonicbox}
+
+\questionmarks{1(c)}{7}{પાયથનમાં ક્લાસ, એટ્રીબ્યુટ, ઓબ્જેક્ટ અને ક્લાસ મેથડ યોગ્ય ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}
+    \node[draw, rectangle split, rectangle split parts=3, minimum width=4cm] (student) {
+        \textbf{Student}
+        \nodepart{second}
+        - roll\_no \newline
+        - name
+        \nodepart{third}
+        + \_\_init\_\_() \newline
+        + display()
+    };
+\end{tikzpicture}
+\captionof{figure}{ક્લાસ ડાયાગ્રામ ઉદાહરણ}
+\end{center}
+
+\begin{center}
+\captionof{table}{OOP સંકલ્પનાઓ}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{શબ્દ} & \textbf{વર્ણન} \\ \hline
+\textbf{ક્લાસ} & ઓબ્જેક્ટ્સ બનાવવા માટેનો બ્લૂપ્રિન્ટ, જેમાં શેર્ડ એટ્રિબ્યુટ્સ અને મેથડ્સ હોય છે \\ \hline
+\textbf{એટ્રિબ્યુટ્સ} & ક્લાસની અંદર ડેટા સ્ટોર કરતા વેરિએબલ્સ \\ \hline
+\textbf{ઓબ્જેક્ટ} & ક્લાસનું ઇન્સ્ટન્સ, જેમાં ચોક્કસ એટ્રિબ્યુટ વેલ્યુ હોય છે \\ \hline
+\textbf{ક્લાસ મેથડ} & ક્લાસની અંદર ડિફાઇન થયેલા ફંક્શન્સ જે ક્લાસની સ્થિતિને એક્સેસ અને મોડિફાય કરી શકે છે \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{lstlisting}[language=Python]
+class Student:
+    # ક્લાસ એટ્રિબ્યુટ
+    school = "GTU"
+    
+    # કન્સ્ટ્રક્ટર
+    def __init__(self, roll_no, name):
+        # ઇન્સ્ટન્સ એટ્રિબ્યુટ્સ
+        self.roll_no = roll_no
+        self.name = name
+    
+    # ઇન્સ્ટન્સ મેથડ
+    def display(self):
+        print(f"Roll No: {self.roll_no}, Name: {self.name}")
+    
+    # ક્લાસ મેથડ
+    @classmethod
+    def change_school(cls, new_school):
+        cls.school = new_school
+
+# ઓબ્જેક્ટ બનાવવું
+student1 = Student(101, "રાજ")
+student1.display()  # આઉટપુટ: Roll No: 101, Name: રાજ
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{ક્લાસ બનાવે, એટ્રિબ્યુટ સંગ્રહે, ઓબ્જેક્ટ વાપરે, મેથડ ક્રિયા કરે}
+\end{mnemonicbox}
+
+\questionmarks{1(c) OR}{7}{ડેટા એન્કેપ્સુલેસન અને પોલી મોર્ફીસમની વ્યાખ્યા આપો. પોલી મોર્ફીસમ સમજાવવા માટેનો પાયથન કોડ વિકસાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{વ્યાખ્યાઓ}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{કોન્સેપ્ટ} & \textbf{વ્યાખ્યા} \\ \hline
+\textbf{ડેટા એન્કેપ્સુલેસન} & ડેટા અને મેથડ્સને એક એકમ (ક્લાસ)માં બંધ કરવા અને કેટલાક કોમ્પોનન્ટ્સને સીધી એક્સેસથી પ્રતિબંધિત કરવા \\ \hline
+\textbf{પોલીમોર્ફિઝમ} & વિવિધ ક્લાસને એક જ નામના મેથડનો પોતાનો અમલ પૂરો પાડવાની ક્ષમતા \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[
+    level 1/.style={sibling distance=4cm},
+    level 2/.style={sibling distance=2.5cm}
+]
+    \node[gtu block] {પોલીમોર્ફિઝમ}
+        child {node[gtu state] {મેથડ ઓવરરાઇડિંગ}}
+        child {node[gtu state] {મેથડ ઓવરલોડિંગ}}
+        child {node[gtu state] {ડક ટાઇપિંગ}};
+\end{tikzpicture}
+\captionof{figure}{પોલીમોર્ફિઝમના પ્રકાર}
+\end{center}
+
+\begin{lstlisting}[language=Python]
+# પોલીમોર્ફિઝમ ઉદાહરણ
+class Animal:
+    def speak(self):
+        pass
+
+class Dog(Animal):
+    def speak(self):
+        return "ભૌં ભૌં!"
+
+class Cat(Animal):
+    def speak(self):
+        return "મ્યાઉં!"
+
+class Duck(Animal):
+    def speak(self):
+        return "ક્વેક!"
+
+# પોલીમોર્ફિઝમ દર્શાવતું ફંક્શન
+def animal_sound(animal):
+    return animal.speak()
+
+# ઓબ્જેક્ટ્સ બનાવવા
+dog = Dog()
+cat = Cat()
+duck = Duck()
+
+# એક જ ફંક્શન વિવિધ પ્રાણી ઓબ્જેક્ટ્સ માટે કામ કરે છે
+print(animal_sound(dog))   # આઉટપુટ: ભૌં ભૌં!
+print(animal_sound(cat))   # આઉટપુટ: મ્યાઉં!
+print(animal_sound(duck))  # આઉટપુટ: ક્વેક!
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{એન્કેપ્સુલેશન છુપાવે છે, પોલીમોર્ફિઝમ બદલાય છે}
+\end{mnemonicbox}
+
+\questionmarks{2(a)}{3}{સ્ટેક અને ક્યુ નો તફાવત આપો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{સ્ટેક વિરુદ્ધ ક્યુ}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{ફીચર} & \textbf{સ્ટેક} & \textbf{ક્યુ} \\ \hline
+\textbf{સિદ્ધાંત} & LIFO (છેલ્લું આવે પહેલું જાય) & FIFO (પહેલું આવે પહેલું જાય) \\ \hline
+\textbf{ઓપરેશન} & પુશ, પોપ & એનક્યુ, ડિક્યુ \\ \hline
+\textbf{એક્સેસ} & એલિમેન્ટ્સ ફક્ત એક છેડેથી ઉમેરાય/દૂર થાય છે (ટોપ) & એલિમેન્ટ્સ છેલ્લે ઉમેરાય છે અને આગળથી દૂર થાય છે \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[
+    node distance=2cm,
+    stacknode/.style={rectangle, draw, minimum width=1cm, minimum height=0.6cm},
+    queuenode/.style={rectangle, draw, minimum size=0.8cm}
+]
+    % Stack
+    \node at (-3, 2) {\textbf{Stack}};
+    \node[stacknode] (s3) at (-3, 1.2) {3};
+    \node[stacknode, below=0cm of s3] (s2) {2};
+    \node[stacknode, below=0cm of s2] (s1) {1};
+    \draw[->] (-4, 1.2) -- (-3.6, 1.2) node[left, pos=0] {Push} node[midway, below] {In};
+    \draw[->] (-3.6, 0.4) -- (-4, 0.4) node[left, pos=1] {Pop} node[midway, below] {Out};
+
+    % Queue
+    \node at (3, 2) {\textbf{Queue}};
+    \node[queuenode] (q1) at (1.5, 0.5) {1};
+    \node[queuenode, right=0cm of q1] (q2) {2};
+    \node[queuenode, right=0cm of q2] (q3) {3};
+    \node[below] at (q1.south) {Front};
+    \node[below] at (q3.south) {Rear};
+    \draw[<-] (q1.west) -- ++(-0.5, 0) node[left] {Out (Dequeue)};
+    \draw[<-] (q3.east) -- ++(0.5, 0) node[right] {In (Enqueue)};
+\end{tikzpicture}
+\captionof{figure}{સ્ટેક અને ક્યુ}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{સ્ટેક ઉપરનું પહેલા, ક્યુ આગળનું પહેલા}
+\end{mnemonicbox}
+
+\questionmarks{2(b)}{4}{પુશ અને પોપ ઓપરેશન માટેનો અલ્ગોરીધમ લખો.}
+
+\begin{solutionbox}
+\textbf{PUSH અલ્ગોરિધમ:}
+\begin{lstlisting}
+શરુઆત
+  1. ચેક કરો કે સ્ટેક ભરેલો છે કે નહીં
+  2. જો ભરેલો ન હોય, તો top ને 1 વધારો
+  3. 'top' પોઝિશન પર એલિમેન્ટ ઉમેરો
+સમાપ્ત
+\end{lstlisting}
+
+\textbf{POP અલ્ગોરિધમ:}
+\begin{lstlisting}
+શરુઆત
+  1. ચેક કરો કે સ્ટેક ખાલી છે કે નહીં
+  2. જો ખાલી ન હોય, તો 'top' પરના એલિમેન્ટને લો
+  3. top ને 1 ઘટાડો
+  4. મેળવેલ એલિમેન્ટ પાછો આપો
+સમાપ્ત
+\end{lstlisting}
+
+\begin{lstlisting}[language=Python]
+class Stack:
+    def __init__(self, size):
+        self.stack = []
+        self.size = size
+        self.top = -1
+    
+    def push(self, element):
+        if self.top >= self.size - 1:
+            return "Stack Overflow"
+        else:
+            self.top += 1
+            self.stack.append(element)
+            return "Pushed " + str(element)
+    
+    def pop(self):
+        if self.top < 0:
+            return "Stack Underflow"
+        else:
+            element = self.stack.pop()
+            self.top -= 1
+            return element
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{ટોપ પર પુશ, ટોપથી પોપ}
+\end{mnemonicbox}
+
+\questionmarks{2(c)}{7}{નીચે. આપેલ સમીકરણ ને ઇન્ફીક્સ માંથી પોસ્ટફિક્ષ માં બદલો. \newline
+\textbf{A * (B + C) - D / (E + F)}}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{Infix} & $A * (B + C) - D / (E + F)$ \\ \hline
+\textbf{Postfix} & $A B C + * D E F + / -$ \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\captionof{table}{ઇન્ફીક્સ માંથી પોસ્ટફિક્ષ ટ્રેસ}
+\begin{tabulary}{\linewidth}{|C|C|L|L|}
+\hline
+\textbf{સ્ટેપ} & \textbf{સિમ્બોલ} & \textbf{સ્ટેક} & \textbf{આઉટપુટ} \\ \hline
+1 & A & & A \\ \hline
+2 & * & * & A \\ \hline
+3 & ( & * ( & A \\ \hline
+4 & B & * ( & A B \\ \hline
+5 & + & * ( + & A B \\ \hline
+6 & C & * ( + & A B C \\ \hline
+7 & ) & * & A B C + \\ \hline
+8 & - & - & A B C + * \\ \hline
+9 & D & - & A B C + * D \\ \hline
+10 & / & - / & A B C + * D \\ \hline
+11 & ( & - / ( & A B C + * D \\ \hline
+12 & E & - / ( & A B C + * D E \\ \hline
+13 & + & - / ( + & A B C + * D E \\ \hline
+14 & F & - / ( + & A B C + * D E F \\ \hline
+15 & ) & - / & A B C + * D E F + \\ \hline
+16 & end & & A B C + * D E F + / - \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{જવાબ:} \code{A B C + * D E F + / -}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{ઓપરેટર સ્ટેક પર, ઓપરન્ડ સીધા પ્રિન્ટ}
+\end{mnemonicbox}
+
+\questionmarks{2(a) OR}{3}{સિમ્પલ ક્યુ અને સર્ક્યુલર ક્યુ નો તફાવત આપો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{સિમ્પલ વિરુદ્ધ સર્ક્યુલર ક્યુ}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{ફીચર} & \textbf{સિમ્પલ ક્યુ} & \textbf{સર્ક્યુલર ક્યુ} \\ \hline
+\textbf{સ્ટ્રક્ચર} & લીનિયર ડેટા સ્ટ્રક્ચર & જોડાયેલા છેડાવાળો લીનિયર ડેટા સ્ટ્રક્ચર \\ \hline
+\textbf{મેમરી} & ડિક્યુ પછી ખાલી જગ્યાઓને કારણે અકાર્યક્ષમ મેમરી વપરાશ & ખાલી જગ્યાઓનો ફરીથી ઉપયોગ કરીને કાર્યક્ષમ મેમરી વપરાશ \\ \hline
+\textbf{ઇમ્પ્લિમેન્ટેશન} & ફ્રન્ટ હંમેશા ઇન્ડેક્સ 0 પર, રીયર વધે & ફ્રન્ટ અને રીયર મોડ્યુલો ઓપરેશન સાથે સર્ક્યુલર રીતે ફરે \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}
+    % Simple Queue
+    \node[anchor=west] at (-4, 1) {Simple Queue:};
+    \draw (-4, 0) grid (0, 0.6);
+    \node[above] at (-3.5, 0.6) {Front};
+    \node[above] at (-0.5, 0.6) {Rear};
+
+    % Circular Queue
+    \node[anchor=west] at (2, 1) {Circular Queue:};
+    \draw (3.5,0) circle [radius=1.2];
+    \draw (3.5,0) circle [radius=0.6];
+    \foreach \angle in {0, 45, ..., 315}
+        \draw (3.5,0) ++(\angle:0.6) -- ++(\angle:0.6);
+    \node at (3.5, 0) {Cycle};
+\end{tikzpicture}
+\captionof{figure}{સિમ્પલ વિરુદ્ધ સર્ક્યુલર ક્યુ સ્ટ્રક્ચર}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{સાદી વેડફે, ગોળ ફરીથી વાપરે}
+\end{mnemonicbox}
+
+\questionmarks{2(b) OR}{4}{રીકસીવ ફંક્શનનો કોન્સેપ્ટ યોગ્ય ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{રિકર્ઝન કોન્સેપ્ટ}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{મુખ્ય પાસાઓ} & \textbf{વર્ણન} \\ \hline
+\textbf{વ્યાખ્યા} & એવું ફંક્શન જે એક જ સમસ્યાના નાના ભાગને હલ કરવા માટે પોતાને જ કોલ કરે છે \\ \hline
+\textbf{બેઝ કેસ} & એવી સ્થિતિ જ્યાં ફંક્શન પોતાને કોલ કરવાનું બંધ કરે છે \\ \hline
+\textbf{રિકર્સિવ કેસ} & એવી સ્થિતિ જ્યાં ફંક્શન સમસ્યાના સરળ સ્વરૂપ સાથે પોતાને કોલ કરે છે \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[
+    level distance=1.2cm,
+    level 1/.style={sibling distance=4cm},
+    every node/.style={rectangle, draw, rounded corners}
+]
+    \node {factorial(3)}
+        child {node {3 * factorial(2)}
+            child {node {3 * 2 * factorial(1)}
+                child {node {3 * 2 * 1 * factorial(0)}
+                    child {node {3 * 2 * 1 * 1 = 6}}
+                }
+            }
+        };
+\end{tikzpicture}
+\captionof{figure}{રિકર્સિવ કોલ્સ ટ્રેસ}
+\end{center}
+
+\begin{lstlisting}[language=Python]
+def factorial(n):
+    # બેઝ કેસ
+    if n == 0:
+        return 1
+    # રિકર્સિવ કેસ
+    else:
+        return n * factorial(n-1)
+
+# ઉદાહરણ
+result = factorial(5)  # 5! = 120
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{બેઝ તોડે, રિકર્શન પાછું આપે}
+\end{mnemonicbox}
+
+\questionmarks{2(c) OR}{7}{Enqueue અને Dequeue ઓપરેશન માટેનો પાયથન કોડ વિકસાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[
+    cell/.style={rectangle, draw, minimum size=0.8cm},
+    scale=0.8, transform shape
+]
+    % Enqueue
+    \node[anchor=west] at (-6, 2) {\textbf{Enqueue Operation:}};
+    \node[cell] at (-5, 1) {1};
+    \node[cell, right=0cm] at (-4.2, 1) {2};
+    \node[cell, right=0cm] at (-3.4, 1) {3};
+    \draw[->, thick] (-1.5, 1) -- (-2.5, 1) node[midway, above] {Add 4};
+    \node[cell] at (0, 1) {1};
+    \node[cell, right=0cm] at (0.8, 1) {2};
+    \node[cell, right=0cm] at (1.6, 1) {3};
+    \node[cell, right=0cm, fill=green!20] at (2.4, 1) {4};
+
+    % Dequeue
+    \node[anchor=west] at (-6, 0) {\textbf{Dequeue Operation:}};
+    \node[cell, fill=red!20] at (-5, -1) {1};
+    \node[cell, right=0cm] at (-4.2, -1) {2};
+    \node[cell, right=0cm] at (-3.4, -1) {3};
+    \node[cell, right=0cm] at (-2.6, -1) {4};
+    \draw[->, thick] (-1.5, -1) -- (-0.5, -1) node[midway, above] {Remove Front};
+    \node[cell] at (1, -1) {2};
+    \node[cell, right=0cm] at (1.8, -1) {3};
+    \node[cell, right=0cm] at (2.6, -1) {4};
+\end{tikzpicture}
+\captionof{figure}{Enqueue અને Dequeue વિઝ્યુઅલાઈઝેશન}
+\end{center}
+
+\begin{lstlisting}[language=Python]
+class Queue:
+    def __init__(self, size):
+        self.queue = []
+        self.size = size
+        self.front = 0
+        self.rear = -1
+        self.count = 0
+    
+    def enqueue(self, item):
+        if self.count >= self.size:
+            return "ક્યુ ભરેલી છે"
+        else:
+            self.rear += 1
+            self.queue.append(item)
+            self.count += 1
+            return "Enqueued " + str(item)
+    
+    def dequeue(self):
+        if self.count <= 0:
+            return "ક્યુ ખાલી છે"
+        else:
+            item = self.queue.pop(0)
+            self.count -= 1
+            return item
+    
+    def display(self):
+        return self.queue
+
+# ટેસ્ટ
+q = Queue(5)
+q.enqueue(10)
+q.enqueue(20)
+q.enqueue(30)
+print(q.display())  # [10, 20, 30]
+print(q.dequeue())  # 10
+print(q.display())  # [20, 30]
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{છેડે ઉમેરો, શરૂઆતથી કાઢો}
+\end{mnemonicbox}
+
+\questionmarks{3(a)}{3}{સીન્ગલી લિન્ક્ડ લીસ્ટ અને સર્ક્યુલર લિન્ક્ડ લીસ્ટ નો તફાવત આપો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{સિંગલી વિરુદ્ધ સર્ક્યુલર લિન્ક્ડ લિસ્ટ}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{ફીચર} & \textbf{સિંગલી લિન્ક્ડ લિસ્ટ} & \textbf{સર્ક્યુલર લિન્ક્ડ લિસ્ટ} \\ \hline
+\textbf{છેલ્લો નોડ} & NULL તરફ પોઇન્ટ કરે છે & પહેલા નોડ તરફ પાછો પોઇન્ટ કરે છે \\ \hline
+\textbf{ટ્રાવર્સલ} & ચોક્કસ અંત ધરાવે છે & સતત ટ્રાવર્સ કરી શકાય છે \\ \hline
+\textbf{મેમરી} & દરેક નોડને એક પોઇન્ટર જોઈએ & દરેક નોડને એક પોઇન્ટર જોઈએ \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[
+    listnode/.style={rectangle, draw, minimum width=0.8cm},
+    ptr/.style={->, >=stealth}
+]
+    % Singly
+    \node[anchor=west] at (-2, 1) {Singly:};
+    \node[listnode] (s1) at (0, 1) {1};
+    \node[listnode] (s2) at (1.5, 1) {2};
+    \node[listnode] (s3) at (3, 1) {3};
+    \node (null) at (4.5, 1) {NULL};
+    \draw[ptr] (s1) -- (s2);
+    \draw[ptr] (s2) -- (s3);
+    \draw[ptr] (s3) -- (null);
+
+    % Circular
+    \node[anchor=west] at (-2, -0.5) {Circular:};
+    \node[listnode] (c1) at (0, -0.5) {1};
+    \node[listnode] (c2) at (1.5, -0.5) {2};
+    \node[listnode] (c3) at (3, -0.5) {3};
+    \draw[ptr] (c1) -- (c2);
+    \draw[ptr] (c2) -- (c3);
+    \draw[ptr] (c3.south) -- ++(0,-0.3) -| (c1.south);
+\end{tikzpicture}
+\captionof{figure}{સિંગલી વિરુદ્ધ સર્ક્યુલર સ્ટ્રક્ચર}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{સિંગલી અટકે, સર્ક્યુલર ફરે}
+\end{mnemonicbox}
+
+\questionmarks{3(b)}{4}{ડબલી લિન્ક્ડ લીસ્ટ નો કોન્સેપ્ટ સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[
+    dnode/.style={rectangle split, rectangle split parts=3, draw, rectangle split horizontal, minimum height=0.6cm},
+    ptr/.style={->, >=stealth, thick}
+]
+    \node[dnode] (n1) at (0,0) {\nodepart{one}P \nodepart{two}1 \nodepart{three}N};
+    \node[dnode] (n2) at (3,0) {\nodepart{one}P \nodepart{two}2 \nodepart{three}N};
+    \node[dnode] (n3) at (6,0) {\nodepart{one}P \nodepart{two}3 \nodepart{three}N};
+    
+    \node (start) at (-2, 0) {NULL};
+    \node (end) at (8, 0) {NULL};
+
+    \draw[ptr] (start) -- (n1.west);
+    \draw[ptr] (n1.three) -- (n2.one);
+    \draw[ptr] (n2.one) to[bend left] (n1.three);
+    \draw[ptr] (n2.three) -- (n3.one);
+    \draw[ptr] (n3.one) to[bend left] (n2.three);
+    \draw[ptr] (n3.three) -- (end);
+
+    \draw[ptr] (n1.one) to[bend left] (start);
+\end{tikzpicture}
+\captionof{figure}{ડબલી લિન્ક્ડ લિસ્ટ સ્ટ્રક્ચર}
+\end{center}
+
+\begin{center}
+\captionof{table}{ડબલી લિન્ક્ડ લિસ્ટ ફીચર્સ}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{ફીચર} & \textbf{વર્ણન} \\ \hline
+\textbf{નોડ સ્ટ્રક્ચર} & દરેક નોડમાં ડેટા અને બે પોઇન્ટર્સ (previous અને next) હોય છે \\ \hline
+\textbf{નેવિગેશન} & આગળ અને પાછળ એમ બંને દિશામાં ટ્રાવર્સ કરી શકાય છે \\ \hline
+\textbf{ઓપરેશન્સ} & બંને છેડેથી ઇન્સર્શન અને ડિલીશન કરી શકાય છે \\ \hline
+\textbf{મેમરી વપરાશ} & વધારાના પોઇન્ટરને કારણે સિંગલી લિન્ક્ડ લિસ્ટ કરતા વધુ મેમરી જોઈએ \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{lstlisting}[language=Python]
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.prev = None
+        self.next = None
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{બે પોઇન્ટર, બે દિશા}
+\end{mnemonicbox}
+
+\questionmarks{3(c)}{7}{નીચે આપેલ ઓપરેશન માટે અલગોરિધમ લખો: \newline
+\textbf{૧. લીસ્ટ ની શરૂઆતમાં નોડ દાખલ કરવા} \newline
+\textbf{૨. લીસ્ટ ના અંતમાં નોડ દાખલ કરવા}}
+
+\begin{solutionbox}
+\textbf{શરૂઆતમાં ઇન્સર્ટ:}
+
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm, auto]
+    \node[gtu block] (start) {શરૂ};
+    \node[gtu block, right=of start] (create) {નવો નોડ બનાવો};
+    \node[gtu block, right=of create] (data) {ડેટા સેટ કરો};
+    \node[gtu block, below=of data] (next) {next હેડ પર સેટ};
+    \node[gtu block, left=of next] (head) {હેડ = નવો નોડ};
+    \node[gtu state, left=of head] (end) {અંત};
+
+    \path[gtu arrow] (start) -- (create);
+    \path[gtu arrow] (create) -- (data);
+    \path[gtu arrow] (data) -- (next);
+    \path[gtu arrow] (next) -- (head);
+    \path[gtu arrow] (head) -- (end);
+\end{tikzpicture}
+\end{center}
+
+\textbf{અંતે ઇન્સર્ટ:}
+
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm, auto]
+    \node[gtu block] (start) {શરૂ};
+    \node[gtu block, right=of start] (create) {નવો નોડ બનાવો};
+    \node[gtu block, right=of create] (data) {ડેટા સેટ કરો};
+    \node[gtu block, below=of data] (next) {next=NULL સેટ};
+    \node[gtu decision, left=of next] (check) {head NULL છે?};
+    \node[gtu block, below=of check] (sethead) {head = નવો નોડ};
+    \node[gtu block, left=of check] (traverse) {છેલ્લે સુધી જાઓ};
+    \node[gtu block, below=of traverse] (link) {last.next = new node};
+    \node[gtu state, left=of traverse] (end) {અંત};
+
+    \path[gtu arrow] (start) -- (create);
+    \path[gtu arrow] (create) -- (data);
+    \path[gtu arrow] (data) -- (next);
+    \path[gtu arrow] (next) -- (check);
+    \path[gtu arrow] (check) -- node[right] {હા} (sethead);
+    \path[gtu arrow] (check) -- node[above] {ના} (traverse);
+    \path[gtu arrow] (traverse) -- (link);
+    \path[gtu arrow] (sethead) -| (end);
+    \path[gtu arrow] (link) -| (end);
+\end{tikzpicture}
+\end{center}
+
+\begin{lstlisting}[language=Python]
+def insert_at_beginning(head, data):
+    new_node = Node(data)
+    new_node.next = head
+    return new_node  # નવો head
+
+def insert_at_end(head, data):
+    new_node = Node(data)
+    new_node.next = None
+    
+    # જો લિન્ક્ડ લિસ્ટ ખાલી હોય
+    if head is None:
+        return new_node
+    
+    # છેલ્લા નોડ સુધી ટ્રાવર્સ કરો
+    temp = head
+    while temp.next:
+        temp = temp.next
+    
+    # છેલ્લા નોડને નવા નોડ સાથે જોડો
+    temp.next = new_node
+    return head
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{શરૂઆત: નવો જૂનાને આગળ કરે, અંત: જૂનો નવાને આગળ કરે}
+\end{mnemonicbox}
+
+\questionmarks{3(a) OR}{3}{સીન્ગલી લિન્ક્ડ લીસ્ટ પરના વિવિધ ઓપરેશન ની યાદી આપો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{સિંગલી લિન્ક્ડ લિસ્ટ પરના ઓપરેશન}
+\begin{tabulary}{\linewidth}{|L|}
+\hline
+\textbf{સિંગલી લિન્ક્ડ લિસ્ટ પરના ઓપરેશન} \\ \hline
+1. ઇન્સર્શન (શરૂઆતમાં, મધ્યમાં, અંતે) \\ \hline
+2. ડિલીશન (શરૂઆતથી, મધ્યમાંથી, અંતથી) \\ \hline
+3. ટ્રાવર્સલ (દરેક નોડની મુલાકાત) \\ \hline
+4. શોધ (ચોક્કસ નોડ શોધવો) \\ \hline
+5. અપડેટિંગ (નોડ ડેટા બદલવો) \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[
+    level 1/.style={sibling distance=3.5cm},
+    level 2/.style={sibling distance=2cm}
+]
+    \node[gtu block] {લિન્ક્ડ લિસ્ટ ઓપરેશન}
+        child {node[gtu state] {ઇન્સર્શન}}
+        child {node[gtu state] {ડિલિશન}}
+        child {node[gtu state] {ટ્રાવર્સલ}}
+        child {node[gtu state] {શોધ}}
+        child {node[gtu state] {અપડેટિંગ}};
+\end{tikzpicture}
+\captionof{figure}{લિન્ક્ડ લિસ્ટ ઓપરેશન}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{ઉમેરો કાઢો ફરો શોધો બદલો}
+\end{mnemonicbox}
+
+\questionmarks{3(b) OR}{4}{સર્ક્યુલર લિન્ક્ડ લીસ્ટ નો કોન્સેપ્ટ સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[
+    listnode/.style={rectangle, draw, minimum size=0.8cm},
+    ptr/.style={->, >=stealth, thick}
+]
+    \node[listnode] (n1) at (0,0) {1};
+    \node[listnode] (n2) at (2,0) {2};
+    \node[listnode] (n3) at (4,0) {3};
+    \node[listnode] (n4) at (6,0) {4};
+
+    \draw[ptr] (n1) -- (n2);
+    \draw[ptr] (n2) -- (n3);
+    \draw[ptr] (n3) -- (n4);
+    
+    \draw[ptr] (n4.south) -- ++(0,-0.5) -| (n1.south);
+    \node at (3, -0.7) {Last points to First};
+\end{tikzpicture}
+\captionof{figure}{સર્ક્યુલર લિન્ક્ડ લિસ્ટ}
+\end{center}
+
+\begin{center}
+\captionof{table}{સર્ક્યુલર લિન્ક્ડ લિસ્ટ ફીચર્સ}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{ફીચર} & \textbf{વર્ણન} \\ \hline
+\textbf{સ્ટ્રક્ચર} & છેલ્લો નોડ NULL ને બદલે પહેલા નોડને પોઇન્ટ કરે છે \\ \hline
+\textbf{ફાયદો} & બધા નોડમાં સતત ટ્રાવર્સલની અનુમતિ આપે છે \\ \hline
+\textbf{એપ્લિકેશન} & રાઉન્ડ રોબિન શેડ્યુલિંગ, સર્ક્યુલર બફર ઇમ્પ્લિમેન્ટેશન \\ \hline
+\textbf{ઓપરેશન} & છેલ્લા નોડ માટે ખાસ હેન્ડલિંગ સાથે સિંગલી લિન્ક્ડ લિસ્ટ જેવા ઇન્સર્શન અને ડિલીશન \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{lstlisting}[language=Python]
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+
+# 3 નોડવાળી સર્ક્યુલર લિન્ક્ડ લિસ્ટ બનાવવી
+head = Node(1)
+node2 = Node(2)
+node3 = Node(3)
+
+head.next = node2
+node2.next = node3
+node3.next = head  # તેને સર્ક્યુલર બનાવે છે
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{છેલ્લો પહેલાને જોડે}
+\end{mnemonicbox}
+
+\questionmarks{3(c) OR}{7}{લિન્ક્ડ લીસ્ટની એપ્લીકેશનોની યાદી આપો. સીન્ગલી લિન્ક્ડ લીસ્ટમાં કુલ નોડ ગણવા માટેનો અલગોરિધમ લખો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{એપ્લિકેશન}
+\begin{tabulary}{\linewidth}{|L|}
+\hline
+\textbf{લિન્ક્ડ લિસ્ટની એપ્લિકેશન} \\ \hline
+1. સ્ટેક અને ક્યુનો અમલીકરણ \\ \hline
+2. ડાયનેમિક મેમરી એલોકેશન \\ \hline
+3. એપ્લિકેશનમાં અન્ડુ ફંક્શનાલિટી \\ \hline
+4. હેશ ટેબલ્સ (ચેઇનિંગ) \\ \hline
+5. ગ્રાફ્સ માટે એડજસન્સી લિસ્ટ \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{નોડ ગણવા માટેનો અલ્ગોરિધમ:}
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm, auto]
+    \node[gtu block] (start) {શરૂ};
+    \node[gtu block, right=of start] (init) {count = 0};
+    \node[gtu block, right=of init] (temp) {temp = head};
+    \node[gtu decision, below=of temp] (check) {temp != NULL?};
+    \node[gtu block, left=of check] (inc) {count++};
+    \node[gtu block, below=of inc] (next) {temp = temp.next};
+    \node[gtu state, right=of check] (end) {રિટર્ન count};
+
+    \path[gtu arrow] (start) -- (init);
+    \path[gtu arrow] (init) -- (temp);
+    \path[gtu arrow] (temp) -- (check);
+    \path[gtu arrow] (check) -- node[above] {હા} (inc);
+    \path[gtu arrow] (inc) -- (next);
+    \path[gtu arrow] (next) -- (check.south);
+    \path[gtu arrow] (check) -- node[above] {ના} (end);
+\end{tikzpicture}
+\end{center}
+
+\begin{lstlisting}[language=Python]
+def count_nodes(head):
+    count = 0
+    temp = head
+    
+    while temp:
+        count += 1
+        temp = temp.next
+    
+    return count
+
+# ઉદાહરણ
+# ધારી લો કે head લિન્ક્ડ લિસ્ટના પ્રથમ નોડને પોઇન્ટ કરે છે
+total_nodes = count_nodes(head)
+print(f"કુલ નોડ: {total_nodes}")
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{ગણો ત્યારે ખસો}
+\end{mnemonicbox}
+
+\questionmarks{4(a)}{3}{લીનીયર સર્ચ અને બાયનરી સર્ચની સરખામણી કરો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{લીનીયર વિરુદ્ધ બાયનરી સર્ચ}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{ફીચર} & \textbf{લીનીયર સર્ચ} & \textbf{બાયનરી સર્ચ} \\ \hline
+\textbf{ડેટા ગોઠવણ} & સોર્ટેડ અને અનસોર્ટેડ બંને ડેટા પર કામ કરે છે & ફક્ત સોર્ટેડ ડેટા પર કામ કરે છે \\ \hline
+\textbf{ટાઇમ કોમ્પ્લેક્સિટી} & O(n) & O(log n) \\ \hline
+\textbf{ઇમ્પ્લિમેન્ટેશન} & સરળ & વધુ જટિલ \\ \hline
+\textbf{શેના માટે શ્રેષ્ઠ} & નાના ડેટાસેટ અથવા અનસોર્ટેડ ડેટા & મોટા સોર્ટેડ ડેટાસેટ \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}
+    % Linear
+    \node[anchor=west] at (-4, 2) {Linear:};
+    \foreach \x/\val in {0/1, 1/2, 2/3, 3/4, 4/5} {
+        \node[draw, rectangle, minimum size=0.6cm] at (-3+\x*0.7, 1.2) {\val};
+        \draw[->] (-3+\x*0.7, 1.8) -- (-3+\x*0.7, 1.5);
+    }
+    \node at (-1.5, 0.8) {Sequential Check};
+
+    % Binary
+    \node[anchor=west] at (1, 2) {Binary:};
+    \foreach \x/\val in {0/1, 1/2, 2/3, 3/4, 4/5, 5/6, 6/7} {
+        \node[draw, rectangle, minimum size=0.6cm] at (2+\x*0.7, 1.2) {\val};
+    }
+    \draw[->, thick] (2+3*0.7, 1.8) -- (2+3*0.7, 1.5) node[midway, right] {Middle};
+    \draw (2, 0.8) -- (4, 0.8) node[midway, below] {Halving};
+\end{tikzpicture}
+\captionof{figure}{સર્ચ સરખામણી}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{લીનીયર બધું જુએ, બાઈનરી આધું કાપે}
+\end{mnemonicbox}
+
+\questionmarks{4(b)}{4}{સિલેકશન સોર્ટ માટેનો અલગોરિધમ લખો.}
+
+\begin{solutionbox}
+\textbf{વિઝ્યુઅલાઈઝેશન:}
+\begin{center}
+\begin{tikzpicture}[
+    arrnode/.style={draw, rectangle, minimum size=0.6cm},
+    scale=0.8, transform shape
+]
+    \node[arrnode] at (0, 3) {5}; \node[arrnode] at (0.7, 3) {3}; \node[arrnode] at (1.4, 3) {8}; \node[arrnode] at (2.1, 3) {1}; \node[arrnode] at (2.8, 3) {2};
+    \node at (4.5, 3) {Initial};
+
+    \node[arrnode, fill=green!20] at (0, 2) {1}; \node[arrnode] at (0.7, 2) {3}; \node[arrnode] at (1.4, 2) {8}; \node[arrnode] at (2.1, 2) {5}; \node[arrnode] at (2.8, 2) {2};
+    \node at (5, 2) {Pass 1 (Swap 1 \& 5)};
+
+    \node[arrnode, fill=green!20] at (0, 1) {1}; \node[arrnode, fill=green!20] at (0.7, 1) {2}; \node[arrnode] at (1.4, 1) {8}; \node[arrnode] at (2.1, 1) {5}; \node[arrnode] at (2.8, 1) {3};
+    \node at (5, 1) {Pass 2 (Swap 2 \& 3)};
+\end{tikzpicture}
+\end{center}
+
+\textbf{અલ્ગોરિધમ:}
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm]
+    \node[gtu block] (start) {Start};
+    \node[gtu block, right=of start] (loop) {For i = 0 to n-1};
+    \node[gtu block, right=of loop] (find) {Find min};
+    \node[gtu block, below=of find] (swap) {Swap min with arr[i]};
+    \node[gtu state, left=of swap] (end) {End};
+
+    \path[gtu arrow] (start) -- (loop);
+    \path[gtu arrow] (loop) -- (find);
+    \path[gtu arrow] (find) -- (swap);
+    \path[gtu arrow] (swap) -- (end);
+\end{tikzpicture}
+\end{center}
+
+\begin{lstlisting}[language=Python]
+def selection_sort(arr):
+    n = len(arr)
+    
+    for i in range(n):
+        min_idx = i
+        
+        # અનસોર્ટેડ એરેમાં લઘુતમ એલિમેન્ટ શોધો
+        for j in range(i+1, n):
+            if arr[j] < arr[min_idx]:
+                min_idx = j
+        
+        # શોધેલા લઘુતમ એલિમેન્ટને પ્રથમ એલિમેન્ટ સાથે સ્વેપ કરો
+        arr[i], arr[min_idx] = arr[min_idx], arr[i]
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{લઘુતમ શોધો, પોઝિશન બદલો}
+\end{mnemonicbox}
+
+\questionmarks{4(c)}{7}{નીચે આપેલા લીસ્ટ ને બબલ સોર્ટ મેથડ વડે ચઢતા ક્રમમાં ગોઠવવા માટેનો પાયથન કોડ વિકસાવો. \newline
+\textbf{list1=[5,4,3,2,1,0]}}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[
+    arrnode/.style={draw, rectangle, minimum size=0.6cm},
+    scale=0.8, transform shape
+]
+    \node at (-2, 2.5) {Initial:};
+    \foreach \x/\val in {0/5, 1/4, 2/3, 3/2, 4/1, 5/0} \node[arrnode] at (\x*0.7, 2.5) {\val};
+
+    \node at (-2, 1.5) {Pass 1:};
+    \foreach \x/\val in {0/4, 1/3, 2/2, 3/1, 4/0, 5/5} \node[arrnode] at (\x*0.7, 1.5) {\val};
+    \node at (6, 1.5) {(5 bubbles to end)};
+
+    \node at (-2, 0.5) {Pass 2:};
+    \foreach \x/\val in {0/3, 1/2, 2/1, 3/0, 4/4, 5/5} \node[arrnode] at (\x*0.7, 0.5) {\val};
+    \node at (6, 0.5) {(4 bubbles up)};
+    
+    \node at (2, -0.5) {... continues until sorted ...};
+\end{tikzpicture}
+\captionof{figure}{બબલ સોર્ટ ટ્રેસ}
+\end{center}
+
+\begin{lstlisting}[language=Python]
+def bubble_sort(arr):
+    n = len(arr)
+    
+    # બધા એરે એલિમેન્ટ્સ પર ટ્રાવર્સ કરો
+    for i in range(n):
+        # છેલ્લા i એલિમેન્ટ્સ પહેલેથી જ યોગ્ય જગ્યા પર છે
+        for j in range(0, n-i-1):
+            # જો વર્તમાન એલિમેન્ટ આગળના એલિમેન્ટ કરતાં મોટો હોય, તો સ્વેપ કરો
+            if arr[j] > arr[j+1]:
+                arr[j], arr[j+1] = arr[j+1], arr[j]
+    
+    return arr
+
+# ઇનપુટ લિસ્ટ
+list1 = [5, 4, 3, 2, 1, 0]
+
+# લિસ્ટ સોર્ટ કરવી
+sorted_list = bubble_sort(list1)
+
+# રિઝલ્ટ ડિસ્પ્લે કરવું
+print("સોર્ટેડ લિસ્ટ:", sorted_list)
+# આઉટપુટ: સોર્ટેડ લિસ્ટ: [0, 1, 2, 3, 4, 5]
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{મોટા બબલ ઉપર જાય}
+\end{mnemonicbox}
+
+\questionmarks{4(a) OR}{3}{સોર્ટિંગ ની વ્યાખ્યા આપો. વિવિધ પ્રકારના સોર્ટિંગ ની યાદી આપો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{સોર્ટિંગ વ્યાખ્યા}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{વ્યાખ્યા} & \textbf{સોર્ટિંગ મેથડ્સ} \\ \hline
+સોર્ટિંગ એટલે ડેટાને ચોક્કસ ક્રમમાં (ચઢતા અથવા ઉતરતા) ગોઠવવાની પ્રક્રિયા & 1. બબલ સોર્ટ \newline 2. સિલેક્શન સોર્ટ \newline 3. ઇન્સર્શન સોર્ટ \newline 4. મર્જ સોર્ટ \newline 5. ક્વિક સોર્ટ \newline 6. હીપ સોર્ટ \newline 7. રેડિક્સ સોર્ટ \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[
+    level 1/.style={sibling distance=4cm},
+    level 2/.style={sibling distance=1.5cm}
+]
+    \node[gtu block] {સોર્ટિંગ અલ્ગોરિધમ}
+        child {node[gtu block] {કમ્પેરિઝન-બેઝ્ડ}
+            child {node[gtu state] {બબલ}}
+            child {node[gtu state] {સિલેક્શન}}
+            child {node[gtu state] {ઇન્સર્શન}}
+            child {node[gtu state] {મર્જ}}
+            child {node[gtu state] {ક્વિક}}
+        }
+        child {node[gtu block] {નોન-કમ્પેરિઝન}
+            child {node[gtu state] {કાઉન્ટિંગ}}
+            child {node[gtu state] {રેડિક્સ}}
+            child {node[gtu state] {બકેટ}}
+        };
+\end{tikzpicture}
+\captionof{figure}{સોર્ટિંગ અલ્ગોરિધમ્સ}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{સારા સોર્ટથી શોધવાનું સરળ બને}
+\end{mnemonicbox}
+
+\questionmarks{4(b) OR}{4}{Insertion sort method નો અલગોરિધમ લખો.}
+
+\begin{solutionbox}
+\textbf{વિઝ્યુઅલાઈઝેશન:}
+\begin{center}
+\begin{tikzpicture}[
+    arrnode/.style={draw, rectangle, minimum size=0.6cm},
+    scale=0.8, transform shape
+]
+    \node at (0, 3) {Initial:}; \foreach \x/\val in {0/5, 1/2, 2/4} \node[arrnode] at (2+\x*0.7, 3) {\val};
+    \node at (0, 2) {Pass 1:}; \foreach \x/\val in {0/2, 1/5, 2/4} \node[arrnode] at (2+\x*0.7, 2) {\val}; \node at (5, 2) {Insert 2};
+    \node at (0, 1) {Pass 2:}; \foreach \x/\val in {0/2, 1/4, 2/5} \node[arrnode] at (2+\x*0.7, 1) {\val}; \node at (5, 1) {Insert 4};
+\end{tikzpicture}
+\end{center}
+
+\textbf{અલ્ગોરિધમ:}
+\begin{center}
+\begin{tikzpicture}[node distance=1.2cm]
+    \node[gtu block] (start) {Start};
+    \node[gtu block, right=of start] (loop) {For i=1 to n-1};
+    \node[gtu block, right=of loop] (key) {key = arr[i]};
+    \node[gtu decision, below=of key] (check) {arr[j] > key?};
+    \node[gtu block, left=of check] (move) {Move right};
+    \node[gtu block, below=of check] (place) {Place key};
+    \node[gtu state, left=of place] (end) {End};
+
+    \path[gtu arrow] (start) -- (loop);
+    \path[gtu arrow] (loop) -- (key);
+    \path[gtu arrow] (key) -- (check);
+    \path[gtu arrow] (check) -- node[above] {Yes} (move);
+    \path[gtu arrow] (move) |- (check);
+    \path[gtu arrow] (check) -- node[right] {No} (place);
+    \path[gtu arrow] (place) -- (end);
+\end{tikzpicture}
+\end{center}
+
+\begin{lstlisting}[language=Python]
+def insertion_sort(arr):
+    for i in range(1, len(arr)):
+        key = arr[i]
+        j = i - 1
+        
+        # key કરતાં મોટા એલિમેન્ટ્સને એક પોઝિશન આગળ ખસેડો
+        while j >= 0 and arr[j] > key:
+            arr[j + 1] = arr[j]
+            j -= 1
+        
+        arr[j + 1] = key
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{કાર્ડ લો, યોગ્ય ક્રમમાં મૂકો}
+\end{mnemonicbox}
+
+\questionmarks{4(c) OR}{7}{નીચે આપેલા લીસ્ટ ને સિલેકશન સોર્ટ મેથડ વડે ચઢતા ક્રમમાં ગોઠવવા માટેનો પાયથન કોડ વિકસાવો. \newline
+\textbf{list1=[6,3,25,8,-1,55,0]}}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[
+    arrnode/.style={draw, rectangle, minimum size=0.6cm},
+    scale=0.8, transform shape
+]
+    \node at (-1, 3.5) {Initial:};
+    \foreach \x/\val in {0/6, 1/3, 2/25, 3/8, 4/-1, 5/55, 6/0} \node[arrnode] at (2+\x*0.7, 3.5) {\val};
+
+    \node at (-1, 2.5) {Pass 1:};
+    \foreach \x/\val in {0/-1, 1/3, 2/25, 3/8, 4/6, 5/55, 6/0} \node[arrnode] at (2+\x*0.7, 2.5) {\val};
+    \node at (8, 2.5) {Swap -1 \& 6};
+
+    \node at (-1, 1.5) {Pass 2:};
+    \foreach \x/\val in {0/-1, 1/0, 2/25, 3/8, 4/6, 5/55, 6/3} \node[arrnode] at (2+\x*0.7, 1.5) {\val};
+    \node at (8, 1.5) {Swap 0 \& 3};
+
+    \node at (3, 0.5) {... continues ...};
+\end{tikzpicture}
+\captionof{figure}{Selection Sort Trace}
+\end{center}
+
+\begin{lstlisting}[language=Python]
+def selection_sort(arr):
+    n = len(arr)
+    
+    for i in range(n):
+        # બાકીના અનસોર્ટેડ એરેમાં લઘુતમ એલિમેન્ટ શોધો
+        min_idx = i
+        for j in range(i+1, n):
+            if arr[j] < arr[min_idx]:
+                min_idx = j
+                
+        # શોધેલા લઘુતમ એલિમેન્ટને પ્રથમ એલિમેન્ટ સાથે સ્વેપ કરો
+        arr[i], arr[min_idx] = arr[min_idx], arr[i]
+    
+    return arr
+
+# ઇનપુટ લિસ્ટ
+list1 = [6, 3, 25, 8, -1, 55, 0]
+
+# લિસ્ટ સોર્ટ કરવી
+sorted_list = selection_sort(list1)
+
+# રિઝલ્ટ ડિસ્પ્લે કરવું
+print("સોર્ટેડ લિસ્ટ:", sorted_list)
+# આઉટપુટ: સોર્ટેડ લિસ્ટ: [-1, 0, 3, 6, 8, 25, 55]
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{નાનામાં નાનું શોધો, આગળ મૂકો}
+\end{mnemonicbox}
+
+\questionmarks{5(a)}{3}{ટ્રી ડેટા સ્ટ્રક્ચરના સંદર્ભમાં નીચેના પદો વ્યાખ્યાયિત કરો: \newline
+\textbf{૧. ફોરેસ્ટ} \newline
+\textbf{૨. રૂટ નોડ} \newline
+\textbf{૩. લીફ નોડ}}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{ટ્રી પરિભાષા}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{શબ્દ} & \textbf{વ્યાખ્યા} \\ \hline
+\textbf{ફોરેસ્ટ} & ડિસજોઇન્ટ ટ્રીનો સંગ્રહ (એકબીજા સાથે જોડાણ વિનાના અનેક ટ્રી) \\ \hline
+\textbf{રૂટ નોડ} & પેરેન્ટ વગરનો ટ્રીનો સૌથી ઉપરનો નોડ, જ્યાંથી અન્ય તમામ નોડ્સ ઉતરી આવે છે \\ \hline
+\textbf{લીફ નોડ} & જે નોડને કોઈ ચિલ્ડ્રન નથી (ટ્રીના તળિયે ટર્મિનલ નોડ) \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[
+    treenode/.style={circle, draw, minimum size=0.6cm},
+    scale=0.8, transform shape
+]
+    % Forest
+    \node[anchor=west] at (-2, 2) {Forest:};
+    \node[treenode] (t1) at (0, 2) {T1}; \node[treenode] (t1a) at (-0.5, 1.2) {}; \node[treenode] (t1b) at (0.5, 1.2) {}; \draw (t1)--(t1a); \draw (t1)--(t1b);
+    \node[treenode] (t2) at (2, 2) {T2}; \node[treenode] (t2a) at (2, 1.2) {}; \draw (t2)--(t2a);
+    \node[treenode] (t3) at (4, 2) {T3};
+
+    % Root
+    \node[anchor=west] at (-2, 0) {Root:};
+    \node[treenode, fill=yellow!20] (r) at (0, 0) {R};
+    \node[treenode] (c1) at (-0.8, -1) {A}; \node[treenode] (c2) at (0.8, -1) {B};
+    \draw (r)--(c1); \draw (r)--(c2);
+    \node[left] at (r) {Root};
+
+    % Leaf
+    \node[anchor=west] at (2, 0) {Leaf:};
+    \node[treenode] (p) at (4, 0) {P};
+    \node[treenode, fill=green!20] (l1) at (3.2, -1) {L1}; \node[treenode, fill=green!20] (l2) at (4.8, -1) {L2};
+    \draw (p)--(l1); \draw (p)--(l2);
+    \node[below] at (l1) {Leaf}; \node[below] at (l2) {Leaf};
+\end{tikzpicture}
+\captionof{figure}{ટ્રી ટર્મ્સ}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{ફોરેસ્ટમાં ઘણા મૂળ, મૂળ બધાને દોરે}
+\end{mnemonicbox}
+
+\questionmarks{5(b)}{4}{78, 58, 82, 15, 66, 80, 99 માટે બાઈનરી સર્ચ ટ્રી દોરો અને ટ્રી માટે ઈન-ઓર્ડર ટ્રાવર્સલ લખો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[
+    level distance=1.5cm,
+    level 1/.style={sibling distance=4cm},
+    level 2/.style={sibling distance=2cm},
+    every node/.style={circle, draw, minimum size=0.8cm}
+]
+    \node {78}
+        child {node {58}
+            child {node {15}}
+            child {node {66}}
+        }
+        child {node {82}
+            child {node {80}}
+            child {node {99}}
+        };
+\end{tikzpicture}
+\captionof{figure}{આપેલ ડેટા માટે બાઈનરી સર્ચ ટ્રી}
+\end{center}
+
+\textbf{ઈન-ઓર્ડર ટ્રાવર્સલ:}
+\begin{center}
+\begin{tabulary}{\linewidth}{|C|L|}
+\hline
+\textbf{સ્ટેપ} & \textbf{મુલાકાત ક્રમ} \\ \hline
+1 & 78 નો ડાબો સબટ્રી મુલાકાત લો \\ \hline
+2 & 58 નો ડાબો સબટ્રી મુલાકાત લો \\ \hline
+3 & 15 ની મુલાકાત લો \\ \hline
+4 & 58 ની મુલાકાત લો \\ \hline
+5 & 66 ની મુલાકાત લો \\ \hline
+6 & 78 ની મુલાકાત લો \\ \hline
+7 & 82 નો ડાબો સબટ્રી મુલાકાત લો \\ \hline
+8 & 80 ની મુલાકાત લો \\ \hline
+9 & 82 ની મુલાકાત લો \\ \hline
+10 & 99 ની મુલાકાત લો \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{ઈન-ઓર્ડર ટ્રાવર્સલ પરિણામ: 15, 58, 66, 78, 80, 82, 99}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{ડાબે, મૂળ, જમણે}
+\end{mnemonicbox}
+
+\questionmarks{5(c)}{7}{નીચેના ઓપરેશન માટે અલગોરિધમ લખો: \newline
+\textbf{૧. બાઈનરી ટ્રીમાં નોડનું ઇન્સર્શન} \newline
+\textbf{૨. બાઈનરી ટ્રીમાં નોડનું ડિલીશન}}
+
+\begin{solutionbox}
+\textbf{ઇન્સર્શન અલ્ગોરિધમ:}
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm]
+    \node[gtu block] (start) {શરૂ};
+    \node[gtu block, right=of start] (create) {નોડ બનાવો};
+    \node[gtu decision, right=of create] (check) {Root NULL?};
+    \node[gtu block, below=of check] (setroot) {સેટ Root};
+    \node[gtu block, right=of check] (find) {ખાલી શોધો (Bfs)};
+    \node[gtu block, below=of find] (insert) {ઇન્સર્ટ કરો};
+    \node[gtu state, below=of setroot] (end) {અંત};
+
+    \path[gtu arrow] (start) -- (create);
+    \path[gtu arrow] (create) -- (check);
+    \path[gtu arrow] (check) -- node[right] {હા} (setroot);
+    \path[gtu arrow] (check) -- node[above] {ના} (find);
+    \path[gtu arrow] (find) -- (insert);
+    \path[gtu arrow] (setroot) -- (end);
+    \path[gtu arrow] (insert) |- (end);
+\end{tikzpicture}
+\end{center}
+
+\textbf{ડિલીશન અલ્ગોરિધમ:}
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm]
+    \node[gtu block] (start) {શરૂ};
+    \node[gtu decision, right=of start] (empty) {ટ્રી ખાલી?};
+    \node[gtu state, below=of empty] (ret) {રિટર્ન};
+    \node[gtu block, right=of empty] (find) {નોડ શોધો};
+    \node[gtu block, right=of find] (deep) {ડીપેસ્ટ રાઈટ શોધો};
+    \node[gtu block, below=of deep] (repl) {ડેટા રિપ્લેસ કરો};
+    \node[gtu block, left=of repl] (del) {ડીપેસ્ટ ડિલીટ કરો};
+    \node[gtu state, left=of del] (end) {અંત};
+
+    \path[gtu arrow] (start) -- (empty);
+    \path[gtu arrow] (empty) -- node[right] {હા} (ret);
+    \path[gtu arrow] (empty) -- node[above] {ના} (find);
+    \path[gtu arrow] (find) -- (deep);
+    \path[gtu arrow] (deep) -- (repl);
+    \path[gtu arrow] (repl) -- (del);
+    \path[gtu arrow] (del) -- (end);
+\end{tikzpicture}
+\end{center}
+
+\begin{lstlisting}[language=Python]
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+# બાઈનરી ટ્રીમાં ઇન્સર્શન
+def insert(root, data):
+    if root is None:
+        return Node(data)
+    
+    # ખાલી જગ્યા શોધવા માટે લેવલ ઓર્ડર ટ્રાવર્સલ
+    queue = []
+    queue.append(root)
+    
+    while queue:
+        temp = queue.pop(0)
+        
+        if temp.left is None:
+            temp.left = Node(data)
+            break
+        else:
+            queue.append(temp.left)
+            
+        if temp.right is None:
+            temp.right = Node(data)
+            break
+        else:
+            queue.append(temp.right)
+    
+    return root
+
+# બાઈનરી ટ્રીમાં ડિલીશન
+def delete_node(root, key):
+    if root is None:
+        return None
+    
+    if root.left is None and root.right is None:
+        if root.data == key:
+            return None
+        else:
+            return root
+    
+    # ડિલીટ કરવા માટેનો નોડ અને ડીપેસ્ટ નોડ શોધો
+    key_node = None
+    last = None
+    parent = None
+    queue = []
+    queue.append(root)
+    
+    while queue:
+        temp = queue.pop(0)
+        if temp.data == key:
+            key_node = temp
+        if temp.left:
+            parent = temp
+            queue.append(temp.left)
+            last = temp.left
+        if temp.right:
+            parent = temp
+            queue.append(temp.right)
+            last = temp.right
+    
+    if key_node:
+        key_node.data = last.data
+        if parent.right == last:
+            parent.right = None
+        else:
+            parent.left = None
+    
+    return root
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{ખાલી જગ્યાએ ઉમેરો, સ્વેપ કરીને કાઢો}
+\end{mnemonicbox}
+
+\questionmarks{5(a) OR}{3}{ટ્રી ડેટા સ્ટ્રક્ચરના સંદર્ભમાં નીચેના પદો વ્યાખ્યાયિત કરો: \newline
+\textbf{૧. ઇન-ડિગ્રી} \newline
+\textbf{૨. આઉટ-ડિગ્રી} \newline
+\textbf{૩. ડેપ્થ}}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{વ્યાખ્યાઓ}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{શબ્દ} & \textbf{વ્યાખ્યા} \\ \hline
+\textbf{ઇન-ડિગ્રી} & નોડમાં આવતી એજેસની સંખ્યા (ટ્રીમાં રૂટ નોડ સિવાય દરેક નોડ માટે હંમેશા 1 હોય છે) \\ \hline
+\textbf{આઉટ-ડિગ્રી} & નોડમાંથી બહાર જતી એજેસની સંખ્યા (ચિલ્ડ્રનની સંખ્યા) \\ \hline
+\textbf{ડેપ્થ} & રૂટથી નોડ સુધીના પાથની લંબાઈ (પાથમાં એજેસની સંખ્યા) \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[
+    level distance=1.5cm,
+    level 1/.style={sibling distance=4cm},
+    level 2/.style={sibling distance=2cm},
+    every node/.style={circle, draw}
+]
+    \node (a) {A}
+        child {node (b) {B}
+            child {node (d) {D}}
+            child {node (e) {E}}
+        }
+        child {node (c) {C}
+            child {node (f) {F}}
+        };
+    
+    \node[right=0.5cm of a] {Root (Depth 0)};
+    \node[right=0.5cm of c] {Depth 1};
+    \node[right=0.5cm of f] {Depth 2};
+\end{tikzpicture}
+\captionof{figure}{ટ્રી ડેપ્થ અને ડિગ્રી}
+\end{center}
+
+\begin{center}
+\captionof{table}{ડિગ્રી વિશ્લેષણ}
+\begin{tabulary}{\linewidth}{|C|C|C|}
+\hline
+\textbf{નોડ} & \textbf{ઇન-ડિગ્રી} & \textbf{આઉટ-ડિગ્રી} \\ \hline
+A & 0 & 2 \\ \hline
+B & 1 & 2 \\ \hline
+C & 1 & 1 \\ \hline
+D & 1 & 0 \\ \hline
+E & 1 & 0 \\ \hline
+F & 1 & 0 \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{ઇન પેરેન્ટ ગણે, આઉટ ચાઈલ્ડ ગણે, ડેપ્થ રૂટથી એજેસ ગણે}
+\end{mnemonicbox}
+
+\questionmarks{5(b) OR}{4}{નીચેના બાઈનરી ટ્રી માટે પ્રી-ઓર્ડર અને પોસ્ટ-ઓર્ડર ટ્રાવર્સલ લખો. \newline
+\textbf{100 -> (20 -> (10, 30), 200 -> (150, 300))}}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[
+    level distance=1.2cm,
+    level 1/.style={sibling distance=4cm},
+    level 2/.style={sibling distance=2cm},
+    every node/.style={circle, draw}
+]
+    \node {100}
+        child {node {20}
+            child {node {10}}
+            child {node {30}}
+        }
+        child {node {200}
+            child {node {150}}
+            child {node {300}}
+        };
+\end{tikzpicture}
+\captionof{figure}{આપેલ બાઈનરી ટ્રી}
+\end{center}
+
+\begin{center}
+\captionof{table}{ટ્રાવર્સલ્સ}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{ટ્રાવર્સલ} & \textbf{ક્રમ} & \textbf{પરિણામ} \\ \hline
+\textbf{પ્રી-ઓર્ડર} & રૂટ, લેફ્ટ, રાઈટ & 100, 20, 10, 30, 200, 150, 300 \\ \hline
+\textbf{પોસ્ટ-ઓર્ડર} & લેફ્ટ, રાઈટ, રૂટ & 10, 30, 20, 150, 300, 200, 100 \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{પ્રી: રૂટ પહેલા, પોસ્ટ: ચિલ્ડ્રન પહેલા}
+\end{mnemonicbox}
+
+\questionmarks{5(c) OR}{7}{બાઈનરી સર્ચ ટ્રીના કન્સ્ટ્રકશન માટે પ્રોગ્રામ ડેવલપ કરો.}
+
+\begin{solutionbox}
+\textbf{કન્સ્ટ્રકશન વિઝ્યુઅલાઈઝેશન:}
+\begin{center}
+\begin{tikzpicture}[
+    every node/.style={circle, draw, minimum size=0.8cm},
+    level distance=1.2cm,
+    level 1/.style={sibling distance=2.5cm},
+    level 2/.style={sibling distance=1.5cm}
+]
+    \node {50}
+        child {node {30}
+            child {node {20}}
+            child {node {40}}
+        }
+        child {node {70}
+            child {node {60}}
+            child {node {80}}
+        };
+\end{tikzpicture}
+\captionof{figure}{[50, 30, 20, 40, 70, 60, 80] માંથી બનાવેલ BST}
+\end{center}
+
+\begin{lstlisting}[language=Python]
+class Node:
+    def __init__(self, key):
+        self.key = key
+        self.left = None
+        self.right = None
+
+def insert(root, key):
+    # જો ટ્રી ખાલી હોય, તો નવો નોડ પરત કરો
+    if root is None:
+        return Node(key)
+    
+    # નહીંતર, ટ્રીમાં નીચે જાઓ
+    if key < root.key:
+        root.left = insert(root.left, key)
+    else:
+        root.right = insert(root.right, key)
+    
+    # યથાવત નોડ પોઇન્ટર પરત કરો
+    return root
+
+def inorder(root):
+    if root:
+        inorder(root.left)
+        print(root.key, end=" ")
+        inorder(root.right)
+
+def preorder(root):
+    if root:
+        print(root.key, end=" ")
+        preorder(root.left)
+        preorder(root.right)
+
+def postorder(root):
+    if root:
+        postorder(root.left)
+        postorder(root.right)
+        print(root.key, end=" ")
+
+# ડ્રાઈવર પ્રોગ્રામ
+def main():
+    # આ એલિમેન્ટ્સ સાથે BST બનાવો: 50, 30, 20, 40, 70, 60, 80
+    root = None
+    elements = [50, 30, 20, 40, 70, 60, 80]
+    
+    for element in elements:
+        root = insert(root, element)
+    
+    # ટ્રાવર્સલ્સ પ્રિન્ટ કરો
+    print("Inorder traversal: ", end="")
+    inorder(root)
+    print("\nPreorder traversal: ", end="")
+    preorder(root)
+    print("\nPostorder traversal: ", end="")
+    postorder(root)
+
+# પ્રોગ્રામ રન કરો
+main()
+\end{lstlisting}
+
+\textbf{ઉદાહરણ આઉટપુટ:}
+\begin{lstlisting}
+Inorder traversal: 20 30 40 50 60 70 80
+Preorder traversal: 50 30 20 40 70 60 80
+Postorder traversal: 20 40 30 60 80 70 50
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{નાના ડાબે, મોટા જમણે}
+\end{mnemonicbox}
+
+\end{document}
+
+
+

@@ -1,0 +1,1227 @@
+\documentclass{article}
+\input{../../../../../../latex-templates/gtu-solutions/preamble.tex}
+\input{../../../../../../latex-templates/gtu-solutions/english-boxes.tex}
+\input{../../../../../../latex-templates/gtu-solutions/commands.tex}
+\usetikzlibrary{calc,positioning,shapes,arrows,automata}
+\tikzset{
+    entity/.style={rectangle, draw, fill=white, align=center, minimum height=2em, font=\small, thick},
+    relationship/.style={diamond, draw, fill=white, align=center, aspect=2, font=\small, thick},
+    attribute/.style={ellipse, draw, fill=white, align=center, font=\small},
+    gtu line/.style={draw, thick},
+    gtu arrow/.style={draw, -latex, thick}
+}
+
+\title{Database Management System (1333204) - Summer 2025 Solution}
+\date{May 17, 2025}
+
+\begin{document}
+\maketitle
+
+\questionmarks{1(a)}{3}{Write a short note: Data Dictionary}
+\begin{solutionbox}
+A \keyword{Data Dictionary} is a centralized repository that stores metadata about database structure, elements, and relationships.
+
+\begin{table}[H]
+    \centering
+    \caption{Data Dictionary Components}
+    \begin{tabulary}{\linewidth}{LC}
+        \toprule
+        \textbf{Component} & \textbf{Description} \\
+        \midrule
+        \textbf{Table Names} & List of all tables in database \\
+        \textbf{Column Details} & Data types, constraints, lengths \\
+        \textbf{Relationships} & Foreign key connections \\
+        \textbf{Indexes} & Performance optimization structures \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\textbf{Key Features:}
+\begin{itemize}
+    \item \textbf{Metadata Storage}: Contains information about data structure
+    \item \textbf{Data Integrity}: Maintains consistency rules and constraints
+    \item \textbf{Documentation}: Provides comprehensive database documentation
+\end{itemize}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "Data Dictionary Delivers Details"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{1(b)}{4}{Define (i) E-R model (ii) Entity (iii) Entity set and (iv) attributes}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{ER Model Definitions}
+    \begin{tabulary}{\linewidth}{LC}
+        \toprule
+        \textbf{Term} & \textbf{Definition} \\
+        \midrule
+        \textbf{E-R Model} & Conceptual data model using entities and relationships \\
+        \textbf{Entity} & Real-world object with independent existence \\
+        \textbf{Entity Set} & Collection of similar entities of same type \\
+        \textbf{Attributes} & Properties that describe entity characteristics \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=2cm]
+    \node [entity] (e1) {Entity A};
+    \node [relationship, right of=e1, xshift=2cm] (rel) {Relationship};
+    \node [entity, right of=rel, xshift=2cm] (e2) {Entity B};
+    
+    \node [attribute, below of=e1, node distance=1.5cm] (a1) {Attributes};
+    \node [attribute, below of=e2, node distance=1.5cm] (a2) {Attributes};
+
+    \draw [gtu arrow] (e1) -- (rel);
+    \draw [gtu arrow] (rel) -- (e2);
+    \draw [gtu line] (e1) -- (a1);
+    \draw [gtu line] (e2) -- (a2);
+\end{tikzpicture}
+\captionof{figure}{ER Model Components}
+\end{center}
+
+\textbf{Key Points:}
+\begin{itemize}
+    \item \textbf{Conceptual Design}: High-level database design approach
+    \item \textbf{Visual Representation}: Uses diagrams for clear understanding
+\end{itemize}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "Entities Relate Meaningfully"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{1(c)}{7}{Explain Advantages of DBMS}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{DBMS Advantages}
+    \begin{tabulary}{\linewidth}{LC}
+        \toprule
+        \textbf{Advantage} & \textbf{Benefit} \\
+        \midrule
+        \textbf{Data Independence} & Applications isolated from data structure changes \\
+        \textbf{Data Sharing} & Multiple users access same data simultaneously \\
+        \textbf{Data Security} & Access control and authentication mechanisms \\
+        \textbf{Data Integrity} & Consistency maintained through constraints \\
+        \textbf{Backup \& Recovery} & Automatic data protection and restoration \\
+        \textbf{Reduced Redundancy} & Eliminates duplicate data storage \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\textbf{Key Benefits:}
+\begin{itemize}
+    \item \textbf{Centralized Control}: Single point of data management
+    \item \textbf{Cost Effectiveness}: Reduces development and maintenance costs
+    \item \textbf{Data Consistency}: Ensures uniform data across applications
+    \item \textbf{Concurrent Access}: Multiple users can work simultaneously
+    \item \textbf{Query Optimization}: Efficient data retrieval mechanisms
+\end{itemize}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "Database Benefits Business Better"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{1(c) OR}{7}{Explain Architecture of DBMS}
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=2cm]
+    \node [block] (ext) {External Level\\User Views};
+    \node [block, below of=ext] (con) {Conceptual Level\\Logical Schema};
+    \node [block, below of=con] (int) {Internal Level\\Physical Storage};
+    
+    \node [above of=ext, xshift=-2cm, node distance=1.5cm] (u1) {User 1};
+    \node [above of=ext, xshift=2cm, node distance=1.5cm] (u2) {User 2};
+    \node [right of=con, xshift=3cm] (dba) {DBA};
+    \node [right of=int, xshift=3cm] (sys) {System};
+
+    \draw [gtu arrow] (u1) -- (ext);
+    \draw [gtu arrow] (u2) -- (ext);
+    \draw [gtu arrow] (ext) -- (con);
+    \draw [gtu arrow] (con) -- (int);
+    \draw [gtu arrow] (dba) -- (con);
+    \draw [gtu arrow] (sys) -- (int);
+\end{tikzpicture}
+\captionof{figure}{Three-Level DBMS Architecture}
+\end{center}
+
+\begin{table}[H]
+    \centering
+    \caption{Architecture Levels}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Level} & \textbf{Purpose} & \textbf{Users} \\
+        \midrule
+        \textbf{External} & Individual user views & End users, Applications \\
+        \textbf{Conceptual} & Complete logical structure & Database Administrator \\
+        \textbf{Internal} & Physical storage details & System programmers \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\textbf{Key Features:}
+\begin{itemize}
+    \item \textbf{Data Independence}: Changes at one level don't affect others
+    \item \textbf{Security}: Different access levels for different users
+    \item \textbf{Abstraction}: Hides complexity from users
+\end{itemize}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "External Conceptual Internal Architecture"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(a)}{3}{Explain UNIQUE KEY and PRIMARY KEY}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{Key Comparison}
+    \begin{tabulary}{\linewidth}{LCC}
+        \toprule
+        \textbf{Feature} & \textbf{PRIMARY KEY} & \textbf{UNIQUE KEY} \\
+        \midrule
+        \textbf{Null Values} & Not allowed & One null allowed \\
+        \textbf{Number per Table} & Only one & Multiple allowed \\
+        \textbf{Index Creation} & Automatic clustered & Automatic non-clustered \\
+        \textbf{Purpose} & Entity identification & Data uniqueness \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\textbf{Key Differences:}
+\begin{itemize}
+    \item \textbf{Primary Key}: Uniquely identifies each record, cannot be null
+    \item \textbf{Unique Key}: Ensures uniqueness but allows one null value
+\end{itemize}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "Primary Prevents Nulls, Unique Understands Nulls"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(b)}{4}{Write a short note on Participation of Entity in ER diagram}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{Participation Types}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Type} & \textbf{Description} & \textbf{Symbol} \\
+        \midrule
+        \textbf{Total Participation} & Every entity must participate & Double line \\
+        \textbf{Partial Participation} & Some entities may not participate & Single line \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=2.5cm]
+    \node [entity] (emp) {Employee};
+    \node [relationship, right of=emp, xshift=2cm] (works) {Works\_for};
+    \node [entity, right of=works, xshift=2cm] (dept) {Department};
+    
+    \draw [double, thick] (emp) -- (works) node[midway, below] {(Total)};
+    \draw [gtu line] (works) -- (dept) node[midway, below] {(Partial)};
+\end{tikzpicture}
+\captionof{figure}{Participation Example}
+\end{center}
+
+\textbf{Key Concepts:}
+\begin{itemize}
+    \item \textbf{Mandatory Participation}: Every instance must be involved
+    \item \textbf{Optional Participation}: Some instances may not be involved
+    \item \textbf{Business Rules}: Reflects real-world constraints
+\end{itemize}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "Total Participation Requires All"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(c)}{7}{Describe Generalization concept in Detail for ER diagram}
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=2cm]
+    \node [entity] (person) {PERSON};
+    \node [relationship, below of=person] (isa) {IS-A};
+    \node [entity, below of=isa, xshift=-2cm] (emp) {EMPLOYEE};
+    \node [entity, below of=isa, xshift=2cm] (std) {STUDENT};
+    
+    \node [attribute, left of=person] (pid) {person\_id};
+    \node [attribute, above of=person] (name) {name};
+    \node [attribute, right of=person] (addr) {address};
+    
+    \node [attribute, left of=emp] (eid) {emp\_id};
+    \node [attribute, below of=emp] (sal) {salary};
+    
+    \node [attribute, right of=std] (sid) {std\_id};
+    \node [attribute, below of=std] (course) {course};
+
+    \draw [gtu line] (person) -- (isa);
+    \draw [gtu line] (isa) -- (emp);
+    \draw [gtu line] (isa) -- (std);
+    
+    \draw [gtu line] (person) -- (pid);
+    \draw [gtu line] (person) -- (name);
+    \draw [gtu line] (person) -- (addr);
+    \draw [gtu line] (emp) -- (eid);
+    \draw [gtu line] (emp) -- (sal);
+    \draw [gtu line] (std) -- (sid);
+    \draw [gtu line] (std) -- (course);
+\end{tikzpicture}
+\captionof{figure}{Generalization Example}
+\end{center}
+
+\begin{table}[H]
+    \centering
+    \caption{Generalization Characteristics}
+    \begin{tabulary}{\linewidth}{LC}
+        \toprule
+        \textbf{Aspect} & \textbf{Description} \\
+        \midrule
+        \textbf{Bottom-up Process} & Combines similar entities into superclass \\
+        \textbf{Inheritance} & Subclasses inherit superclass attributes \\
+        \textbf{Specialization} & Reverse process of generalization \\
+        \textbf{Overlap Constraints} & Disjoint or overlapping subclasses \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\textbf{Key Features:}
+\begin{itemize}
+    \item \textbf{Attribute Inheritance}: Common attributes moved to superclass
+    \item \textbf{Relationship Inheritance}: Relationships also inherited
+    \item \textbf{Constraint Types}: Total/partial, disjoint/overlapping
+    \item \textbf{ISA Relationship}: Represents "is-a" connection
+\end{itemize}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "Generalization Groups Similar Entities"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(a) OR}{3}{Explain Mapping Cardinality in ER diagram}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{Cardinality Types}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Type} & \textbf{Description} & \textbf{Example} \\
+        \midrule
+        \textbf{One-to-One (1:1)} & One entity relates to one other & Person-Passport \\
+        \textbf{One-to-Many (1:M)} & One entity relates to many others & Department-Employee \\
+        \textbf{Many-to-One (M:1)} & Many entities relate to one & Employee-Department \\
+        \textbf{Many-to-Many (M:N)} & Many entities relate to many & Student-Course \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\textbf{Key Concepts:}
+\begin{itemize}
+    \item \textbf{Relationship Constraints}: Defines how entities can be related
+    \item \textbf{Business Rules}: Reflects real-world relationship limits
+\end{itemize}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "One Or Many Mappings Matter"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(b) OR}{4}{Explain Aggregation in E-R diagram}
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=2.5cm]
+    \node [entity] (emp) {Employee};
+    \node [relationship, right of=emp] (works) {Works\_on};
+    \node [entity, right of=works] (proj) {Project};
+    
+    % Aggregation box
+    \draw [dashed, thick] ($(emp.north west)+(-0.5,0.5)$) rectangle ($(proj.south east)+(0.5,-0.5)$);
+    
+    \node [relationship, below of=works, yshift=-1cm] (manages) {Manages};
+    \node [entity, below of=manages] (mgr) {Manager};
+    
+    \draw [gtu line] (emp) -- (works);
+    \draw [gtu line] (works) -- (proj);
+    \draw [gtu line] (manages) -- (mgr);
+    \draw [gtu line] (works) -- (manages);
+\end{tikzpicture}
+\captionof{figure}{Aggregation Example}
+\end{center}
+
+\textbf{Key Features:}
+\begin{itemize}
+    \item \textbf{Relationship as Entity}: Treats relationship set as entity
+    \item \textbf{Higher-level Relationships}: Allows relationships between relationships
+    \item \textbf{Complex Modeling}: Handles advanced business scenarios
+    \item \textbf{Abstraction Mechanism}: Simplifies complex relationships
+\end{itemize}
+
+\begin{table}[H]
+    \centering
+    \caption{Aggregation Benefits}
+    \begin{tabulary}{\linewidth}{LC}
+        \toprule
+        \textbf{Benefit} & \textbf{Description} \\
+        \midrule
+        \textbf{Modeling Flexibility} & Handles complex relationships \\
+        \textbf{Semantic Clarity} & Clear representation of business rules \\
+        \textbf{Design Simplicity} & Reduces model complexity \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "Aggregation Abstracts Advanced Associations"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(c) OR}{7}{Draw ER diagram of Library Management system using Enhanced ER model}
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=2cm]
+    \node [entity] (person) {PERSON};
+    \node [relationship, below of=person] (isa) {IS-A};
+    \node [entity, below of=isa, xshift=-3cm] (member) {MEMBER};
+    \node [entity, below of=isa, xshift=3cm] (lib) {LIBRARIAN};
+    
+    \node [relationship, below of=member] (makes) {Makes};
+    \node [relationship, below of=lib] (proc) {Processes};
+    \node [entity, below of=makes, xshift=3cm] (trans) {TRANSACTION};
+    
+    \node [relationship, below of=trans] (invol) {Involved\_In};
+    \node [entity, below of=invol] (book) {BOOK};
+    \node [relationship, right of=book, xshift=2cm] (belongs) {Belongs\_To};
+    \node [entity, right of=belongs, xshift=2cm] (cat) {CATEGORY};
+    
+    % Connections
+    \draw [gtu line] (person) -- (isa);
+    \draw [gtu line] (isa) -- (member);
+    \draw [gtu line] (isa) -- (lib);
+    \draw [gtu line] (member) -- (makes);
+    \draw [gtu line] (lib) -- (proc);
+    \draw [gtu arrow] (makes) -- (trans);
+    \draw [gtu arrow] (proc) -- (trans);
+    \draw [gtu arrow] (invol) -- (trans);
+    \draw [gtu arrow] (invol) -- (book);
+    \draw [gtu arrow] (belongs) -- (book);
+    \draw [gtu line] (belongs) -- (cat);
+    
+    % Sample Attributes (simplified)
+    \node [attribute, left of=person] {person\_id};
+    \node [attribute, left of=member] {member\_id};
+    \node [attribute, right of=lib] {emp\_id};
+    \node [attribute, left of=book] {isbn};
+\end{tikzpicture}
+\captionof{figure}{Library Management System}
+\end{center}
+
+\textbf{Enhanced ER Features Used:}
+\begin{itemize}
+    \item \textbf{Generalization}: Person superclass with Member and Librarian subclasses
+    \item \textbf{Specialization}: Different attributes for different person types
+    \item \textbf{Aggregation}: Transaction relationship involving multiple entities
+    \item \textbf{Multiple Inheritance}: Complex relationship handling
+\end{itemize}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "Library Links Literature Logically"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3(a)}{3}{Explain SQL data types}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{Common SQL Data Types}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Category} & \textbf{Data Type} & \textbf{Description} \\
+        \midrule
+        \textbf{Numeric} & INT, DECIMAL, FLOAT & Store numbers \\
+        \textbf{Character} & CHAR, VARCHAR, TEXT & Store text \\
+        \textbf{Date/Time} & DATE, TIME, DATETIME & Store temporal data \\
+        \textbf{Boolean} & BOOLEAN & Store true/false \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\textbf{Key Points:}
+\begin{itemize}
+    \item \textbf{Data Integrity}: Ensures correct data storage
+    \item \textbf{Storage Optimization}: Appropriate size allocation
+    \item \textbf{Validation}: Automatic data type checking
+\end{itemize}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "Data Types Define Storage"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3(b)}{4}{Compare DROP and TRUNCATE commands}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{DROP vs TRUNCATE Comparison}
+    \begin{tabulary}{\linewidth}{LCC}
+        \toprule
+        \textbf{Feature} & \textbf{DROP} & \textbf{TRUNCATE} \\
+        \midrule
+        \textbf{Operation} & Removes table structure & Removes all data only \\
+        \textbf{Rollback} & Cannot rollback & Can rollback (in transaction) \\
+        \textbf{Speed} & Slower & Faster \\
+        \textbf{Triggers} & Fires triggers & Does not fire triggers \\
+        \textbf{Where Clause} & Not applicable & Not supported \\
+        \textbf{Auto-increment} & Resets & Resets to initial value \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\textbf{Code Examples:}
+\begin{lstlisting}[language=SQL]
+-- DROP command
+DROP TABLE student;
+
+-- TRUNCATE command  
+TRUNCATE TABLE student;
+\end{lstlisting}
+
+\textbf{Key Differences:}
+\begin{itemize}
+    \item \textbf{Structure Impact}: DROP removes everything, TRUNCATE keeps structure
+    \item \textbf{Performance}: TRUNCATE is faster for large tables
+\end{itemize}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "DROP Destroys, TRUNCATE Trims"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3(c)}{7}{Consider a following Relational Schema and give Relational Algebra Expression for the following Queries\\ \textbf{Students (Name, SPI, DOB, Enrollment No)}}
+\begin{solutionbox}
+\textbf{Relational Algebra Expressions:}
+
+\textbf{i) List out all students whose SPI is lower than 6.0:}
+\[ \sigma_{SPI < 6.0}(Students) \]
+
+\textbf{ii) List name of student whose enrollment number contains 006:}
+\[ \pi_{Name}(\sigma_{Enrollment\_No \text{ LIKE } '\%006\%'}(Students)) \]
+
+\textbf{iii) List all students with same DOB:}
+\[ Students \bowtie_{Students.DOB = S2.DOB \land Students.Enrollment\_No \neq S2.Enrollment\_No} (\rho_{S2}(Students)) \]
+
+\textbf{iv) Display students name starting from same letter:}
+\[ \pi_{Name}(Students \bowtie_{\substack{SUBSTR(Students.Name,1,1) = SUBSTR(S2.Name,1,1) \\ \land Students.Enrollment\_No \neq S2.Enrollment\_No}} (\rho_{S2}(Students))) \]
+
+\begin{table}[H]
+    \centering
+    \caption{Relational Algebra Operators Used}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Operator} & \textbf{Symbol} & \textbf{Purpose} \\
+        \midrule
+        \textbf{Selection} & $\sigma$ & Filter rows based on condition \\
+        \textbf{Projection} & $\pi$ & Select specific columns \\
+        \textbf{Join} & $\bowtie$ & Combine related tuples \\
+        \textbf{Rename} & $\rho$ & Rename relations/attributes \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "Select Project Join Rename"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3(a) OR}{3}{Explain use of Grant and Revoke command with example}
+\begin{solutionbox}
+\textbf{Code Examples:}
+\begin{lstlisting}[language=SQL]
+-- GRANT command
+GRANT SELECT, INSERT ON student TO user1;
+GRANT ALL PRIVILEGES ON database1 TO user2;
+
+-- REVOKE command  
+REVOKE INSERT ON student FROM user1;
+REVOKE ALL PRIVILEGES ON database1 FROM user2;
+\end{lstlisting}
+
+\textbf{Key Features:}
+\begin{itemize}
+    \item \textbf{Access Control}: Manages user permissions
+    \item \textbf{Security}: Prevents unauthorized access
+    \item \textbf{Granular Control}: Specific privilege assignment
+\end{itemize}
+
+\begin{table}[H]
+    \centering
+    \caption{Common Privileges}
+    \begin{tabulary}{\linewidth}{LC}
+        \toprule
+        \textbf{Privilege} & \textbf{Description} \\
+        \midrule
+        \textbf{SELECT} & Read data \\
+        \textbf{INSERT} & Add new records \\
+        \textbf{UPDATE} & Modify existing data \\
+        \textbf{DELETE} & Remove records \\
+        \textbf{ALL} & Complete access \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "Grant Gives, Revoke Removes"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3(b) OR}{4}{Describe DML commands with Example}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{DML Commands}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Command} & \textbf{Purpose} & \textbf{Example} \\
+        \midrule
+        \textbf{INSERT} & Add new records & \code{INSERT INTO student...} \\
+        \textbf{UPDATE} & Modify existing data & \code{UPDATE student SET...} \\
+        \textbf{DELETE} & Remove records & \code{DELETE FROM student...} \\
+        \textbf{SELECT} & Retrieve data & \code{SELECT * FROM student...} \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\textbf{Code Examples:}
+\begin{lstlisting}[language=SQL]
+-- INSERT command
+INSERT INTO Students (name, spi, dob) 
+VALUES ('Alice', 8.5, '2000-05-15');
+
+-- UPDATE command
+UPDATE Students SET spi = 9.0 
+WHERE name = 'Alice';
+
+-- DELETE command
+DELETE FROM Students 
+WHERE spi < 6.0;
+
+-- SELECT command
+SELECT name, spi FROM Students 
+WHERE spi > 8.0;
+\end{lstlisting}
+
+\textbf{Key Features:}
+\begin{itemize}
+    \item \textbf{Data Manipulation}: Core database operations
+    \item \textbf{Transaction Support}: Can be rolled back
+    \item \textbf{Conditional Operations}: WHERE clause support
+\end{itemize}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "Insert Update Delete Select"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3(c) OR}{7}{List all Conversion function of DBMS and explain any three of them in detail}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{Conversion Functions}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Function} & \textbf{Purpose} & \textbf{Example} \\
+        \midrule
+        \textbf{TO\_CHAR} & Convert to character & \code{TO\_CHAR(sysdate)} \\
+        \textbf{TO\_DATE} & Convert to date & \code{TO\_DATE('15-05-2025')} \\
+        \textbf{TO\_NUMBER} & Convert to number & \code{TO\_NUMBER('123.45')} \\
+        \textbf{CAST} & General conversion & \code{CAST('123' AS INT)} \\
+        \textbf{CONVERT} & Data type conversion & \code{CONVERT(varchar, 123)} \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\textbf{Detailed Explanation of Three Functions:}
+
+\textbf{1. TO\_CHAR Function:}
+\begin{itemize}
+    \item \textbf{Purpose}: Converts dates and numbers to character strings
+    \item \textbf{Syntax}: \code{TO\_CHAR(value, format)}
+    \item \textbf{Usage}: Date formatting, number formatting with specific patterns
+\end{itemize}
+
+\textbf{2. TO\_DATE Function:}
+\begin{itemize}
+    \item \textbf{Purpose}: Converts character strings to date values
+    \item \textbf{Syntax}: \code{TO\_DATE(string, format)}
+    \item \textbf{Usage}: String to date conversion with specified format
+\end{itemize}
+
+\textbf{3. TO\_NUMBER Function:}
+\begin{itemize}
+    \item \textbf{Purpose}: Converts character strings to numeric values
+    \item \textbf{Syntax}: \code{TO\_NUMBER(string, format)}
+    \item \textbf{Usage}: String to number conversion for calculations
+\end{itemize}
+
+\textbf{Key Benefits:}
+\begin{itemize}
+    \item \textbf{Data Type Flexibility}: Seamless conversion between types
+    \item \textbf{Format Control}: Specific formatting options
+    \item \textbf{Error Handling}: Validation during conversion
+\end{itemize}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "Convert Characters Dates Numbers"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(a)}{3}{Write short note: Domain Integrity Constraint}
+\begin{solutionbox}
+\textbf{Domain Integrity Constraints} ensure that data values fall within acceptable ranges and formats for specific attributes.
+
+\begin{table}[H]
+    \centering
+    \caption{Domain Constraint Types}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Constraint} & \textbf{Purpose} & \textbf{Example} \\
+        \midrule
+        \textbf{CHECK} & Value range validation & \code{CHECK (age >= 0 AND age <= 100)} \\
+        \textbf{NOT NULL} & Prevents null values & \code{name VARCHAR(50) NOT NULL} \\
+        \textbf{DEFAULT} & Sets default values & \code{status VARCHAR(10) DEFAULT 'Active'} \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\textbf{Key Features:}
+\begin{itemize}
+    \item \textbf{Data Validation}: Ensures data quality at entry
+    \item \textbf{Business Rules}: Implements domain-specific rules
+    \item \textbf{Automatic Checking}: Validation occurs during DML operations
+\end{itemize}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "Domain Defines Data Boundaries"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(b)}{4}{List all JOIN in DBMS and explain any two}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{Types of JOINs}
+    \begin{tabulary}{\linewidth}{LC}
+        \toprule
+        \textbf{JOIN Type} & \textbf{Description} \\
+        \midrule
+        \textbf{INNER JOIN} & Returns matching records from both tables \\
+        \textbf{LEFT JOIN} & Returns all records from left table \\
+        \textbf{RIGHT JOIN} & Returns all records from right table \\
+        \textbf{FULL OUTER JOIN} & Returns all records from both tables \\
+        \textbf{CROSS JOIN} & Cartesian product of both tables \\
+        \textbf{SELF JOIN} & Table joined with itself \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\textbf{Detailed Explanation:}
+
+\textbf{1. INNER JOIN:}
+\begin{lstlisting}[language=SQL]
+SELECT s.name, c.course_name
+FROM students s
+INNER JOIN courses c ON s.course_id = c.course_id;
+\end{lstlisting}
+\begin{itemize}
+    \item Returns only matching records from both tables
+    \item Most commonly used join type
+\end{itemize}
+
+\textbf{2. LEFT JOIN:}
+\begin{lstlisting}[language=SQL]
+SELECT s.name, c.course_name
+FROM students s
+LEFT JOIN courses c ON s.course_id = c.course_id;
+\end{lstlisting}
+\begin{itemize}
+    \item Returns all students, even if no course assigned
+    \item NULL values for unmatched records
+\end{itemize}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "Join Tables Together Thoughtfully"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(c)}{7}{Explain Concept of Functional Dependency in detail}
+\begin{solutionbox}
+\textbf{Functional Dependency} occurs when the value of one attribute uniquely determines the value of another attribute.
+
+\textbf{Notation:} $A \to B$ (A functionally determines B)
+
+\begin{table}[H]
+    \centering
+    \caption{Types of Functional Dependencies}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Type} & \textbf{Definition} & \textbf{Example} \\
+        \midrule
+        \textbf{Full FD} & All attributes in LHS needed & \{Student\_ID, Course\_ID\} $\to$ Grade \\
+        \textbf{Partial FD} & Some LHS attributes redundant & \{Student\_ID, Course\_ID\} $\to$ Student\_Name \\
+        \textbf{Transitive FD} & Indirect dependency through another attribute & Student\_ID $\to$ Dept\_ID $\to$ Dept\_Name \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=2.5cm]
+    \node [attribute] (sid) {Student\_ID};
+    \node [attribute, right of=sid, xshift=2cm] (sname) {Student\_Name};
+    \node [attribute, below of=sname] (addr) {Address};
+    \node [attribute, below of=sid] (cid) {Course\_ID};
+    \node [attribute, right of=cid, xshift=2cm] (cname) {Course\_Name};
+
+    \draw [gtu arrow] (sid) -- (sname);
+    \draw [gtu arrow] (sid) |- (addr);
+    \draw [gtu arrow] (cid) -- (cname);
+\end{tikzpicture}
+\captionof{figure}{Functional Dependency Example}
+\end{center}
+
+\textbf{Key Properties:}
+\begin{itemize}
+    \item \textbf{Reflexivity}: $A \to A$ (trivial dependency)
+    \item \textbf{Augmentation}: If $A \to B$, then $AC \to BC$
+    \item \textbf{Transitivity}: If $A \to B$ and $B \to C$, then $A \to C$
+    \item \textbf{Decomposition}: If $A \to BC$, then $A \to B$ and $A \to C$
+\end{itemize}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "Functions Determine Dependencies Directly"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(a) OR}{3}{Write short note: Referential integrity Constraints}
+\begin{solutionbox}
+\textbf{Referential Integrity} ensures that foreign key values in one table correspond to existing primary key values in referenced table.
+
+\begin{table}[H]
+    \centering
+    \caption{Referential Integrity Rules}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Rule} & \textbf{Description} & \textbf{Action} \\
+        \midrule
+        \textbf{INSERT Rule} & Foreign key must exist in parent & Reject invalid inserts \\
+        \textbf{DELETE Rule} & Handle parent record deletion & CASCADE, RESTRICT, SET NULL \\
+        \textbf{UPDATE Rule} & Handle primary key updates & CASCADE, RESTRICT \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\textbf{Code Example:}
+\begin{lstlisting}[language=SQL]
+ALTER TABLE Orders 
+ADD CONSTRAINT FK_Customer 
+FOREIGN KEY (customer_id) 
+REFERENCES Customers(customer_id);
+\end{lstlisting}
+
+\textbf{Key Features:}
+\begin{itemize}
+    \item \textbf{Foreign Key Constraint}: Links related tables
+    \item \textbf{Data Consistency}: Prevents orphaned records
+    \item \textbf{Relationship Maintenance}: Preserves table relationships
+\end{itemize}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "References Require Related Records"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(b) OR}{4}{Explain union and intersection operations of relational algebra}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{Set Operations Comparison}
+    \begin{tabulary}{\linewidth}{LCCL}
+        \toprule
+        \textbf{Operation} & \textbf{Symbol} & \textbf{Description} & \textbf{Requirement} \\
+        \midrule
+        \textbf{UNION} & $\cup$ & Combines all tuples from both relations & Union compatible \\
+        \textbf{INTERSECTION} & $\cap$ & Common tuples in both relations & Union compatible \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\textbf{Union Operation:}
+\begin{itemize}
+    \item \textbf{Syntax}: $R \cup S$
+    \item \textbf{Result}: All tuples from R and S (duplicates removed)
+    \item \textbf{Requirement}: Same number and types of attributes
+\end{itemize}
+
+\textbf{Intersection Operation:}
+\begin{itemize}
+    \item \textbf{Syntax}: $R \cap S$
+    \item \textbf{Result}: Tuples that exist in both R and S
+    \item \textbf{Requirement}: Union compatible relations
+\end{itemize}
+
+\textbf{Example:}
+\begin{lstlisting}
+Students_CS U Students_IT = All students from both departments
+Students_CS n Students_IT = Students in both departments
+\end{lstlisting}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "Union Unites, Intersection Identifies Common"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(c) OR}{7}{Explain Concept of Normalization in DBMS in detail}
+\begin{solutionbox}
+\textbf{Normalization} is the process of organizing database tables to minimize data redundancy and improve data integrity.
+
+\begin{table}[H]
+    \centering
+    \caption{Normal Forms}
+    \begin{tabulary}{\linewidth}{LCC}
+        \toprule
+        \textbf{Normal Form} & \textbf{Requirements} & \textbf{Eliminates} \\
+        \midrule
+        \textbf{1NF} & Atomic values, no repeating groups & Multivalued attributes \\
+        \textbf{2NF} & 1NF + No partial dependencies & Partial functional dependencies \\
+        \textbf{3NF} & 2NF + No transitive dependencies & Transitive dependencies \\
+        \textbf{BCNF} & 3NF + Every determinant is candidate key & Remaining anomalies \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\textbf{Normalization Process:}
+
+\textbf{Step 1 - First Normal Form (1NF):}
+\begin{itemize}
+    \item Eliminate repeating groups
+    \item Each cell contains single value
+    \item Each record is unique
+\end{itemize}
+
+\textbf{Step 2 - Second Normal Form (2NF):}
+\begin{itemize}
+    \item Must be in 1NF
+    \item Remove partial dependencies
+    \item Non-key attributes fully dependent on primary key
+\end{itemize}
+
+\textbf{Step 3 - Third Normal Form (3NF):}
+\begin{itemize}
+    \item Must be in 2NF
+    \item Remove transitive dependencies
+    \item Non-key attributes not dependent on other non-key attributes
+\end{itemize}
+
+\textbf{Benefits of Normalization:}
+\begin{itemize}
+    \item \textbf{Reduced Redundancy}: Eliminates duplicate data
+    \item \textbf{Data Integrity}: Maintains consistency
+    \item \textbf{Storage Efficiency}: Minimizes storage space
+    \item \textbf{Update Anomalies}: Prevents inconsistent updates
+\end{itemize}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "Normalize to Neat, Non-redundant Tables"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(a)}{3}{Describe Need of Normalization in DBMS}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{Problems Solved by Normalization}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Problem} & \textbf{Description} & \textbf{Solution} \\
+        \midrule
+        \textbf{Insertion Anomaly} & Cannot insert data without complete info & Separate tables \\
+        \textbf{Update Anomaly} & Multiple updates for single change & Remove redundancy \\
+        \textbf{Deletion Anomaly} & Loss of important data when deleting & Preserve dependencies \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\textbf{Key Needs:}
+\begin{itemize}
+    \item \textbf{Data Consistency}: Ensures uniform data across database
+    \item \textbf{Storage Optimization}: Reduces redundant storage
+    \item \textbf{Maintenance Simplicity}: Easier database updates
+\end{itemize}
+
+\textbf{Benefits:}
+\begin{itemize}
+    \item \textbf{Improved Data Quality}: Reduces errors and inconsistencies
+    \item \textbf{Flexible Design}: Easier to modify and extend
+    \item \textbf{Better Performance}: For update operations
+\end{itemize}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "Normalization Needs Neat Organization"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(b)}{4}{Explain properties of Transaction in DBMS}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{ACID Properties}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Property} & \textbf{Description} & \textbf{Purpose} \\
+        \midrule
+        \textbf{Atomicity} & All operations succeed or all fail & Ensures completeness \\
+        \textbf{Consistency} & Database remains in valid state & Maintains integrity \\
+        \textbf{Isolation} & Concurrent transactions don't interfere & Prevents conflicts \\
+        \textbf{Durability} & Committed changes are permanent & Ensures persistence \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\textbf{Detailed Explanation:}
+\begin{itemize}
+    \item \textbf{Atomicity}: Transaction is indivisible unit. Either all operations complete or none.
+    \item \textbf{Consistency}: Database transitions from one valid state to another. All integrity constraints maintained.
+    \item \textbf{Isolation}: Concurrent transactions appear to run sequentially. Intermediate states not visible to other transactions.
+    \item \textbf{Durability}: Once committed, changes survive system failures. Data permanently stored.
+\end{itemize}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "ACID Assures Correct Database"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(c)}{7}{Explain View Serializability in detail}
+\begin{solutionbox}
+\textbf{View Serializability} determines if a concurrent schedule produces the same result as some serial schedule by examining read and write operations.
+
+\begin{table}[H]
+    \centering
+    \caption{View Equivalence Conditions}
+    \begin{tabulary}{\linewidth}{LC}
+        \toprule
+        \textbf{Condition} & \textbf{Description} \\
+        \midrule
+        \textbf{Initial Reads} & Same transactions read initial values \\
+        \textbf{Final Writes} & Same transactions perform final writes \\
+        \textbf{Intermediate Reads} & Read values from same writing transactions \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\textbf{Key Concepts:}
+
+\textbf{View Equivalent Schedules:}
+Two schedules are view equivalent if:
+\begin{enumerate}
+    \item For each data item, if transaction T reads initial value in one schedule, it reads initial value in other
+    \item For each read operation, if T reads value written by T' in one schedule, same holds in other
+    \item For each data item, if T performs final write in one schedule, it performs final write in other
+\end{enumerate}
+
+\textbf{Testing View Serializability:}
+\begin{itemize}
+    \item \textbf{Precedence Graph}: Create directed graph
+    \item \textbf{Cycle Detection}: Check for cycles in graph
+    \item \textbf{Conflict Analysis}: Examine read-write conflicts
+\end{itemize}
+
+\textbf{Example Analysis:}
+\begin{lstlisting}
+Schedule S1: R1(X) W1(X) R2(X) W2(X)
+Schedule S2: R1(X) R2(X) W1(X) W2(X)
+\end{lstlisting}
+
+\textbf{Comparison with Conflict Serializability:}
+\begin{itemize}
+    \item View serializability is less restrictive
+    \item Some view serializable schedules are not conflict serializable
+    \item More complex to test
+\end{itemize}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "View Verifies Valid Schedules"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(a) OR}{3}{Perform 2NF on any Database}
+\begin{solutionbox}
+\textbf{Example: Student Course Database}
+
+\textbf{Original Table (Not in 2NF):}
+\begin{lstlisting}
+Student_Course (Student_ID, Student_Name, Course_ID, Course_Name, Grade, Instructor)
+Primary Key: {Student_ID, Course_ID}
+\end{lstlisting}
+
+\textbf{Functional Dependencies:}
+\begin{itemize}
+    \item Student\_ID $\to$ Student\_Name (Partial dependency)
+    \item Course\_ID $\to$ Course\_Name, Instructor (Partial dependency)
+    \item \{Student\_ID, Course\_ID\} $\to$ Grade
+\end{itemize}
+
+\textbf{2NF Decomposition:}
+
+\textbf{Table 1: Students}
+\begin{lstlisting}
+Students (Student_ID, Student_Name)
+Primary Key: Student_ID
+\end{lstlisting}
+
+\textbf{Table 2: Courses}
+\begin{lstlisting}
+Courses (Course_ID, Course_Name, Instructor)  
+Primary Key: Course_ID
+\end{lstlisting}
+
+\textbf{Table 3: Enrollments}
+\begin{lstlisting}
+Enrollments (Student_ID, Course_ID, Grade)
+Primary Key: {Student_ID, Course_ID}
+Foreign Keys: Student_ID -> Students, Course_ID -> Courses
+\end{lstlisting}
+
+\textbf{Result:} All partial dependencies eliminated, now in 2NF.
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "Second Normal Form Separates Dependencies"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(b) OR}{4}{Explain States of Transaction}
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=2.5cm]
+    \node [state] (active) {Active};
+    \node [state, right of=active, xshift=1cm] (part) {Partially\\Committed};
+    \node [state, right of=part, xshift=1cm] (commit) {Committed};
+    \node [state, below of=active] (failed) {Failed};
+    \node [state, below of=part] (aborted) {Aborted};
+    
+    \draw [gtu arrow] (active) -- (part) node[midway, above] {\scriptsize final statement};
+    \draw [gtu arrow] (part) -- (commit);
+    \draw [gtu arrow] (active) -- (failed) node[midway, left] {\scriptsize error};
+    \draw [gtu arrow] (part) -- (failed);
+    \draw [gtu arrow] (failed) -- (aborted) node[midway, below] {\scriptsize rollback};
+\end{tikzpicture}
+\captionof{figure}{Transaction State Diagram}
+\end{center}
+
+\begin{table}[H]
+    \centering
+    \caption{Transaction States}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{State} & \textbf{Description} & \textbf{Actions} \\
+        \midrule
+        \textbf{Active} & Transaction is executing & Read/Write operations \\
+        \textbf{Partially Committed} & Final statement executed & Waiting for commit \\
+        \textbf{Committed} & Transaction completed successfully & Changes permanent \\
+        \textbf{Failed} & Cannot proceed normally & Error occurred \\
+        \textbf{Aborted} & Transaction rolled back & All changes undone \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\textbf{Key Points:}
+\begin{itemize}
+    \item \textbf{Recovery}: System can recover from failed states
+    \item \textbf{Durability}: Committed changes are permanent
+    \item \textbf{Atomicity}: Aborted transactions leave no trace
+\end{itemize}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "Transactions Travel Through States"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(c) OR}{7}{Explain Conflict Serializability in detail}
+\begin{solutionbox}
+\textbf{Conflict Serializability} ensures that a concurrent schedule is equivalent to some serial schedule by analyzing conflicting operations.
+
+\begin{table}[H]
+    \centering
+    \caption{Conflicting Operations}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Operation Pair} & \textbf{Conflict Type} & \textbf{Reason} \\
+        \midrule
+        \textbf{Read-Write} & RW Conflict & Read before write \\
+        \textbf{Write-Read} & WR Conflict & Write before read \\
+        \textbf{Write-Write} & WW Conflict & Multiple writes \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\textbf{Testing Conflict Serializability:}
+
+\textbf{Step 1: Identify Conflicts}
+\begin{itemize}
+    \item Find pairs of operations on same data item
+    \item Check if operations belong to different transactions
+    \item Determine if operations conflict
+\end{itemize}
+
+\textbf{Step 2: Create Precedence Graph}
+\begin{itemize}
+    \item Nodes represent transactions
+    \item Directed edges represent conflicts
+    \item Edge from Ti to Tj if Ti conflicts with Tj
+\end{itemize}
+
+\textbf{Step 3: Check for Cycles}
+\begin{itemize}
+    \item If graph has no cycles $\to$ Conflict serializable
+    \item If graph has cycles $\to$ Not conflict serializable
+\end{itemize}
+
+\textbf{Example Analysis:}
+\begin{lstlisting}
+Schedule: R1(A) W1(A) R2(A) W2(B) R1(B) W1(B)
+Conflicts:
+- W1(A) conflicts with R2(A) -> T1 before T2
+- W2(B) conflicts with R1(B) -> T2 before T1
+- W2(B) conflicts with W1(B) -> T2 before T1
+\end{lstlisting}
+
+\textbf{Precedence Graph:}
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=2.5cm]
+    \node [state] (t1) {T1};
+    \node [state, right of=t1] (t2) {T2};
+    
+    \draw [gtu arrow] (t1) to[bend left] (t2);
+    \draw [gtu arrow] (t2) to[bend left] (t1);
+\end{tikzpicture}
+\captionof{figure}{Precedence Graph (Cycle)}
+\end{center}
+
+\textbf{Result:} Contains cycle, therefore NOT conflict serializable.
+
+\textbf{Comparing with View Serializability:}
+\begin{itemize}
+    \item Conflict serializability is more restrictive
+    \item All conflict serializable schedules are view serializable
+    \item Easier to test than view serializability
+\end{itemize}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "Conflicts Create Cycles, Check Carefully"
+\end{mnemonicbox}
+\end{solutionbox}
+
+\end{document}

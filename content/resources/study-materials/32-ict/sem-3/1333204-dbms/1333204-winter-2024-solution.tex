@@ -1,0 +1,902 @@
+\documentclass{article}
+\input{../../../../../../latex-templates/gtu-solutions/preamble.tex}
+\input{../../../../../../latex-templates/gtu-solutions/english-boxes.tex}
+\input{../../../../../../latex-templates/gtu-solutions/commands.tex}
+
+\usetikzlibrary{calc,positioning,shapes,arrows,automata,fit,shapes.multipart,trees}
+\tikzset{
+    entity/.style={rectangle, draw, fill=white, align=center, minimum height=2em, font=\small, thick},
+    relationship/.style={diamond, draw, fill=white, align=center, aspect=2, font=\small, thick},
+    attribute/.style={ellipse, draw, fill=white, align=center, font=\small},
+    multi attribute/.style={ellipse, draw, double, fill=white, align=center, font=\small},
+    gtu line/.style={draw, thick},
+    gtu arrow/.style={draw, -latex, thick}
+}
+
+\title{Database Management System (1333204) - Winter 2024 Solution}
+\date{December 09, 2024}
+
+\begin{document}
+\maketitle
+
+\questionmarks{1(a)}{3}{Define: Field, Record, Metadata}
+\begin{solutionbox}
+\begin{itemize}
+    \item \textbf{Field}: A single unit of data representing one attribute of an entity.
+    \item \textbf{Record}: Collection of related fields that store data about an entity.
+    \item \textbf{Metadata}: Data about data that describes the structure, properties, and relationships of database objects.
+\end{itemize}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "FRaMe" (Field, Record, Metadata)
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{1(b)}{4}{Define: strong and weak entity set.}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{Strong vs Weak Entity Set}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Entity Type} & \textbf{Description} & \textbf{Identification} \\
+        \midrule
+        \textbf{Strong Entity} & Exists independently & Has its own primary key \\
+        \textbf{Weak Entity} & Depends on strong entity & Requires parent entity key \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\textbf{Examples}: Strong Entity - Customer, Employee; Weak Entity - Bank Account, Order Item.
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "SWing" (Strong is With own identity, weak is Not Getting own identity)
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{1(c)}{7}{Explain 3 Levels of Data Abstraction}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{Levels of Data Abstraction}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Level} & \textbf{Description} & \textbf{Used By} \\
+        \midrule
+        \textbf{Physical Level} & Describes how data is stored physically & System Administrators \\
+        \textbf{Conceptual Level} & Describes what data is stored and relationships & Database Designers \\
+        \textbf{View Level} & Describes part of database relevant to users & End Users \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=2cm]
+    \node [gtu block, fill=blue!10] (view) {View Level};
+    \node [gtu block, below of=view] (conc) {Conceptual Level};
+    \node [gtu block, below of=conc] (phys) {Physical Level};
+    
+    \node [left of=view, xshift=-3cm] (users) {End Users};
+    \node [left of=conc, xshift=-3cm] (dba) {Database Designers};
+    \node [left of=phys, xshift=-3cm] (admin) {System Administrators};
+
+    \draw [gtu arrow] (users) -- (view);
+    \draw [gtu arrow] (dba) -- (conc);
+    \draw [gtu arrow] (admin) -- (phys);
+    
+    \draw [gtu arrow] (view) -- (conc);
+    \draw [gtu arrow] (conc) -- (phys);
+\end{tikzpicture}
+\captionof{figure}{Data Abstraction Levels}
+\end{center}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "PCV" (Physical, Conceptual, View - bottom to top)
+\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{1(c)}{7}{Explain advantages and disadvantages of DBMS.}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{Advantages and Disadvantages of DBMS}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Advantages} & \textbf{Disadvantages} \\
+        \midrule
+        \textbf{Data Redundancy Control} & \textbf{High Cost} of software and hardware \\
+        \textbf{Data Consistency} & \textbf{Complexity} in design and maintenance \\
+        \textbf{Improved Data Security} & \textbf{Performance Impact} with heavy usage \\
+        \textbf{Data Sharing} & \textbf{Vulnerability} to system failures \\
+        \textbf{Data Independence} & \textbf{Recovery Challenges} after failure \\
+        \textbf{Standardized Access} & \textbf{Increased Training Requirements} \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "BASIC-DV" (Benefits: Access, Security, Independence, Consistency - Drawbacks: Vulnerability)
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(a)}{3}{Explain select operation in relational algebra with example}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{Select Operation ($\sigma$)}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Feature} & \textbf{Description} \\
+        \midrule
+        \textbf{Syntax} & $\sigma_{condition}(Relation)$ \\
+        \textbf{Function} & Retrieves tuples satisfying condition \\
+        \textbf{Example} & $\sigma_{salary>30000}(Employee)$ \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "SERVe" (Select Exactly Required Values)
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(b)}{4}{Define Primary, Foreign, Super, Candidate Keys in DBMS.}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{Key Types}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Key Type} & \textbf{Description} \\
+        \midrule
+        \textbf{Primary Key} & Unique identifier for each record \\
+        \textbf{Foreign Key} & Attribute linking to primary key in another table \\
+        \textbf{Super Key} & Set of attributes that can uniquely identify records \\
+        \textbf{Candidate Key} & Minimal super key that can be primary key \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "PFSC" (Person First Shows Credentials)
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(c)}{7}{Draw E R Diagram of Library Management System.}
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=2.5cm]
+    \node [entity] (book) {BOOK};
+    \node [relationship, below of=book] (issued) {is\_issued};
+    \node [entity, below of=issued] (issue) {ISSUE};
+    
+    \node [relationship, left of=issue, xshift=-1cm] (borrows) {borrows};
+    \node [entity, left of=borrows, xshift=-1cm] (member) {MEMBER};
+    
+    \node [relationship, right of=issue, xshift=1cm] (processes) {processes};
+    \node [entity, right of=processes, xshift=1cm] (lib) {LIBRARIAN};
+    
+    % Attributes Book
+    \node [attribute, above left of=book] (bid) {\underline{book\_id}};
+    \node [attribute, above of=book] (btitle) {title};
+    \node [attribute, above right of=book] (bauth) {author};
+    
+    % Attributes Member
+    \node [attribute, above left of=member] (mid) {\underline{member\_id}};
+    \node [attribute, left of=member] (mname) {name};
+    \node [attribute, below left of=member] (mphone) {phone};
+    
+    % Attributes Issue
+    \node [attribute, below left of=issue] (iid) {\underline{issue\_id}};
+    \node [attribute, below right of=issue] (idate) {issue\_date};
+    
+    % Attributes Librarian
+    \node [attribute, above right of=lib] (lid) {\underline{staff\_id}};
+    \node [attribute, right of=lib] (lname) {name};
+    
+    % Connections
+    \draw [gtu line] (book) -- (issued);
+    \draw [gtu line] (issued) -- (issue);
+    \draw [gtu line] (member) -- (borrows);
+    \draw [gtu line] (borrows) -- (issue);
+    \draw [gtu line] (lib) -- (processes);
+    \draw [gtu line] (processes) -- (issue);
+    
+    \draw [gtu line] (book) -- (bid);
+    \draw [gtu line] (book) -- (btitle);
+    \draw [gtu line] (book) -- (bauth);
+    
+    \draw [gtu line] (member) -- (mid);
+    \draw [gtu line] (member) -- (mname);
+    \draw [gtu line] (member) -- (mphone);
+    
+    \draw [gtu line] (issue) -- (iid);
+    \draw [gtu line] (issue) -- (idate);
+    
+    \draw [gtu line] (lib) -- (lid);
+    \draw [gtu line] (lib) -- (lname);
+\end{tikzpicture}
+\captionof{figure}{Library Management System ER Diagram}
+\end{center}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "LIMB" (Library Items, Members, Borrowing)
+\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{2(a)}{3}{Explain union operation in relational algebra with example.}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{Union Operation ($\cup$)}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Feature} & \textbf{Description} \\
+        \midrule
+        \textbf{Syntax} & $Relation1 \cup Relation2$ \\
+        \textbf{Function} & Combines tuples from both relations \\
+        \textbf{Requirement} & Both relations must be union-compatible \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\textbf{Example:} $Students\_CS \cup Students\_IT$
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "CUP" (Combining Union of Parts)
+\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{2(b)}{4}{Define Composite attribute and Multivalued attribute with example}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{Attribute Types}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Attribute Type} & \textbf{Description} & \textbf{Example} \\
+        \midrule
+        \textbf{Composite} & Can be divided into smaller subparts & Address (street, city, state, zip) \\
+        \textbf{Multivalued} & Can have more than one value & Phone numbers, Email addresses \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=2cm, level 1/.style={sibling distance=3cm}, level 2/.style={sibling distance=1.5cm}]
+    \node [entity] {Person}
+        child {node [attribute] {Address (Composite)}
+            child {node [attribute] {Street}}
+            child {node [attribute] {City}}
+            child {node [attribute] {State}}
+        }
+        child {node [multi attribute] {Phone Numbers}
+            child {node [attribute] {Num 1}}
+            child {node [attribute] {Num 2}}
+        };
+\end{tikzpicture}
+\captionof{figure}{Attribute Types Hierarchy}
+\end{center}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "CoMbo" (Composite has Multiple components)
+\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{2(c)}{7}{Draw E R Diagram of College Management System.}
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=3cm]
+    \node [entity] (dept) {DEPARTMENT};
+    \node [relationship, right of=dept] (offers) {offers};
+    \node [entity, right of=offers] (course) {COURSE};
+    
+    \node [relationship, below of=dept] (employs) {employs};
+    \node [entity, below of=employs] (faculty) {FACULTY};
+    
+    \node [relationship, below of=course] (teaches) {teaches};
+    
+    \node [relationship, above of=dept] (enrolls) {enrolls};
+    \node [entity, above of=enrolls] (student) {STUDENT};
+    
+    \node [relationship, right of=student, xshift=1cm] (registers) {registers};
+    \node [entity, right of=registers, xshift=1cm] (enrollment) {ENROLLMENT};
+    
+    % Connections
+    \draw [gtu line] (dept) -- (offers);
+    \draw [gtu line] (offers) -- (course);
+    \draw [gtu line] (dept) -- (employs);
+    \draw [gtu line] (employs) -- (faculty);
+    \draw [gtu line] (faculty) -| (teaches);
+    \draw [gtu line] (teaches) |- (course);
+    \draw [gtu line] (dept) -- (enrolls);
+    \draw [gtu line] (enrolls) -- (student);
+    \draw [gtu line] (student) -- (registers);
+    \draw [gtu line] (registers) -- (enrollment);
+    \draw [gtu line] (course) -| (registers); % Course linked to enrollment too
+    
+    % Attributes
+    \node [attribute, left of=dept] {\underline{dept\_id}};
+    \node [attribute, left of=student] {\underline{student\_id}};
+    \node [attribute, right of=course] {\underline{course\_id}};
+    \node [attribute, left of=faculty] {\underline{faculty\_id}};
+    \node [attribute, right of=enrollment] {\underline{enrollment\_id}};
+\end{tikzpicture}
+\captionof{figure}{College Management System ER Diagram}
+\end{center}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "DECFS" (Departments, Enrollments, Courses, Faculty, Students)
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3(a)}{3}{List different data types in SQL and Explain in brief}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{SQL Data Types}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Category} & \textbf{Examples} & \textbf{Usage} \\
+        \midrule
+        \textbf{Numeric} & INT, FLOAT, DECIMAL & Store numbers \\
+        \textbf{Character} & CHAR, VARCHAR, TEXT & Store text \\
+        \textbf{Date/Time} & DATE, TIME, TIMESTAMP & Store temporal data \\
+        \textbf{Boolean} & BOOLEAN & Store true/false values \\
+        \textbf{Binary} & BLOB, BINARY & Store binary data \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "NCDBB" (Numbers, Characters, Dates, Booleans, Binaries)
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3(b)}{4}{Explain any two DDL Commands with Syntax and Example}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{DDL Commands}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Command} & \textbf{Syntax} & \textbf{Example} \\
+        \midrule
+        \textbf{CREATE} & \code{CREATE TABLE t (cols);} & \code{CREATE TABLE Student (id INT, n TEXT);} \\
+        \textbf{ALTER} & \code{ALTER TABLE t ADD c type;} & \code{ALTER TABLE Student ADD email TEXT;} \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=3cm]
+    \node [gtu block, fill=orange!10] (ddl) {DDL Commands};
+    \node [gtu process, below left of=ddl] (create) {CREATE: New Objects};
+    \node [gtu process, below right of=ddl] (alter) {ALTER: Modify Objects};
+    
+    \draw [gtu arrow] (ddl) -- (create);
+    \draw [gtu arrow] (ddl) -- (alter);
+\end{tikzpicture}
+\captionof{figure}{DDL Commands}
+\end{center}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "CAD" (Create And Define)
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3(c)}{7}{Write the Output of Following Query.}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{SQL Query Outputs}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Function} & \textbf{Result} & \textbf{Explanation} \\
+        \midrule
+        \textbf{CEIL(123.57)} & 124 & Smallest integer $\ge$ 123.57 \\
+        \textbf{CEIL(4.1)} & 5 & Smallest integer $\ge$ 4.1 \\
+        \textbf{MOD(12,4)} & 0 & Remainder of 12 $\div$ 4 \\
+        \textbf{MOD(10,4)} & 2 & Remainder of 10 $\div$ 4 \\
+        \textbf{POWER(2,3)} & 8 & $2^3$ \\
+        \textbf{POWER(3,3)} & 27 & $3^3$ \\
+        \textbf{ROUND(121.413,1)} & 121.4 & Round to 1 decimal \\
+        \textbf{ROUND(121.413,2)} & 121.41 & Round to 2 decimals \\
+        \textbf{FLOOR(25.3)} & 25 & Largest integer $\le$ 25.3 \\
+        \textbf{FLOOR(25.7)} & 25 & Largest integer $\le$ 25.7 \\
+        \textbf{LENGTH('AHMEDABAD')} & 9 & Number of characters \\
+        \textbf{ABS(-25)} & 25 & Absolute value \\
+        \textbf{ABS(36)} & 36 & Absolute value \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "CMPRFLA" (Ceiling, Modulus, Power, Round, Floor, Length, Absolute)
+\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{3(a)}{3}{Explain any three Date Functions.}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{Date Functions}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Function} & \textbf{Purpose} & \textbf{Example Idea} \\
+        \midrule
+        \textbf{ADD\_MONTHS} & Adds months to date & Add 3 months to Jan $\to$ Apr \\
+        \textbf{MONTHS\_BETWEEN} & Calculates months between dates & Months between Mar and Jan $\to$ 2 \\
+        \textbf{SYSDATE} & Returns current date and time & Returns system timestamp \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "AMS" (Add\_months, Months\_between, Sysdate)
+\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{3(b)}{4}{Explain any two DML Commands with Syntax and Example}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{DML Commands}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Command} & \textbf{Syntax} & \textbf{Example} \\
+        \midrule
+        \textbf{INSERT} & \code{INSERT INTO t VALUES (v1...);} & \code{INSERT INTO S VALUES (1, 'Raj');} \\
+        \textbf{UPDATE} & \code{UPDATE t SET c=v WHERE cond;} & \code{UPDATE S SET e='n' WHERE id=1;} \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=3cm]
+    \node [gtu block, fill=green!10] (dml) {DML Commands};
+    \node [gtu process, below left of=dml] (insert) {INSERT: Add Records};
+    \node [gtu process, below right of=dml] (update) {UPDATE: Modify Records};
+    
+    \draw [gtu arrow] (dml) -- (insert);
+    \draw [gtu arrow] (dml) -- (update);
+\end{tikzpicture}
+\captionof{figure}{DML Commands}
+\end{center}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "IUM" (Insert, Update, Manipulate)
+\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{3(c)}{7}{For the table: EMP(emp\_no, emp\_name, designation, salary, deptno), Write SQL commands for following operations.}
+\begin{solutionbox}
+\begin{itemize}
+    \item \textbf{Create table EMP}:
+    \begin{lstlisting}[language=SQL]
+CREATE TABLE EMP (
+    emp_no INT PRIMARY KEY, 
+    emp_name VARCHAR(50), 
+    designation VARCHAR(30), 
+    salary DECIMAL(10,2), 
+    deptno INT
+);
+    \end{lstlisting}
+    
+    \item \textbf{Given Columns Select}:
+    \begin{lstlisting}[language=SQL]
+SELECT emp_no, emp_name, designation, salary, deptno FROM EMP;
+    \end{lstlisting}
+    
+    \item \textbf{Name starts with 'p'}:
+    \begin{lstlisting}[language=SQL]
+SELECT * FROM EMP WHERE emp_name LIKE 'p%';
+    \end{lstlisting}
+    
+    \item \textbf{Department wise salary}:
+    \begin{lstlisting}[language=SQL]
+SELECT deptno, SUM(salary) AS total_salary 
+FROM EMP GROUP BY deptno;
+    \end{lstlisting}
+    
+    \item \textbf{Add email\_id}:
+    \begin{lstlisting}[language=SQL]
+ALTER TABLE EMP ADD email_id VARCHAR(100);
+    \end{lstlisting}
+    
+    \item \textbf{Rename column}:
+    \begin{lstlisting}[language=SQL]
+ALTER TABLE EMP RENAME COLUMN designation TO post;
+    \end{lstlisting}
+    
+    \item \textbf{Delete all records}:
+    \begin{lstlisting}[language=SQL]
+DELETE FROM person;
+    \end{lstlisting}
+\end{itemize}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "CSDAACD" (Create, Select, Display, Aggregate, Add, Change, Delete)
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(a)}{3}{List different aggregate functions and explain any one with syntax and example.}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{Aggregate Functions}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Function} & \textbf{Purpose} \\
+        \midrule
+        \textbf{SUM} & Calculates total \\
+        \textbf{AVG} & Calculates average \\
+        \textbf{COUNT} & Counts number of rows \\
+        \textbf{MAX} & Finds maximum value \\
+        \textbf{MIN} & Finds minimum value \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\textbf{Example (AVG)}: \code{SELECT AVG(salary) FROM Employee;}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "SCAMM" (Sum, Count, Avg, Max, Min)
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(b)}{4}{Define the transaction with example.}
+\begin{solutionbox}
+\textbf{Transaction}: Logical unit of work that must be completely processed or completely fail.
+
+\begin{table}[H]
+    \centering
+    \caption{Transaction Properties}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Concept} & \textbf{Description} \\
+        \midrule
+        \textbf{ACID} & Atomicity, Consistency, Isolation, Durability \\
+        \textbf{States} & Active, Partially Committed, Committed, Failed, Aborted \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{lstlisting}[language=SQL]
+BEGIN TRANSACTION;
+    UPDATE Accounts SET balance = balance - 5000 WHERE acc_no = 'A123';
+    UPDATE Accounts SET balance = balance + 5000 WHERE acc_no = 'B456';
+COMMIT;
+\end{lstlisting}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "TAPS" (Transaction As Process Set)
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(c)}{7}{What is an Operator in SQL? Explain Arithmetic and Logical operators with Syntax and Example}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{SQL Operators}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Type} & \textbf{Operators} & \textbf{Example} \\
+        \midrule
+        \textbf{Arithmetic} & +, -, *, /, \% & 5 + 3 = 8 \\
+        \textbf{Logical} & AND & salary > 3k AND dept = 'IT' \\
+        \textbf{Logical} & OR & salary > 5k OR dept = 'HR' \\
+        \textbf{Logical} & NOT & NOT (condition) \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "ASMDOLA" (Add, Subtract, Multiply, Divide, OR, AND, NOT)
+\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{4(a)}{3}{List different numeric functions and explain any one with syntax and example.}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{Numeric Functions}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Function} & \textbf{Purpose} \\
+        \midrule
+        \textbf{ROUND} & Rounds to decimal places \\
+        \textbf{TRUNC} & Truncates to decimal places \\
+        \textbf{CEIL} & Smallest integer $\ge$ number \\
+        \textbf{FLOOR} & Largest integer $\le$ number \\
+        \textbf{ABS} & Absolute value \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\textbf{Example (ROUND)}: \code{ROUND(125.679, 2)} $\to$ 125.68
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "RTCFA" (Round, Truncate, Ceiling, Floor, Absolute)
+\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{4(b)}{4}{List various database operations of a transaction.}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{Transaction Operations}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Operation} & \textbf{Description} \\
+        \midrule
+        \textbf{BEGIN} & Marks start \\
+        \textbf{READ} & Retrieves data \\
+        \textbf{WRITE} & Modifies data \\
+        \textbf{COMMIT} & Saves changes \\
+        \textbf{ROLLBACK} & Undoes changes \\
+        \textbf{SAVEPOINT} & Partial rollback point \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{center}
+\begin{tikzpicture}[gtu flow]
+    \node [gtu start] (begin) {BEGIN};
+    \node [gtu process, below of=begin] (rw) {READ / WRITE};
+    \node [gtu decision, below of=rw] (check) {Success?};
+    \node [gtu stop, below left of=check, xshift=-1cm] (commit) {COMMIT};
+    \node [gtu stop, below right of=check, xshift=1cm] (rollback) {ROLLBACK};
+    
+    \draw [gtu arrow] (begin) -- (rw);
+    \draw [gtu arrow] (rw) -- (check);
+    \draw [gtu arrow] (check) -| node[near start] {Yes} (commit);
+    \draw [gtu arrow] (check) -| node[near start] {No} (rollback);
+\end{tikzpicture}
+\captionof{figure}{Transaction Flow}
+\end{center}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "BRWCRS" (Begin, Read, Write, Commit, Rollback, Savepoint)
+\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{4(c)}{7}{What is join? Explain different types of joins with syntax and example.}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{Join Types}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Join Type} & \textbf{Description} \\
+        \midrule
+        \textbf{INNER JOIN} & Match in both tables \\
+        \textbf{LEFT JOIN} & All from left, matched from right \\
+        \textbf{RIGHT JOIN} & All from right, matched from left \\
+        \textbf{FULL JOIN} & Match in either table \\
+        \textbf{SELF JOIN} & Join table to itself \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=2cm]
+    \node [gtu block, fill=purple!10] (joins) {JOIN TYPES};
+    \node [gtu process, below of=joins] (inner) {INNER};
+    \node [gtu process, left of=inner, xshift=-1cm] (left) {LEFT};
+    \node [gtu process, right of=inner, xshift=1cm] (right) {RIGHT};
+    \node [gtu process, below of=left] (full) {FULL};
+    \node [gtu process, below of=right] (self) {SELF};
+    
+    \draw [gtu arrow] (joins) -- (inner);
+    \draw [gtu arrow] (joins) -- (left);
+    \draw [gtu arrow] (joins) -- (right);
+    \draw [gtu arrow] (joins) -- (full);
+    \draw [gtu arrow] (joins) -- (self);
+\end{tikzpicture}
+\captionof{figure}{Types of Joins}
+\end{center}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "ILRFS" (Inner, Left, Right, Full, Self)
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(a)}{3}{Convert the customer relation into 1NF shown below.}
+\begin{solutionbox}
+\textbf{Customer Table (1NF)}:
+\begin{table}[H]
+    \centering
+    \caption{Customer in 1NF}
+    \begin{tabulary}{\linewidth}{LCLLL}
+        \toprule
+        \textbf{cid} & \textbf{name} & \textbf{society} & \textbf{city} & \textbf{Contact\_no} \\
+        \midrule
+        CO1 & Riya & Amu aavas & Anand & 5322332123 \\
+        CO2 & Jiya & Sardar colony & Ahmedabad & 5326521456 \\
+        CO2 & Jiya & Sardar colony & Ahmedabad & 5265232849 \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "AFM" (Atomic values, Flatten Multivalued attributes)
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(b)}{4}{List and Explain ACID properties of transaction.}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{ACID Properties}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Property} & \textbf{Description} \\
+        \midrule
+        \textbf{Atomicity} & All or nothing \\
+        \textbf{Consistency} & Database remains valid \\
+        \textbf{Isolation} & Transactions don't interfere \\
+        \textbf{Durability} & Changes are permanent \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=2.5cm]
+    \node [gtu block, fill=yellow!10] (acid) {ACID};
+    \node [gtu process, above left of=acid] (a) {Atomicity};
+    \node [gtu process, above right of=acid] (c) {Consistency};
+    \node [gtu process, below right of=acid] (i) {Isolation};
+    \node [gtu process, below left of=acid] (d) {Durability};
+    
+    \draw [gtu arrow] (acid) -- (a);
+    \draw [gtu arrow] (acid) -- (c);
+    \draw [gtu arrow] (acid) -- (i);
+    \draw [gtu arrow] (acid) -- (d);
+\end{tikzpicture}
+\captionof{figure}{ACID Properties}
+\end{center}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "ACID" (Atomicity, Consistency, Isolation, Durability)
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(c)}{7}{List different types of functional dependencies and explain each using example.}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{Functional Dependencies}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Type} & \textbf{Description} & \textbf{Example} \\
+        \midrule
+        \textbf{Trivial FD} & $Y \subseteq X$ & $\{ID, Name\} \to \{Name\}$ \\
+        \textbf{Non-trivial FD} & $Y \not\subseteq X$ & $\{ID\} \to \{Name\}$ \\
+        \textbf{Partial FD} & Part of key determines attr & $\{Course, Student\} \to CourseName$ \\
+        \textbf{Transitive FD} & $X \to Y \to Z$ & $Student \to Dept \to DeptName$ \\
+        \textbf{Multivalued FD} & One determines set of another & $Course \to\to Textbook$ \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{center}
+\begin{tikzpicture}[gtu block, node distance=2.5cm]
+    \node [attribute] (a) {A};
+    \node [attribute, right of=a] (b) {B};
+    \node [attribute, right of=b] (c) {C};
+    
+    \draw [gtu arrow] (a) -- node[above] {determines} (b);
+    \draw [gtu arrow] (b) -- node[above] {determines} (c);
+    \draw [gtu arrow, bend right] (a) to node[below] {Transitive} (c);
+\end{tikzpicture}
+\captionof{figure}{Transitive Dependency}
+\end{center}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "TNPTMv" (Trivial, Non-trivial, Partial, Transitive, Multivalued)
+\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{5(a)}{3}{Convert the Depositor\_Account relation into 2NF.}
+\begin{solutionbox}
+\textbf{Account Table (2NF)}:
+\begin{table}[H]
+    \centering
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{ano} & \textbf{balance} & \textbf{bname} \\
+        \midrule
+         & & \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\textbf{Depositor Table (2NF)}:
+\begin{table}[H]
+    \centering
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{cid} & \textbf{ano} & \textbf{access\_date} \\
+        \midrule
+         & & \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "RPKD" (Remove Partial Key Dependencies)
+\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{5(b)}{4}{Explain conflict serializability.}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{Conflict Serializability}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Concept} & \textbf{Description} \\
+        \midrule
+        \textbf{Definition} & Equivalent to serial schedule \\
+        \textbf{Conflict Ops} & RW, WR, WW on same item \\
+        \textbf{Testing} & No cycles in precedence graph \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\begin{center}
+\begin{tikzpicture}[gtu state, node distance=3cm]
+    \node [gtu state] (t1) {T1};
+    \node [gtu state, right of=t1] (t2) {T2};
+    \node [gtu state, right of=t2] (t3) {T3};
+    
+    \draw [gtu arrow] (t1) -- (t2);
+    \draw [gtu arrow] (t2) -- (t3);
+    \node [below of=t2, yshift=1cm] {No Cycle $\implies$ Serializable};
+\end{tikzpicture}
+\captionof{figure}{Precedence Graph}
+\end{center}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "COGS" (Conflict Operations Graph Serializable)
+\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{5(c)}{7}{Explain 3NF normalization with example}
+\begin{solutionbox}
+\begin{table}[H]
+    \centering
+    \caption{Normal Forms}
+    \begin{tabulary}{\linewidth}{LCL}
+        \toprule
+        \textbf{Form} & \textbf{Definition} & \textbf{Example} \\
+        \midrule
+        \textbf{1NF} & Atomic & Split phone numbers \\
+        \textbf{2NF} & No Partial Dep & Split Order details \\
+        \textbf{3NF} & No Transitive Dep & Split Student Dept \\
+        \bottomrule
+    \end{tabulary}
+\end{table}
+
+\textbf{Example}: \code{Emp(ID, Name, DeptID, DeptName)} $\to$ \\
+\code{Emp(ID, Name, DeptID)} + \code{Dept(DeptID, DeptName)}
+
+\begin{center}
+\begin{tikzpicture}[gtu flow]
+    \node [gtu start] (nf1) {1NF};
+    \node [gtu process, right of=nf1, xshift=2cm] (nf2) {2NF};
+    \node [gtu process, right of=nf2, xshift=2cm] (nf3) {3NF};
+    
+    \draw [gtu arrow] (nf1) -- node[above] {Remove Partial} (nf2);
+    \draw [gtu arrow] (nf2) -- node[above] {Remove Transitive} (nf3);
+\end{tikzpicture}
+\captionof{figure}{Normalization Flow}
+\end{center}
+
+\begin{mnemonicbox}
+    \textbf{Mnemonic:} "APTN" (Atomic, Partial, Transitive, Normalized)
+\end{mnemonicbox}
+\end{solutionbox}
+
+\end{document}
