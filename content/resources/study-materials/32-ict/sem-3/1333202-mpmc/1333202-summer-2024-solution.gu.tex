@@ -1,0 +1,659 @@
+\documentclass{article}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/preamble.tex}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/gujarati-boxes.tex}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/commands.tex}
+
+\title{માઇક્રોપ્રોસેસર અને માઇક્રોકંટ્રોલર (1333202) - સમર 2024 સોલ્યુશન}
+\date{June 10, 2024}
+
+\begin{document}
+\maketitle
+
+\questionmarks{1(a)}{3}{8051 માઇક્રોકંટ્રોલરના સામાન્ય ફીચર્સની યાદી બનાવો.}
+
+\begin{solutionbox}
+8051 એ એક લોકપ્રિય 8-bit માઇક્રોકંટ્રોલર છે જેના સામાન્ય ફીચર્સ નીચે મુજબ છે:
+
+\begin{center}
+\captionof{table}{8051 માઇક્રોકંટ્રોલરના સામાન્ય ફીચર્સ}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{ફીચર} & \textbf{વર્ણન} \\ \hline
+\textbf{On-chip Oscillator} & બિલ્ટ-ઇન ક્લોક જનરેટર સર્કિટ (સામાન્ય રીતે 12MHz) \\ \hline
+\textbf{Program Memory} & કોડ સ્ટોરેજ માટે 4KB આંતરિક ROM \\ \hline
+\textbf{Data Memory} & વેરિયેબલ માટે 128 bytes આંતરિક RAM \\ \hline
+\textbf{I/O Ports} & 4 દ્વિદિશીય 8-bit પોર્ટ્સ (P0, P1, P2, P3) \\ \hline
+\textbf{Timers/Counters} & બે 16-bit Timer/Counter યુનિટ્સ (Timer 0, Timer 1) \\ \hline
+\textbf{Serial Port} & કમ્યુનિકેશન માટે એક Full duplex UART ચેનલ \\ \hline
+\textbf{Interrupts} & પ્રાથમિકતા સાથે 5 interrupt સ્રોતો (2 external, 2 timer, 1 serial) \\ \hline
+\textbf{SFRs} & સિસ્ટમ કંટ્રોલ માટે Special Function Registers \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{On Program Data I/O Timers Serial Interrupts SFRs}
+\end{mnemonicbox}
+
+\questionmarks{1(b)}{4}{T-State, Machine Cycle, Instruction Cycle અને Opcode ની વ્યાખ્યા આપો.}
+
+\begin{solutionbox}
+આ શબ્દો માઇક્રોપ્રોસેસરના ટાઇમિંગ અને ઓપરેશનને વ્યાખ્યાયિત કરે છે:
+
+\begin{center}
+\captionof{table}{માઇક્રોપ્રોસેસર ટાઇમિંગ વ્યાખ્યાઓ}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{શબ્દ} & \textbf{વ્યાખ્યા} & \textbf{અવધિ} \\ \hline
+\textbf{T-State} & સિસ્ટમ ક્લોકનો એક સમયગાળો. આ સમયનો મૂળભૂત એકમ છે. & $1/f_{clk}$ \\ \hline
+\textbf{Machine Cycle} & એક મેમરી ઓપરેશન (read/write) અથવા I/O ઓપરેશન પૂરું કરવાનો સમય. & 3-6 T-states (8085) \\ \hline
+\textbf{Instruction Cycle} & Instruction ને fetch, decode અને execute કરવાનો કુલ સમય. & 1-5 Machine cycles \\ \hline
+\textbf{Opcode} & Operation Code: Instruction નો ભાગ જે instruction નો પ્રકાર દર્શાવે છે. & 1 byte \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{T-State}: માઇક્રોપ્રોસેસર ઓપરેશનનો સૌથી નાનો સમય એકમ.
+    \item \keyword{Machine Cycle}: મેમરી એક્સેસ માટે અનેક T-states ધરાવે છે.
+    \item \keyword{Instruction Cycle}: સંપૂર્ણ instruction execution નો સમય.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Time Machine Instruction Operation}
+\end{mnemonicbox}
+
+\questionmarks{1(c)}{7}{Von-Neumann અને Harvard Architecture ની સરખામણી કરો.}
+
+\begin{solutionbox}
+બે મુખ્ય કોમ્પ્યુટર આર્કિટેક્ચર વચ્ચેની સરખામણી નીચે મુજબ છે:
+
+\begin{center}
+\captionof{table}{Von-Neumann vs Harvard Architecture સરખામણી}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પરિમાણ} & \textbf{Von-Neumann} & \textbf{Harvard} \\ \hline
+\textbf{Memory Organization} & કોડ અને ડેટા માટે એક જ shared મેમરી હોય છે. & કોડ અને ડેટા માટે અલગ અલગ મેમરી હોય છે. \\ \hline
+\textbf{Bus Structure} & Instruction અને ડેટા માટે એક જ bus સિસ્ટમ. & Instruction અને ડેટા માટે અલગ અલગ buses. \\ \hline
+\textbf{Speed} & Bus sharing ને કારણે ઓપરેશન ધીમું છે (serial fetching). & Parallel access ને કારણે ઓપરેશન ઝડપી છે. \\ \hline
+\textbf{Cost} & ઓછી કિંમતે અમલીકરણ. & ડ્યુઅલ મેમરી અને buses ને કારણે વધારે કિંમત. \\ \hline
+\textbf{Flexibility} & મેમરી ઉપયોગ વધારે flexible છે (code/data boundary flexible). & મેમરી allocation નિશ્ચિત હોય છે, ઓછી flexibility. \\ \hline
+\textbf{Examples} & 8085, x86 processors. & 8051, DSP processors. \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm]
+    % Von Neumann
+    \node [gtu block, minimum width=3cm] (cpu1) {CPU};
+    \node [gtu block, minimum width=3cm, below=2cm of cpu1] (mem1) {Memory\\(Code + Data)};
+    \draw [gtu arrow, <->] (cpu1) -- node[right, font=\small] {Single Bus} (mem1);
+    \node [above=0.2cm of cpu1, font=\bfseries] {Von-Neumann};
+
+    % Harvard
+    \node [gtu block, minimum width=3cm, right=4cm of cpu1] (cpu2) {CPU};
+    \node [gtu block, below right=2cm of cpu2] (dmem) {Data\\Memory};
+    \node [gtu block, below left=2cm of cpu2] (pmem) {Program\\Memory};
+    \draw [gtu arrow, <->] (cpu2) -- node[right, font=\small, pos=0.4] {Data Bus} (dmem);
+    \draw [gtu arrow, <->] (cpu2) -- node[left, font=\small, pos=0.4] {Code Bus} (pmem);
+    \node [above=0.2cm of cpu2, font=\bfseries] {Harvard};
+\end{tikzpicture}
+\captionof{figure}{આર્કિટેક્ચર સરખામણી}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Von-Single Harvard-Dual}
+\end{mnemonicbox}
+
+\questionmarks{1(c) OR}{7}{Microcomputer System ને block diagram સાથે સમજાવો.}
+
+\begin{solutionbox}
+Microcomputer System માં CPU, મેમરી, I/O devices અને તેમને જોડતી system bus નો સમાવેશ થાય છે.
+
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm]
+    \node [gtu block, minimum width=3cm, minimum height=2cm] (cpu) {CPU\\(MPU)};
+    \node [gtu block, right=1cm of cpu, minimum height=2cm] (mem) {Memory\\(ROM/RAM)};
+    \node [gtu block, right=1cm of mem, minimum height=2cm] (io) {I/O Devices\\(Peripherals)};
+    
+    % Buses
+    \draw [gtu arrow, <->] (cpu) -- node[below] {System Bus} (mem);
+    \draw [gtu arrow, <->] (mem) -- (io);
+    
+    % Detailed bus representation
+    \coordinate (bus_start) at ($(cpu.south west) + (0,-1)$);
+    \coordinate (bus_end) at ($(io.south east) + (0,-1)$);
+    
+    \draw [ultra thick] (bus_start) -- (bus_end) node[below left] {System Bus (Address, Data, Control)};
+    
+    \draw [<->, thick] (cpu.south) -- (cpu.south |- bus_start);
+    \draw [<->, thick] (mem.south) -- (mem.south |- bus_start);
+    \draw [<->, thick] (io.south) -- (io.south |- bus_start);
+    
+\end{tikzpicture}
+\captionof{figure}{Microcomputer System Block Diagram}
+\end{center}
+
+\begin{center}
+\captionof{table}{Microcomputer System ના ઘટકો}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{ઘટક} & \textbf{કાર્ય} & \textbf{ઉદાહરણો} \\ \hline
+\textbf{CPU} & કેન્દ્રીય પ્રોસેસિંગ અને નિયંત્રણ. Instructions execute કરે છે. & 8085, 8086 \\ \hline
+\textbf{Memory} & પ્રોગ્રામ (ROM) અને ડેટા (RAM) સ્ટોર કરે છે. & EPROM, RAM \\ \hline
+\textbf{I/O Unit} & બાહ્ય દુનિયા સાથે interface પૂરું પાડે છે (Keyboard, Display). & 8255 PPI \\ \hline
+\textbf{System Bus} & ડેટા ટ્રાન્સફર માટેનો માર્ગ. Address, Data અને Control buses નો સમાવેશ થાય છે. & Ribbon Cable \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+
+\questionmarks{2(a)}{3}{8085 Microprocessor માં Bus organization દોરો.}
+
+\begin{solutionbox}
+8085 માં ત્રણ પ્રકારની buses હોય છે:
+
+\begin{center}
+\begin{tikzpicture}[node distance=2cm]
+    \node [gtu block, minimum width=3cm, minimum height=2cm] (mp) {8085 CPU};
+    
+    % Address Bus
+    \draw [gtu arrow, ->] ($(mp.east) + (0, 0.5)$) -- ++(2,0) node[right] {Address Bus (16-bit) [Unidirectional]};
+    
+    % Data Bus
+    \draw [gtu arrow, <->] (mp.east) -- ++(2,0) node[right] {Data Bus (8-bit) [Bidirectional]};
+    
+    % Control Bus
+    \draw [gtu arrow, ->] ($(mp.east) + (0, -0.5)$) -- ++(2,0) node[right] {Control Bus [Output/Input]};
+    
+    \node [right=0.5cm of mp.north east] {To Memory \& I/O};
+\end{tikzpicture}
+\captionof{figure}{8085 Bus Organization}
+\end{center}
+\end{solutionbox}
+
+\questionmarks{2(b)}{4}{8085 માં ઉપયોગમાં લેવાતા Flags ની સૂચી બનાવો અને દરેક flag નું કાર્ય સમજાવો.}
+
+\begin{solutionbox}
+8085 માં 5 flags હોય છે જે ALU operations નું status દર્શાવે છે.
+
+\begin{center}
+\begin{tikzpicture}
+    % Flag Register
+    \draw (0,0) grid (8,1);
+    \foreach \x/\label in {0.5/D7, 1.5/D6, 2.5/D5, 3.5/D4, 4.5/D3, 5.5/D2, 6.5/D1, 7.5/D0}
+        \node [above] at (\x, 1) {\scriptsize \label};
+        
+    \foreach \x/\val in {0.5/S, 1.5/Z, 2.5/x, 3.5/AC, 4.5/x, 5.5/P, 6.5/x, 7.5/CY}
+        \node at (\x, 0.5) {\textbf{\val}};
+\end{tikzpicture}
+\captionof{figure}{Flag Register Format}
+\end{center}
+
+\begin{center}
+\captionof{table}{8085 Flags Register}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Flag} & \textbf{Bit} & \textbf{કાર્ય} \\ \hline
+\textbf{S (Sign)} & D7 & જો પરિણામ નેગેટિવ હોય (MSB=1) તો set થાય છે. \\ \hline
+\textbf{Z (Zero)} & D6 & જો પરિણામ શૂન્ય હોય તો set થાય છે. \\ \hline
+\textbf{AC (Aux Carry)} & D4 & જો Lower nibble માંથી Upper nibble માં carry આવે તો set થાય છે (BCD માટે). \\ \hline
+\textbf{P (Parity)} & D2 & જો પરિણામમાં 1 ની સંખ્યા બેકી (Even Parity) હોય તો set થાય છે. \\ \hline
+\textbf{CY (Carry)} & D0 & જો ઓપરેશનમાં carry/borrow થાય તો set થાય છે. \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+
+\questionmarks{2(c)}{7}{8085 નો Block Diagram દોરો અને સમજાવો.}
+
+\begin{solutionbox}
+8085 ના આર્કિટેક્ચરમાં ALU, Timing \& Control Unit, અને Registers નો સમાવેશ થાય છે.
+
+\begin{center}
+\begin{tikzpicture}[scale=0.8, transform shape]
+    % Main Blocks
+    \node [gtu block] (alu) {ALU (8-bit)};
+    \node [gtu block, below=1cm of alu] (acc) {Accumulator (A)};
+    \node [gtu block, below=0.5cm of acc] (temp) {Temp Reg};
+    \node [gtu block, right=1cm of acc] (flags) {Flags};
+    \node [gtu block, right=3cm of alu, minimum width=3cm] (regs) {Registers\\B, C, D, E, H, L\\SP, PC};
+    \node [gtu block, left=2cm of acc] (id) {Instruction\\Decoder};
+    \node [gtu block, below=1cm of id] (timing) {Timing \&\\Control Unit};
+    \node [gtu block, above=1cm of regs] (interrupt) {Interrupt Control};
+    \node [gtu block, above=1cm of alu] (serial) {Serial I/O Control};
+    
+    % Connections
+    \draw [gtu arrow, <->] (alu) -- (acc);
+    \draw [gtu arrow] (alu) -- (flags);
+    \draw [gtu arrow] (id) -- (timing);
+    \draw [gtu arrow, <->] (alu) -- (regs);
+    
+    % Buses
+    \draw [->, thick] (regs.east) -- ++(1,0) node[right] {Address/Data Bus};
+    \draw [->, thick] (timing.south) -- ++(0,-1) node[below] {Control Signals};
+\end{tikzpicture}
+\captionof{figure}{8085 Block Diagram}
+\end{center}
+
+\begin{center}
+\captionof{table}{8085 ના ઘટકો}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{Block} & \textbf{કાર્ય} \\ \hline
+\textbf{ALU} & Arithmetic (+, -) અને logical (AND, OR) ઓપરેશન્સ કરે છે. \\ \hline
+\textbf{Registers} & General purpose (B-L) અને Special functional registers (SP, PC, A). \\ \hline
+\textbf{Accumulator} & 8-bit register જે ALU સાથે જોડાયેલ છે, પરિણામ store કરે છે. \\ \hline
+\textbf{Program Counter (PC)} & આવનારી instruction નું address રાખે છે (16-bit). \\ \hline
+\textbf{Stack Pointer (SP)} & Stack મેમરીના top નું address રાખે છે (16-bit). \\ \hline
+\textbf{Timing \& Control} & System ને control કરવા માટે signals (RD, WR, ALE) બનાવે છે. \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+
+\questionmarks{2(a) OR}{3}{Microprocessor માં Instruction Fetching, Decoding અને Execution Operation સમજાવો.}
+
+\begin{solutionbox}
+Instruction cycle માં ત્રણ મુખ્ય તબક્કાઓ છે:
+
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto]
+    \node [gtu state] (fetch) {Fetch};
+    \node [gtu state, right=of fetch] (decode) {Decode};
+    \node [gtu state, right=of decode] (execute) {Execute};
+    
+    \draw [gtu arrow] (fetch) -- (decode);
+    \draw [gtu arrow] (decode) -- (execute);
+    \draw [gtu arrow, dashed] (execute) to[bend left] (fetch);
+\end{tikzpicture}
+\captionof{figure}{Instruction Cycle}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{Fetch}: મેમરીમાંથી instruction લાવવી. PC address આપે છે અને મેમરી ડેટા (opcode) મોકલે છે.
+    \item \textbf{Decode}: Instruction opcode નું અર્થઘટન કરવું કે શું કરવાનું છે (ઉ.દા. ADD, MOV).
+    \item \textbf{Execute}: જરૂરી ઓપરેશન કરવું (ઉ.દા. ડેટા વાંચવો, ALU ઓપરેશન કરવું).
+\end{itemize}
+\end{solutionbox}
+
+\questionmarks{2(b) OR}{4}{8085 માં Lower order Address અને Data lines નું Demultiplexing શું છે? આકૃતિની મદદથી સમજાવો.}
+
+\begin{solutionbox}
+AD0-AD7 lines address અને data બંને માટે વપરાય છે (multiplexed). તેને અલગ કરવા માટે Latch અને ALE નો ઉપયોગ થાય છે.
+
+\begin{center}
+\begin{tikzpicture}[node distance=2.5cm]
+    \node [gtu block, minimum height=3cm] (cpu) {8085\\CPU};
+    \node [gtu block, right=3cm of cpu] (latch) {74LS373\\Latch};
+    
+    \draw [->, thick] ($(cpu.east)+(0,0.5)$) -- node[above] {AD0-AD7} ($(latch.west)+(0,0.5)$);
+    \draw [->, thick] ($(cpu.east)+(0,-0.5)$) -- node[below] {ALE} ($(latch.west)+(0,-0.5)$);
+    
+    \draw [->, thick] (latch.east) -- ++(1,0) node[right] {A0-A7 (Address)};
+    \draw [->, thick] ($(latch.west)+(0.5,0.5)$) -- ++(0,-1.5) -- ++(2.5,0) node[right] {D0-D7 (Data)};
+\end{tikzpicture}
+\captionof{figure}{Demultiplexing Circuit}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{ALE = 1}: AD0-AD7 પર Address હોય છે. Latch address ને store કરે છે.
+    \item \textbf{ALE = 0}: AD0-AD7 પર Data હોય છે. Latch જૂનું address જાળવી રાખે છે.
+\end{itemize}
+\end{solutionbox}
+
+\questionmarks{2(c) OR}{7}{8085 નો Pin Diagram દોરો અને સમજાવો.}
+
+\begin{solutionbox}
+8085 એ 40-pin DIP IC છે.
+
+\begin{center}
+\begin{tikzpicture}[scale=0.8]
+    \draw [thick] (0,0) rectangle (6,10);
+    \node at (3,5) {\textbf{8085}};
+    \node at (3,9.5) {\textbf{Pin Diagram}};
+    
+    % Draw some representative pins
+    \foreach \y/\label/\pin in {9/X1/1, 8.5/X2/2, 6.5/TRAP/6, 4/INTA/11, 3.5/AD0/12, 0.5/AD6/18}
+        \draw (-0.5, \y) node[left] {\scriptsize \pin\ \label} -- (0, \y);
+        
+    \foreach \y/\label/\pin in {9/VCC/40, 7.5/CLK/37, 5/RD/32, 4/ALE/30, 0.5/A10/23}
+        \draw (6, \y) -- (6.5, \y) node[right] {\scriptsize \label\ \pin};
+        
+    \node at (3,2) {.... અને અન્ય pins ....};
+\end{tikzpicture}
+\captionof{figure}{8085 Pin Diagram (સંક્ષિપ્ત)}
+\end{center}
+
+\begin{center}
+\captionof{table}{Pin કાર્યો}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{Pin Group} & \textbf{કાર્ય} \\ \hline
+\textbf{Address Bus (A8-A15)} & Address ના ઉચ્ચ ક્રમના bits. \\ \hline
+\textbf{Multiplexed (AD0-AD7)} & Address (low byte) અને Data time-multiplexed હોય છે. \\ \hline
+\textbf{Control (RD, WR, ALE)} & મેમરી Read/Write અને Address Latch Enable. \\ \hline
+\textbf{Interrupts} & TRAP, RST7.5, 6.5, 5.5, INTR. \\ \hline
+\textbf{Power and Clock} & VCC (+5V), VSS (GND), X1, X2 (Crystal). \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+
+\questionmarks{3(a)}{3}{8051 નો IP SFR દોરો અને દરેક bit નું કાર્ય સમજાવો.}
+
+\begin{solutionbox}
+Interrupt Priority (IP) રજીસ્ટર (Address B8H) interrupts ની priority (High/Low) નક્કી કરે છે.
+
+\begin{center}
+\begin{tikzpicture}
+    \draw (0,0) grid (8,1);
+    \foreach \x/\label in {0.5/-, 1.5/-, 2.5/PT2, 3.5/PS, 4.5/PT1, 5.5/PX1, 6.5/PT0, 7.5/PX0}
+        \node at (\x, 0.5) {\textbf{\label}};
+\end{tikzpicture}
+\captionof{figure}{IP Register}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{1 = High Priority}, \textbf{0 = Low Priority}.
+    \item \textbf{PS}: Serial Port Priority.
+    \item \textbf{PTx}: Timer x Priority.
+    \item \textbf{PXx}: External Interrupt x Priority.
+\end{itemize}
+\end{solutionbox}
+
+\questionmarks{3(b)}{4}{8051 માટે Timer/Counter Logic diagram દોરો અને સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[node distance=2cm]
+    \node (osc) {Osc $\div$ 12};
+    \node [below=1cm of osc] (pin) {Pin T0/T1};
+    \node [gtu decision, right=2cm of osc, shape aspect=2] (mux) {C/T};
+    \node [gtu block, right=1cm of mux] (tl) {TLx};
+    \node [gtu block, right=0.5cm of tl] (th) {THx};
+    \node [gtu state, right=1cm of th] (tf) {TFx};
+    
+    \draw [->] (osc) -- (mux);
+    \draw [->] (pin) -| (mux);
+    \draw [->] (mux) -- node[above] {Clock} (tl);
+    \draw [->] (tl) -- (th);
+    \draw [->] (th) -- node[above] {Overflow} (tf);
+\end{tikzpicture}
+\captionof{figure}{Timer Logic Diagram}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{Clock Source}: Internal clock (Timer mode) અથવા External pin (Counter mode).
+    \item \textbf{Registers}: THx અને TLx 16-bit count સ્ટોર કરે છે.
+    \item \textbf{Overflow}: જ્યારે count FFH થી વધે છે, ત્યારે TFx flag set થાય છે.
+\end{itemize}
+\end{solutionbox}
+
+\questionmarks{3(c)}{7}{8051 નો Block Diagram દોરો અને સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[scale=0.9, transform shape]
+    \node [gtu block, minimum height=4cm, minimum width=2cm] (cpu) {CPU};
+    \node [gtu block, right=2cm of cpu] (rom) {4KB\\ROM};
+    \node [gtu block, below=1cm of rom] (ram) {128B\\RAM};
+    \node [gtu block, left=2cm of cpu] (timers) {Timers};
+    \node [gtu block, below=1cm of timers] (serial) {Serial Port};
+    \node [gtu block, below=2cm of cpu, minimum width=6cm] (ports) {I/O Ports P0-P3};
+    \draw [thick, <->] (cpu) -- (rom);
+    \draw [thick, <->] (cpu) -- (ram);
+    \draw [thick, <->] (cpu) -- (timers);
+    \draw [thick, <->] (cpu) -- (ports);
+\end{tikzpicture}
+\captionof{figure}{8051 Block Diagram}
+\end{center}
+\end{solutionbox}
+
+\questionmarks{3(a) OR}{3}{8051 નો PCON SFR દોરો અને દરેક bit નું કાર્ય સમજાવો.}
+
+\begin{solutionbox}
+PCON (Power Control) રજીસ્ટર power modes અને baud rate control માટે છે.
+
+\begin{center}
+\begin{tikzpicture}
+    \draw (0,0) grid (8,1);
+    \foreach \x/\label in {0.5/SMOD, 1.5/-, 2.5/-, 3.5/-, 4.5/GF1, 5.5/GF0, 6.5/PD, 7.5/IDL}
+        \node at (\x, 0.5) {\textbf{\label}};
+\end{tikzpicture}
+\end{center}
+\end{solutionbox}
+
+\questionmarks{3(b) OR}{4}{8051 Serial communication Mode 1 માં, XTAL=11.0592 MHz માટે, 9600 અને 4800 baud rate મેળવવા માટે TH1 ની કિંમત શોધો.}
+
+\begin{solutionbox}
+\textbf{સૂત્ર}:
+\[ \text{Baud Rate} = \frac{2^{SMOD}}{32} \times \frac{XTAL}{12 \times (256 - TH1)} \]
+
+\textbf{1. 9600 Baud માટે:}
+\[ TH1 = 256 - \frac{28800}{9600} = 256 - 3 = 253 = \textbf{FD H} \]
+
+\textbf{2. 4800 Baud માટે:}
+\[ TH1 = 256 - \frac{28800}{4800} = 256 - 6 = 250 = \textbf{FA H} \]
+\end{solutionbox}
+
+\questionmarks{4(a)}{3}{8051 માં LCALL અને LJMP instructions માં શું ફરક છે?}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{LCALL vs LJMP}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પરિમાણ} & \textbf{LCALL (Long Call)} & \textbf{LJMP (Long Jump)} \\ \hline
+\textbf{કાર્ય} & Subroutine call કરે છે. & Address પર jump કરે છે. \\ \hline
+\textbf{Stack Usage} & Return address ને stack પર push કરે છે. & Stack વાપરતું નથી. \\ \hline
+\textbf{Return} & \code{RET} instruction જરૂરી છે. & પાછા આવતું નથી. \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+
+\questionmarks{4(b)}{4}{Timer0 વાપરીને port 1.0 પર square wave generate કરવા માટે 8051 Assembly Language Program લખો.}
+
+\begin{solutionbox}
+\begin{lstlisting}[language={[x86masm]Assembler}, caption={Square Wave Generation}]
+    ORG 0000H
+    MOV TMOD, #01H      ; Timer 0, Mode 1
+LOOP:
+    MOV TH0, #0FFH      ; Load high byte
+    MOV TL0, #00H       ; Load low byte
+    SETB TR0            ; Start Timer
+WAIT:
+    JNB TF0, WAIT       ; Overflow ની રાહ જુઓ
+    CLR TR0             ; Stop Timer
+    CLR TF0             ; Clear Flag
+    CPL P1.0            ; Toggle P1.0
+    SJMP LOOP           ; Repeat
+    END
+\end{lstlisting}
+\end{solutionbox}
+
+\questionmarks{4(c)}{7}{8051 ની કોઈપણ ત્રણ Logical અને ચાર Data Transfer Instructions ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Logical Instructions:}
+\begin{itemize}
+    \item \code{ANL A, Rn}: A = A AND Rn. (Logical AND)
+    \item \code{ORL A, \#data}: A = A OR Data. (Logical OR)
+    \item \code{XRL A, direct}: A = A XOR Memory. (Logical XOR)
+\end{itemize}
+
+\textbf{Data Transfer Instructions:}
+\begin{itemize}
+    \item \code{MOV A, Rn}: Register ને A માં move કરો.
+    \item \code{MOVX A, @DPTR}: External memory data લાવો.
+    \item \code{PUSH direct}: Stack પર data મોકલો.
+    \item \code{MOVC A, @A+DPTR}: ROM માંથી code byte લાવો.
+\end{itemize}
+\end{solutionbox}
+
+\questionmarks{4(a) OR}{3}{Instructions સમજાવો: (i) RRC A (ii) POP (iii) CLR PSW.7}
+
+\begin{solutionbox}
+\begin{enumerate}
+    \item \textbf{RRC A}: Accumulator ને જમણી બાજુ Carry દ્વારા rotate કરે છે.
+    \item \textbf{POP direct}: Stack માંથી byte pop કરીને destination માં મૂકે છે.
+    \item \textbf{CLR PSW.7}: Carry Flag (CY) ને clear (0) કરે છે.
+\end{enumerate}
+\end{solutionbox}
+
+\questionmarks{4(b) OR}{4}{30H લોકેશનમાં સેટોર ડેટાને 31H લોકેશનમાં સ્ટોર ડેટાવડે ભાગાકાર કરી શેષને 40h અને ભાગફળને 41h મેમરી લોકેશનમાં સ્ટોર કરવા માટે 8051 નો Assembly Language Program લખો.}
+
+\begin{solutionbox}
+\begin{lstlisting}[language={[x86masm]Assembler}, caption={ભાગાકાર પ્રોગ્રામ}]
+    ORG 0000H
+    MOV A, 30H      ; Dividend
+    MOV B, 31H      ; Divisor
+    DIV AB          ; A / B
+    MOV 41H, A      ; Quotient
+    MOV 40H, B      ; Remainder
+    END
+\end{lstlisting}
+\end{solutionbox}
+
+\questionmarks{4(c) OR}{7}{8051 Microcontroller ના Addressing Modes ની યાદી બનાવો અને દરેકને ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{Addressing Modes}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Mode} & \textbf{વર્ણન} & \textbf{ઉદાહરણ} \\ \hline
+\textbf{Immediate} & Instruction માં જ ડેટા હોય છે. & \code{MOV A, \#25H} \\ \hline
+\textbf{Register} & Register નો ઉપયોગ થાય છે. & \code{MOV A, R0} \\ \hline
+\textbf{Direct} & સીધું મેમરી એડ્રેસ આપે છે. & \code{MOV A, 30H} \\ \hline
+\textbf{Indirect} & Register માં એડ્રેસ હોય છે (@). & \code{MOV A, @R0} \\ \hline
+\textbf{Indexed} & Base + Offset (Lookup table). & \code{MOVC A, @A+DPTR} \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+
+\questionmarks{5(a)}{3}{8051 microcontroller સાથે Relay ઇન્ટરફેસિંગ દોરો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{circuitikz}[scale=1]
+    \draw (0,0) node[anchor=east] {P1.0} to[R, l=1k$\Omega$] (2,0) node[npn, anchor=B] (Q) {BC547};
+    \draw (Q.E) node[ground]{};
+    \draw (Q.C) to[L, l=Relay] (2.77, 2) node[vcc] {+12V};
+    \draw (3.5, 0.77) to[D*, l=1N4007] (3.5, 2) -- (2.77, 2);
+    \draw (3.5, 0.77) -- (Q.C);
+\end{circuitikz}
+\captionof{figure}{Relay Interfacing}
+\end{center}
+\end{solutionbox}
+
+\questionmarks{5(b)}{4}{8051 microcontroller સાથે 7-Segment display ઇન્ટરફેસ કરો અને "1" પ્રિન્ટ કરવાનો પ્રોગ્રામ લખો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{circuitikz}
+    \draw (0,0) node[draw, minimum height=2cm] (P1) {Port 1};
+    \draw (4,0) node[draw, minimum height=2cm] (disp) {7-Seg};
+    \draw [->] (P1.east) -- node[above] {a-g, dp} (disp.west);
+\end{circuitikz}
+\captionof{figure}{7-Segment Interface}
+\end{center}
+
+\begin{lstlisting}[language={[x86masm]Assembler}, caption={Display 1}]
+    ; Common Cathode: "1" = segments b, c = 06H
+    MOV P1, #06H
+    END
+\end{lstlisting}
+\end{solutionbox}
+
+\questionmarks{5(c)}{7}{8051 microcontroller સાથે DAC 0808 ઇન્ટરફેસ કરો અને Square wave generate કરવાનો પ્રોગ્રામ લખો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{circuitikz}
+    \draw (0,2) node[draw, minimum height=2cm] (cpu) {8051};
+    \draw (4,2) node[draw, minimum height=2cm] (dac) {DAC0808};
+    \draw [->, thick] (cpu) -- node[above] {Data Bus} (dac);
+    \draw (dac.east) -- ++(1,0) node[op amp, anchor=-] (opamp) {};
+    \draw (opamp.out) -- ++(0.5,0) node[right] {Vout};
+\end{circuitikz}
+\end{center}
+
+\begin{lstlisting}[language={[x86masm]Assembler}, caption={DAC Square Wave}]
+LOOP:
+    MOV P2, #00H     ; Min 0V
+    ACALL DELAY
+    MOV P2, #0FFH    ; Max 5V
+    ACALL DELAY
+    SJMP LOOP
+DELAY:
+    MOV R0, #200
+D1: DJNZ R0, D1
+    RET
+\end{lstlisting}
+\end{solutionbox}
+
+\questionmarks{5(a) OR}{3}{8051 microcontroller સાથે Push button Switch નું Interface.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{circuitikz}
+    \draw (0,2) node[vcc] {+5V} to[R, l=10k] (0,1) -- (0,-0.5) to[push button] (0,-1.5) node[ground]{};
+    \draw (0,1) -- (2,1) node[right] {To P1.0};
+\end{circuitikz}
+\captionof{figure}{Switch Interface}
+\end{center}
+\end{solutionbox}
+
+\questionmarks{5(b) OR}{4}{8051 microcontroller સાથે DC Motor ઇન્ટરફેસ કરો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{circuitikz}
+    \draw (0,0) node[left] {P1.0} to[R, l=1k] (2,0) node[npn, anchor=B] (Q) {TIP122};
+    \draw (Q.E) node[ground]{};
+    \draw (Q.C) -- (2.77, 1.5) node[draw, circle, minimum size=0.8cm] {M} -- (2.77, 3) node[vcc]{+12V};
+    \draw (4, 0.77) to[D*, l=Diode] (4, 3) -- (2.77,3);
+    \draw (4, 0.77) -- (Q.C);
+\end{circuitikz}
+\captionof{figure}{DC Motor Driver}
+\end{center}
+\end{solutionbox}
+
+\questionmarks{5(c) OR}{7}{8051 microcontroller સાથે LCD ઇન્ટરફેસ કરો અને "Hello" display કરવાનો પ્રોગ્રામ લખો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{circuitikz}
+    \node [gtu block, minimum height=3cm] (lcd) {LCD 16x2};
+    \node [gtu block, left=3cm of lcd, minimum height=3cm] (cpu) {8051};
+    \draw [->, thick] (cpu.east) -- (lcd.west);
+\end{circuitikz}
+\end{center}
+
+\begin{lstlisting}[language={[x86masm]Assembler}, caption={LCD Hello}]
+    ; Init LCD
+    MOV A, #38H
+    ACALL CMD
+    MOV A, #0EH
+    ACALL CMD
+    ; Send 'H', 'E', 'L', 'L', 'O'
+    MOV A, #'H'
+    ACALL DAT
+    ; ...
+    SJMP $
+CMD: ; command subroutine
+    MOV P2, A
+    CLR P3.0
+    SETB P3.1
+    CLR P3.1
+    ACALL DELAY
+    RET
+DAT: ; data subroutine
+    MOV P2, A
+    SETB P3.0
+    SETB P3.1
+    CLR P3.1
+    ACALL DELAY
+    RET
+\end{lstlisting}
+\end{solutionbox}
+
+\end{document}

@@ -1,0 +1,1021 @@
+\documentclass{article}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/preamble.tex}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/gujarati-boxes.tex}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/commands.tex}
+
+\title{Microprocessor \& Microcontroller Systems (1333202) - Summer 2025 Solution}
+\date{May 13, 2025}
+
+\begin{document}
+\maketitle
+
+\questionmarks{1(A)}{3}{8085 નું બસ ઓર્ગેનાઈઝેશન દોરો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[node distance=2cm]
+    \node [gtu block, minimum width=3cm, minimum height=2cm] (mp) {8085 CPU};
+    
+    % Address Bus
+    \draw [gtu arrow, ->] ($(mp.east) + (0, 0.5)$) -- ++(2,0) node[right] {Address Bus (16-bit) [Unidirectional]};
+    
+    % Data Bus
+    \draw [gtu arrow, <->] (mp.east) -- ++(2,0) node[right] {Data Bus (8-bit) [Bidirectional]};
+    
+    % Control Bus
+    \draw [gtu arrow, ->] ($(mp.east) + (0, -0.5)$) -- ++(2,0) node[right] {Control Bus (Rules) [Output/Input]};
+    
+    \node [right=0.5cm of mp.north east] {To Memory \& I/O};
+\end{tikzpicture}
+\captionof{figure}{8085 Bus Organization}
+\end{center}
+
+\textbf{બસના પ્રકારો:}
+\begin{itemize}
+    \item \textbf{Address Bus}: મેમરી એડ્રેસિંગ માટે 16-bit એકદિશીય બસ.
+    \item \textbf{Data Bus}: ડેટા ટ્રાન્સફર માટે 8-bit દ્વિદિશીય બસ.
+    \item \textbf{Control Bus}: RD, WR, ALE, IO/M જેવા કંટ્રોલ સિગ્નલ્સ.
+\end{itemize}
+
+\begin{mnemonicbox}ADC - Address, Data, Control\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{1(B)}{4}{માઈક્રોપ્રોસેસરની માઈક્રોકંટ્રોલર સાથે સરખામણી કરો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{માઈક્રોપ્રોસેસર vs માઈક્રોકંટ્રોલર}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{લક્ષણ} & \textbf{માઈક્રોપ્રોસેસર} & \textbf{માઈક્રોકંટ્રોલર} \\ \hline
+\textbf{આર્કિટેક્ચર} & બાહ્ય ઘટકોની જરૂર. & એક જ ચિપ પર બધા ઘટકો. \\ \hline
+\textbf{મેમરી} & બાહ્ય RAM/ROM જરૂરી. & આંતરિક RAM/ROM ઉપલબ્ધ. \\ \hline
+\textbf{કિંમત} & વધુ સિસ્ટમ કોસ્ટ. & ઓછી સિસ્ટમ કોસ્ટ. \\ \hline
+\textbf{પાવર} & વધુ પાવર વપરાશ. & ઓછો પાવર વપરાશ. \\ \hline
+\textbf{સાઈઝ} & મોટું સિસ્ટમ સાઈઝ. & કોમ્પેક્ટ સિસ્ટમ. \\ \hline
+\textbf{ઉપયોગ} & સામાન્ય હેતુ કમ્પ્યુટિંગ. & એમ્બેડેડ કંટ્રોલ એપ્લિકેશનો. \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{મુખ્ય મુદ્દાઓ:}
+\begin{itemize}
+    \item \textbf{માઈક્રોપ્રોસેસર}: માત્ર CPU, બાહ્ય સપોર્ટ ચિપ્સ જરૂરી.
+    \item \textbf{માઈક્રોકંટ્રોલર}: ચિપ પર સંપૂર્ણ કમ્પ્યુટર સિસ્ટમ.
+\end{itemize}
+
+\begin{mnemonicbox}MICRO - Memory Internal, Compact, Reduced cost, Optimized\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{1(C)}{7}{8085 માઈક્રોપ્રોસેસરના દરેક બ્લોક દોરો અને સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[scale=0.8, transform shape]
+    % Main Blocks
+    \node [gtu block] (alu) {ALU (8-bit)};
+    \node [gtu block, below=1cm of alu] (acc) {Accumulator (A)};
+    \node [gtu block, below=0.5cm of acc] (temp) {Temp Reg};
+    \node [gtu block, right=1cm of acc] (flags) {Flag Register};
+    
+    \node [gtu block, right=3cm of alu, minimum width=3cm] (regs) {Register Array\\B, C, D, E, H, L\\SP, PC};
+    
+    \node [gtu block, left=2cm of acc] (id) {Instruction\\Decoder};
+    \node [gtu block, below=1cm of id] (timing) {Timing \&\\Control Unit};
+    
+    \node [gtu block, above=1cm of regs] (interrupt) {Interrupt Control};
+    \node [gtu block, above=1cm of alu] (serial) {Serial I/O Control};
+    
+    % Connections
+    \draw [gtu arrow, <->] (alu) -- (acc);
+    \draw [gtu arrow] (alu) -- (flags);
+    \draw [gtu arrow] (id) -- (timing);
+    \draw [gtu arrow, <->] (alu) -- (regs);
+    
+    % Buses
+    \draw [->, thick] (regs.east) -- ++(1,0) node[right] {Address/Data Bus};
+    \draw [->, thick] (timing.south) -- ++(0,-1) node[below] {Control Signals};
+    
+\end{tikzpicture}
+\captionof{figure}{8085 Block Diagram}
+\end{center}
+
+\textbf{બ્લોકના કાર્યો:}
+\begin{itemize}
+    \item \textbf{ALU}: અંકગણિત અને તાર્કિક ઓપરેશન કરે છે.
+    \item \textbf{Accumulator}: ડેટા પ્રોસેસિંગ માટે પ્રાથમિક કામકાજ રજિસ્ટર.
+    \item \textbf{Register Array}: B, C, D, E, H, L સામાન્ય હેતુ રજિસ્ટરો.
+    \item \textbf{Program Counter}: આગળના instruction નું address ધરાવે છે.
+    \item \textbf{Stack Pointer}: મેમરીમાં stack ના ટોપને પોઈન્ટ કરે છે.
+    \item \textbf{Control Unit}: પ્રોસેસરના એકંદર ઓપરેશનને કંટ્રોલ કરે છે.
+\end{itemize}
+
+\begin{mnemonicbox}APRIL - ALU, Program counter, Registers, Instruction decoder, Logic control\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{1(C) OR}{7}{8085 માઈક્રોપ્રોસેસરનો પીન ડાયાગ્રામ દોરો અને કોઈ પણ 4 પીન સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[scale=0.7, transform shape]
+    \draw [thick] (0,0) rectangle (6,10);
+    \node at (3,5) {\textbf{8085}};
+    \node at (3,9.5) {\textbf{Pin Diagram}};
+    
+    % Left Pins (Sample)
+    \foreach \y/\label/\pin in {9/X1/1, 8.5/X2/2, 8/RESET OUT/3, 6.5/TRAP/6, 4.5/INTR/10, 4/INTA/11, 3.5/AD0/12, 1/AD5/17}
+        \draw (-0.5, \y) node[left] {\scriptsize \pin\ \label} -- (0, \y);
+        
+    % Right Pins (Sample)
+    \foreach \y/\label/\pin in {9/VCC/40, 8.5/HOLD/39, 7.5/CLK OUT/37, 7/RESET IN/36, 5/RD/32, 4.5/WR/31, 4/ALE/30, 0.5/A10/23}
+        \draw (6, \y) -- (6.5, \y) node[right] {\scriptsize \label\ \pin};
+        
+    \node at (3,2) {.... (Total 40 Pins) ....};
+\end{tikzpicture}
+\captionof{figure}{8085 Pin Diagram}
+\end{center}
+
+\textbf{પીન સમજાવટ:}
+\begin{itemize}
+    \item \textbf{ALE (Pin 30)}: Address Latch Enable - multiplexed bus પર address અને data અલગ કરે છે.
+    \item \textbf{RD (Pin 32)}: Read control signal - active low, read operation દર્શાવે છે.
+    \item \textbf{WR (Pin 31)}: Write control signal - active low, write operation દર્શાવે છે.
+    \item \textbf{RESET (Pin 36)}: Reset input - low થાય ત્યારે processor initialize કરે છે.
+\end{itemize}
+
+\begin{mnemonicbox}ARWA - ALE, Read, Write, rAset\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(A)}{3}{વ્યાખ્યા આપો: (1) Opcode (2) Operand}
+
+\begin{solutionbox}
+\textbf{વ્યાખ્યાઓ:}
+\begin{itemize}
+    \item \textbf{Opcode}: Operation Code - કરવાનું operation સ્પષ્ટ કરે છે (ADD, MOV, JMP).
+    \item \textbf{Operand}: જે ડેટા અથવા address પર operation કરવાનું છે.
+\end{itemize}
+
+\textbf{ઉદાહરણ:}
+\begin{verbatim}
+MOV A, B
+ |   |  |
+ |   |  +-- Operand 2 (Source)  
+ |   +-- Operand 1 (Destination)
+ +-- Opcode
+\end{verbatim}
+
+\begin{mnemonicbox}OO - Operation + Operand\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(B)}{4}{RISC અને CISC વચ્ચે તફાવત આપો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{RISC vs CISC}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{લક્ષણ} & \textbf{RISC} & \textbf{CISC} \\ \hline
+\textbf{Instructions} & સરળ, fixed format. & જટિલ, variable format. \\ \hline
+\textbf{Execution} & Single cycle execution. & Multiple cycle execution. \\ \hline
+\textbf{Addressing} & થોડા addressing modes. & ઘણા addressing modes. \\ \hline
+\textbf{Memory} & Load/Store architecture. & Memory-to-memory operations. \\ \hline
+\textbf{Compiler} & જટિલ compiler design. & સરળ compiler design. \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{મુખ્ય મુદ્દાઓ:}
+\begin{itemize}
+    \item \textbf{RISC}: Reduced Instruction Set Computer - સરળ, ઝડપી.
+    \item \textbf{CISC}: Complex Instruction Set Computer - feature rich.
+\end{itemize}
+
+\begin{mnemonicbox}RISC is SLIM - Simple, Load-store, Instruction reduced, Memory efficient\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(C)}{7}{Von-Neumann અને Harvard Architecture વચ્ચે તફાવત આપો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[node distance=2cm]
+    \node [gtu block] (cpu1) {CPU};
+    \node [gtu block, right=of cpu1] (mem1) {Data + Instr\\Memory};
+    \draw [gtu arrow, <->] (cpu1) -- node[above] {Single Bus} (mem1);
+    \node [below=0.5cm of cpu1] {Von-Neumann};
+    
+    \node [gtu block, right=4cm of cpu1] (cpu2) {CPU};
+    \node [gtu block, above right=0.5cm and 1.5cm of cpu2] (imem) {Instr Mem};
+    \node [gtu block, below right=0.5cm and 1.5cm of cpu2] (dmem) {Data Mem};
+    
+    \draw [gtu arrow, <->] (cpu2) |- (imem);
+    \draw [gtu arrow, <->] (cpu2) |- (dmem);
+    
+    \node [below=2cm of cpu2] {Harvard};
+\end{tikzpicture}
+\captionof{figure}{Von-Neumann vs Harvard}
+\end{center}
+
+\begin{center}
+\captionof{table}{Architecture Comparison}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{લક્ષણ} & \textbf{Von-Neumann} & \textbf{Harvard} \\ \hline
+\textbf{Memory} & data અને instructions માટે single memory. & data અને instructions માટે અલગ memory. \\ \hline
+\textbf{Bus Structure} & Single bus system. & Dual bus system. \\ \hline
+\textbf{Access} & data અને instructions ને sequential access. & simultaneous access શક્ય. \\ \hline
+\textbf{Cost} & ઓછી કિંમત. & વધુ કિંમત. \\ \hline
+\textbf{Speed} & bus conflicts કારણે ધીમું. & parallel access કારણે ઝડપી. \\ \hline
+\textbf{Examples} & 8085, સામાન્ય computers. & 8051, DSP processors. \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{mnemonicbox}VH - Von has one bus, Harvard has two\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(A) OR}{3}{વ્યાખ્યા આપો: (1) T-State (2) Instruction Cycle (3) Machine Cycle}
+
+\begin{solutionbox}
+\textbf{વ્યાખ્યાઓ:}
+\begin{itemize}
+    \item \textbf{T-State}: Time state - મૂળભૂત timing unit, એક clock period.
+    \item \textbf{Instruction Cycle}: એક instruction નું સંપૂર્ણ execution.
+    \item \textbf{Machine Cycle}: એક memory operation માટે જરૂરી T-states નું જૂથ.
+\end{itemize}
+
+\textbf{સંબંધ:}
+\begin{itemize}
+    \item Instruction Cycle = Multiple Machine Cycles
+    \item Machine Cycle = Multiple T-States (3-6 T-states)
+\end{itemize}
+
+\begin{mnemonicbox}TIM - T-state, Instruction cycle, Machine cycle\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(B) OR}{4}{8085 ના Address અને Data Bus નું De-Multiplexing સમજાવો.}
+
+\begin{solutionboxnobreak}
+\begin{center}
+\begin{tikzpicture}[node distance=2.5cm]
+    \node [gtu block, minimum height=3cm] (cpu) {8085\\CPU};
+    \node [gtu block, right=3cm of cpu] (latch) {74LS373\\Latch};
+    
+    % Lines
+    \draw [->, thick] ($(cpu.east)+(0,0.5)$) -- node[above] {AD0-AD7} ($(latch.west)+(0,0.5)$);
+    \draw [->, thick] ($(cpu.east)+(0,-0.5)$) -- node[below] {ALE} ($(latch.west)+(0,-0.5)$);
+    
+    % Outputs
+    \draw [->, thick] (latch.east) -- ++(1,0) node[right] {A0-A7 (Address)};
+    \draw [->, thick] ($(latch.west)+(0.5,0.5)$) -- ++(0,-1.5) -- ++(2.5,0) node[right] {D0-D7 (Data)};
+    
+\end{tikzpicture}
+\captionof{figure}{Demultiplexing Circuit}
+\end{center}
+
+\textbf{પ્રક્રિયા:}
+\begin{itemize}
+    \item \textbf{Step 1}: T1 દરમિયાન, AD0-AD7 માં lower 8-bit address હોય છે.
+    \item \textbf{Step 2}: ALE high થાય છે, external latch માં address latch થાય છે.
+    \item \textbf{Step 3}: બાકીના T-states માટે AD0-AD7 data bus બને છે.
+\end{itemize}
+
+\textbf{જરૂરી ઘટકો:}
+\begin{itemize}
+    \item \textbf{74LS373}: Address latching માટે Octal latch IC.
+    \item \textbf{ALE}: Timing માટે Address Latch Enable signal.
+\end{itemize}
+
+\begin{mnemonicbox}LAD - Latch Address with Data separation\end{mnemonicbox}
+\end{solutionboxnobreak}
+
+\questionmarks{2(C) OR}{7}{8085 નો Flag Register દોરો અને સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}
+    % Flag Register
+    \draw (0,0) grid (8,1);
+    \foreach \x/\label in {0.5/D7, 1.5/D6, 2.5/D5, 3.5/D4, 4.5/D3, 5.5/D2, 6.5/D1, 7.5/D0}
+        \node [above] at (\x, 1) {\scriptsize \label};
+        
+    \foreach \x/\val in {0.5/S, 1.5/Z, 2.5/x, 3.5/AC, 4.5/x, 5.5/P, 6.5/x, 7.5/CY}
+        \node at (\x, 0.5) {\textbf{\val}};
+\end{tikzpicture}
+\captionof{figure}{Flag Register Format}
+\end{center}
+
+\textbf{Flag વર્ણન:}
+\begin{itemize}
+    \item \textbf{CY (D0)}: Carry flag - carry આવે ત્યારે set થાય છે.
+    \item \textbf{P (D2)}: Parity flag - even parity માટે set થાય છે.
+    \item \textbf{AC (D4)}: Auxiliary carry - BCD operations માટે set થાય છે.
+    \item \textbf{Z (D6)}: Zero flag - પરિણામ zero હોય ત્યારે set થાય છે.
+    \item \textbf{S (D7)}: Sign flag - પરિણામ negative હોય ત્યારે set થાય છે.
+\end{itemize}
+
+\textbf{Flag Operations:}
+\begin{itemize}
+    \item \textbf{Conditional Jumps}: Flag status પર આધારિત (JZ, JC, JP).
+    \item \textbf{Arithmetic Results}: ALU operations પછી automatically update થાય છે.
+\end{itemize}
+
+\begin{mnemonicbox}SZAPC - Sign, Zero, Auxiliary, Parity, Carry\end{mnemonicbox}
+\end{solutionbox}
+
+
+\questionmarks{3(A)}{3}{SFR એટલે શું ? કોઈ પણ ત્રણ SFR નું લિસ્ટ આપો.}
+
+\begin{solutionbox}
+\textbf{SFR વ્યાખ્યા:}
+\textbf{Special Function Register} - માઈક્રોકંટ્રોલરમાં ચોક્કસ કાર્યો માટે સમર્પિત રજિસ્ટરો.
+
+\textbf{ત્રણ SFRs:}
+\begin{itemize}
+    \item \textbf{ACC (E0H)}: Accumulator register.
+    \item \textbf{PSW (D0H)}: Program Status Word.
+    \item \textbf{SP (81H)}: Stack Pointer register.
+\end{itemize}
+
+\textbf{લાક્ષણિકતાઓ:}
+\begin{itemize}
+    \item \textbf{Address Range}: Internal RAM માં 80H થી FFH.
+    \item \textbf{Bit Addressable}: કેટલાક SFRs વ્યક્તિગત bit access આપે છે.
+    \item \textbf{Function Specific}: દરેકનું સમર્પિત હાર્ડવેર કાર્ય છે.
+\end{itemize}
+
+\begin{mnemonicbox}APS - ACC, PSW, Stack Pointer\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3(B)}{4}{Program Counter (PC) અને Data Pointer (DPTR) રજિસ્ટર સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Program Counter (PC):}
+\begin{itemize}
+    \item \textbf{Size}: 16-bit રજિસ્ટર.
+    \item \textbf{Function}: execute થનાર આગામી instruction નું address ધરાવે છે.
+    \item \textbf{Auto-increment}: Instruction fetch પછી આપમેળે increment થાય છે.
+    \item \textbf{Range}: 0000H થી FFFFH.
+\end{itemize}
+
+\textbf{Data Pointer (DPTR):}
+\begin{itemize}
+    \item \textbf{Size}: 16-bit રજિસ્ટર (DPH + DPL).
+    \item \textbf{Function}: External data memory locations ને point કરે છે.
+    \item \textbf{Usage}: External memory access માટે MOVX instructions સાથે વપરાય છે.
+    \item \textbf{Components}: DPH (83H) અને DPL (82H).
+\end{itemize}
+
+\begin{center}
+\begin{tikzpicture}
+    % PC
+    \node [anchor=east] at (0,1) {PC:};
+    \draw (0.5,0.5) rectangle (2.5,1.5) node[midway] {PCH};
+    \draw (2.5,0.5) rectangle (4.5,1.5) node[midway] {PCL};
+    \node [right] at (4.5,1) {16-bit};
+    
+    % DPTR
+    \node [anchor=east] at (0,-1) {DPTR:};
+    \draw (0.5,-1.5) rectangle (2.5,-0.5) node[midway] {DPH};
+    \draw (2.5,-1.5) rectangle (4.5,-0.5) node[midway] {DPL};
+    \node [right] at (4.5,-1) {16-bit};
+    \node [below] at (1.5,-1.5) {83H};
+    \node [below] at (3.5,-1.5) {82H};
+\end{tikzpicture}
+\captionof{figure}{PC અને DPTR Registers}
+\end{center}
+
+\begin{mnemonicbox}PD - PC Points to Program, DPTR Points to Data\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3(C)}{7}{8051 નું આર્કિટેક્ચર દોરો અને સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[scale=0.8, transform shape]
+    % CPU Core
+    \node [gtu block] (alu) {ALU (8-bit)};
+    \node [gtu block, below=1cm of alu] (acc) {A};
+    \node [gtu block, left=0.5cm of acc] (b) {B};
+    \node [gtu block, right=0.5cm of acc] (psw) {PSW};
+    
+    % Memory / SFRs
+    \node [gtu block, right=3cm of alu] (ram) {128B RAM};
+    \node [gtu block, below=0.5cm of ram] (rom) {4KB ROM};
+    \node [gtu block, above=0.5cm of ram] (sfr) {SFR Area};
+    
+    % Peripherals
+    \node [gtu block, left=3cm of alu] (timer) {Timer 0, 1};
+    \node [gtu block, below=0.5cm of timer] (serial) {Serial Port};
+    \node [gtu block, above=0.5cm of timer] (int) {Interrupts};
+    
+    % IO Ports
+    \node [gtu block, below=3cm of acc, minimum width=6cm] (ports) {I/O Ports P0, P1, P2, P3};
+    
+    % Connections (Simplified)
+    \draw [gtu arrow, <->] (alu) -- (acc);
+    \draw [gtu arrow] (alu) -- (b);
+    \draw [gtu arrow] (alu) -- (psw);
+    
+    \draw [gtu arrow, <->] (acc) -- (ram);
+    \draw [gtu arrow, <->] (ram) -- (sfr);
+    
+    \draw [gtu arrow, <->] (sfr) -| (timer);
+    \draw [gtu arrow, <->] (sfr) -| (serial);
+    \draw [gtu arrow, <->] (int) -- (alu);
+    
+    \draw [gtu arrow, <->] (alu) -- (ports);
+\end{tikzpicture}
+\captionof{figure}{8051 Architecture Block Diagram}
+\end{center}
+
+\textbf{આર્કિટેક્ચર ઘટકો:}
+\begin{itemize}
+    \item \textbf{CPU}: Accumulator અને B register સાથે 8-bit ALU.
+    \item \textbf{Memory}: 4KB internal ROM, 128B internal RAM.
+    \item \textbf{I/O Ports}: ચાર 8-bit bidirectional ports (P0-P3).
+    \item \textbf{Timers}: બે 16-bit timers/counters (T0, T1).
+    \item \textbf{Serial Port}: કમ્યુનિકેશન માટે Full duplex UART.
+    \item \textbf{Interrupts}: Priority levels સાથે 5 interrupt sources.
+\end{itemize}
+
+\textbf{ખાસ વિશેષતાઓ:}
+\begin{itemize}
+    \item \textbf{Boolean Processor}: Bit manipulation ક્ષમતાઓ.
+    \item \textbf{Addressing Modes}: 8 વિવિધ addressing modes.
+    \item \textbf{Power Management}: Idle અને power-down modes.
+\end{itemize}
+
+\begin{mnemonicbox}MIPTIS - Memory, I/O, Processor, Timers, Interrupts, Serial\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3(A) OR}{3}{8051 ની નીચેની પીન સમજાવો: (1) ALE (2) PSEN (3) XTAL1 \& XTAL2}
+
+\begin{solutionbox}
+\textbf{પીન કાર્યો:}
+\begin{itemize}
+    \item \textbf{ALE (Pin 30)}: Address Latch Enable
+    \begin{itemize}
+        \item Lower address byte latch કરવા માટે output pulse.
+        \item Oscillator frequency ના 1/6 પર active high signal.
+    \end{itemize}
+    
+    \item \textbf{PSEN (Pin 29)}: Program Store Enable
+    \begin{itemize}
+        \item External program memory read માટે active low output.
+        \item External EPROM ની OE pin સાથે જોડાયેલ.
+    \end{itemize}
+    
+    \item \textbf{XTAL1 \& XTAL2 (Pins 19, 18)}: Crystal જોડાણો
+    \begin{itemize}
+        \item Clock generation માટે external crystal જોડો.
+        \item સામાન્ય frequency: 11.0592 MHz અથવા 12 MHz.
+    \end{itemize}
+\end{itemize}
+
+\begin{center}
+\begin{circuitikz}
+    \draw (0,0) node[draw, minimum width=3cm, minimum height=1cm] (ic) {8051};
+    \draw (ic.south west) ++(0.5,0) -- ++(0,-0.5) node[below] {XTAL1}; 
+    \draw (ic.south east) ++(-0.5,0) -- ++(0,-0.5) node[below] {XTAL2};
+    
+    \coordinate (x1) at ($(ic.south west) + (0.5,-1)$);
+    \coordinate (x2) at ($(ic.south east) + (-0.5,-1)$);
+    
+    \draw (x1) -- node[midway, fill=white, draw] {Crystal} (x2);
+    \draw (x1) to[C, l=33pF] ++(0,-1.5) node[ground]{};
+    \draw (x2) to[C, l=33pF] ++(0,-1.5) node[ground]{};
+    
+    \draw ($(ic.south west) + (0.5,-0.5)$) -- (x1);
+    \draw ($(ic.south east) + (-0.5,-0.5)$) -- (x2);
+\end{circuitikz}
+\captionof{figure}{Crystal Oscillator Connection}
+\end{center}
+
+\begin{mnemonicbox}APX - ALE latches Address, PSEN enables Program, XTAL generates clocK\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3(B) OR}{4}{8051 માઈક્રોકંટ્રોલરનું ઈન્ટરનલ રેમ ઓર્ગેનાઈઝેશન સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}
+    % RAM Memory Map
+    \draw [thick] (0,0) rectangle (4,8);
+    \node at (2,8.5) {\textbf{Internal RAM (128 Bytes)}};
+    
+    % Sections
+    \draw (0,6) -- (4,6);
+    \draw (0,4) -- (4,4);
+    \draw (0,2) -- (4,2);
+    \draw (0,0) -- (4,0);
+    
+    % Labels
+    \node at (2,7) {General Purpose / User RAM};
+    \node at (2,5) {Bit Addressable RAM};
+    \node at (2,1) {Register Banks 0-3};
+    
+    % Addresses
+    \node [anchor=east] at (0,8) {7FH};
+    \node [anchor=east] at (0,6) {30H};
+    \node [anchor=east] at (0,5) {2FH};
+    \node [anchor=east] at (0,4) {20H};
+    \node [anchor=east] at (0,2) {1FH};
+    \node [anchor=east] at (0,0) {00H};
+    
+    % Details
+    \node [right, align=left] at (4.2, 7) {Scratch Pad\\(80 Bytes)};
+    \node [right, align=left] at (4.2, 5) {16 Bytes\\(128 Bits)};
+    \node [right, align=left] at (4.2, 1) {4 Banks x 8 Regs\\(32 Bytes)};
+\end{tikzpicture}
+\captionof{figure}{8051 Internal RAM Organization}
+\end{center}
+
+\textbf{RAM વિભાગો:}
+\begin{itemize}
+    \item \textbf{Register Banks}: 4 banks $\times$ 8 registers દરેક (00H-1FH).
+    \item \textbf{Bit Addressable}: વ્યક્તિગત bit access સાથે 16 bytes (20H-2FH).
+    \item \textbf{General Purpose}: User data માટે 80 bytes (30H-7FH).
+    \item \textbf{Stack Area}: સામાન્ય રીતે 08H થી ઉપર તરફ હોય છે.
+\end{itemize}
+
+\textbf{Addressing:}
+\begin{itemize}
+    \item \textbf{Direct}: વાસ્તવિક address નો ઉપયોગ કરીને (MOV 30H, A).
+    \item \textbf{Indirect}: Register pointer નો ઉપયોગ કરીને (MOV @R0, A).
+\end{itemize}
+
+\begin{mnemonicbox}RBGS - Register banks, Bit addressable, General purpose, Stack\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3(C) OR}{7}{8051 નો પીન ડાયાગ્રામ દોરો અને સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[scale=0.7, transform shape]
+    \draw [thick] (0,0) rectangle (6,10);
+    \node at (3,5) {\textbf{8051}};
+    \node at (3,9.5) {\textbf{Pin Diagram}};
+    
+    % Left Pins
+    \foreach \y/\label/\pin in {9/P1.0/1, 8.5/P1.1/2, 8/P1.2/3, 5/RESET/9, 4.5/RXD/10, 4/TXD/11, 2/XTAL2/18, 1.5/XTAL1/19, 1/VSS/20}
+        \draw (-0.5, \y) node[left] {\scriptsize \pin\ \label} -- (0, \y);
+        
+    % Right Pins
+    \foreach \y/\label/\pin in {9/VCC/40, 8.5/P0.0/39, 8/P0.1/38, 5/EA/31, 4.5/ALE/30, 4/PSEN/29, 0.5/P2.0/21}
+        \draw (6, \y) -- (6.5, \y) node[right] {\scriptsize \label\ \pin};
+        
+    \node at (3,2) {.... (Total 40 Pins) ....};
+\end{tikzpicture}
+\captionof{figure}{8051 Pin Diagram}
+\end{center}
+
+\textbf{પીન સમજાવટ:}
+\begin{itemize}
+    \item \textbf{RESET (Pin 9)}: Reset input - Active high, microcontroller initialize કરે છે.
+    \item \textbf{EA/VPP (Pin 31)}: External Access - Program memory selection control કરે છે.
+    \item \textbf{P0 (Pins 32-39)}: Port 0 - External memory માટે Multiplexed address/data bus.
+    \item \textbf{P2 (Pins 21-28)}: Port 2 - External memory માટે High-order address bus.
+\end{itemize}
+
+\begin{mnemonicbox}REPP - REset, External Access, Port 0, Port 2\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(A)}{3}{R0 રજિસ્ટરમાં સ્ટોર થયેલ ડેટાનો R1 રજિસ્ટરમાં સ્ટોર થયેલ ડેટા સાથે ગુણાકાર કરવાનો પ્રોગ્રામ લખો. પરિણામ R2 રજિસ્ટર (LSB) અને R3 રજિસ્ટર (MSB) માં સ્ટોર કરો.}
+
+\begin{solutionbox}
+\begin{lstlisting}[language={[x86masm]Assembler}, caption={Multiplication Program}]
+    ORG 0000H
+    MOV R0, #05H    ; Load first number
+    MOV R1, #03H    ; Load second number
+    MOV A, R0       ; R0 ને accumulator માં move કરો
+    MOV B, R1       ; R1 ને B register માં move કરો
+    MUL AB          ; A અને B નો ગુણાકાર કરો
+    MOV R2, A       ; LSB ને R2 માં store કરો
+    MOV R3, B       ; MSB ને R3 માં store કરો
+    END
+\end{lstlisting}
+
+\textbf{Program Flow:}
+\begin{itemize}
+    \item \textbf{Load operands} R0 અને R1 માં.
+    \item Multiplication માટે A અને B registers માં \textbf{transfer} કરો.
+    \item MUL AB instruction \textbf{execute} કરો.
+    \item 16-bit result (A=LSB, B=MSB) \textbf{store} કરો.
+\end{itemize}
+
+\textbf{Result Storage:}
+\begin{itemize}
+    \item \textbf{R2}: Product ના lower 8 bits.
+    \item \textbf{R3}: Product ના higher 8 bits.
+\end{itemize}
+
+\begin{mnemonicbox}LTSE - Load, Transfer, multiply, Store result\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(B)}{4}{Data Transfer Instructions નું લિસ્ટ આપો અને કોઈ પણ બે યોગ્ય ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Data Transfer Instructions:}
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{Instruction} & \textbf{Function} \\ \hline
+MOV & Registers/memory વચ્ચે data move કરે છે. \\ \hline
+MOVX & External memory માં/થી data move કરે છે. \\ \hline
+MOVC & Code byte ને accumulator માં move કરે છે. \\ \hline
+PUSH & Stack પર data push કરે છે. \\ \hline
+POP & Stack માંથી data pop કરે છે. \\ \hline
+XCH & Accumulator ને register સાથે exchange કરે છે. \\ \hline
+XCHD & Lower nibble exchange કરે છે. \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{વિગતવાર ઉદાહરણો:}
+
+\textbf{1. MOV Instruction:}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+    MOV A, #50H     ; Immediate data 50H accumulator માં load કરો
+    MOV R0, A       ; Accumulator content ને R0 માં copy કરો
+    MOV 30H, A      ; Accumulator content ને address 30H પર store કરો
+\end{lstlisting}
+
+\textbf{2. PUSH/POP Instructions:}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+    PUSH ACC        ; Accumulator ને stack પર push કરો
+    PUSH 00H        ; R0 content ને stack પર push કરો
+    POP 01H         ; Stack content ને R1 માં pop કરો
+    POP ACC         ; Stack content ને accumulator માં pop કરો
+\end{lstlisting}
+
+\begin{mnemonicbox}Move Makes Programs Possible - MOV, MOVX, PUSH, POP\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(C)}{7}{8051 ના Addressing Modes વ્યાખ્યાયિત કરો અને સમજાવો.}
+
+\begin{solutionbox}
+\textbf{8051 Addressing Modes:}
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{Mode} & \textbf{Description} & \textbf{Example} & \textbf{Usage} \\ \hline
+\textbf{Immediate} & Data instruction નો ભાગ છે. & \code{MOV A, \#50H} & Constant values. \\ \hline
+\textbf{Register} & સીધો register નો ઉપયોગ. & \code{MOV A, R0} & Fast access. \\ \hline
+\textbf{Direct} & Direct address નો ઉપયોગ. & \code{MOV A, 30H} & RAM locations. \\ \hline
+\textbf{Indirect} & Pointer તરીકે register. & \code{MOV A, @R0} & Dynamic addressing. \\ \hline
+\textbf{Indexed} & Base + offset addressing. & \code{MOVC A, @A+DPTR} & Table lookup. \\ \hline
+\textbf{Relative} & PC + offset. & \code{SJMP LOOP} & Branch instructions. \\ \hline
+\textbf{Absolute} & Direct jump address. & \code{LJMP 1000H} & Long jumps. \\ \hline
+\textbf{Bit} & Individual bit access. & \code{SETB P1.0} & Control operations. \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{વિગતવાર ઉદાહરણો:}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+    ; Immediate Addressing
+    MOV A, #25H         ; 25H ને A માં Load કરો
+    
+    ; Register Addressing
+    MOV A, R1           ; R1 ને A માં Copy કરો
+    
+    ; Direct Addressing
+    MOV A, 40H          ; Address 40H થી Load કરો
+    
+    ; Indirect Addressing
+    MOV R0, #40H        ; R0 points to 40H
+    MOV A, @R0          ; R0 દ્વારા pointed address થી Load કરો
+    
+    ; Indexed Addressing
+    MOV DPTR, #TABLE    ; Table ને point કરો
+    MOV A, #02H         ; Index value
+    MOVC A, @A+DPTR     ; TABLE+2 થી Load કરો
+\end{lstlisting}
+
+\begin{mnemonicbox}IRIDRAB - Immediate, Register, Indirect, Direct, Relative, Absolute, Bit\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(A) OR}{3}{R0 રજિસ્ટરમાં સ્ટોર થયેલ ડેટાનો 2's Complement શોધવાનો પ્રોગ્રામ લખો.}
+
+\begin{solutionbox}
+\begin{lstlisting}[language={[x86masm]Assembler}, caption={2's Complement Program}]
+    ORG 0000H
+    MOV R0, #85H        ; Test data load કરો
+    MOV A, R0           ; Data ને accumulator માં copy કરો
+    CPL A               ; bits ને complement (1's complement) કરો
+    INC A               ; 2's complement મેળવવા 1 ઉમેરો
+    MOV R1, A           ; Result R1 માં store કરો
+    END
+\end{lstlisting}
+
+\textbf{Algorithm:}
+\begin{itemize}
+    \item \textbf{Step 1}: R0 માંથી ડેટા accumulator માં load કરો.
+    \item \textbf{Step 2}: CPL A વાપરીને તમામ bits complement કરો.
+    \item \textbf{Step 3}: INC A વાપરીને 1 ઉમેરો.
+    \item \textbf{Step 4}: પરિણામ પાછું સ્ટોર કરો.
+\end{itemize}
+
+\textbf{Verification:}
+\begin{verbatim}
+Original: 85H = 10000101B
+1's Comp: 7AH = 01111010B  
+2's Comp: 7BH = 01111011B
+\end{verbatim}
+
+\begin{mnemonicbox}CCI - Complement, aCd 1, Include result\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(B) OR}{4}{Logical Instructions નું લિસ્ટ આપો અને કોઈ પણ બે યોગ્ય ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Logical Instructions:}
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{Instruction} & \textbf{Function} \\ \hline
+ANL & Logical AND operation. \\ \hline
+ORL & Logical OR operation. \\ \hline
+XRL & Logical XOR operation. \\ \hline
+CPL & Complement operation. \\ \hline
+RL/RLC & Rotate left. \\ \hline
+RR/RRC & Rotate right. \\ \hline
+SWAP & Swap nibbles. \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{વિગતવાર ઉદાહરણો:}
+
+\textbf{1. ANL (AND Logic):}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+    MOV A, #0F0H        ; A = 11110000B
+    ANL A, #0AAH        ; 10101010B સાથે AND કરો
+                        ; પરિણામ: A = 10100000B = A0H
+\end{lstlisting}
+\textbf{ઉપયોગ}: ચોક્કસ bits ને mask કરવા, ન જોઈતા bits clear કરવા.
+
+\textbf{2. ORL (OR Logic):}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+    MOV A, #0F0H        ; A = 11110000B  
+    ORL A, #00FH        ; 00001111B સાથે OR કરો
+                        ; પરિણામ: A = 11111111B = FFH
+\end{lstlisting}
+\textbf{ઉપયોગ}: ચોક્કસ bits set કરવા, bit patterns ભેગા કરવા.
+
+\begin{mnemonicbox}AXOR - AND masks, XOR toggles, OR sets, Rotate shifts\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(C) OR}{7}{નીચેની Instructions સમજાવો: (1)ADDC (2) INC (3) DEC (4) JZ (5) SUBB (6) NOP (7) RET}
+
+\begin{solutionbox}
+\textbf{Instruction સમજૂતી:}
+
+\begin{enumerate}
+    \item \textbf{ADDC (Add with Carry)}: Source, destination, અને carry flag નો સરવાળો કરે છે.
+    \begin{lstlisting}[language={[x86masm]Assembler}]
+    MOV A, #80H
+    ADDC A, #90H    ; A = A + 90H + Carry flag
+    \end{lstlisting}
+    
+    \item \textbf{INC (Increment)}: Operand માં 1 નો વધારો કરે છે.
+    \begin{lstlisting}[language={[x86masm]Assembler}]
+    INC A           ; A = A + 1
+    INC R0          ; R0 = R0 + 1
+    \end{lstlisting}
+    
+    \item \textbf{DEC (Decrement)}: Operand માં 1 નો ઘટાડો કરે છે.
+    \begin{lstlisting}[language={[x86masm]Assembler}]
+    DEC A           ; A = A - 1
+    DEC R1          ; R1 = R1 - 1
+    \end{lstlisting}
+    
+    \item \textbf{JZ (Jump on Zero)}: Zero flag set હોય ત્યારે conditional jump.
+    \begin{lstlisting}[language={[x86masm]Assembler}]
+    DEC A
+    JZ ZERO_LABEL   ; જો A = 0 તો Jump કરો
+    \end{lstlisting}
+    
+    \item \textbf{SUBB (Subtract with Borrow)}: Accumulator માંથી source અને carry બાદ કરે છે.
+    \begin{lstlisting}[language={[x86masm]Assembler}]
+    MOV A, #50H
+    SUBB A, #30H    ; A = A - 30H - Carry flag
+    \end{lstlisting}
+    
+    \item \textbf{NOP (No Operation)}: Timing delay પૂરો પાડે છે, placeholder છે.
+    \begin{lstlisting}[language={[x86masm]Assembler}]
+    NOP             ; કંઈ કરશો નહીં, 1 cycle વાપરો
+    \end{lstlisting}
+    
+    \item \textbf{RET (Return)}: Subroutine માંથી calling address પર return થાય છે.
+    \begin{lstlisting}[language={[x86masm]Assembler}]
+    CALL SUBROUTINE
+    ...
+    SUBROUTINE:
+        RET         ; Caller પર પાછા ફરો
+    \end{lstlisting}
+\end{enumerate}
+
+\begin{mnemonicbox}AIDS NR - Add, Increment, Decrement, Subtract, No-op, Return\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(A)}{3}{DJNZ અને CJNE Instructions યોગ્ય ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{DJNZ (Decrement and Jump if Not Zero):}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+    MOV R0, #05H        ; Counter initialize કરો
+    LOOP:
+        MOV A, #00H     ; કોઈ operation
+        DJNZ R0, LOOP   ; R0 ઘટાડો, zero ન હોય તો jump કરો
+\end{lstlisting}
+\textbf{કાર્ય}: Decrement અને conditional jump operations ને જોડે છે.
+
+\textbf{CJNE (Compare and Jump if Not Equal):}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+    MOV A, #30H
+    CJNE A, #30H, NOT_EQUAL  ; A ને 30H સાથે compare કરો
+    MOV R0, #01H             ; સમાન હોય
+    SJMP CONTINUE
+    NOT_EQUAL:
+    MOV R0, #00H             ; સમાન ન હોય
+    CONTINUE:
+\end{lstlisting}
+\textbf{કાર્ય}: બે operands compare કરે છે અને સમાન નથી તો jump કરે છે.
+
+\begin{mnemonicbox}DC - Decrement count, Compare jump\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(B)}{4}{ટાઈમર 0 નો ઉપયોગ કરી 30 મિલી સેકંડનો ટાઈમ ડિલે જનરેટ કરવા માટે એસેમ્બલી પ્રોગ્રામ બનાવો. ક્રિસ્ટલ ફ્રિકવન્સી 12 મેગા હર્ટઝ ગણતરીમાં લેવી.}
+
+\begin{solutionbox}
+\begin{lstlisting}[language={[x86masm]Assembler}, caption={30ms Delay Program}]
+    ORG 0000H
+    MAIN:
+        CALL DELAY_30MS     ; 30ms delay call કરો
+        SJMP MAIN           ; Repeat કરો
+    
+    DELAY_30MS:
+        MOV TMOD, #01H      ; Timer 0, Mode 1 (16-bit)
+        MOV TH0, #8AH       ; 30ms માટે high byte લોડ કરો
+        MOV TL0, #23H       ; Low byte લોડ કરો
+        SETB TR0            ; Timer 0 start કરો
+    WAIT:
+        JNB TF0, WAIT       ; Timer overflow માટે રાહ જુઓ
+        CLR TR0             ; Timer stop કરો
+        CLR TF0             ; Timer flag clear કરો
+        RET
+    END
+\end{lstlisting}
+
+\textbf{30ms delay માટે ગણતરી:}
+\begin{itemize}
+    \item Crystal Frequency = 12 MHz
+    \item Machine Cycle = 12/12 MHz = 1 $\mu$s
+    \item 30ms માટે = 30,000 $\mu$s = 30,000 machine cycles
+    \item Timer Count = $65536 - 30000 = 35536 = 8A23H$
+    \item TH0 = 8AH, TL0 = 23H
+\end{itemize}
+
+\begin{mnemonicbox}CLSW - Calculate, Load, Start, Wait\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(C)}{7}{8051 માઈક્રોકંટ્રોલર સાથે LCD નો ઇન્ટરફેસિંગ ડાયાગ્રામ દોરો અને ઇન્ટરફેસિંગ માટે જરૂરી LCD ની તમામ પીનો સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{circuitikz}
+    \node [gtu block, minimum height=4cm] (lcd) {LCD 16x2};
+    \node [gtu block, left=3cm of lcd, minimum height=4cm] (cpu) {8051};
+    
+    % Data Lines
+    \draw [->, thick] (cpu.east) -- node[above] {D4-D7 (P2)} (lcd.west);
+    
+    % Control Lines
+    \draw [->] ($(cpu.east)+(0,-1)$) -- node[below] {RS, RW, EN (P1)} ($(lcd.west)+(0,-1)$);
+    
+    % Power
+    \draw ($(lcd.north)+(1,0)$) -- ++(0,0.5) node[vcc] {+5V};
+    \draw ($(lcd.south)+(1,0)$) -- ++(0,-0.5) node[ground] {};
+    
+    % Potentiometer for Contrast
+    \draw ($(lcd.south)+(-1,0)$) -- ++(0,-1) node[ground] {}; 
+    \node [below right] at ($(lcd.south)+(-1,0)$) {VEE};
+\end{circuitikz}
+\captionof{figure}{LCD Interfacing}
+\end{center}
+
+\textbf{LCD પીન કાર્યો:}
+\begin{itemize}
+    \item \textbf{RS (Pin 4)}: Register Select - 0=Command, 1=Data.
+    \item \textbf{RW (Pin 5)}: Read/Write - 0=Write, 1=Read.
+    \item \textbf{EN (Pin 6)}: Enable - Data transfer માટે high to low pulse.
+    \item \textbf{D4-D7 (Pins 11-14)}: Commands/data માટે 4-bit data lines.
+\end{itemize}
+
+\textbf{મૂળભૂત LCD Commands:}
+\begin{itemize}
+    \item \textbf{0x38}: Function set (8-bit, 2 lines).
+    \item \textbf{0x0E}: Display ON, cursor ON.
+    \item \textbf{0x01}: Clear display.
+    \item \textbf{0x80}: Cursor ને first line પર set કરો.
+\end{itemize}
+
+\begin{mnemonicbox}REED - RS selects, RW reads, EN enables, Data transfers\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(A) OR}{3}{65h મેમરી લોકેશન પર સ્ટોર થયેલ ડેટાનું 75h મેમરી લોકેશન પર સ્ટોર થયેલ ડેટા સાથે OR ઓપરેશન કરો અને પરિણામ R6 રજિસ્ટરમાં સ્ટોર કરવાનો પ્રોગ્રામ લખો.}
+
+\begin{solutionbox}
+\begin{lstlisting}[language={[x86masm]Assembler}, caption={OR Operation Program}]
+    ORG 0000H
+    MOV 65H, #0F0H      ; 65H પર ટેસ્ટ ડેટા સ્ટોર કરો
+    MOV 75H, #0AAH      ; 75H પર ટેસ્ટ ડેટા સ્ટોર કરો
+    
+    MOV A, 65H          ; 65H માંથી ડેટાને accumulator માં લોડ કરો
+    ORL A, 75H          ; 75H પરના ડેટા સાથે OR કરો
+    MOV R6, A           ; પરિણામ R6 register માં સ્ટોર કરો
+    END
+\end{lstlisting}
+
+\textbf{ઉદાહરણ ગણતરી:}
+\begin{verbatim}
+65H પરનો ડેટા: F0H = 11110000B
+75H પરનો ડેટા: AAH = 10101010B  
+OR પરિણામ:   FAH = 11111010B
+\end{verbatim}
+
+\begin{mnemonicbox}LOS - Load, OR, Store result\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(B) OR}{4}{P1.3 પર 2 કિલો હર્ટઝનો સ્કવેર વેવ જનરેટ કરવા માટે એસેમ્બલી પ્રોગ્રામ લખો. ક્રિસ્ટલ ફ્રિકવન્સી 11.0592 મેગા હર્ટઝ ગણતરીમાં લેવી.}
+
+\begin{solutionbox}
+\begin{lstlisting}[language={[x86masm]Assembler}, caption={Square Wave Program}]
+    ORG 0000H
+    MAIN:
+        SETB P1.3           ; P1.3 ને high કરો
+        CALL DELAY_250US    ; અડધા period માટે delay
+        CLR P1.3            ; P1.3 ને low કરો
+        CALL DELAY_250US    ; અડધા period માટે delay
+        SJMP MAIN           ; સતત repeat કરો
+    
+    DELAY_250US:
+        MOV TMOD, #01H      ; Timer 0, Mode 1
+        MOV TH0, #0FEH      ; High byte લોડ કરો
+        MOV TL0, #0CBH      ; Low byte લોડ કરો
+        SETB TR0            ; Timer 0 start કરો
+    WAIT:
+        JNB TF0, WAIT       ; Overflow માટે રાહ જુઓ
+        CLR TR0             ; Timer stop કરો
+        CLR TF0             ; Flag clear કરો
+        RET
+    END
+\end{lstlisting}
+
+\textbf{2KHz Square Wave માટે ગણતરી:}
+\begin{itemize}
+    \item Frequency = 2KHz, Period = 500$\mu$s. Half Period = 250$\mu$s.
+    \item Crystal = 11.0592 MHz. Machine Cycle = 1.085$\mu$s.
+    \item Timer Count = $250 / 1.085 \approx 230$.
+    \item Timer Value = $65536 - 230 = 65306 = FECBH$.
+\end{itemize}
+
+\begin{mnemonicbox}SCDW - Set high, Clear low, Delay, Wait\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(C) OR}{7}{8051 માઈક્રોકંટ્રોલર સાથે 7-Segment ડિસ્પ્લેનો ઇન્ટરફેસિંગ દોરો અને સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{circuitikz}
+    \draw (0,0) node[draw, minimum height=2cm] (P1) {Port 1};
+    \draw (4,0) node[draw, minimum height=2cm] (disp) {7-Seg};
+    
+    \foreach \y in {0.7, 0.5, 0.3, 0.1, -0.1, -0.3, -0.5, -0.7}
+        \draw [->] ($(P1.east)+(0,\y)$) -- ($(disp.west)+(0,\y)$);
+        
+    \node [right=0.2cm of P1] {\scriptsize a-g, dp};
+    \node [above] at (2, 0.8) {Current Limiting Resistors (330$\Omega$)};
+\end{circuitikz}
+\captionof{figure}{7-Segment Interface}
+\end{center}
+
+\textbf{ડિસ્પ્લે કોન્ફિગરેશન:}
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Digit} & \textbf{Common Cathode} & \textbf{Common Anode} \\ \hline
+0 & 3FH & C0H \\ \hline
+1 & 06H & F9H \\ \hline
+2 & 5BH & A4H \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{નમૂના પ્રોગ્રામ:}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+    MOV DPTR, #DIGIT_TABLE  ; Lookup table ને point કરો
+    MOV A, #05H             ; અંક 5 દર્શાવો
+    MOVC A, @A+DPTR         ; 7-segment કોડ મેળવો
+    MOV P1, A               ; Display ને મોકલો
+\end{lstlisting}
+
+\begin{mnemonicbox}CRAM - Common connection, Resistors limit, Address segments, Multiplex digits\end{mnemonicbox}
+\end{solutionbox}
+
+\end{document}
+
