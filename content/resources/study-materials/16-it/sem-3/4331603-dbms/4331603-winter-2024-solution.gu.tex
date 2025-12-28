@@ -1,0 +1,1175 @@
+\documentclass{article}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/preamble.tex}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/gujarati-boxes.tex}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/commands.tex}
+\usetikzlibrary{fit, trees, positioning, shapes.geometric, arrows.meta, shadows}
+
+\tikzset{
+  gtu entity/.style={rectangle, draw, fill=blue!10, align=center, minimum height=2em, minimum width=3em},
+  gtu relationship/.style={diamond, draw, fill=green!10, align=center, aspect=2, inner sep=1pt},
+  gtu attribute/.style={ellipse, draw, fill=yellow!10, align=center, inner sep=2pt},
+  gtu state/.style={rectangle, rounded corners, draw, fill=orange!10, align=center, minimum height=2em},
+  gtu arrow/.style={->, >=latex, thick}
+}
+
+\title{Database Management (4331603) - Winter 2024 Solution}
+\date{December 07, 2024}
+
+\begin{document}
+\maketitle
+
+\questionmarks{1(a)}{3}{Three-level database architecture સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\begin{center}
+\captionof{table}{Three Levels of Architecture}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Level} & \textbf{Description} & \textbf{Purpose} \\ \hline
+\textbf{External Level} & User views અને application programs & Data abstraction for users \\ \hline
+\textbf{Conceptual Level} & Complete logical structure & Organization-wide data view \\ \hline
+\textbf{Internal Level} & Physical storage details & Storage અને access methods \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm, auto, thick]
+    % Nodes - Copied from English
+    \node [gtu block, fill=red!10, minimum width=6cm] (Ext) {External Level (User Views)};
+    \node [gtu block, fill=blue!10, minimum width=6cm, below=1cm of Ext] (Con) {Conceptual Level (Logical Structure)};
+    \node [gtu block, fill=green!10, minimum width=6cm, below=1cm of Con] (Int) {Internal Level (Physical Storage)};
+    
+    \node [above=0.8cm of Ext] (Users) {End Users / Applications};
+    \node [below=0.8cm of Int] (Storage) {Physical Database};
+    
+    \draw [gtu arrow] (Users) -- (Ext);
+    \draw [gtu arrow] (Ext) -- (Con);
+    \draw [gtu arrow] (Con) -- (Int);
+    \draw [gtu arrow] (Int) -- (Storage);
+    
+    \node [right=0.2cm of Ext, font=\small, anchor=west] {External/Conceptual Mapping};
+    \node [right=0.2cm of Con, font=\small, anchor=west] {Conceptual/Internal Mapping};
+\end{tikzpicture}
+\captionof{figure}{Three-Level Database Architecture}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{External Level}: Individual user views અને specific application requirements દર્શાવે છે.
+    \item \keyword{Conceptual Level}: Storage details વગર complete database schema દર્શાવે છે.
+    \item \keyword{Internal Level}: Physical storage structures અને access paths દર્શાવે છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{ECI - Every Computer Interface}
+\end{mnemonicbox}
+
+\questionmarks{1(b)}{4}{Total Participation અને Partial Participation ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Table:}
+\begin{center}
+\captionof{table}{Participation Types}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{Participation Type} & \textbf{Definition} & \textbf{Symbol} & \textbf{Example} \\ \hline
+\textbf{Total Participation} & દરેક entity એ participate કરવું જ પડે & Double line & Student-Course enrollment \\ \hline
+\textbf{Partial Participation} & અમુક entities participate ન પણ કરે & Single line & Employee-Department management \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto, thick]
+    % Total Participation
+    \node [gtu entity] (Stud) {Student};
+    \node [gtu relationship, right=2cm of Stud] (Enrolls) {Enrolls};
+    \node [gtu entity, right=2cm of Enrolls] (Course) {Course};
+    \draw [double, ultra thick] (Stud) -- (Enrolls) node[midway, above] {Total};
+    \draw [thick] (Enrolls) -- (Course);
+
+    % Partial Participation
+    \node [gtu entity, below=2cm of Stud] (Emp) {Employee};
+    \node [gtu relationship, right=2cm of Emp] (Manages) {Manages};
+    \node [gtu entity, right=2cm of Manages] (Dept) {Department};
+    \draw [thick] (Emp) -- (Manages) node[midway, above] {Partial};
+    \draw [double, ultra thick] (Manages) -- (Dept);
+\end{tikzpicture}
+\captionof{figure}{Participation Constraints}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{Total Participation}: બધા Students એ ઓછામાં ઓછા એક Course માં enroll થવું ફરજિયાત છે.
+    \item \keyword{Partial Participation}: બધા Employees કઈ department manage કરતા નથી.
+    \item \keyword{Double lines} total participation constraints દર્શાવે છે.
+    \item \keyword{Single lines} partial participation relationships દર્શાવે છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Total = Two lines, Partial = Plain line}
+\end{mnemonicbox}
+
+\questionmarks{1(c)}{7}{File management systems ની સરખામણીમાં DBMS ના ફાયદા સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Table:}
+\begin{center}
+\captionof{table}{DBMS Advantages}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Advantage} & \textbf{File System} & \textbf{DBMS} \\ \hline
+\textbf{Data Redundancy} & High duplication & Controlled redundancy \\ \hline
+\textbf{Data Inconsistency} & સામાન્ય સમસ્યા & Data integrity જળવાઈ રહે છે \\ \hline
+\textbf{Data Sharing} & Limited sharing & Concurrent access support \\ \hline
+\textbf{Security} & File-level security & User-level access control \\ \hline
+\textbf{Backup \& Recovery} & Manual process & Automatic mechanisms \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{Reduced Data Redundancy}: Applications વચ્ચે duplicate data storage દૂર કરે છે.
+    \item \keyword{Data Consistency}: બધી applications માં uniform data સુનિશ્ચિત કરે છે.
+    \item \keyword{Data Independence}: Applications ને data structure changes થી સ્વતંત્ર રાખે છે.
+    \item \keyword{Concurrent Access}: એકથી વધુ users data ને એકસાથે access કરી શકે છે.
+    \item \keyword{Security Control}: User authentication અને authorization mechanisms પૂરા પાડે છે.
+    \item \keyword{Backup and Recovery}: Automatic data protection અને restoration પૂરું પાડે છે.
+    \item \keyword{Data Integrity}: Constraints દ્વારા data quality જાળવી રાખે છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{RDCCSBI - Really Don't Copy, Control, Secure, Backup, Integrate}
+\end{mnemonicbox}
+
+\questionmarks{1(c) OR}{7}{વિવિધ data models ની યાદી બનાવો. કોઈપણ બે સંક્ષિપ્તમાં સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Data Models List:}
+\begin{itemize}
+    \item Hierarchical Data Model
+    \item Network Data Model  
+    \item Relational Data Model
+    \item Object-Oriented Data Model
+    \item Entity-Relationship Model
+\end{itemize}
+
+\begin{center}
+\captionof{table}{Comparison of Data Models}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{Model} & \textbf{Structure} & \textbf{Advantages} & \textbf{Disadvantages} \\ \hline
+\textbf{Relational} & Tables with rows/columns & Simple, flexible & Performance overhead \\ \hline
+\textbf{Network} & Graph with records/links & Efficient navigation & Complex structure \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{Relational Data Model:}
+\begin{itemize}
+    \item \keyword{Structure}: Data tables (relations) માં organize થાય છે.
+    \item \keyword{Components}: Tuples (rows), attributes (columns), domains.
+    \item \keyword{Operations}: Select, project, join operations ઉપલબ્ધ છે.
+\end{itemize}
+
+\textbf{Network Data Model:}
+\begin{itemize}
+    \item \keyword{Structure}: Graph-based જેમાં owner-member relationships હોય છે.
+    \item \keyword{Navigation}: Record types વચ્ચે explicit links હોય છે.
+    \item \keyword{Flexibility}: Many-to-many relationships ને naturally support કરે છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{HNROE - Have Network Relational Object Entity}
+\end{mnemonicbox}
+
+\questionmarks{2(a)}{3}{Mapping Cardinalities સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Table:}
+\begin{center}
+\captionof{table}{Mapping Cardinalities}
+\begin{tabulary}{\linewidth}{|L|C|L|L|}
+\hline
+\textbf{Cardinality} & \textbf{Symbol} & \textbf{Description} & \textbf{Example} \\ \hline
+\textbf{One-to-One} & 1:1 & દરેક entity એક બીજા entity સાથે જોડાયેલ & Person-Passport \\ \hline
+\textbf{One-to-Many} & 1:M & એક entity અનેક સાથે જોડાયેલ & Department-Employee \\ \hline
+\textbf{Many-to-One} & M:1 & અનેક entities એક સાથે જોડાયેલ & Student-Course \\ \hline
+\textbf{Many-to-Many} & M:N & અનેક entities અનેક સાથે જોડાયેલ & Student-Subject \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[node distance=2.5cm, auto, thick]
+    % 1:1
+    \node [gtu entity] (P) {Person};
+    \node [gtu relationship, right=1cm of P] (Has) {Has};
+    \node [gtu entity, right=1cm of Has] (Pass) {Passport};
+    \draw [thick] (P) -- (Has) node[midway, above] {1};
+    \draw [thick] (Has) -- (Pass) node[midway, above] {1};
+    
+    % 1:M
+    \node [gtu entity, below=1.5cm of P] (Dept) {Dept};
+    \node [gtu relationship, right=1cm of Dept] (EmpIn) {Has};
+    \node [gtu entity, right=1cm of EmpIn] (Emp) {Emp};
+    \draw [thick] (Dept) -- (EmpIn) node[midway, above] {1};
+    \draw [thick] (EmpIn) -- (Emp) node[midway, above] {M};
+\end{tikzpicture}
+\captionof{figure}{Cardinality Examples}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{Cardinality constraints}: relationship participation limits નક્કી કરે છે.
+    \item \keyword{Maximum cardinality}: associations ની upper bound દર્શાવે છે.
+    \item \keyword{Importance}: Database design અને relationship modeling માં મદદરૂપ છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{OMOM - One, One-Many, One-Many, Many-Many}
+\end{mnemonicbox}
+
+\questionmarks{2(b)}{4}{Relational Algebra માં Outer Join operation સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Table:}
+\begin{center}
+\captionof{table}{Outer Join Types}
+\begin{tabulary}{\linewidth}{|L|C|L|L|}
+\hline
+\textbf{Join Type} & \textbf{Symbol} & \textbf{Result} & \textbf{NULL Handling} \\ \hline
+\textbf{Left Outer} & $\bowtie_L$ & All left + matching right & Unmatched right માટે NULLs \\ \hline
+\textbf{Right Outer} & $\bowtie_R$ & All right + matching left & Unmatched left માટે NULLs \\ \hline
+\textbf{Full Outer} & $\bowtie_F$ & બંને tables માંથી બધું & Unmatched માટે NULLs \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{Example:}
+\code{EMPLOYEE LEFT OUTER JOIN DEPARTMENT}
+\begin{itemize}
+    \item બધા employees નો સમાવેશ થાય છે.
+    \item જે employees નું department ન હોય ત્યાં NULL values મુકાય છે.
+\end{itemize}
+
+\begin{itemize}
+    \item \keyword{Preserves tuples}: Specified relation(s) માંથી unmatched tuples જાળવી રાખે છે.
+    \item \keyword{NULL values}: Missing attribute values માટે NULL values વાપરે છે.
+    \item \keyword{Usage}: Incomplete data relationships ના reporting માટે ઉપયોગી છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{LRF - Left Right Full outer joins}
+\end{mnemonicbox}
+
+\questionmarks{2(c)}{7}{Specialization અને Generalization નો કોન્સેપ્ટ ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Table:}
+\begin{center}
+\captionof{table}{Specialization vs Generalization}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{Concept} & \textbf{Direction} & \textbf{Process} & \textbf{Example} \\ \hline
+\textbf{Specialization} & Top-Down & General થી Specific & Vehicle $\to$ Car, Truck \\ \hline
+\textbf{Generalization} & Bottom-Up & Specific થી General & Car, Truck $\to$ Vehicle \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm, auto, thick]
+    % Superclass
+    \node [gtu entity] (Veh) {VEHICLE};
+    
+    % ISA Hierarchy
+    \node [gtu relationship, below=1cm of Veh, isosceles triangle, shape border rotate=90, inner sep=2pt, aspect=1] (ISA) {ISA};
+    
+    % Subclasses
+    \node [gtu entity, below left=1.5cm and 0.5cm of ISA] (Car) {CAR};
+    \node [gtu entity, below right=1.5cm and 0.5cm of ISA] (Truck) {TRUCK};
+    
+    % Connections
+    \draw [thick] (Veh) -- (ISA);
+    \draw [thick] (ISA) -| (Car);
+    \draw [thick] (ISA) -| (Truck);
+    
+    % Attributes (Optional visualization)
+    \node [gtu attribute, above left=0.5cm of Veh] (ID) {ID};
+    \node [gtu attribute, above right=0.5cm of Veh] (Make) {Make};
+    
+    \node [gtu attribute, below=0.5cm of Car] (Doors) {Doors};
+    \node [gtu attribute, below=0.5cm of Truck] (Payload) {Payload};
+    
+    \draw [thick] (Veh) -- (ID);
+    \draw [thick] (Veh) -- (Make);
+    \draw [thick] (Car) -- (Doors);
+    \draw [thick] (Truck) -- (Payload);
+    
+    % Labels
+    \node [right=2cm of ISA, align=left, font=\small] {$\uparrow$ Generalization (Bottom-Up)\\$\downarrow$ Specialization (Top-Down)};
+\end{tikzpicture}
+\captionof{figure}{ISA Hierarchy Example}
+\end{center}
+
+\textbf{Specialization:}
+\begin{itemize}
+    \item \keyword{Process}: Superclass માંથી subclasses બનાવવાની પ્રક્રિયા (Top-Down).
+    \item \keyword{Inheritance}: Subclasses બધા superclass attributes inherit કરે છે.
+    \item \keyword{Extension}: Subclasses ને specific properties હોય છે.
+\end{itemize}
+
+\textbf{Generalization:}
+\begin{itemize}
+    \item \keyword{Process}: Common subclass features માંથી superclass બનાવવાની પ્રક્રિયા (Bottom-Up).
+    \item \keyword{Abstraction}: Common attributes અને relationships ને identify કરે છે.
+    \item \keyword{Simplification}: Hierarchy દ્વારા complexity ઘટાડે છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{SG-TD-BU - Specialization General-To-Detail, Bottom-Up}
+\end{mnemonicbox}
+
+\questionmarks{2(a OR)}{3}{Relational Algebra માં વિવિધ પ્રકારના Keys સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Table:}
+\begin{center}
+\captionof{table}{Types of Keys}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{Key Type} & \textbf{Definition} & \textbf{Uniqueness} & \textbf{Example} \\ \hline
+\textbf{Super Key} & કોઈપણ attribute set જે uniquely identify કરે & Yes & \{ID, Name, Phone\} \\ \hline
+\textbf{Candidate Key} & Minimal super key & Yes & \{ID\}, \{Email\} \\ \hline
+\textbf{Primary Key} & પસંદ કરેલ candidate key & Yes & \{StudentID\} \\ \hline
+\textbf{Foreign Key} & References primary key & No & \{DeptID\} \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{Super Key}: Tuples ને uniquely identify કરે છે, extra attributes હોઈ શકે છે.
+    \item \keyword{Candidate Key}: Redundant attributes વગરની minimal super key.
+    \item \keyword{Primary Key}: Entity identification માટે પસંદ કરેલ candidate key.
+    \item \keyword{Foreign Key}: Tables વચ્ચે referential integrity સ્થાપિત કરે છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{SCPF - Super Candidate Primary Foreign}
+\end{mnemonicbox}
+
+\questionmarks{2(b OR)}{4}{ER-diagram માં attributes ના પ્રકારો યોગ્ય ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Table:}
+\begin{center}
+\captionof{table}{Attribute Types}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{Attribute Type} & \textbf{Symbol} & \textbf{Description} & \textbf{Example} \\ \hline
+\textbf{Simple} & Oval & વિભાજિત ન થઈ શકે & Age, Name \\ \hline
+\textbf{Composite} & Tree-like & વિભાજિત થઈ શકે & Address (Street, City) \\ \hline
+\textbf{Derived} & Dashed oval & અન્ય પરથી ગણતરી થાય & Age from Birth\_Date \\ \hline
+\textbf{Multi-valued} & Double oval & એકથી વધુ values & Phone\_Numbers \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto, thick]
+    % Entity
+    \node [gtu entity] (Person) {Person};
+    
+    % Attributes
+    \node [gtu attribute, above=1.5cm of Person] (Name) {Name};
+    \node [gtu attribute, left=2cm of Person] (Addr) {Address};
+    \node [gtu attribute, right=2cm of Person, double] (Phone) {Phone};
+    \node [gtu attribute, below left=1.5cm of Person, dashed] (Age) {Age};
+    
+    % Composite parts
+    \node [gtu attribute, below left=1cm of Addr] (Street) {Street};
+    \node [gtu attribute, below right=1cm of Addr] (City) {City};
+    
+    % Connections
+    \draw [thick] (Person) -- (Name);
+    \draw [thick] (Person) -- (Addr);
+    \draw [thick] (Person) -- (Phone);
+    \draw [thick] (Person) -- (Age);
+    \draw [thick] (Addr) -- (Street);
+    \draw [thick] (Addr) -- (City);
+    
+    % Labels
+    \node [right=0.2cm of Name, font=\tiny] {Simple};
+    \node [above=0.2cm of Addr, font=\tiny] {Composite};
+    \node [above=0.2cm of Phone, font=\tiny] {Multi-valued};
+    \node [below=0.2cm of Age, font=\tiny] {Derived};
+\end{tikzpicture}
+\captionof{figure}{Attribute Types in ER}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{Simple attributes}: atomic અને અવિભાજ્ય હોય છે.
+    \item \keyword{Composite attributes}: ને અર્થપૂર્ણ પેટા-ભાગો હોય છે (e.g., Address broken into Street, City).
+    \item \keyword{Derived attributes}: અન્ય attribute values પરથી ગણવામાં આવે છે (e.g., Age from DOB).
+    \item \keyword{Multi-valued attributes}: entity દીઠ અનેક values store કરી શકે છે (e.g., Phone numbers).
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{SCDM - Simple Composite Derived Multi-valued}
+\end{mnemonicbox}
+
+\questionmarks{2(c OR)}{7}{SELECT, PROJECT, UNION અને SET-INTERSECTION operations યોગ્ય ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Table:}
+\begin{center}
+\captionof{table}{Relational Operations}
+\begin{tabulary}{\linewidth}{|L|C|L|L|}
+\hline
+\textbf{Operation} & \textbf{Symbol} & \textbf{Purpose} & \textbf{Example} \\ \hline
+\textbf{SELECT} & $\sigma$ & Filter rows & $\sigma_{salary > 50000}(Employee)$ \\ \hline
+\textbf{PROJECT} & $\pi$ & Select columns & $\pi_{name, age}(Employee)$ \\ \hline
+\textbf{UNION} & $\cup$ & Combine relations & $R \cup S$ \\ \hline
+\textbf{INTERSECTION} & $\cap$ & Common tuples & $R \cap S$ \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{1. SELECT Operation ($\sigma$):}
+\begin{itemize}
+    \item Rows ને filter કરે છે.
+    \item Example: $\sigma_{age > 25}(STUDENT)$
+    \item 25 વર્ષથી વધુ ઉંમરના વિદ્યાર્થીઓ પરત કરે છે.
+\end{itemize}
+
+\textbf{2. PROJECT Operation ($\pi$):}
+\begin{itemize}
+    \item Specific columns select કરે છે.
+    \item Example: $\pi_{name, course}(STUDENT)$
+    \item ફક્ત name અને course columns પરત કરે છે.
+\end{itemize}
+
+\textbf{3. UNION Operation ($\cup$):}
+\begin{itemize}
+    \item બે relations માંથી tuples ને જોડે છે (duplicates કાઢી નાખે છે).
+    \item Example: $SCIENCE\_STUDENTS \cup ARTS\_STUDENTS$
+    \item બંને streams ના વિદ્યાર્થીઓને જોડે છે.
+\end{itemize}
+
+\textbf{4. INTERSECTION Operation ($\cap$):}
+\begin{itemize}
+    \item બંને relations માં હાજર હોય તેવા tuples પરત કરે છે.
+    \item Example: $MALE\_STUDENTS \cap SPORTS\_STUDENTS$
+    \item Male students જે sports રમે છે તેમને પરત કરે છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{SPUI - Select Project Union Intersection}
+\end{mnemonicbox}
+
+\questionmarks{3(a)}{3}{Primary Key અને Foreign Key constraint વચ્ચેનો તફાવત આપો.}
+
+\begin{solutionbox}
+\textbf{Table:}
+\begin{center}
+\captionof{table}{Primary Key vs Foreign Key}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Aspect} & \textbf{Primary Key} & \textbf{Foreign Key} \\ \hline
+\textbf{Purpose} & Unique identification & Referential integrity \\ \hline
+\textbf{NULL Values} & Not allowed & Allowed \\ \hline
+\textbf{Uniqueness} & Must be unique & Can be duplicate \\ \hline
+\textbf{Count} & Only one per table & Multiple allowed \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{Primary Key}: Table ની અંદર entity integrity સુનિશ્ચિત કરે છે (Unique + Not Null).
+    \item \keyword{Foreign Key}: Tables વચ્ચે referential integrity જાળવે છે (links to PK).
+    \item \keyword{Uniqueness}: Primary keys હંમેશા unique હોય છે; foreign keys repeat થઈ શકે છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{PU-FN - Primary Unique, Foreign Nullable}
+\end{mnemonicbox}
+
+\questionmarks{3(b)}{4}{DUAL table અને SYSDATE ને ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Table:}
+\begin{center}
+\captionof{table}{DUAL and SYSDATE}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{Component} & \textbf{Type} & \textbf{Purpose} & \textbf{Example} \\ \hline
+\textbf{DUAL} & Virtual table & Test expressions & \code{SELECT 2+3 FROM DUAL} \\ \hline
+\textbf{SYSDATE} & System function & Current date/time & \code{SELECT SYSDATE FROM DUAL} \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{DUAL Table:}
+\begin{itemize}
+    \item \keyword{Virtual table}: એક row અને એક column ધરાવતું special table (Oracle).
+    \item \keyword{Testing}: System functions અથવા calculations (જે physical table સાથે જોડાયેલ નથી) test કરવા માટે વપરાય છે.
+\end{itemize}
+
+\textbf{SYSDATE Function:}
+\begin{itemize}
+    \item \keyword{System Time}: Database server પરથી current date અને time પરત કરે છે.
+    \item \keyword{Operations}: Date arithmetic support કરે છે (e.g., \code{SYSDATE + 1} આવતીકાલ માટે).
+\end{itemize}
+
+\textbf{Examples:}
+\begin{itemize}
+    \item \code{SELECT SYSDATE FROM DUAL;} (Current Time)
+    \item \code{SELECT SYSDATE + 30 FROM DUAL;} (30 days later)
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{DT-ST - DUAL Testing, SYSDATE Time}
+\end{mnemonicbox}
+
+\questionmarks{3(c)}{7}{વિવિધ numeric functions નો ઉપયોગ કરવા માટે SQL queries લખો.}
+
+\begin{solutionbox}
+\textbf{Numeric Functions Overview:}
+\begin{itemize}
+    \item \code{TRUNC}: Number ને specified precision સુધી truncate કરે છે.
+    \item \code{ABS}: Absolute value શોધી આપે છે.
+    \item \code{CEIL}: Smallest integer $\geq$ n.
+    \item \code{FLOOR}: Largest integer $\leq$ n.
+    \item \code{MOD}: Remainder (શેષ) શોધી આપે છે.
+    \item \code{POWER}: Exponentiation (ઘાત) શોધી આપે છે.
+\end{itemize}
+
+\textbf{SQL Queries:}
+\begin{itemize}
+    \item (a) Display integer value of 125.25
+    \newline \code{SELECT TRUNC(125.25) FROM DUAL;} $\to$ 125
+    
+    \item (b) Display absolute value of (-15)
+    \newline \code{SELECT ABS(-15) FROM DUAL;} $\to$ 15
+    
+    \item (c) Display ceil value of 55.65
+    \newline \code{SELECT CEIL(55.65) FROM DUAL;} $\to$ 56
+    
+    \item (d) Display floor value of 100.2
+    \newline \code{SELECT FLOOR(100.2) FROM DUAL;} $\to$ 100
+    
+    \item (e) Display the square root of 16
+    \newline \code{SELECT SQRT(16) FROM DUAL;} $\to$ 4
+    
+    \item (f) Show value of $e^3$
+    \newline \code{SELECT EXP(3) FROM DUAL;}
+    
+    \item (g) Display result of 12 raised to 6
+    \newline \code{SELECT POWER(12, 6) FROM DUAL;}
+    
+    \item (h) Display result of 24 mod 2
+    \newline \code{SELECT MOD(24, 2) FROM DUAL;} $\to$ 0
+    
+    \item (i) Show output of sign(-25), sign(25), sign(0)
+    \newline \code{SELECT SIGN(-25), SIGN(25), SIGN(0) FROM DUAL;} $\to$ -1, 1, 0
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{TACFSEPM - TRUNC ABS CEIL FLOOR SQRT EXP POWER MOD}
+\end{mnemonicbox}
+
+\questionmarks{3(a OR)}{3}{Unique અને Check Constraint ને યોગ્ય ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Table:}
+\begin{center}
+\captionof{table}{Relationship Constraints}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{Constraint} & \textbf{Purpose} & \textbf{Duplicates} & \textbf{Example} \\ \hline
+\textbf{UNIQUE} & Duplicates અટકાવે છે & Not allowed & Email address \\ \hline
+\textbf{CHECK} & Data validate કરે છે & Value restrictions & Age $> 0$ \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{Examples:}
+\begin{itemize}
+    \item \keyword{UNIQUE Constraint}:
+    \newline \code{email VARCHAR(50) UNIQUE} ખાતરી કરે છે કે કોઈ બે students ને same email નથી.
+    
+    \item \keyword{CHECK Constraint}:
+    \newline \code{age NUMBER CHECK (age >= 18)} ખાતરી કરે છે કે ઉંમર valid છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{UC-DV - Unique no Copy, Check Validates}
+\end{mnemonicbox}
+
+\questionmarks{3(b OR)}{4}{PL/SQL block નું structure સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Table:}
+\begin{center}
+\captionof{table}{PL/SQL Block Sections}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{Section} & \textbf{Required} & \textbf{Purpose} & \textbf{Example} \\ \hline
+\textbf{DECLARE} & Optional & Variable declarations & \code{v\_name VARCHAR2(20);} \\ \hline
+\textbf{BEGIN} & Mandatory & Executable statements & \code{SELECT ... INTO ...} \\ \hline
+\textbf{EXCEPTION} & Optional & Error handling & \code{WHEN OTHERS THEN ...} \\ \hline
+\textbf{END} & Mandatory & Block termination & \code{END;} \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[node distance=0cm, auto, thick]
+    \node [gtu block, minimum width=5cm, dashed] (Dec) {DECLARE (Variables)};
+    \node [gtu block, minimum width=5cm, below=0cm of Dec] (Beg) {BEGIN (Logic)};
+    \node [gtu block, minimum width=5cm, below=0cm of Beg, dashed] (Exc) {EXCEPTION (Errors)};
+    \node [gtu block, minimum width=5cm, below=0cm of Exc] (End) {END;};
+    
+    \draw [decorate, decoration={brace, amplitude=5pt}, thick] (Dec.north east) -- (End.south east) node [midway, right=0.5cm] {PL/SQL Block};
+\end{tikzpicture}
+\captionof{figure}{PL/SQL Block Structure}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{DECLARE section}: Variable અને cursor declarations (Optional).
+    \item \keyword{BEGIN-END}: Mandatory executable section જેમાં SQL અને logic હોય છે.
+    \item \keyword{EXCEPTION section}: Runtime errors ને handle કરે છે (Optional).
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{DBE-E - Declare Begin Exception End}
+\end{mnemonicbox}
+
+\questionmarks{3(c OR)}{7}{નીચેના ટેબલને ધ્યાનમાં લો અને ક્વેરીઓ ઉકેલો.}
+
+\begin{solutionbox}
+\textbf{I) BRANCH table બનાવો:}
+\begin{lstlisting}[language=SQL]
+CREATE TABLE BRANCH (
+    branchid VARCHAR2(10) PRIMARY KEY,
+    branchname VARCHAR2(50) NOT NULL,
+    address VARCHAR2(100)
+);
+\end{lstlisting}
+
+\textbf{II) EMPLOYEE table બનાવો:}
+\begin{lstlisting}[language=SQL]
+CREATE TABLE EMPLOYEE (
+    empid VARCHAR2(10) PRIMARY KEY,
+    name VARCHAR2(50) NOT NULL,
+    post VARCHAR2(30),
+    gender CHAR(1) CHECK (gender IN ('M', 'F')),
+    birthdate DATE,
+    salary NUMBER(10,2),
+    branchid VARCHAR2(10),
+    FOREIGN KEY (branchid) REFERENCES BRANCH(branchid)
+);
+\end{lstlisting}
+
+\textbf{III) અમદાવાદ બ્રાન્ચમાં કામ કરતા Employees શોધો:}
+\begin{lstlisting}[language=SQL]
+SELECT e.* FROM EMPLOYEE e, BRANCH b 
+WHERE e.branchid = b.branchid 
+AND b.branchname = 'Ahmedabad';
+\end{lstlisting}
+
+\textbf{IV) 1998 માં જન્મેલા Employees શોધો:}
+\begin{lstlisting}[language=SQL]
+SELECT * FROM EMPLOYEE 
+WHERE EXTRACT(YEAR FROM birthdate) = 1998;
+\end{lstlisting}
+
+\textbf{V) 5000 થી વધુ પગાર ધરાવતી Female employees શોધો:}
+\begin{lstlisting}[language=SQL]
+SELECT * FROM EMPLOYEE 
+WHERE gender = 'F' AND salary > 5000;
+\end{lstlisting}
+
+\textbf{VI) જ્યાં Ajay કામ કરે છે તે Address શોધો:}
+\begin{lstlisting}[language=SQL]
+SELECT b.address FROM EMPLOYEE e, BRANCH b
+WHERE e.branchid = b.branchid 
+AND e.name = 'Ajay';
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{CBEFFA - Create Branch Employee Find Female Address}
+\end{mnemonicbox}
+
+\questionmarks{4(a)}{3}{Referential Integrity યથા યોગ્ય ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Table:}
+\begin{center}
+\captionof{table}{Referential Integrity}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Aspect} & \textbf{Description} & \textbf{Example} \\ \hline
+\textbf{Definition} & Foreign key must reference existing primary key & Employee.deptid $\to$ Department.deptid \\ \hline
+\textbf{Purpose} & Maintain data consistency & Prevent orphan records \\ \hline
+\textbf{Actions} & CASCADE, SET NULL, RESTRICT & ON DELETE CASCADE \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[node distance=2.5cm, auto, thick]
+    % Parent Rule
+    \node [gtu entity] (Dept) {DEPARTMENT};
+    \node [gtu attribute, above=0.5cm of Dept] (DPK) {DeptID (PK)};
+    \draw [thick] (Dept) -- (DPK);
+    
+    % Child Rule
+    \node [gtu entity, right=4cm of Dept] (Emp) {EMPLOYEE};
+    \node [gtu attribute, above=0.5cm of Emp] (EFK) {DeptID (FK)};
+    \draw [thick] (Emp) -- (EFK);
+    
+    % Reference Arrow
+    \draw [->, red, dashed, ultra thick] (EFK) to[bend left] node[midway, above] {References} (DPK);
+    
+    % Labels
+    \node [below=0.5cm of Dept, font=\small] {Parent Table};
+    \node [below=0.5cm of Emp, font=\small] {Child Table};
+\end{tikzpicture}
+\captionof{figure}{Foreign Key Reference}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{Referential integrity}: tables વચ્ચે valid relationships સુનિશ્ચિત કરે છે.
+    \item \keyword{Orphan records}: prevented; અસ્તિત્વમાં ન હોય તેવા department માં employee ઉમેરી શકાતો નથી.
+    \item \keyword{Cascade}: operations updates/deletes ને automatically propagate કરે છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{RIO - Referential Integrity prevents Orphans}
+\end{mnemonicbox}
+
+\questionmarks{4(b)}{4}{Partial અને Full Functional Dependency વચ્ચેનો તફાવત આપો.}
+
+\begin{solutionbox}
+\textbf{Table:}
+\begin{center}
+\captionof{table}{Dependency Types}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{Type} & \textbf{Definition} & \textbf{Example} & \textbf{Requirement} \\ \hline
+\textbf{Partial} & Composite key ના ભાગ પર આધારિત & (StudentID, CourseID) $\to$ Name & Composite primary key \\ \hline
+\textbf{Full} & આખી key પર આધારિત & (StudentID, CourseID) $\to$ Grade & Complete key needed \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{Example:} Key is (StudentID, CourseID)
+\begin{itemize}
+    \item \keyword{Partial}: StudentName only StudentID પર આધારિત છે. 2NF નું ઉલ્લંઘન કરે છે.
+    \item \keyword{Full}: Grade બંને StudentID અને CourseID પર આધારિત છે. Good.
+\end{itemize}
+
+\begin{itemize}
+    \item \keyword{Partial dependency} data redundancy અને anomalies નું કારણ બને છે.
+    \item \keyword{2NF} partial functional dependencies ને દૂર કરે છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{PF-CF - Partial Few, Complete Full}
+\end{mnemonicbox}
+
+\questionmarks{4(c)}{7}{3rd Normal Form ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{3rd Normal Form Requirements:}
+\begin{itemize}
+    \item Table 2NF માં હોવું જોઈએ.
+    \item કોઈ transitive dependencies ન હોવી જોઈએ (Non-key $\to$ Non-key).
+    \item Non-key attributes માત્ર primary key પર આધારિત હોવા જોઈએ.
+\end{itemize}
+
+\textbf{Problem (Before 3NF):}
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{StudID} & \textbf{Name} & \textbf{InstID} & \textbf{InstName} \\ \hline
+S1 & John & I1 & Dr. Smith \\ \hline
+\end{tabulary}
+\end{center}
+\textit{Issue: StudentID $\to$ InstID $\to$ InstName (Transitive Dependency)}
+
+\textbf{3NF Solution (Decomposition):}
+
+\textbf{1. STUDENT Table:}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{StudID} & \textbf{Name} & \textbf{CourseID} \\ \hline
+S1 & John & C1 \\ \hline
+\end{tabulary}
+
+\textbf{2. COURSE Table:}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{CourseID} & \textbf{CName} & \textbf{InstID} \\ \hline
+C1 & Math & I1 \\ \hline
+\end{tabulary}
+
+\textbf{3. INSTRUCTOR Table:}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{InstID} & \textbf{InstName} \\ \hline
+I1 & Dr. Smith \\ \hline
+\end{tabulary}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{3NF-NT - 3rd Normal Form No Transitives}
+\end{mnemonicbox}
+
+\questionmarks{4(a OR)}{3}{Normalization નું મહત્વ સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Table:}
+\begin{center}
+\captionof{table}{Benefits of Normalization}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Benefit} & \textbf{Problem Solved} & \textbf{Result} \\ \hline
+\textbf{Reduce Redundancy} & Duplicate data & Storage efficiency \\ \hline
+\textbf{Eliminate Anomalies} & Update/Insert/Delete issues & Data consistency \\ \hline
+\textbf{Improve Integrity} & Data inconsistency & Reliable information \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{Minimizes redundancy}: Data એક જ વાર store કરીને storage બચાવે છે.
+    \item \keyword{Prevents anomalies}: Logical data modification સુનિશ્ચિત કરે છે.
+    \item \keyword{Simplifies maintenance}: Organized structure manage કરવું સરળ છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{RESIM - Redundancy Eliminated, Storage Improved, Maintenance}
+\end{mnemonicbox}
+
+\questionmarks{4(b OR)}{4}{Prime Attributes અને Non-Prime Attributes વચ્ચેનો તફાવત આપો.}
+
+\begin{solutionbox}
+\textbf{Table:}
+\begin{center}
+\captionof{table}{Prime vs Non-Prime Attributes}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{Type} & \textbf{Definition} & \textbf{Role} & \textbf{Example} \\ \hline
+\textbf{Prime} & Part of candidate key & Key formation & StudentID, CourseID \\ \hline
+\textbf{Non-Prime} & Not part of any key & Data storage & Name, Grade \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{Example:} Relation(StudentID, CourseID, Grade, Semester)
+\begin{itemize}
+    \item Candidate Key: (StudentID, CourseID)
+    \item \keyword{Prime Attributes}: StudentID, CourseID
+    \item \keyword{Non-Prime Attributes}: Grade, Semester
+\end{itemize}
+
+\begin{itemize}
+    \item \keyword{Significance}: Non-prime attributes સાથે સંકળાયેલી functional dependency Normal Form (2NF/3NF) નક્કી કરે છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{PN-KD - Prime in Key, Non-prime for Data}
+\end{mnemonicbox}
+
+\questionmarks{4(c OR)}{7}{2nd Normal Form ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{2nd Normal Form Requirements:}
+\begin{itemize}
+    \item Table 1NF માં હોવું જોઈએ.
+    \item કોઈ partial functional dependencies ન હોવી જોઈએ.
+    \item Non-key attributes એ WHOLE primary key પર આધારિત હોવા જોઈએ.
+\end{itemize}
+
+\textbf{Problem (Before 2NF):}
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|L|L|L|}
+\hline
+\textbf{StudID} & \textbf{CourseID} & \textbf{SName} & \textbf{CName} & \textbf{Grade} \\ \hline
+S1 & C1 & John & Math & A \\ \hline
+S1 & C2 & John & Physics & B \\ \hline
+\end{tabulary}
+\end{center}
+\textit{Issue: StudID $\to$ SName (Partial), CourseID $\to$ CName (Partial)}
+
+\textbf{2NF Solution (Decomposition):}
+
+\textbf{1. STUDENT Table:}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{StudID} & \textbf{SName} \\ \hline
+S1 & John \\ \hline
+\end{tabulary}
+
+\textbf{2. COURSE Table:}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{CourseID} & \textbf{CName} \\ \hline
+C1 & Math \\ \hline
+\end{tabulary}
+
+\textbf{3. ENROLLMENT Table:}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{StudID} & \textbf{CourseID} & \textbf{Grade} \\ \hline
+S1 & C1 & A \\ \hline
+S1 & C2 & B \\ \hline
+\end{tabulary}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{2NF-FD - 2nd Normal Form Full Dependencies}
+\end{mnemonicbox}
+
+\questionmarks{5(a)}{3}{Transaction states યોગ્ય ડાયાગ્રામ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto, thick]
+    % States
+    \node [gtu state] (Active) {Active};
+    \node [gtu state, right=2.5cm of Active] (Part) {Partially Committed};
+    \node [gtu state, right=2.5cm of Part] (Comm) {Committed};
+    \node [gtu state, below=1.5cm of Active] (Fail) {Failed};
+    \node [gtu state, right=2.5cm of Fail] (Abort) {Aborted};
+    
+    % Transitions
+    \draw [gtu arrow] (Active) -- (Part) node[midway, above, font=\tiny] {read/write};
+    \draw [gtu arrow] (Part) -- (Comm) node[midway, above, font=\tiny] {commit};
+    \draw [gtu arrow] (Active) -- (Fail) node[midway, right, font=\tiny] {error};
+    \draw [gtu arrow] (Part) -- (Fail) node[midway, right, font=\tiny] {error};
+    \draw [gtu arrow] (Fail) -- (Abort) node[midway, above, font=\tiny] {rollback};
+\end{tikzpicture}
+\captionof{figure}{Transaction State Diagram}
+\end{center}
+
+\textbf{Table:}
+\begin{center}
+\captionof{table}{Transaction States}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{State} & \textbf{Description} & \textbf{Next State} \\ \hline
+\textbf{Active} & Operations execute કરી રહ્યું છે & Partial/Failed \\ \hline
+\textbf{Partially Committed} & છેલ્લું statement execute થયું & Committed/Failed \\ \hline
+\textbf{Committed} & સફળતાપૂર્વક પૂર્ણ & End \\ \hline
+\textbf{Failed} & Error ને કારણે execution અટક્યું & Aborted \\ \hline
+\textbf{Aborted} & Changes rolled back & End \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{APCFA - Active Partial Commit Fail Abort}
+\end{mnemonicbox}
+
+\questionmarks{5(b)}{4}{કોઈપણ બે DDL commands ને યોગ્ય ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Table:}
+\begin{center}
+\captionof{table}{DDL Commands}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{Command} & \textbf{Purpose} & \textbf{Example Syntax} \\ \hline
+\textbf{CREATE} & Create objects & \code{CREATE TABLE T (...)} \\ \hline
+\textbf{ALTER} & Modify structure & \code{ALTER TABLE T ADD ...} \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{1. CREATE Command:}
+\begin{lstlisting}[language=SQL]
+CREATE TABLE EMPLOYEE (
+    empid NUMBER(5) PRIMARY KEY,
+    name VARCHAR2(50)
+);
+\end{lstlisting}
+
+\textbf{2. ALTER Command:}
+\begin{lstlisting}[language=SQL]
+-- Add new column
+ALTER TABLE EMPLOYEE ADD phone VARCHAR2(15);
+-- Modify column
+ALTER TABLE EMPLOYEE MODIFY name VARCHAR2(100);
+-- Drop column
+ALTER TABLE EMPLOYEE DROP COLUMN phone;
+\end{lstlisting}
+
+\begin{itemize}
+    \item \keyword{DDL}: Data Definition Language schema વ્યાખ્યાયિત કરે છે.
+    \item \keyword{Auto-commit}: DDL commands આપમેળે save થાય છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{CA-NM - CREATE Adds, ALTER Modifies}
+\end{mnemonicbox}
+
+\questionmarks{5(c)}{7}{ACID ગુણધર્મો વિગતવાર સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Table:}
+\begin{center}
+\captionof{table}{ACID Properties}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Property} & \textbf{Definition} & \textbf{Example} \\ \hline
+\textbf{Atomicity} & બધું અથવા કંઈ નહીં & Complete transfer અથવા rollback \\ \hline
+\textbf{Consistency} & Database હંમેશા valid & Balance ક્યારેય negative ન થાય \\ \hline
+\textbf{Isolation} & Independent execution & Concurrent users interfere ન કરે \\ \hline
+\textbf{Durability} & Permanent changes & Power loss પછી પણ data remains \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{Atomicity}: Transaction એક indivisible unit છે.
+    \item \keyword{Consistency}: DB ને એક valid state માંથી બીજામાં લઈ જાય છે.
+    \item \keyword{Isolation}: Intermediate states અન્ય transactions માટે invisible હોય છે.
+    \item \keyword{Durability}: Committed data crash પછી પણ કાયમી રહે છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{ACID - Atomicity Consistency Isolation Durability}
+\end{mnemonicbox}
+
+\questionmarks{5(a OR)}{3}{two phase લોકિંગ ટેકનિક શું છે?}
+
+\begin{solutionbox}
+\textbf{Table:}
+\begin{center}
+\captionof{table}{2PL Phases}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{Phase} & \textbf{Action} & \textbf{Description} & \textbf{Allowed} \\ \hline
+\textbf{Growing} & Acquire locks & Transaction બધા locks મેળવે છે & LOCK \\ \hline
+\textbf{Shrinking} & Release locks & Transaction locks છોડે છે & UNLOCK \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[thick]
+    % Axes
+    \draw [->] (0,0) -- (6,0) node[right] {Time};
+    \draw [->] (0,0) -- (0,3) node[above] {Locks Held};
+    
+    % Graph line
+    \draw [blue, ultra thick] (0,0) -- (3,2.5) -- (3.5, 2.5) -- (5.5, 0);
+    
+    % Checkpoints
+    \draw [dashed] (3,2.5) -- (3,0) node[below] {Point of Max Locking};
+    
+    % Labels
+    \node at (1.5, 1) {Growing Phase};
+    \node at (4.5, 1) {Shrinking Phase};
+\end{tikzpicture}
+\captionof{figure}{Two-Phase Locking Protocol}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{Growing Phase}: Transaction locks મેળવી શકે છે, પણ કોઈ release કરી શકતું નથી.
+    \item \keyword{Shrinking Phase}: Transaction locks release કરી શકે છે, પણ કોઈ મેળવી શકતું નથી.
+    \item \keyword{Guarantee}: Serializability સુનિશ્ચિત કરે છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{2PL-GS - Two Phase Locking Growing Shrinking}
+\end{mnemonicbox}
+
+\questionmarks{5(b OR)}{4}{કોઈપણ બે DML આદેશોને યોગ્ય ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Table:}
+\begin{center}
+\captionof{table}{DML Commands}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Command} & \textbf{Purpose} & \textbf{Example} \\ \hline
+\textbf{INSERT} & Add new records & \code{INSERT INTO Student...} \\ \hline
+\textbf{UPDATE} & Modify records & \code{UPDATE Student SET...} \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{1. INSERT Command:}
+\begin{lstlisting}[language=SQL]
+INSERT INTO EMPLOYEE (empid, name, salary)
+VALUES (101, 'John Smith', 50000);
+\end{lstlisting}
+
+\textbf{2. UPDATE Command:}
+\begin{lstlisting}[language=SQL]
+UPDATE EMPLOYEE 
+SET salary = 60000 
+WHERE empid = 101;
+\end{lstlisting}
+
+\begin{itemize}
+    \item \keyword{DML}: Data Manipulation Language data values ને manage કરે છે.
+    \item \keyword{Explicit Commit}: Changes save કરવા માટે ઘણીવાર \code{COMMIT} ની જરૂર પડે છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{IU-AM - INSERT Adds, UPDATE Modifies}
+\end{mnemonicbox}
+
+\questionmarks{5(c OR)}{7}{concurrency control ની સમસ્યાઓની યાદી બનાવો અને કોઈપણ બેને વિગતવાર સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Problems List:}
+\begin{enumerate}
+    \item Lost Update Problem
+    \item Dirty Read Problem
+    \item Non-repeatable Read Problem
+    \item Phantom Read Problem
+\end{enumerate}
+
+\textbf{1. Lost Update Problem:}
+\begin{itemize}
+    \item \keyword{Scenario}: બે transactions same item update કરે છે, અને એક update બીજા દ્વારા overwrite થાય છે.
+    \item \keyword{Example}:
+        \begin{itemize}
+            \item T1 reads X=100. T2 reads X=100.
+            \item T1 writes X=110. T2 writes X=90.
+            \item T1 નું update ખોવાઈ ગયું. Final X=90 (હોવું જોઈએ 100).
+        \end{itemize}
+\end{itemize}
+
+\textbf{2. Dirty Read Problem:}
+\begin{itemize}
+    \item \keyword{Scenario}: Uncommitted transaction દ્વારા લખાયેલ data વાંચવો.
+    \item \keyword{Example}:
+        \begin{itemize}
+            \item T1 updates X=200. T2 reads X=200.
+            \item T1 fails and rolls back X=100.
+            \item T2 એ invalid data (200) process કર્યો.
+        \end{itemize}
+\end{itemize}
+
+\textbf{Solutions:}
+\begin{itemize}
+    \item Use \keyword{Locking Protocols} (2PL).
+    \item Use \keyword{Isolation Levels} (Read Committed, Serializable).
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{LDUI - Lost Dirty Unrepeatable Inconsistent}
+\end{mnemonicbox}
+
+\end{document}

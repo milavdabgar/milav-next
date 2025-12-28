@@ -1,0 +1,1060 @@
+\documentclass{article}
+% Adjust the relative path to point to the latex-templates directory
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/preamble.tex}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/english-boxes.tex}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/commands.tex}
+\usetikzlibrary{fit}
+
+\title{Database Management (4331603) - Winter 2023 Solution}
+\date{January 18, 2024}
+
+\begin{document}
+\maketitle
+
+\questionmarks{1(a)}{3}{Define the following terms: a). Data items b). Data dictionary c).Meta data}
+
+\begin{solutionbox}
+\textbf{Table:}
+\begin{center}
+\captionof{table}{Database Terms}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{Term} & \textbf{Definition} \\ \hline
+\textbf{Data Items} & Basic units of data that cannot be subdivided further. Individual facts or values stored in database fields \\ \hline
+\textbf{Data Dictionary} & Centralized repository containing metadata about database structure, tables, columns, and relationships \\ \hline
+\textbf{Metadata} & Data about data that describes structure, constraints, and properties of database elements \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{Data Items}: Smallest unit of named data
+    \item \keyword{Data Dictionary}: "System Catalog" storing schema definitions
+    \item \keyword{Metadata}: Structural information describing the data
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{DDM - Data Dictionary Manages}
+\end{mnemonicbox}
+
+\questionmarks{1(b)}{4}{Explain disadvantages of File oriented system.}
+
+\begin{solutionbox}
+\textbf{Table:}
+\begin{center}
+\captionof{table}{Disadvantages of File System}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{Disadvantage} & \textbf{Description} \\ \hline
+\textbf{Data Redundancy} & Same data stored in multiple files leading to storage waste \\ \hline
+\textbf{Data Inconsistency} & Different versions of same data in different files \\ \hline
+\textbf{Data Isolation} & Difficulty in accessing data scattered across multiple files \\ \hline
+\textbf{Security Issues} & Limited access control and security mechanisms \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{Redundancy}: Duplication of data across files
+    \item \keyword{Inconsistency}: Mismatched data due to poor synchronization
+    \item \keyword{Isolation}: Lack of standard format hinders data sharing
+    \item \keyword{Integrity}: Hard to enforce constraints across files
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{RDIS - Really Difficult Information System}
+\end{mnemonicbox}
+
+\questionmarks{1(c)}{7}{Describe the responsibilities of DBA in detail.}
+
+\begin{solutionbox}
+\textbf{Table:}
+\begin{center}
+\captionof{table}{DBA Responsibilities}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{Responsibility} & \textbf{Details} \\ \hline
+\textbf{Database Design} & Creating logical and physical database structures \\ \hline
+\textbf{Security Management} & Implementing user access controls and data protection \\ \hline
+\textbf{Performance Monitoring} & Optimizing database performance and query execution \\ \hline
+\textbf{Backup \& Recovery} & Ensuring data safety through regular backups \\ \hline
+\textbf{User Support} & Providing technical assistance to database users \\ \hline
+\textbf{System Maintenance} & Regular updates, patches, and system optimization \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm, auto, thick]
+    \node [gtu root] (Root) {DBA Responsibilities};
+    
+    \node [gtu child, below left=1.5cm and 2cm of Root] (Des) {Database Design};
+    \node [gtu child, left=0.5cm of Des] (Sec) {Security Mgmt};
+    
+    \node [gtu child, below right=1.5cm and 2cm of Root] (Back) {Backup \& Recovery};
+    \node [gtu child, right=0.5cm of Back] (Sup) {User Support};
+    
+    \node [gtu child, below=1.5cm of Root] (Perf) {Performance};
+    \node [gtu child, below=0.5cm of Perf] (Maint) {Maintenance};
+    
+    \draw [gtu arrow] (Root) -- (Des);
+    \draw [gtu arrow] (Root) -- (Sec);
+    \draw [gtu arrow] (Root) -- (Perf);
+    \draw [gtu arrow] (Root) -- (Back);
+    \draw [gtu arrow] (Root) -- (Sup);
+    \draw [gtu arrow] (Root) -- (Maint);
+\end{tikzpicture}
+\captionof{figure}{Key Responsibilities of Database Administrator}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{Design}: Schema definition and storage structure planning
+    \item \keyword{Security}: Granting/revoking access and encryption
+    \item \keyword{Recovery}: Disaster recovery planning
+    \item \keyword{Tuning}: Indexing and query optimization
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{DSPBUM - Database Specialists Provide Better User Management}
+\end{mnemonicbox}
+
+\questionmarks{1(c OR)}{7}{Define data abstraction? Explain Three level Architecture of DBMS.}
+
+\begin{solutionbox}
+\textbf{Data Abstraction}: Process of hiding complex implementation details while showing only essential features to users.
+
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm, auto, thick]
+    % Levels
+    \node [gtu block, fill=red!10, minimum width=6cm] (Ext) {External Level (User Views)};
+    \node [gtu block, fill=blue!10, minimum width=6cm, below=1cm of Ext] (Con) {Conceptual Level (Logical Schema)};
+    \node [gtu block, fill=green!10, minimum width=6cm, below=1cm of Con] (Int) {Internal Level (Physical Storage)};
+    
+    % Users
+    \node [above=0.8cm of Ext] (Users) {End Users / Applications};
+    
+    % Connections
+    \draw [gtu arrow] (Users) -- (Ext);
+    \draw [gtu arrow] (Ext) -- (Con);
+    \draw [gtu arrow] (Con) -- (Int);
+    
+    % Labels (Mapping)
+    \node [right=0.5cm of Ext, font=\small] {External/Conceptual Mapping};
+    \node [right=0.5cm of Con, font=\small] {Conceptual/Internal Mapping};
+\end{tikzpicture}
+\captionof{figure}{Three Level Architecture}
+\end{center}
+
+\textbf{Table:}
+\begin{center}
+\captionof{table}{Architecture Levels}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Level} & \textbf{Description} & \textbf{Purpose} \\ \hline
+\textbf{External Level} & User view of database & Individual user perspectives \\ \hline
+\textbf{Conceptual Level} & Logical structure of entire database & Overall database organization \\ \hline
+\textbf{Internal Level} & Physical storage details & How data is actually stored \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{View Level}: Describes only part of the database
+    \item \keyword{Logical Level}: Describes what data is stored and relationships
+    \item \keyword{Physical Level}: Describes complex low-level data structures
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{ECI - Every Computer Industry}
+\end{mnemonicbox}
+
+\questionmarks{2(a)}{3}{Define the Following Terms :a).Relationship set b).Participation c).Candidate key}
+
+\begin{solutionbox}
+\textbf{Table:}
+\begin{center}
+\captionof{table}{Terminology}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{Term} & \textbf{Definition} \\ \hline
+\textbf{Relationship Set} & Collection of relationships of same type between entity sets \\ \hline
+\textbf{Participation} & Constraint specifying whether entity occurrence is mandatory in relationship \\ \hline
+\textbf{Candidate Key} & Minimal set of attributes that uniquely identifies each entity in entity set \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{Relationship}: Association among several entities
+    \item \keyword{Total Participation}: Every entity must participate (double line)
+    \item \keyword{Candidate Key}: Super key with no proper subset being a super key
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{RPC - Relationship Participation Candidate}
+\end{mnemonicbox}
+
+\questionmarks{2(b)}{4}{Explain Generalization with example.}
+
+\begin{solutionbox}
+\textbf{Generalization}: Bottom-up approach where common attributes of lower-level entities are combined into higher-level entity.
+
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto, thick]
+    % Superclass
+    \node [gtu block] (Vehicle) {Vehicle};
+    
+    % Relationship
+    \node [gtu decision, below=1cm of Vehicle] (IsA) {IS-A};
+    
+    % Subclasses
+    \node [gtu block, below left=1.5cm and 1cm of IsA] (Car) {Car};
+    \node [gtu block, below=1.5cm of IsA] (Truck) {Truck};
+    \node [gtu block, below right=1.5cm and 1cm of IsA] (Bus) {Bus};
+    
+    % Connections
+    \draw [thick] (Vehicle) -- (IsA);
+    \draw [thick] (IsA) -| (Car);
+    \draw [thick] (IsA) -- (Truck);
+    \draw [thick] (IsA) -| (Bus);
+    
+    % Direction indicator
+    \node [right=2cm of IsA, font=\small, color=red] {Bottom-Up Approach $\uparrow$};
+\end{tikzpicture}
+\captionof{figure}{Generalization Example}
+\end{center}
+
+\textbf{Table:}
+\begin{center}
+\captionof{table}{Generalization Concepts}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{Concept} & \textbf{Description} \\ \hline
+\textbf{Purpose} & Reduce redundancy by creating common superclass \\ \hline
+\textbf{Direction} & Bottom-up (specific to general) \\ \hline
+\textbf{Example} & Car, Truck, Bus $\rightarrow$ Vehicle \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{Superclass}: Generalized entity containing common properties
+    \item \keyword{Subclass}: Specialized entities with unique properties
+    \item \keyword{Attribute Inheritance}: Subclasses inherit attributes of superclass
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{GBU - Generalization Builds Up}
+\end{mnemonicbox}
+
+\questionmarks{2(c)}{7}{Define E-R diagram? Explain different symbols used in E-R diagram with example.}
+
+\begin{solutionbox}
+\textbf{E-R Diagram}: Graphical representation showing entities, attributes, and relationships in database design.
+
+\textbf{Table:}
+\begin{center}
+\captionof{table}{ER Diagram Symbols}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{Symbol} & \textbf{Shape} & \textbf{Usage} & \textbf{Example} \\ \hline
+\textbf{Entity} & Rectangle & Represents objects & Student, Course \\ \hline
+\textbf{Attribute} & Oval & Properties of entities & Name, Age, ID \\ \hline
+\textbf{Relationship} & Diamond & Connections between entities & Enrolls, Teaches \\ \hline
+\textbf{Primary Key} & Underlined oval & Unique identifier & Student\_ID \\ \hline
+\textbf{Multivalued} & Double oval & Multiple values & Phone\_Numbers \\ \hline
+\textbf{Derived} & Dashed oval & Calculated attributes & Age from DOB \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto, thick]
+    % Entities
+    \node [gtu block] (Student) {Student};
+    \node [gtu block, right=4cm of Student] (Course) {Course};
+    
+    % Relationship
+    \node [gtu decision] (Enrolls) at ($(Student)!0.5!(Course)$) {Enrolls};
+    
+    % Attributes Student
+    \node [ellipse, draw, above left=1cm of Student] (Sid) {\underline{ID}};
+    \node [ellipse, draw, above=1cm of Student] (Name) {Name};
+    \node [ellipse, draw, double, below=0.5cm of Student] (Phone) {Phone};
+    \node [ellipse, draw, dashed, below left=0.5cm of Student] (Age) {Age};
+    
+    % Attributes Course
+    \node [ellipse, draw, above=1cm of Course] (Cid) {\underline{ID}};
+    \node [ellipse, draw, above right=1cm of Course] (Cname) {Title};
+    
+    % Edges
+    \draw (Student) -- (Sid);
+    \draw (Student) -- (Name);
+    \draw (Student) -- (Phone);
+    \draw (Student) -- (Age);
+    \draw (Course) -- (Cid);
+    \draw (Course) -- (Cname);
+    
+    \draw (Student) -- node[above] {M} (Enrolls);
+    \draw (Enrolls) -- node[above] {N} (Course);
+\end{tikzpicture}
+\captionof{figure}{Sample ER Diagram}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{Entity Sets}: Things with independent existence
+    \item \keyword{Relationship Sets}: Associations between entities
+    \item \keyword{Attribute Types}: Key, Composite, Multivalued, Derived
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{EARPM - Every Attribute Represents Proper Meaning}
+\end{mnemonicbox}
+
+\questionmarks{2(a OR)}{3}{Define Relational Algebra? List out various operations in relational algebra?}
+
+\begin{solutionbox}
+\textbf{Relational Algebra}: Formal query language with operations for manipulating relational database tables.
+
+\textbf{Table:}
+\begin{center}
+\captionof{table}{Relational Algebra Operations}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{Operation Type} & \textbf{Operations} \\ \hline
+\textbf{Basic Operations} & Select ($\sigma$), Project ($\pi$), Union ($\cup$), Set Difference ($-$), Cartesian Product ($\times$) \\ \hline
+\textbf{Additional Operations} & Intersection ($\cap$), Join ($\bowtie$), Division ($\div$), Rename ($\rho$) \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{Procedural Language}: Specifies what to retrieve and how
+    \item \keyword{Operators}: Takes relations as input and produces relation as output
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{SPUDC-IJDR - Simple People Use Database Concepts}
+\end{mnemonicbox}
+
+\questionmarks{2(b OR)}{4}{Explain Specialization with example.}
+
+\begin{solutionbox}
+\textbf{Specialization}: Top-down approach where higher-level entity is divided into specialized lower-level entities.
+
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto, thick]
+    % Superclass
+    \node [gtu block] (Emp) {Employee};
+    
+    % Relationship
+    \node [gtu decision, below=1cm of Emp] (IsA) {IS-A};
+    
+    % Subclasses
+    \node [gtu block, below left=1.5cm and 1cm of IsA] (Mgr) {Manager};
+    \node [gtu block, below=1.5cm of IsA] (Clerk) {Clerk};
+    \node [gtu block, below right=1.5cm and 1cm of IsA] (Eng) {Engineer};
+    
+    % Connections
+    \draw [thick] (Emp) -- (IsA);
+    \draw [thick] (IsA) -| (Mgr);
+    \draw [thick] (IsA) -- (Clerk);
+    \draw [thick] (IsA) -| (Eng);
+    
+    % Unique Attributes
+    \node [ellipse, draw, left=0.3cm of Mgr, font=\tiny] {Dept};
+    \node [ellipse, draw, right=0.3cm of Eng, font=\tiny] {Skill};
+    
+    \node [right=2cm of IsA, font=\small, color=blue] {Top-Down Approach $\downarrow$};
+\end{tikzpicture}
+\captionof{figure}{Specialization Example}
+\end{center}
+
+\textbf{Table:}
+\begin{center}
+\captionof{table}{Specialization Concepts}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{Concept} & \textbf{Description} \\ \hline
+\textbf{Purpose} & Create specialized subclasses with unique attributes \\ \hline
+\textbf{Direction} & Top-down (general to specific) \\ \hline
+\textbf{Example} & Employee $\rightarrow$ Manager, Clerk, Engineer \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{Subgrouping}: Identifies subsets of entities with distinctive roles
+    \item \keyword{Inheritance}: Lower-level entities inherit from higher-level
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{STD - Specialization Top Down}
+\end{mnemonicbox}
+
+\questionmarks{2(c OR)}{7}{Define attribute? Explain different types of attributes with example.}
+
+\begin{solutionbox}
+\textbf{Attribute}: Property or characteristic that describes an entity.
+
+\textbf{Table:}
+\begin{center}
+\captionof{table}{Attribute Types}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Attribute Type} & \textbf{Description} & \textbf{Example} \\ \hline
+\textbf{Simple} & Cannot be divided further & Age, Name \\ \hline
+\textbf{Composite} & Can be subdivided & Address (Street, City) \\ \hline
+\textbf{Single-valued} & Has one value & SSN, Employee\_ID \\ \hline
+\textbf{Multi-valued} & Can have multiple values & Phone\_Numbers \\ \hline
+\textbf{Derived} & Calculated from other attributes & Age from Birth\_Date \\ \hline
+\textbf{Key} & Uniquely identifies entity & Student\_ID \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[level/.style={sibling distance=25mm, level distance=20mm}, auto, thick]
+    \node [gtu root] {Attribute Types}
+        child {node [gtu child] {Simple}
+             child {node [gtu state, fill=white] {Name}}
+        }
+        child {node [gtu child] {Composite}
+             child {node [gtu state, fill=white] {Address}
+                child {node [gtu state, fill=white] {City}}
+                child {node [gtu state, fill=white] {State}}
+             }
+        }
+        child {node [gtu child] {Multi-valued}
+             child {node [gtu state, double, fill=white] {Phone}}
+        }
+        child {node [gtu child] {Derived}
+             child {node [gtu state, dashed, fill=white] {Age}}
+        };
+\end{tikzpicture}
+\captionof{figure}{Classification of Attributes}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{Domain}: Set of permitted values for each attribute
+    \item \keyword{Null}: Value used when attribute is unknown or not applicable
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{SCSMDK - Simple Composite Single Multi Derived Key}
+\end{mnemonicbox}
+
+\questionmarks{3(a)}{3}{Explain the GRANT and REVOKE statement in SQL.}
+
+\begin{solutionbox}
+\textbf{Table:}
+\begin{center}
+\captionof{table}{DCL Commands}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Statement} & \textbf{Purpose} & \textbf{Syntax Example} \\ \hline
+\textbf{GRANT} & Provides privileges to users & \code{GRANT SELECT ON table TO user} \\ \hline
+\textbf{REVOKE} & Removes privileges from users & \code{REVOKE SELECT ON table FROM user} \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{Privileges}: Permissions like SELECT, INSERT, UPDATE, DELETE
+    \item \keyword{Control}: Manage which users can access or modify data
+    \item \keyword{Security}: Fundamental for database security implementation
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{GR - Grant Removes (via REVOKE)}
+\end{mnemonicbox}
+
+\questionmarks{3(b)}{4}{Explain following Character functions. 1) INSTR 2) LENGTH}
+
+\begin{solutionbox}
+\textbf{Table:}
+\begin{center}
+\captionof{table}{SQL Character Functions}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{Function} & \textbf{Purpose} & \textbf{Syntax} & \textbf{Example} \\ \hline
+\textbf{INSTR} & Finds position of substring & \code{INSTR(str, substr)} & \code{INSTR('Hello', 'e')} $\rightarrow$ 2 \\ \hline
+\textbf{LENGTH} & Returns string length & \code{LENGTH(str)} & \code{LENGTH('Hello')} $\rightarrow$ 5 \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{lstlisting}[language=SQL]
+SELECT INSTR('Database', 'a') FROM dual; -- Returns 2
+SELECT LENGTH('Database') FROM dual;     -- Returns 8
+\end{lstlisting}
+
+\begin{itemize}
+    \item \keyword{INSTR}: Case sensitive search for substring position
+    \item \keyword{LENGTH}: Counts total characters including spaces
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{IL - INSTR Locates, LENGTH measures}
+\end{mnemonicbox}
+
+\questionmarks{3(c)}{7}{Write SQL statements for following table: Student(Enno,name,branch,sem,clgname,bdate)}
+
+\begin{solutionbox}
+\begin{lstlisting}[language=SQL]
+-- 1. Create a table Student
+CREATE TABLE Student (
+    Enno VARCHAR(10) PRIMARY KEY,
+    name VARCHAR(50),
+    branch VARCHAR(20),
+    sem INT,
+    clgname VARCHAR(100),
+    bdate DATE
+);
+
+-- 2. Add a column mobno in Student table
+ALTER TABLE Student ADD mobno VARCHAR(15);
+
+-- 3. Insert one record in student table
+INSERT INTO Student VALUES 
+('E001', 'Raj Patel', 'IT', 3, 'GTU College', '2003-05-15', '9876543210');
+
+-- 4. Find out list of students who have enrolled in "IT" branch
+SELECT * FROM Student WHERE branch = 'IT';
+
+-- 5. Retrieve all information about student where name begin with 'a'
+SELECT * FROM Student WHERE name LIKE 'a%';
+
+-- 6. Count the number of rows in student table
+SELECT COUNT(*) FROM Student;
+
+-- 7. Delete all record of student table
+DELETE FROM Student;
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{CAIRSCD - Create Add Insert Retrieve Search Count Delete}
+\end{mnemonicbox}
+
+\questionmarks{3(a OR)}{3}{Explain equi join with example in SQL.}
+
+\begin{solutionbox}
+\textbf{Equi Join}: Join operation using equality condition to combine tables.
+
+\textbf{Table:}
+\begin{center}
+\captionof{table}{Equi Join}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Join Type} & \textbf{Condition} & \textbf{Result} \\ \hline
+\textbf{Equi Join} & Column1 = Column2 & Matching rows from both tables \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{lstlisting}[language=SQL]
+-- Example: List student names and their course names
+SELECT s.name, c.course_name 
+FROM Student s, Course c 
+WHERE s.course_id = c.course_id;
+\end{lstlisting}
+
+\begin{itemize}
+    \item \keyword{Operator}: Uses equality operator (=)
+    \item \keyword{Columns}: Typically compares primary key and foreign key
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{EE - Equi Equals}
+\end{mnemonicbox}
+
+\questionmarks{3(b OR)}{4}{Explain following Aggregate functions. 1) MAX 2) SUM}
+
+\begin{solutionbox}
+\textbf{Table:}
+\begin{center}
+\captionof{table}{SQL Aggregate Functions}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{Function} & \textbf{Purpose} & \textbf{Syntax} & \textbf{Example} \\ \hline
+\textbf{MAX} & Returns maximum value & \code{MAX(column)} & \code{MAX(salary)} \\ \hline
+\textbf{SUM} & Returns total sum & \code{SUM(column)} & \code{SUM(marks)} \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{lstlisting}[language=SQL]
+SELECT MAX(salary) FROM Employee; -- e.g., 50000
+SELECT SUM(marks) FROM Student;   -- e.g., 450
+\end{lstlisting}
+
+\begin{itemize}
+    \item \keyword{Aggregation}: Performs calculation on a set of values to return single value
+    \item \keyword{Usage}: Often used with GROUP BY clause
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{MS - MAX Sum}
+\end{mnemonicbox}
+
+\questionmarks{3(c OR)}{7}{Write SQL statements for the following table: Employee(EmpID,Ename,DOB,Dept,Salary)}
+
+\begin{solutionbox}
+\begin{lstlisting}[language=SQL]
+-- 1. Create a table Employee
+CREATE TABLE Employee (
+    EmpID VARCHAR(10) PRIMARY KEY,
+    Ename VARCHAR(50),
+    DOB DATE,
+    Dept VARCHAR(30),
+    Salary DECIMAL(10,2)
+);
+
+-- 2. Find sum of salaries of all employee
+SELECT SUM(Salary) FROM Employee;
+
+-- 3. Insert one record in Employee table
+INSERT INTO Employee VALUES 
+('E001', 'John Doe', '1990-05-15', 'IT', 35000);
+
+-- 4. Find names of employees who salary between 25000/- and 48000/-
+SELECT Ename FROM Employee WHERE Salary BETWEEN 25000 AND 48000;
+
+-- 5. Display detail of all employees in descending order of their DOB
+SELECT * FROM Employee ORDER BY DOB DESC;
+
+-- 6. List name of all employees whose name ends with 'a'
+SELECT Ename FROM Employee WHERE Ename LIKE '%a';
+
+-- 7. Find highest and least salaries of all employees
+SELECT MAX(Salary) AS Highest, MIN(Salary) AS Lowest FROM Employee;
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{CSIDDHL - Create Sum Insert Display Display List HighLow}
+\end{mnemonicbox}
+
+\questionmarks{4(a)}{3}{Consider a following relational schema \& give Relational Algebra Expressions for the following queries. Student (Enrollment\_No,Name,DOB,SPI)}
+
+\begin{solutionbox}
+\begin{enumerate}
+    \item List all students whose SPI is greater than 7.0
+    \begin{center}
+    $\sigma_{SPI > 7.0}(Student)$
+    \end{center}
+    
+    \item Find Name of student whose Enrollment\_No is 007
+    \begin{center}
+    $\pi_{Name}(\sigma_{Enrollment\_No = 007}(Student))$
+    \end{center}
+\end{enumerate}
+
+\textbf{Table:}
+\begin{center}
+\captionof{table}{Relational Algebra Symbols}
+\begin{tabulary}{\linewidth}{|C|L|L|}
+\hline
+\textbf{Symbol} & \textbf{Operation} & \textbf{Purpose} \\ \hline
+$\sigma$ & Selection & Filter rows based on condition \\ \hline
+$\pi$ & Projection & Select specific columns \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{Selection}: Returns subset of tuples
+    \item \keyword{Projection}: Returns subset of attributes
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{SP - Select Project}
+\end{mnemonicbox}
+
+\questionmarks{4(b)}{4}{Write a short note on partial functional dependency.}
+
+\begin{solutionbox}
+\textbf{Table:}
+\begin{center}
+\captionof{table}{Partial Dependency}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{Concept} & \textbf{Description} \\ \hline
+\textbf{Definition} & Non-prime attribute depends on part of composite primary key \\ \hline
+\textbf{Occurs in} & Tables with composite primary keys \\ \hline
+\textbf{Problem} & Causes redundancy and update anomalies \\ \hline
+\textbf{Solution} & Decompose into 2NF \\ \hline
+\end{tabulary}
+\end{center}
+
+\paragraph{Example:}
+In table StudentCourse(StudentID, CourseID, StudentName, CourseName):
+\begin{itemize}
+\item Key: (StudentID, CourseID)
+\item Dependency: StudentID $\rightarrow$ StudentName (Partial Key)
+\end{itemize}
+
+\begin{itemize}
+    \item \keyword{Composite Key}: Primary key made of multiple attributes
+    \item \keyword{Violation}: Breaks 2nd Normal Form rules
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{PDPR - Partial Dependency Problems Resolved}
+\end{mnemonicbox}
+
+\questionmarks{4(c)}{7}{Explain need of Normalization? Discuss about 2NF with example.}
+
+\begin{solutionbox}
+\textbf{Need for Normalization}:
+\begin{itemize}
+    \item Eliminates \keyword{Data Redundancy} (duplicate data)
+    \item Prevents \keyword{Update Anomalies} (inconsistent updates)
+    \item Prevents \keyword{Insert Anomalies} (inability to add data)
+    \item Prevents \keyword{Delete Anomalies} (accidental data loss)
+\end{itemize}
+
+\textbf{Second Normal Form (2NF)}:
+\begin{enumerate}
+    \item Must be in 1NF
+    \item No partial functional dependencies allowed
+\end{enumerate}
+
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto, thick]
+    % Before 2NF
+    \node [gtu block, fill=red!10] (Before) {StudentCourse\\(StudentID, CourseID, StudentName, CourseName)};
+    
+    % Arrow
+    \node [below=1cm of Before] (Arrow) {$\Downarrow$ Decompose to 2NF};
+    
+    % After 2NF
+    \node [gtu block, fill=green!10, below left=1cm and -1cm of Arrow] (Student) {Student\\(StudentID, StudentName)};
+    \node [gtu block, fill=green!10, below right=1cm and -1cm of Arrow] (Course) {Course\\(CourseID, CourseName)};
+    \node [gtu block, fill=green!10, below=2.5cm of Arrow] (Enroll) {Enrollment\\(StudentID, CourseID)};
+    
+    \draw [gtu arrow] (Before) -- (Arrow);
+    \draw [gtu arrow] (Arrow) -- (Student);
+    \draw [gtu arrow] (Arrow) -- (Course);
+    \draw [gtu arrow] (Arrow) -- (Enroll);
+\end{tikzpicture}
+\captionof{figure}{2NF Decomposition}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{Decomposition}: Splitting table to separate themes
+    \item \keyword{Full Dependency}: Non-keys must depend on whole primary key
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{NUID2 - Normalization Unifies Important Data to 2NF}
+\end{mnemonicbox}
+
+\questionmarks{4(a OR)}{3}{Consider a following relational schema \& give Relational Algebra Expressions for the following queries. Student(Enno,name,age,address)}
+
+\begin{solutionbox}
+\begin{enumerate}
+    \item Find names of students living in Surat
+    \begin{center}
+    $\pi_{name}(\sigma_{address = 'Surat'}(Student))$
+    \end{center}
+    
+    \item Find names of students older than 30
+    \begin{center}
+    $\pi_{name}(\sigma_{age > 30}(Student))$
+    \end{center}
+\end{enumerate}
+
+\textbf{Table:}
+\begin{center}
+\captionof{table}{Query Operations}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{Query} & \textbf{Algebra Expression} \\ \hline
+\textbf{Filter Rows} & $\sigma_{condition}(Table)$ \\ \hline
+\textbf{Select Columns} & $\pi_{columns}(Result)$ \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{Nesting}: Operations are nested inside each other
+    \item \keyword{Order}: Selection usually performed before projection
+\end{itemize}
+\end{solutionbox}
+
+\questionmarks{4(b OR)}{4}{Define 1 NF? Explain 1NF with suitable example.}
+
+\begin{solutionbox}
+\textbf{First Normal Form (1NF)}: Database schema where each column contains atomic (indivisible) values, and there are no repeating groups.
+
+\textbf{Table:}
+\begin{center}
+\captionof{table}{1NF Rules}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{Rule} & \textbf{Description} \\ \hline
+\textbf{Atomic Values} & No multiple values in single cell \\ \hline
+\textbf{No Repeating Groups} & No duplicate columns for same data \\ \hline
+\textbf{Unique Rows} & Each row must be unique \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{Example}:
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{Before 1NF} & \textbf{After 1NF} \\ \hline
+ID: 1, Subjects: Math, Science & ID: 1, Subject: Math \\
+ & ID: 1, Subject: Science \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{Atomicity}: Fundamental requirement for relational model
+    \item \keyword{Scalability}: Makes querying and indexing efficient
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{ANU - Atomic No-repeat Unique}
+\end{mnemonicbox}
+
+\questionmarks{4(c OR)}{7}{Define Transitive Dependency? Explain 3NF with suitable example.}
+
+\begin{solutionbox}
+\textbf{Transitive Dependency}: Non-prime attribute depends on another non-prime attribute rather than directly on primary key.
+
+\textbf{Third Normal Form (3NF)}:
+\begin{enumerate}
+    \item Must be in 2NF
+    \item No transitive dependencies exist
+\end{enumerate}
+
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto, thick]
+    % Before 3NF
+    \node [gtu state, fill=red!10] (Sid) {Student\_ID};
+    \node [gtu state, right=2cm of Sid, fill=yellow!10] (Dcode) {DeptCode};
+    \node [gtu state, right=2cm of Dcode, fill=yellow!10] (Dname) {DeptName};
+    
+    \draw [gtu arrow] (Sid) -- (Dcode);
+    \draw [gtu arrow] (Dcode) -- (Dname);
+    \draw [gtu arrow, dashed, bend right] (Sid) to node [below] {Transitive} (Dname);
+    
+    \node [below=1cm of Dcode] (Label1) {Before 3NF (Transitive Dependency)};
+    
+    % After 3NF
+    \node [below=2cm of Sid] (Sid2) {Student\_ID};
+    \node [right=2cm of Sid2] (Dcode2) {DeptCode};
+    \node [right=2cm of Dcode2] (Dname2) {DeptName};
+    
+    \node [gtu block, fit=(Sid2) (Dcode2), fill=green!10] (Table1) {};
+    \node [gtu block, fit=(Dcode2) (Dname2), xshift=4cm, fill=green!10] (Table2) {};
+    
+    \node at (Table1.center) {Student Table};
+    \node at (Table2.center) {Dept Table};
+
+    \node [below=1cm of Table1] (Label2) {After 3NF (Split Tables)};
+\end{tikzpicture}
+\captionof{figure}{Transitive Dependency \& 3NF}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{Indirect Dependency}: A $\rightarrow$ B $\rightarrow$ C implies A $\rightarrow$ C
+    \item \keyword{Solution}: Move transitive attributes to new table
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{T3ND - Transitive Third Normal Form No Dependencies}
+\end{mnemonicbox}
+
+\questionmarks{5(a)}{3}{Define Serializability? Explain rules of serializability?}
+
+\begin{solutionbox}
+\textbf{Serializability}: Property ensuring concurrent transaction execution produces same result as serial execution.
+
+\textbf{Table:}
+\begin{center}
+\captionof{table}{Serializability Rules}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{Rule} & \textbf{Description} \\ \hline
+\textbf{Conflict Serializability} & Schedule implies same order of conflicting operations as serial schedule \\ \hline
+\textbf{View Serializability} & Schedule has same read-write patterns as serial schedule \\ \hline
+\end{tabulary}
+\end{center}
+
+\paragraph{Example 2:}
+Consider a schedule with two transactions T1 and T2. If T1 reads a value, then T2 writes it, and then T1 writes it, this might not be serializable. A serial schedule means transactions are executed one after another.
+
+\begin{itemize}
+    \item \keyword{Consistency}: Ensures database integrity during concurrency
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{SCV - Serial Conflict View}
+\end{mnemonicbox}
+
+\questionmarks{5(b)}{4}{Explain Attributes of Implicit Cursors.}
+
+\begin{solutionbox}
+\textbf{Table:}
+\begin{center}
+\captionof{table}{Implicit Cursor Attributes}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{Attribute} & \textbf{Description} \\ \hline
+\textbf{\%FOUND} & TRUE if last SQL affected at least one row \\ \hline
+\textbf{\%NOTFOUND} & TRUE if last SQL affected no rows \\ \hline
+\textbf{\%ROWCOUNT} & Number of rows affected by last SQL \\ \hline
+\textbf{\%ISOPEN} & Always FALSE for implicit cursors (automatically closed) \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{SQL\%Attribute}: Accessed using SQL prefix
+    \item \keyword{Implicit}: Created automatically for DML statements
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{FNRI - Found NotFound RowCount IsOpen}
+\end{mnemonicbox}
+
+\questionmarks{5(c)}{7}{Explain two phase locking protocol with suitable example.}
+
+\begin{solutionbox}
+\textbf{Two Phase Locking (2PL)}: Concurrency control protocol that ensures serializability by defining how transactions acquire and release locks.
+
+\textbf{Table:}
+\begin{center}
+\captionof{table}{2PL Phases}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Phase} & \textbf{Description} & \textbf{Rule} \\ \hline
+\textbf{Growing Phase} & Transaction acquires locks & Cannot release any lock \\ \hline
+\textbf{Lock Point} & Point where all locks are acquired & Maximum locks held \\ \hline
+\textbf{Shrinking Phase} & Transaction releases locks & Cannot acquire new locks \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto, thick]
+    \node [gtu state] (Start) {Start};
+    \node [gtu state, right=2cm of Start] (Growing) {Growing Phase};
+    \node [gtu decision, right=2cm of Growing] (LockPoint) {Lock Point};
+    \node [gtu state, right=2cm of LockPoint] (Shrinking) {Shrinking Phase};
+    \node [gtu state, right=2cm of Shrinking] (End) {End};
+    
+    \draw [gtu arrow] (Start) -- (Growing);
+    \draw [gtu arrow] (Growing) -- node[above] {Acquire Locks} (LockPoint);
+    \draw [gtu arrow] (LockPoint) -- node[above] {Release Locks} (Shrinking);
+    \draw [gtu arrow] (Shrinking) -- (End);
+    
+    \draw [gtu arrow, loop above] (Growing) to node {Lock(X)} (Growing);
+    \draw [gtu arrow, loop above] (Shrinking) to node {Unlock(X)} (Shrinking);
+\end{tikzpicture}
+\captionof{figure}{Two Phase Locking Protocol}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{Serializability}: Guaranteed by 2PL
+    \item \keyword{Deadlocks}: Possible in 2PL (unlike conservative 2PL)
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{2PGS - Two Phase Growing Shrinking}
+\end{mnemonicbox}
+
+\questionmarks{5(a OR)}{3}{Explain ACID properties of transaction.}
+
+\begin{solutionbox}
+\textbf{Table:}
+\begin{center}
+\captionof{table}{ACID Properties}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{Property} & \textbf{Description} \\ \hline
+\textbf{Atomicity} & Transaction is all-or-nothing unit of work \\ \hline
+\textbf{Consistency} & Database transitions from one valid state to another \\ \hline
+\textbf{Isolation} & Concurrent transactions do not interfere with each other \\ \hline
+\textbf{Durability} & Committed changes are permanent despite failures \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{ACID - All Changes In Database}
+\end{mnemonicbox}
+
+\questionmarks{5(b OR)}{4}{Define Triggers? Explain advantages of triggers.}
+
+\begin{solutionbox}
+\textbf{Triggers}: Special stored procedures that automatically execute (fire) in response to specific events on a table or view.
+
+\textbf{Table:}
+\begin{center}
+\captionof{table}{Advantages of Triggers}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{Advantage} & \textbf{Description} \\ \hline
+\textbf{Automatic Execution} & Runs automatically without manual invocation \\ \hline
+\textbf{Data Integrity} & Enforces complex business rules and constraints \\ \hline
+\textbf{Auditing} & Tracks history of data changes (who, when, what) \\ \hline
+\textbf{Security} & Controls access and validates data modification \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{ADAS - Automatic Data Auditing Security}
+\end{mnemonicbox}
+
+\questionmarks{5(c OR)}{7}{List down problems of concurrency control. Explain any two with suitable example.}
+
+\begin{solutionbox}
+\textbf{Problems of Concurrency Control}:
+\begin{enumerate}
+    \item \keyword{Lost Update}: Overwriting uncommitted data
+    \item \keyword{Dirty Read}: Reading uncommitted data
+    \item \keyword{Non-repeatable Read}: Re-reading changed data
+    \item \keyword{Phantom Read}: New rows appearing in range query
+\end{enumerate}
+
+\textbf{Table:}
+\begin{center}
+\captionof{table}{Concurrency Problems}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{Problem} & \textbf{Example Scenario} \\ \hline
+\textbf{Lost Update} & T1 reads X, T2 reads X. T1 updates X, T2 updates X. T1's update is lost. \\ \hline
+\textbf{Dirty Read} & T1 updates X. T2 reads X. T1 fails/rollbacks. T2 has invalid data. \\ \hline
+\end{tabulary}
+\end{center}
+
+\paragraph{Example 3:}
+Another example for Lost Update:
+T1: Read A(100) $\rightarrow$ A=A+50
+T2: Read A(100) $\rightarrow$ A=A+30
+T1: Write A(150)
+T2: Write A(130) \textbf{[Overwrites T1's 150!]}
+Final should be 180, but is 130.
+
+\paragraph{Example 4 (Dirty Read):}
+T1: Update A=200 \textbf{[Not Committed]}
+T2: Read A(200) \textbf{[Dirty]}
+T1: Rollback to 100
+T2 uses 200, which never officially existed.
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{LDNP - Lost Dirty Non-repeatable Phantom}
+\end{mnemonicbox}
+
+\end{document}

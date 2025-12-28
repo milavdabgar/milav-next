@@ -1,0 +1,1043 @@
+\documentclass{article}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/preamble.tex}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/gujarati-boxes.tex}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/commands.tex}
+\usetikzlibrary{fit, trees, positioning}
+
+\title{Linux Operating System (4331602) - Winter 2024 Solution}
+\date{December 05, 2024}
+
+\begin{document}
+\maketitle
+
+\questionmarks{1(a)}{3}{મલ્ટિપ્રોગ્રામિંગ ઓપરેટિંગ સિસ્ટમ સમજાવો અને તેના ફાયદા જણાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{Multiprogramming Operating System} એકસાથે ઘણા પ્રોગ્રામને મેમરીમાં રાખીને CPU નો સમય અસરકારક રીતે વહેંચીને કામ કરે છે.
+
+\begin{center}
+\captionof{table}{Multiprogramming System Features}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{લક્ષણ} & \textbf{વર્ણન} \\ \hline
+\textbf{Memory Management} & મેમરીમાં અનેક પ્રોગ્રામ લોડ કરવા \\ \hline
+\textbf{CPU Scheduling} & CPU પ્રોગ્રામ વચ્ચે બદલાય છે \\ \hline
+\textbf{Resource Sharing} & સિસ્ટમ રિસોર્સનો કુશળ ઉપયોગ \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{વધારો CPU ઉપયોગ}: CPU પ્રોગ્રામ વચ્ચે બદલાતું રહે છે
+    \item \textbf{સારો throughput}: એકમ સમયમાં વધુ પ્રોગ્રામ પૂર્ણ થાય છે
+    \item \textbf{ઓછો response time}: પેરેલલ પ્રોસેસિંગથી પ્રોગ્રામ ઝડપથી ચાલે છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{MCP - Memory sharing, CPU utilization, Parallel execution}
+\end{mnemonicbox}
+
+\questionmarks{1(b)}{4}{લિનક્સ ઓપરેટિંગ સિસ્ટમની લાક્ષણિકતાઓ સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\begin{center}
+\captionof{table}{Linux Operating System Characteristics}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{લાક્ષણિકતા} & \textbf{વર્ણન} \\ \hline
+\textbf{Open Source} & સોર્સ કોડ ફ્રીમાં ઉપલબ્ધ અને સુધારી શકાય \\ \hline
+\textbf{Multi-user} & અનેક યુઝર એકસાથે સિસ્ટમ એક્સેસ કરી શકે \\ \hline
+\textbf{Multi-tasking} & અનેક પ્રોસેસ એકસાથે ચાલી શકે \\ \hline
+\textbf{Portable} & વિવિધ હાર્ડવેર પ્લેટફોર્મ પર ચાલે છે \\ \hline
+\textbf{Security} & મજબૂત પરમિશન સિસ્ટમ અને એક્સેસ કંટ્રોલ \\ \hline
+\textbf{Stability} & વિશ્વસનીય અને મજબૂત સિસ્ટમ પર્ફોર્મન્સ \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{કેસ સેન્સિટિવ}: અપરકેસ અને લોઅરકેસ વચ્ચે તફાવત કરે છે
+    \item \textbf{Command line interface}: સિસ્ટમ ઓપરેશન માટે શક્તિશાળી શેલ
+    \item \textbf{File system hierarchy}: રૂટ (/) થી શરૂ થતું વ્યવસ્થિત ડિરેક્ટરી સ્ટ્રક્ચર
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{LAMPS - Linux is Accessible, Multi-user, Portable, Secure}
+\end{mnemonicbox}
+
+\questionmarks{1(c)}{7}{FCFS શેડ્યુલિંગ અલ્ગોરિધમ તેના ફાયદા અને ગેરફાયદા સાથે સમજાવો. નીચેના ડેટા માટે ગેન્ટ ચાર્ટ સાથે FCFS અલ્ગોરિધમ માટે સરેરાશ waiting time અને સરેરાશ turnaround time ની ગણતરી કરો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{First Come First Serve (FCFS)} એ નોન-પ્રીએમ્પ્ટિવ શેડ્યુલિંગ અલ્ગોરિધમ છે જ્યાં પ્રોસેસ તેના આવવાના ક્રમમાં એક્ઝિક્યુટ થાય છે.
+
+\begin{center}
+\captionof{table}{FCFS Algorithm Analysis}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{પાસાં} & \textbf{વર્ણન} \\ \hline
+\textbf{Policy} & પહેલા આવેલ પ્રોસેસને પહેલા CPU મળે \\ \hline
+\textbf{Type} & નોન-પ્રીએમ્પ્ટિવ \\ \hline
+\textbf{Implementation} & સાદી ક્યુ (FIFO) \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{ફાયદા:}
+\begin{itemize}
+    \item \textbf{સરળ અમલીકરણ}: સમજવામાં અને કોડ કરવામાં સહેલું
+    \item \textbf{ન્યાયિક શેડ્યુલિંગ}: કોઈ starvation થતું નથી
+\end{itemize}
+
+\textbf{ગેરફાયદા:}
+\begin{itemize}
+    \item \textbf{કોન્વોય ઇફેક્ટ}: નાના પ્રોસેસ મોટા પ્રોસેસની રાહ જુએ છે
+    \item \textbf{ખરાબ સરેરાશ waiting time}: સિસ્ટમ પર્ફોર્મન્સ માટે શ્રેષ્ઠ નથી
+\end{itemize}
+
+\textbf{Gantt Chart Calculation:}
+\begin{center}
+\begin{tikzpicture}[x=0.5cm, y=1cm]
+    \draw (0,0) rectangle (5,1) node[midway] {P0};
+    \draw (5,0) rectangle (8,1) node[midway] {P1};
+    \draw (8,0) rectangle (10,1) node[midway] {P2};
+    \draw (10,0) rectangle (17,1) node[midway] {P3};
+    
+    \node[below] at (0,0) {0};
+    \node[below] at (5,0) {5};
+    \node[below] at (8,0) {8};
+    \node[below] at (10,0) {10};
+    \node[below] at (17,0) {17};
+\end{tikzpicture}
+\captionof{figure}{Gantt Chart (FCFS)}
+\end{center}
+
+\begin{center}
+\captionof{table}{Process Execution Analysis}
+\begin{tabulary}{\linewidth}{|L|L|L|L|L|L|L|}
+\hline
+\textbf{પ્રોસેસ} & \textbf{આવવાનો સમય} & \textbf{બર્સ્ટ} & \textbf{શરૂઆત} & \textbf{સમાપ્તિ} & \textbf{Waiting} & \textbf{Turnaround} \\ \hline
+P0 & 0 & 5 & 0 & 5 & 0 & 5 \\ \hline
+P1 & 3 & 3 & 5 & 8 & 2 & 5 \\ \hline
+P2 & 5 & 2 & 8 & 10 & 3 & 5 \\ \hline
+P3 & 6 & 7 & 10 & 17 & 4 & 11 \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{સરેરાશ Waiting Time} = $(0+2+3+4)/4 = \textbf{2.25 ms}$ \\
+\textbf{સરેરાશ Turnaround Time} = $(5+5+5+11)/4 = \textbf{6.5 ms}$
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{FCFS-SiNo - First Come First Serve is Simple but Not optimal}
+\end{mnemonicbox}
+
+\questionmarks{1(c) OR}{7}{રાઉન્ડ રોબિન અલ્ગોરિધમ તેના ફાયદા અને ગેરફાયદા સાથે સમજાવો. નીચેના ડેટા માટે ગેન્ટ ચાર્ટ સાથે રાઉન્ડ રોબિન અલ્ગોરિધમ માટે સરેરાશ waiting time અને સરેરાશ turnaround time ની ગણતરી કરો. (ટાઇમ ક્વોન્ટમ = 2 ms)}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{Round Robin} એ પ્રીએમ્પ્ટિવ શેડ્યુલિંગ અલ્ગોરિધમ છે જ્યાં દરેક પ્રોસેસને સમાન CPU ટાઇમ સ્લાઇસ (ક્વોન્ટમ) મળે છે.
+
+\begin{center}
+\captionof{table}{Round Robin Features}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{લક્ષણ} & \textbf{વર્ણન} \\ \hline
+\textbf{Time Quantum} & દરેક પ્રોસેસ માટે નિશ્ચિત ટાઇમ સ્લાઇસ \\ \hline
+\textbf{Preemption} & ક્વોન્ટમ પૂરું થયા પછી પ્રોસેસ અટકાવાય છે \\ \hline
+\textbf{Queue Type} & વર્તુળાકાર રેડી ક્યુ \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{ફાયદા:}
+\begin{itemize}
+    \item \textbf{ન્યાયિક વિતરણ}: દરેક પ્રોસેસને સમાન CPU ટાઇમ મળે છે
+    \item \textbf{કોઈ starvation નથી}: બધા પ્રોસેસને આખરે CPU મળે છે
+\end{itemize}
+
+\textbf{ગેરફાયદા:}
+\begin{itemize}
+    \item \textbf{Context switching overhead}: વારંવાર પ્રોસેસ બદલાવાનું
+    \item \textbf{Performance depends on quantum}: ખૂબ નાનું કે મોટું હોવાથી અસર થાય છે
+\end{itemize}
+
+\textbf{Gantt Chart (Quantum = 2ms):}
+\begin{center}
+\begin{tikzpicture}[x=0.5cm, y=1cm]
+    \draw (0,0) rectangle (2,1) node[midway] {P0};
+    \draw (2,0) rectangle (4,1) node[midway] {P1};
+    \draw (4,0) rectangle (6,1) node[midway] {P2};
+    \draw (6,0) rectangle (7,1) node[midway] {P3};
+    \draw (7,0) rectangle (9,1) node[midway] {P0};
+    \draw (9,0) rectangle (11,1) node[midway] {P1};
+    \draw (11,0) rectangle (12,1) node[midway] {P2};
+    \draw (12,0) rectangle (13,1) node[midway] {P1};
+    \draw (13,0) rectangle (14,1) node[midway] {P0};
+    \draw (14,0) rectangle (16,1) node[midway] {P1};
+    \foreach \x in {0,2,4,6,7,9,11,12,13,14,16}
+        \node[below, font=\scriptsize] at (\x,0) {\x};
+\end{tikzpicture}
+\captionof{figure}{Gantt Chart (Round Robin)}
+\end{center}
+
+\begin{center}
+\captionof{table}{Round Robin Execution}
+\begin{tabulary}{\linewidth}{|L|L|L|L|L|L|}
+\hline
+\textbf{પ્રોસેસ} & \textbf{આવવાનો સમય} & \textbf{બર્સ્ટ} & \textbf{પૂર્ણતા} & \textbf{Waiting} & \textbf{Turnaround} \\ \hline
+P0 & 0 & 4 & 14 & 10 & 14 \\ \hline
+P1 & 1 & 5 & 16 & 10 & 15 \\ \hline
+P2 & 2 & 3 & 12 & 7 & 10 \\ \hline
+P3 & 3 & 1 & 7 & 3 & 4 \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{સરેરાશ Waiting Time} = $(10+10+7+3)/4 = \textbf{7.5 ms}$ \\
+\textbf{સરેરાશ Turnaround Time} = $(14+15+10+4)/4 = \textbf{10.75 ms}$
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{RR-TEQ - Round Robin uses Time Equal Quantum}
+\end{mnemonicbox}
+
+\questionmarks{2(a)}{3}{રિયલ ટાઇમ ઓપરેશન સિસ્ટમ સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{Real Time Operating System (RTOS)} ડેટાને પ્રોસેસ કરે છે અને કડક સમય મર્યાદામાં ઇવેન્ટ્સનો જવાબ આપે છે.
+
+\begin{center}
+\captionof{table}{RTOS Types}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પ્રકાર} & \textbf{રિસ્પોન્સ ટાઇમ} & \textbf{ઉદાહરણ} \\ \hline
+\textbf{Hard Real-time} & ગેરેન્ટીડ ડેડલાઇન & મિસાઇલ ગાઇડન્સ \\ \hline
+\textbf{Soft Real-time} & લવચીક ડેડલાઇન & વિડિઓ સ્ટ્રીમિંગ \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{Deterministic behavior}: અનુમાનિત રિસ્પોન્સ ટાઇમ
+    \item \textbf{Priority-based scheduling}: મહત્વપૂર્ણ ટાસ્કને વધુ પ્રાયોરિટી
+    \item \textbf{Minimal latency}: ઝડપી ઇન્ટરપ્ટ હેન્ડલિંગ અને કોન્ટેક્સ્ટ સ્વિચિંગ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{RTD - Real Time is Deterministic}
+\end{mnemonicbox}
+
+\questionmarks{2(b)}{4}{ડાયાગ્રામ સાથે પ્રોસેસ લાઇફ સાઇકલ સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{Process Life Cycle} એક પ્રોસેસ એક્ઝિક્યુશન દરમિયાન પસાર થતા વિવિધ સ્ટેટ્સ દર્શાવે છે.
+
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto]
+    \node [gtu state] (new) {New};
+    \node [gtu state, right=of new] (ready) {Ready};
+    \node [gtu state, right=of ready] (running) {Running};
+    \node [gtu state, right=of running] (term) {Terminated};
+    \node [gtu state, below=of ready] (wait) {Waiting};
+
+    \path [gtu arrow] (new) -- node {બનાવવું} (ready);
+    \path [gtu arrow] (ready) -- node {Dispatch} (running);
+    \path [gtu arrow] (running) -- node {Exit} (term);
+    \path [gtu arrow] (running) edge [bend right] node [above] {Time Quantum} (ready);
+    \path [gtu arrow] (running) -- node {I/O Req} (wait);
+    \path [gtu arrow] (wait) -- node {I/O Done} (ready);
+\end{tikzpicture}
+\captionof{figure}{Process State Transition}
+\end{center}
+
+\begin{center}
+\captionof{table}{Process States}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{સ્ટેટ} & \textbf{વર્ણન} \\ \hline
+\textbf{New} & પ્રોસેસ બનાવવામાં આવી રહ્યું છે \\ \hline
+\textbf{Ready} & CPU એસાઇનમેન્ટ માટે રાહ જોઈ રહ્યું છે \\ \hline
+\textbf{Running} & ઇન્સ્ટ્રક્શન્સ એક્ઝિક્યુટ થઈ રહ્યા છે \\ \hline
+\textbf{Waiting} & I/O પૂર્ણતા માટે રાહ જોઈ રહ્યું છે \\ \hline
+\textbf{Terminated} & પ્રોસેસે એક્ઝિક્યુશન પૂર્ણ કર્યું છે \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{NRRWT - New Ready Running Waiting Terminated}
+\end{mnemonicbox}
+
+\questionmarks{2(c)}{7}{લિનક્સમાં વિવિધ ફાઇલ અને ડિરેક્ટરી સંબંધિત કમાન્ડ્સ સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\begin{center}
+\captionof{table}{File Commands}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{કમાન્ડ} & \textbf{કાર્ય} & \textbf{ઉદાહરણ} \\ \hline
+\textbf{ls} & ડિરેક્ટરી કન્ટેન્ટ્સ લિસ્ટ કરો & \code{ls -la} \\ \hline
+\textbf{cat} & ફાઇલ કન્ટેન્ટ દર્શાવો & \code{cat file.txt} \\ \hline
+\textbf{cp} & ફાઇલ કોપી કરો & \code{cp source dest} \\ \hline
+\textbf{mv} & ફાઇલ મૂવ/રિનેમ કરો & \code{mv old new} \\ \hline
+\textbf{rm} & ફાઇલ ડિલીટ કરો & \code{rm file.txt} \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\captionof{table}{Directory Commands}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{કમાન્ડ} & \textbf{કાર્ય} & \textbf{ઉદાહરણ} \\ \hline
+\textbf{mkdir} & ડિરેક્ટરી બનાવો & \code{mkdir mydir} \\ \hline
+\textbf{rmdir} & ખાલી ડિરેક્ટરી ડિલીટ કરો & \code{rmdir mydir} \\ \hline
+\textbf{cd} & ડિરેક્ટરી બદલો & \code{cd /home} \\ \hline
+\textbf{pwd} & વર્કિંગ ડિરેક્ટરી પ્રિન્ટ કરો & \code{pwd} \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{File permissions}: એક્સેસ રાઇટ્સ સુધારવા માટે \code{chmod} વાપરો
+    \item \textbf{File ownership}: ફાઇલ ઓનર બદલવા માટે \code{chown} વાપરો
+    \item \textbf{File information}: વિગતવાર ફાઇલ ઇન્ફો માટે \code{stat} વાપરો
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{LCCMR-MRCP - List, Cat, Copy, Move, Remove for files; Make ...}
+\end{mnemonicbox}
+
+\questionmarks{2(a) OR}{3}{ઓપરેટિંગ સિસ્ટમ સર્વિસિસનું વિગતવાર વર્ણન કરો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{Operating System Services} યુઝર એપ્લિકેશન્સ અને હાર્ડવેર રિસોર્સિસ વચ્ચે ઇન્ટરફેસ પ્રદાન કરે છે.
+
+\begin{center}
+\captionof{table}{OS Services Categories}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{કેટેગરી} & \textbf{સર્વિસિસ} \\ \hline
+\textbf{User Interface} & GUI, કમાન્ડ લાઇન, બેચ \\ \hline
+\textbf{Program Execution} & લોડિંગ, રનિંગ, ટર્મિનેટિંગ \\ \hline
+\textbf{I/O Operations} & ફાઇલ ઓપરેશન્સ, ડિવાઇસ કમ્યુનિકેશન \\ \hline
+\textbf{File System} & ક્રિએશન, ડિલીશન, મેનિપ્યુલેશન \\ \hline
+\textbf{Communication} & પ્રોસેસ કમ્યુનિકેશન, નેટવર્ક \\ \hline
+\textbf{Error Detection} & હાર્ડવેર/સોફ્ટવેર એરર હેન્ડલિંગ \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{Resource allocation}: CPU, મેમરી અને ડિવાઇસ મેનેજમેન્ટ
+    \item \textbf{Accounting}: રિસોર્સ ઉપયોગ અને પર્ફોર્મન્સ ટ્રેક કરવું
+    \item \textbf{Protection and security}: એક્સેસ કંટ્રોલ અને ઓથેન્ટિકેશન
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{UPIFCE - User interface, Program execution, I/O, File system, Communication, Error detection}
+\end{mnemonicbox}
+
+\questionmarks{2(b) OR}{4}{પ્રોસેસ કંટ્રોલ બ્લોક સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{Process Control Block (PCB)} એ ડેટા સ્ટ્રક્ચર છે જેમાં પ્રોસેસ વિશેની બધી માહિતી હોય છે.
+
+\begin{center}
+\captionof{table}{PCB Components}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{કમ્પોનન્ટ} & \textbf{સ્ટોર કરેલી માહિતી} \\ \hline
+\textbf{Process ID} & અનન્ય પ્રોસેસ આઇડેન્ટિફાયર \\ \hline
+\textbf{Process State} & વર્તમાન સ્ટેટ (ready, running, waiting) \\ \hline
+\textbf{CPU Registers} & પ્રોગ્રામ કાઉન્ટર, સ્ટેક પોઇન્ટર, રજિસ્ટર્સ \\ \hline
+\textbf{Memory Management} & બેઝ/લિમિટ રજિસ્ટર્સ, પેજ ટેબલ્સ \\ \hline
+\textbf{I/O Status} & ઓપન ફાઇલ્સ, એલોકેટેડ ડિવાઇસિસ \\ \hline
+\textbf{Accounting} & CPU ઉપયોગ, ટાઇમ લિમિટ્સ \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[node distance=0cm]
+    \node [gtu block, minimum width=5cm] (pid) {Process ID};
+    \node [gtu block, minimum width=5cm, below=of pid] (state) {Process State};
+    \node [gtu block, minimum width=5cm, below=of state] (pc) {Program Counter};
+    \node [gtu block, minimum width=5cm, below=of pc] (reg) {CPU Registers};
+    \node [gtu block, minimum width=5cm, below=of reg] (mem) {Memory Limits};
+    \node [gtu block, minimum width=5cm, below=of mem] (files) {Open File List};
+    \node [gtu block, minimum width=5cm, below=of files] (acc) {Accounting Info};
+\end{tikzpicture}
+\captionof{figure}{PCB Structure}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{PPCMIA - Process ID, Process state, Program Counter, CPU registers, Memory, I/O, Accounting}
+\end{mnemonicbox}
+
+\questionmarks{2(c) OR}{7}{લિનક્સના ઇન્સ્ટોલેશન સ્ટેપ્સ સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{Linux Installation} સિસ્ટમ તૈયાર કરવા અને બૂટેબલ મીડિયાથી ઓપરેટિંગ સિસ્ટમ ઇન્સ્ટોલ કરવાનું છે.
+
+\begin{center}
+\captionof{table}{Installation Steps}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{સ્ટેપ} & \textbf{વર્ણન} \\ \hline
+\textbf{1. Download ISO} & લિનક્સ ડિસ્ટ્રિબ્યુશન ઇમેજ ફાઇલ લો \\ \hline
+\textbf{2. Create Bootable Media} & ઇન્સ્ટોલેશન મીડિયા બનાવવા USB/DVD વાપરો \\ \hline
+\textbf{3. Boot from Media} & BIOS/UEFI બૂટ ઓર્ડર બદલો \\ \hline
+\textbf{4. Select Language} & ઇન્સ્ટોલેશન ભાષા પસંદ કરો \\ \hline
+\textbf{5. Partition Disk} & રૂટ, સ્વેપ, હોમ પાર્ટિશન બનાવો \\ \hline
+\textbf{6. Configure Network} & IP, DNS, હોસ્ટનેમ સેટ કરો \\ \hline
+\textbf{7. Create User Account} & યુઝરનેમ, પાસવર્ડ સેટ કરો \\ \hline
+\textbf{8. Install Bootloader} & બૂટિંગ માટે GRUB કોન્ફિગર કરો \\ \hline
+\textbf{9. Complete Installation} & મીડિયા કાઢો અને રીબૂટ કરો \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{Partitioning Scheme:}
+\begin{itemize}
+    \item \textbf{Root (/)}: સિસ્ટમ ફાઇલ્સ માટે ઓછામાં ઓછું 20GB
+    \item \textbf{Swap}: વર્ચ્યુઅલ મેમરી માટે RAM નો 2x સાઇઝ
+    \item \textbf{Home (/home)}: યુઝર ડેટા માટે બાકીની જગ્યા
+\end{itemize}
+
+\textbf{Post-installation:}
+\begin{itemize}
+    \item \textbf{Update system}: \code{sudo apt update \&\& sudo apt upgrade}
+    \item \textbf{Install drivers}: ગ્રાફિક્સ, નેટવર્ક, ઓડિયો ડ્રાઇવર્સ
+    \item \textbf{Configure security}: ફાયરવોલ, યુઝર પરમિશન્સ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{DCBSLNCIU - Download, Create media, Boot, Select language, Layout disk, Network, Create user...}
+\end{mnemonicbox}
+
+\questionmarks{3(a)}{3}{વ્યાખ્યાયિત કરો: પ્રક્રિયા, પ્રોગ્રામ, સ્વેપિંગ}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\begin{center}
+\captionof{table}{Basic Definitions}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{શબ્દ} & \textbf{વ્યાખ્યા} \\ \hline
+\textbf{Process} & એલોકેટેડ રિસોર્સિસ સાથે એક્ઝિક્યુશનમાં રહેલ પ્રોગ્રામ \\ \hline
+\textbf{Program} & ડિસ્ક પર સ્ટોર કરેલ ઇન્સ્ટ્રક્શન્સનો સેટ \\ \hline
+\textbf{Swapping} & મેમરી અને ડિસ્ક વચ્ચે પ્રોસેસને મૂવ કરવું \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{Process}: પ્રોસેસ ID, મેમરી સ્પેસ અને એક્ઝિક્યુશન સ્ટેટ સાથેની સક્રિય એન્ટિટી
+    \item \textbf{Program}: સેકન્ડરી સ્ટોરેજમાં સ્ટોર કરેલી નિષ્ક્રિય એન્ટિટી, એક્ઝિક્યુટેબલ ફાઇલ
+    \item \textbf{Swapping}: ફિઝિકલ મેમરી કરતાં વધુ પ્રોસેસ હેન્ડલ કરવાની મેમરી મેનેજમેન્ટ ટેકનિક
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{PAP-MDS - Process is Active Program; Program is instructions; Swapping is Memory-Disk transfer}
+\end{mnemonicbox}
+
+\questionmarks{3(b)}{4}{વિવિધ ફાઇલ ઓપરેશન્સની યાદી બનાવો અને તેમાંના દરેકનું વર્ણન કરો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\begin{center}
+\captionof{table}{File Operations}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{ઓપરેશન} & \textbf{વર્ણન} & \textbf{સિસ્ટમ કોલ} \\ \hline
+\textbf{Create} & નિર્દિષ્ટ નામ સાથે નવી ફાઇલ બનાવો & \code{creat()} \\ \hline
+\textbf{Open} & રીડિંગ/રાઇટિંગ માટે ફાઇલ તૈયાર કરો & \code{open()} \\ \hline
+\textbf{Read} & ફાઇલમાંથી ડેટા મેળવો & \code{read()} \\ \hline
+\textbf{Write} & ફાઇલમાં ડેટા સ્ટોર કરો & \code{write()} \\ \hline
+\textbf{Close} & ફાઇલ એક્સેસ પૂર્ણ કરો, રિસોર્સિસ રીલીઝ કરો & \code{close()} \\ \hline
+\textbf{Delete} & ફાઇલ સિસ્ટમમાંથી ફાઇલ કાઢો & \code{unlink()} \\ \hline
+\textbf{Seek} & ફાઇલ પોઇન્ટરને સ્પેસિફિક પોઝિશન પર મૂવ કરો & \code{lseek()} \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{File attributes}: એક્સેસ પરમિશન્સ, ટાઇમસ્ટેમ્પ્સ, સાઇઝ ઇન્ફોર્મેશન
+    \item \textbf{File locking}: કોન્કરન્ટ એક્સેસ કોન્ફ્લિક્ટ અટકાવવું
+    \item \textbf{Buffer management}: કેશિંગ દ્વારા I/O પર્ફોર્મન્સ ઓપ્ટિમાઇઝ કરવું
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{CORWCDS - Create, Open, Read, Write, Close, Delete, Seek}
+\end{mnemonicbox}
+
+\questionmarks{3(c)}{7}{ફિબોનાકી શ્રેણી બનાવવા અને પ્રિન્ટ કરવા માટે શેલ સ્ક્રિપ્ટ લખો.}
+
+\begin{solutionbox}
+\textbf{Fibonacci Series} એવી સંખ્યાઓ બનાવે છે જ્યાં દરેક સંખ્યા તેની પહેલાની બે સંખ્યાઓનો સરવાળો હોય છે.
+
+\begin{lstlisting}[language=bash, caption={Fibonacci Script}]
+#!/bin/bash
+# Fibonacci series generator
+
+echo "કેટલા ટર્મ્સ દાખલ કરો:"
+read n
+
+a=0
+b=1
+
+echo "Fibonacci Series:"
+echo -n "$a $b "
+
+for((i=2; i<n; i++))
+do
+    c=$((a + b))
+    echo -n "$c "
+    a=$b
+    b=$c
+done
+echo
+\end{lstlisting}
+
+\begin{center}
+\captionof{table}{Script Components}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{કમ્પોનન્ટ} & \textbf{હેતુ} \\ \hline
+\textbf{\#!/bin/bash} & ઇન્ટરપ્રેટર સ્પેસિફાઇ કરતી શેબેંગ લાઇન \\ \hline
+\textbf{read n} & ટર્મ્સની સંખ્યા માટે યુઝર ઇનપુટ સ્વીકારો \\ \hline
+\textbf{for loop} & સિક્વન્સ જનરેટ કરવા માટે પુનરાવર્તન કરો \\ \hline
+\textbf{Arithmetic} & શ્રેણીમાં આગળની સંખ્યા ગણો \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{FLAB - Fibonacci uses Loop with Addition of Both previous numbers}
+\end{mnemonicbox}
+
+\questionmarks{3(a) OR}{3}{શેડ્યુલરના પ્રકારોની યાદી બનાવો અને તેમાંથી કોઈપણ એક સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\begin{center}
+\captionof{table}{Types of Schedulers}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{શેડ્યુલર પ્રકાર} & \textbf{કાર્ય} \\ \hline
+\textbf{Long-term} & જોબ પૂલમાંથી રેડી ક્યુમાં પ્રોસેસ પસંદ કરે છે \\ \hline
+\textbf{Short-term} & રેડી ક્યુમાંથી CPU માટે પ્રોસેસ પસંદ કરે છે \\ \hline
+\textbf{Medium-term} & મેમરી અને ડિસ્ક વચ્ચે સ્વેપિંગ હેન્ડલ કરે છે \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{Short-term Scheduler (CPU Scheduler):}
+\begin{itemize}
+    \item \textbf{Frequency}: ખૂબ જ વારંવાર એક્ઝિક્યુટ થાય છે (મિલિસેકન્ડ્સ)
+    \item \textbf{Function}: નક્કી કરે છે કે આગળ કયો પ્રોસેસ CPU મેળવશે
+    \item \textbf{Algorithms}: FCFS, SJF, રાઉન્ડ રોબિન, પ્રાયોરિટી
+    \item \textbf{Goal}: CPU ઉપયોગ અને throughput મેક્સિમાઇઝ કરવું
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{LSM-JRC - Long-term (Job), Short-term (Ready), Medium-term (swap Control)}
+\end{mnemonicbox}
+
+\questionmarks{3(b) OR}{4}{વિવિધ ફાઇલ એટ્રિબ્યુટ્સની યાદી બનાવો અને તેમાંથી દરેકનું વર્ણન કરો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\begin{center}
+\captionof{table}{File Attributes}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{એટ્રિબ્યુટ} & \textbf{વર્ણન} \\ \hline
+\textbf{Name} & ફાઇલનું માનવ-વાંચી શકાય તેવું આઇડેન્ટિફાયર \\ \hline
+\textbf{Type} & ફાઇલ ફોર્મેટ (ટેક્સ્ટ, બાઇનરી, એક્ઝિક્યુટેબલ) \\ \hline
+\textbf{Size} & બાઇટ્સમાં વર્તમાન ફાઇલ સાઇઝ \\ \hline
+\textbf{Location} & સ્ટોરેજ ડિવાઇસ પર ફિઝિકલ એડ્રેસ \\ \hline
+\textbf{Protection} & એક્સેસ પરમિશન્સ (રીડ, રાઇટ, એક્ઝિક્યુટ) \\ \hline
+\textbf{Time stamps} & ક્રિએશન, મોડિફિકેશન, એક્સેસ ટાઇમ્સ \\ \hline
+\textbf{Owner} & ફાઇલ બનાવનાર યુઝર \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{Permission Structure:}
+\begin{itemize}
+    \item \textbf{User (u)}: ઓનર પરમિશન્સ
+    \item \textbf{Group (g)}: ગ્રુપ મેમ્બર પરમિશન્સ  
+    \item \textbf{Other (o)}: બાકીના બધા યુઝર્સની પરમિશન્સ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{NTSLPTO - Name, Type, Size, Location, Protection, Time, Owner}
+\end{mnemonicbox}
+
+\questionmarks{3(c) OR}{7}{વ્હાઇલ લૂપનો ઉપયોગ કરીને 1 થી 10 ના સરવાળા માટે શેલ સ્ક્રિપ્ટ લખો.}
+
+\begin{solutionbox}
+\textbf{While Loop} નિર્દિષ્ટ કંડિશન સાચી રહે ત્યાં સુધી એક્ઝિક્યુશન ચાલુ રાખે છે.
+
+\begin{lstlisting}[language=bash, caption={Sum 1 to 10}]
+#!/bin/bash
+# Sum of numbers 1 to 10 using while loop
+
+echo "Calculating sum of 1 to 10:"
+
+i=1
+sum=0
+
+while [ $i -le 10 ]
+do
+    sum=$((sum + i))
+    echo "Adding $i, current sum: $sum"
+    i=$((i + 1))
+done
+
+echo "Final sum of 1 to 10 is: $sum"
+\end{lstlisting}
+
+\begin{center}
+\captionof{table}{Script Logic}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{કમ્પોનન્ટ} & \textbf{હેતુ} \\ \hline
+\textbf{i=1} & કાઉન્ટર વેરિએબલ ઇનિશિયલાઇઝ કરો \\ \hline
+\textbf{sum=0} & એક્યુમ્યુલેટર ઇનિશિયલાઇઝ કરો \\ \hline
+\textbf{while [ \$i -le 10 ]} & i $\le$ 10 સુધી ચાલુ રાખો \\ \hline
+\textbf{sum=\$((sum + i))} & વર્તમાન સંખ્યા સરવાળામાં ઉમેરો \\ \hline
+\textbf{i=\$((i + 1))} & કાઉન્ટર વધારો \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{WICS - While loop needs Initialize, Condition, Sum calculation}
+\end{mnemonicbox}
+
+\questionmarks{4(a)}{3}{ડેડલોક થવાની કંડિશનની યાદી બનાવો અને સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{Deadlock} ત્યારે થાય છે જ્યારે પ્રોસેસિસ એકબીજા પાસે રહેલા રિસોર્સિસ માટે અનિશ્ચિત સમય સુધી રાહ જુએ છે.
+
+\begin{center}
+\captionof{table}{Deadlock Conditions (Coffman Conditions)}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{કંડિશન} & \textbf{વર્ણન} \\ \hline
+\textbf{Mutual Exclusion} & એક સમયે માત્ર એક પ્રોસેસ રિસોર્સ વાપરી શકે \\ \hline
+\textbf{Hold and Wait} & પ્રોસેસ રિસોર્સ રાખીને બીજાની રાહ જુએ છે \\ \hline
+\textbf{No Preemption} & રિસોર્સિસ બળજબરીથી છીનવી શકાતા નથી \\ \hline
+\textbf{Circular Wait} & રિસોર્સિસ માટે રાહ જોતા પ્રોસેસિસની સર્ક્યુલર ચેઇન \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{ડેડલોક માટે ચારેય કંડિશન એકસાથે સાચી હોવી જરૂરી છે.}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{MHNC - Mutual exclusion, Hold and wait, No preemption, Circular wait}
+\end{mnemonicbox}
+
+\questionmarks{4(b)}{4}{ફાઇલ એક્સેસ મેથડ્સની િૂચિ બનાવો. કોઈપણ એક સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\begin{center}
+\captionof{table}{File Access Methods}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{મેથડ} & \textbf{વર્ણન} \\ \hline
+\textbf{Sequential Access} & શરૂઆતથી અંત સુધી ફાઇલ વાંચો \\ \hline
+\textbf{Direct Access} & કોઈપણ રેકોર્ડ પર સીધું જમ્પ કરો \\ \hline
+\textbf{Index Sequential} & સિક્વન્શિયલ અને ઇન્ડેક્સ્ડ એક્સેસનું કોમ્બિનેશન \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{Sequential Access Method:}
+\begin{itemize}
+    \item \textbf{Process}: રેકોર્ડ્સને ક્રમમાં એક પછી એક વાંચો
+    \item \textbf{Advantages}: સરળ અમલીકરણ, બેચ પ્રોસેસિંગ માટે કુશળ
+    \item \textbf{Disadvantages}: સ્પેસિફિક રેકોર્ડ એક્સેસ માટે ધીમું
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{SDI - Sequential (start to end), Direct (jump anywhere), Index (combined approach)}
+\end{mnemonicbox}
+
+\questionmarks{4(c)}{7}{ઓપરેટિંગ સિસ્ટમમાં સુરક્ષા પગલાંનું વર્ણન કરો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{Operating System Security} અનધિકૃત એક્સેસ અને ખતરાઓથી સિસ્ટમ રિસોર્સિસને સુરક્ષિત રાખે છે.
+
+\begin{center}
+\captionof{table}{Security Mechanisms}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{મેકેનિઝમ} & \textbf{વર્ણન} \\ \hline
+\textbf{Authentication} & યુઝર આઇડેન્ટિટી વેરિફાઇ કરવું (પાસવર્ડ્સ, બાયોમેટ્રિક્સ) \\ \hline
+\textbf{Authorization} & રિસોર્સ એક્સેસ પરમિશન્સ કંટ્રોલ કરવું \\ \hline
+\textbf{Access Control Lists} & કોણ કયા રિસોર્સિસ એક્સેસ કરી શકે તે ડિફાઇન કરવું \\ \hline
+\textbf{Encryption} & ડેટા ગુપ્તતા સુરક્ષિત રાખવી \\ \hline
+\textbf{Audit Logs} & સિસ્ટમ પ્રવૃત્તિઓ અને એક્સેસ ટ્રેક કરવી \\ \hline
+\textbf{Firewalls} & નેટવર્ક ટ્રાફિક કંટ્રોલ કરવું \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{Security Levels:}
+\begin{itemize}
+    \item \textbf{Physical security}: હાર્ડવેર અને સુવિધાઓને સુરક્ષિત રાખવી
+    \item \textbf{User authentication}: લોગિન ક્રેડેન્શિયલ્સ અને બાયોમેટ્રિક્સ
+    \item \textbf{File permissions}: રીડ, રાઇટ, એક્ઝિક્યુટ કંટ્રોલ્સ
+    \item \textbf{Network security}: સિક્યોર કમ્યુનિકેશન પ્રોટોકોલ્સ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{AAAEAF - Authentication, Authorization, Access control, Encryption, Audit, Firewall}
+\end{mnemonicbox}
+
+\questionmarks{4(a) OR}{3}{ડેડલોકનો સામનો કરવાની રીતોની યાદી બનાવો. ડેડલોક ડિટેક્શન અને રિકવરી સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\begin{center}
+\captionof{table}{Deadlock Handling Methods}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{મેથડ} & \textbf{અભિગમ} \\ \hline
+\textbf{Prevention} & ઓછામાં ઓછી એક કોફમેન કંડિશન રોકવી \\ \hline
+\textbf{Avoidance} & રિસોર્સ એલોકેશન સ્ટેટને ડાયનેમિકલી તપાસવું \\ \hline
+\textbf{Detection \& Recovery} & ડેડલોકને મંજૂરી આપો, પછી ડિટેક્ટ કરો અને રિકવર કરો \\ \hline
+\textbf{Ignore} & ડેડલોક ક્યારેય નથી થતું તેવું માનવું (ઓસ્ટ્રિચ અલ્ગોરિધમ) \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{Deadlock Detection:}
+\begin{itemize}
+    \item \textbf{Wait-for graph}: પ્રોસેસ ડિપેન્ડન્સીઝનો ગ્રાફ મેઇન્ટેઇન કરવો
+    \item \textbf{Detection algorithm}: ગ્રાફમાં સાયકલ્સ માટે નિયમિત ચેક કરવું
+\end{itemize}
+
+\textbf{Deadlock Recovery:}
+\begin{itemize}
+    \item \textbf{Process termination}: એક કે વધુ ડેડલોક્ડ પ્રોસેસિસને કિલ કરવા
+    \item \textbf{Resource preemption}: પ્રોસેસિસ પાસેથી રિસોર્સિસ લેવા
+    \item \textbf{Rollback}: ચેકપોઇન્ટ્સ વાપરીને પ્રોસેસિસને સેફ સ્ટેટમાં પાછા લાવવા
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{PADI - Prevention, Avoidance, Detection, Ignore}
+\end{mnemonicbox}
+
+\questionmarks{4(b) OR}{4}{ફાઇલ એલોકેશન મેથડ્સની યાદી બનાવો. કોઈપણ એક સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\begin{center}
+\captionof{table}{File Allocation Methods}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{મેથડ} & \textbf{વર્ણન} \\ \hline
+\textbf{Contiguous} & સતત ડિસ્ક બ્લોક્સ એલોકેટ કરવા \\ \hline
+\textbf{Linked} & છૂટાછવાયા બ્લોક્સને લિંક કરવા માટે પોઇન્ટર્સ વાપરવા \\ \hline
+\textbf{Indexed} & બ્લોક એડ્રેસિસ સ્ટોર કરવા માટે ઇન્ડેક્સ બ્લોક વાપરવો \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{Contiguous Allocation:}
+\begin{itemize}
+    \item \textbf{Structure}: ફાઇલ ડિસ્ક પર સતત બ્લોક્સ કબજે કરે છે
+    \item \textbf{Advantages}: ઝડપી એક્સેસ, સરળ અમલીકરણ, સિક્વન્શિયલ એક્સેસ માટે સારું
+    \item \textbf{Disadvantages}: એક્સટર્નલ ફ્રેગમેન્ટેશન, ફાઇલ વધારવી મુશ્કેલ
+    \item \textbf{Directory entry}: શરૂઆતનું એડ્રેસ અને લેન્થ સમાવે છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{CLI - Contiguous (consecutive), Linked (pointers), Indexed (table)}
+\end{mnemonicbox}
+
+\questionmarks{4(c) OR}{7}{પ્રોગ્રામ થ્રેટ્સ અને સિસ્ટમ થ્રેટ્સ સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{Program Threats} એવા મેલિશિયસ સોફ્ટવેર છે જે સિસ્ટમ કે ડેટાને નુકસાન પહોંચાડી શકે છે.
+
+\begin{center}
+\captionof{table}{Program Threats}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{થ્રેટ પ્રકાર} & \textbf{વર્ણન} \\ \hline
+\textbf{Virus} & અન્ય પ્રોગ્રામ્સને ચેપ લગાડતો સ્વ-પ્રતિકૃતિ કરતો કોડ \\ \hline
+\textbf{Worm} & નેટવર્ક પર ફેલાતો સ્ટેન્ડઅલોન મેલવેર \\ \hline
+\textbf{Trojan Horse} & કાયદેસર સોફ્ટવેરના વેશમાં છુપાયેલો મેલિશિયસ કોડ \\ \hline
+\textbf{Logic Bomb} & સ્પેસિફિક ઇવેન્ટ પર મેલિશિયસ એક્શન ટ્રિગર કરતો કોડ \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{System Threats} ઓપરેટિંગ સિસ્ટમ અને સિસ્ટમ રિસોર્સિસને ટાર્ગેટ કરે છે.
+
+\begin{center}
+\captionof{table}{System Threats}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{થ્રેટ પ્રકાર} & \textbf{વર્ણન} \\ \hline
+\textbf{Buffer Overflow} & મેલિશિયસ કોડ એક્ઝિક્યુટ કરવા ઇનપુટ બફર્સ ઓવરફ્લો કરવા \\ \hline
+\textbf{Denial of Service} & સર્વિસ અનઉપલબ્ધ બનાવવા સિસ્ટમ રિસોર્સિસને ઓવરવ્હેલ્મ કરવા \\ \hline
+\textbf{Privilege Escalation} & અધિકૃત કરતાં વધુ એક્સેસ પ્રિવિલેજ મેળવવા \\ \hline
+\textbf{Man-in-the-Middle} & બે પક્ષો વચ્ચેની કમ્યુનિકેશન ઇન્ટરસેપ્ટ કરવી \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{VWTLB-BPDM - Virus, Worm, Trojan, Logic bomb... Buffer overflow...}
+\end{mnemonicbox}
+
+\questionmarks{5(a)}{3}{ઇન્ટર પ્રોસેસ કમ્યુનિકેશન સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{Inter Process Communication (IPC)} પ્રોસેસિસને ડેટા એક્સચેન્જ કરવા અને પ્રવૃત્તિઓ સિંક્રોનાઇઝ કરવા સક્ષમ બનાવે છે.
+
+\begin{center}
+\captionof{table}{IPC Mechanisms}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{મેકેનિઝમ} & \textbf{વર્ણન} \\ \hline
+\textbf{Pipes} & એકદિશીય કમ્યુનિકેશન ચેનલ \\ \hline
+\textbf{Message Queues} & સ્ટ્રક્ચર્ડ મેસેજ પાસિંગ \\ \hline
+\textbf{Shared Memory} & મલ્ટિપલ પ્રોસેસિસ માટે કોમન મેમરી એરિયા \\ \hline
+\textbf{Semaphores} & કાઉન્ટર્સ વાપરીને સિંક્રોનાઇઝેશન \\ \hline
+\textbf{Signals} & નોટિફિકેશન માટે સોફ્ટવેર ઇન્ટરપ્ટ્સ \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{PMSSS - Pipes, Message queues, Shared memory, Semaphores, Signals}
+\end{mnemonicbox}
+
+\questionmarks{5(b)}{4}{લિનક્સ દ્વારા વપરાતું ફાઇલ સ્ટ્રક્ચર સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{Linux File System} રૂટ ડિરેક્ટરીથી શરૂ થતું હાયરાર્કિકલ ડિરેક્ટરી સ્ટ્રક્ચર અનુસરે છે.
+
+\begin{center}
+\begin{tikzpicture}[
+    node distance=0.5cm,
+    every node/.style={gtu block, minimum width=1.5cm, font=\small},
+    level 1/.style={sibling distance=2.5cm},
+    level 2/.style={sibling distance=1.5cm}
+]
+    \node {/}
+        child {node {bin}
+            child {node {ls}}
+            child {node {cat}}
+        }
+        child {node {etc}
+            child {node {passwd}}
+        }
+        child {node {home}
+            child {node {user1}
+                child {node {Docs}}
+            }
+        };
+\end{tikzpicture}
+\captionof{figure}{Linux File System Hierarchy}
+\end{center}
+
+\begin{center}
+\captionof{table}{Important Directories}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{ડિરેક્ટરી} & \textbf{હેતુ} \\ \hline
+\textbf{/} & રૂટ ડિરેક્ટરી, હાયરાર્કીની ટોચ \\ \hline
+\textbf{/bin} & આવશ્યક યુઝર કમાન્ડ્સ \\ \hline
+\textbf{/etc} & સિસ્ટમ કોન્ફિગરેશન ફાઇલ્સ \\ \hline
+\textbf{/home} & યુઝર હોમ ડિરેક્ટરીઓ \\ \hline
+\textbf{/var} & વેરિએબલ ડેટા (લોગ્સ, મેઇલ) \\ \hline
+\textbf{/usr} & યુઝર પ્રોગ્રામ્સ અને યુટિલિટીઝ \\ \hline
+\textbf{/tmp} & ટેમ્પરરી ફાઇલ્સ \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{BEHVUT - Bin, Etc, Home, Var, Usr, Tmp}
+\end{mnemonicbox}
+
+\questionmarks{5(c)}{7}{ઓપરેટિંગ સિસ્ટમ સિક્યોરિટી નીતિઓ અને પ્રક્રિયાઓ સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{Security Policies} સિસ્ટમ રિસોર્સિસ અને ડેટાને સુરક્ષિત રાખવા માટેના નિયમો અને માર્ગદર્શિકા ડિફાઇન કરે છે.
+
+\begin{center}
+\captionof{table}{Security Policy Components}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{કમ્પોનન્ટ} & \textbf{વર્ણન} \\ \hline
+\textbf{Access Control Policy} & કોણ કયા રિસોર્સિસ એક્સેસ કરી શકે \\ \hline
+\textbf{Password Policy} & મજબૂત પાસવર્ડ્સ માટેની આવશ્યકતાઓ \\ \hline
+\textbf{Audit Policy} & કઈ પ્રવૃત્તિઓ મોનિટર અને લોગ કરવી \\ \hline
+\textbf{Backup Policy} & ડેટા બેકઅપ અને રિકવરી પ્રક્રિયાઓ \\ \hline
+\textbf{Incident Response} & સિક્યોરિટી બ્રીચ હેન્ડલ કરવાના સ્ટેપ્સ \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{Security Procedures:}
+\begin{itemize}
+    \item \textbf{Authentication}: મલ્ટિ-ફેક્ટર ઓથેન્ટિકેશન, પાસવર્ડ જટિલતા
+    \item \textbf{Authorization}: લીસ્ટ પ્રિવિલેજનો સિદ્ધાંત, રોલ-બેઝ્ડ એક્સેસ
+    \item \textbf{Monitoring}: લોગ એનાલિસિસ, ઇન્ટ્રુઝન ડિટેક્શન
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{APABI - Access control, Password, Audit, Backup, Incident response}
+\end{mnemonicbox}
+
+\questionmarks{5(a) OR}{3}{ક્રિટિકલ સેક્શન સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{Critical Section} એ કોડ સેગમેન્ટ છે જ્યાં પ્રોસેસ શેર્ડ રિસોર્સિસ એક્સેસ કરે છે જે એકસાથે એક્સેસ થવા જોઈએ નહીં.
+
+\begin{center}
+\captionof{table}{Critical Section Properties}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{પ્રોપર્ટી} & \textbf{વર્ણન} \\ \hline
+\textbf{Mutual Exclusion} & એક સમયે માત્ર એક પ્રોસેસ ક્રિટિકલ સેક્શનમાં \\ \hline
+\textbf{Progress} & આગળા પ્રોસેસની પસંદગી અનિશ્ચિત સમય માટે મોકૂફ ન મૂકવી \\ \hline
+\textbf{Bounded Waiting} & અન્ય પ્રોસેસિસ ક્રિટિકલ સેક્શનમાં એન્ટર કરવાની સંખ્યા પર મર્યાદા \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{Structure:}
+\begin{lstlisting}[basicstyle=\ttfamily]
+do {
+    entry_section();     // Request permission
+    critical_section();  // Access shared resource
+    exit_section();      // Release permission
+    remainder_section(); // Other work
+} while(true);
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{MPB - Mutual exclusion, Progress, Bounded waiting}
+\end{mnemonicbox}
+
+\questionmarks{5(b) OR}{4}{લિનક્સ ફાઇલ સિસ્ટમના પ્રકારો સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{Linux File Systems} ઓર્ગેનાઇઝ અને ડેટા સ્ટોરેજ મેનેજ કરે છે.
+
+\begin{center}
+\captionof{table}{Linux File System Types}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{ફાઇલ સિસ્ટમ} & \textbf{વર્ણન} \\ \hline
+\textbf{ext4} & ચોથું એક્સટેન્ડેડ ફાઇલ સિસ્ટમ, સૌથી સામાન્ય \\ \hline
+\textbf{XFS} & ઉચ્ચ પર્ફોર્મન્સ જર્નલિંગ ફાઇલ સિસ્ટમ \\ \hline
+\textbf{Btrfs} & એડવાન્સ્ડ ફીચર્સ સાથે B-ટ્રી ફાઇલ સિસ્ટમ \\ \hline
+\textbf{ZFS} & બિલ્ટ-ઇન RAID સાથે ઝેટાબાઇટ ફાઇલ સિસ્ટમ \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{ext4 Features:}
+\begin{itemize}
+    \item \textbf{Journaling}: સિસ્ટમ ક્રેશ પછી ઝડપી રિકવરી
+    \item \textbf{Large file support}: 16TB સુધીની ફાઇલ્સ
+    \item \textbf{Backwards compatibility}: ext2/ext3 પાર્ટિશન્સ માઉન્ટ કરી શકે છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{EXBZNF - Ext4, XFS, Btrfs, ZFS, NTFS, FAT32}
+\end{mnemonicbox}
+
+\questionmarks{5(c) OR}{7}{પ્રોટેક્શન મેકેનિઝમની જરૂરિયાત અને વિવિધ પ્રોટેક્શન ડોમેઇન સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{Protection Mechanism} પ્રોસેસિસને એકબીજા અને સિસ્ટમ રિસોર્સિસ સાથે દખલગીરી કરવાથી અટકાવે છે.
+
+\textbf{Need for Protection:}
+\begin{itemize}
+    \item \textbf{Resource sharing}: મલ્ટિપલ યુઝર્સ/પ્રોસેસિસ સમાન રિસોર્સિસ એક્સેસ કરે છે
+    \item \textbf{Error containment}: બગ્સને સંપૂર્ણ સિસ્ટમને અસર કરતા અટકાવવા
+    \item \textbf{Security enforcement}: એક્સેસ કંટ્રોલ નીતિઓ લાગુ કરવી
+\end{itemize}
+
+\begin{center}
+\captionof{table}{Protection Domains}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{ડોમેઇન પ્રકાર} & \textbf{વર્ણન} \\ \hline
+\textbf{User Domain} & યુઝર પ્રોસેસિસ માટે મર્યાદિત એક્સેસ રાઇટ્સ \\ \hline
+\textbf{Kernel Domain} & સિસ્ટમ રિસોર્સિસ પર સંપૂર્ણ એક્સેસ \\ \hline
+\textbf{System Domain} & સિસ્ટમ સર્વિસિસ માટે મધ્યમ પ્રિવિલેજિસ \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{center}
+\captionof{table}{Access Rights}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{Right} & \textbf{વર્ણન} \\ \hline
+\textbf{Read} & રિસોર્સનું કન્ટેન્ટ જોવું \\ \hline
+\textbf{Write} & રિસોર્સ કન્ટેન્ટ સુધારવું \\ \hline
+\textbf{Execute} & પ્રોગ્રામ ચલાવવું કે ડિરેક્ટરીમાં પ્રવેશ \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{RECES-UKS - Resource sharing, Error containment, Security; User domain, Kernel domain...}
+\end{mnemonicbox}
+
+\end{document}

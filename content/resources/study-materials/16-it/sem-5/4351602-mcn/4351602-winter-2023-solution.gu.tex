@@ -1,0 +1,975 @@
+\documentclass{article}
+% Adjust the relative path to point to the latex-templates directory
+\input{../../../../../../latex-templates/gtu-solutions/preamble.tex}
+\input{../../../../../../latex-templates/gtu-solutions/gujarati-boxes.tex}
+\input{../../../../../../latex-templates/gtu-solutions/commands.tex}
+\usetikzlibrary{fit, positioning, arrows.meta, shapes.geometric, calc, shapes.symbols}
+
+\title{Mobile Computing and Networks (4351602) - Winter 2023 Solution}
+\date{December 06, 2023}
+
+\begin{document}
+\maketitle
+
+\questionmarks{1(અ)}{3}{કલાઇન્ટ સર્વર અને પીઅર ટૂ પીઅર નેટવર્કનો તફાવત લખો.}
+
+\begin{solutionbox}
+\textbf{તફાવત:}
+\begin{center}
+\captionof{table}{Client-Server vs P2P}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પેરામીટર} & \textbf{Client-Server Network} & \textbf{Peer-to-Peer Network} \\ \hline
+\textbf{આર્કિટેક્ચર} & કેન્દ્રિય સર્વર સાથે & વિકેન્દ્રિત, બધા નોડ્સ સમાન \\ \hline
+\textbf{ખર્ચ} & સર્વર હાર્ડવેરને કારણે વધુ & ઓછો, હાલના કમ્પ્યુટર્સનો ઉપયોગ \\ \hline
+\textbf{સિક્યોરિટી} & વધુ, કેન્દ્રિય નિયંત્રણ & ઓછી, વિતરિત નિયંત્રણ \\ \hline
+\textbf{સ્કેલેબિલિટી} & સર્વરની ક્ષમતાથી મર્યાદિત & વધુ સારી, નોડ્સ સાથે સંસાધનો વધે \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{CSS-P: Client-Server = કેન્દ્રિય સિક્યોરિટી, P2P = પીઅર પાવર}
+\end{mnemonicbox}
+
+\questionmarks{1(બ)}{4}{ARP પ્રોટોકોલ તેની વર્કિંગ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{ARP (Address Resolution Protocol)} લોકલ નેટવર્કમાં IP એડ્રેસને MAC એડ્રેસ સાથે જોડે છે.
+
+\textbf{વર્કિંગ પ્રોસેસ:}
+\begin{itemize}
+    \item \keyword{બ્રોડકાસ્ટ રિક્વેસ્ટ}: હોસ્ટ ટાર્ગેટ IP સાથે ARP રિક્વેસ્ટ બ્રોડકાસ્ટ કરે
+    \item \keyword{કેશ ચેક}: રિસીવિંગ હોસ્ટ્સ તપાસે કે IP મેચ થાય છે કે નહીં
+    \item \keyword{રિપ્લાય જનરેશન}: ટાર્ગેટ હોસ્ટ MAC એડ્રેસ સાથે ARP રિપ્લાય મોકલે
+    \item \keyword{કેશ અપડેટ}: રિક્વેસ્ટિંગ હોસ્ટ ARP ટેબલ અપડેટ કરે
+\end{itemize}
+
+\textbf{ARP ટેબલ ઉદાહરણ:}
+\begin{center}
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{IP Address} & \textbf{MAC Address} & \textbf{TTL} \\ \hline
+192.168.1.1 & 00:1A:2B:3C:4D:5E & 300s \\ \hline
+\end{tabular}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{BCRU: બ્રોડકાસ્ટ, કેશ, રિપ્લાય, અપડેટ}
+\end{mnemonicbox}
+
+\questionmarks{1(ક)}{7}{OSI મોડેલ આકૃતિ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{OSI (Open Systems Interconnection)} મોડેલમાં નેટવર્ક કમ્યુનિકેશન માટે 7 લેયર્સ છે.
+
+\begin{center}
+\begin{tikzpicture}[node distance=0.6cm, auto]
+    \node [gtu block, minimum width=6cm] (app) {7. Application Layer};
+    \node [gtu block, minimum width=6cm, below=of app] (pres) {6. Presentation Layer};
+    \node [gtu block, minimum width=6cm, below=of pres] (sess) {5. Session Layer};
+    \node [gtu block, minimum width=6cm, below=of sess] (trans) {4. Transport Layer};
+    \node [gtu block, minimum width=6cm, below=of trans] (net) {3. Network Layer};
+    \node [gtu block, minimum width=6cm, below=of net] (data) {2. Data Link Layer};
+    \node [gtu block, minimum width=6cm, below=of data] (phys) {1. Physical Layer};
+
+    \draw [gtu arrow] (app) -- (pres);
+    \draw [gtu arrow] (pres) -- (sess);
+    \draw [gtu arrow] (sess) -- (trans);
+    \draw [gtu arrow] (trans) -- (net);
+    \draw [gtu arrow] (net) -- (data);
+    \draw [gtu arrow] (data) -- (phys);
+\end{tikzpicture}
+\captionof{figure}{OSI Model Layers}
+\end{center}
+
+\textbf{લેયર ફંક્શન્સ:}
+\begin{itemize}
+    \item \keyword{Physical}: ફિઝિકલ મીડિયમ પર બિટ ટ્રાન્સમિશન
+    \item \keyword{Data Link}: ફ્રેમ ટ્રાન્સમિશન, એરર ડિટેક્શન
+    \item \keyword{Network}: રાઉટિંગ, IP એડ્રેસિંગ
+    \item \keyword{Transport}: એન્ડ-ટુ-એન્ડ ડિલિવરી, TCP/UDP
+    \item \keyword{Session}: કનેક્શન મેનેજમેન્ટ
+    \item \keyword{Presentation}: ડેટા એન્ક્રિપ્શન, કોમ્પ્રેશન
+    \item \keyword{Application}: યુઝર ઇન્ટરફેસ, ઇમેઇલ, વેબ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{All People Seem To Need Data Processing}
+\end{mnemonicbox}
+
+\questionmarks{1(ક OR)}{7}{કન્જેશન શું છે? કન્જેશન કંટ્રોલ સમજાવો.}
+
+\begin{solutionbox}
+\textbf{કન્જેશન} ત્યારે થાય છે જ્યારે નેટવર્ક ટ્રાફિક ઉપલબ્ધ બેન્ડવિડ્થ કરતાં વધી જાય, જેથી પેકેટ ડિલે અને લોસ થાય.
+
+\textbf{કન્જેશન કંટ્રોલના પ્રકારો:}
+\begin{center}
+\captionof{table}{Congestion Control Types}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પ્રકાર} & \textbf{મેથડ} & \textbf{વર્ણન} \\ \hline
+\textbf{Open-Loop} & પ્રિવેન્શન & કન્જેશન પહેલાં ટ્રાફિક શેપિંગ \\ \hline
+\textbf{Closed-Loop} & રિએક્શન & ફીડબેક આધારિત એડજસ્ટમેન્ટ \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{કન્જેશન કંટ્રોલ ટેકનિક્સ:}
+\begin{itemize}
+    \item \keyword{ટ્રાફિક શેપિંગ}: ડેટા ટ્રાન્સમિશન રેટ નિયંત્રિત કરો
+    \item \keyword{એડમિશન કંટ્રોલ}: કન્જેશન દરમિયાન નવા કનેક્શન્સ મર્યાદિત કરો
+    \item \keyword{લોડ શેડિંગ}: બફર્સ ભરાઈ જાય ત્યારે પેકેટ્સ ડ્રોપ કરો
+    \item \keyword{બેકપ્રેશર}: અપસ્ટ્રીમ કન્જેશન સિગ્નલ્સ મોકલો
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{TALB: ટ્રાફિક, એડમિશન, લોડ, બેકપ્રેશર}
+\end{mnemonicbox}
+
+\questionmarks{2(અ)}{3}{એડહોક નેટવર્ક શું છે? તે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{એડહોક નેટવર્ક} એક વાયરલેસ નેટવર્ક છે જેમાં કોઈ નિશ્ચિત ઇન્ફ્રાસ્ટ્રક્ચર વગર નોડ્સ સીધો કમ્યુનિકેટ કરે છે.
+
+\textbf{લક્ષણો:}
+\begin{itemize}
+    \item \keyword{સ્વ-આયોજિત}: ઓટોમેટિક નેટવર્ક ફોર્મેશન
+    \item \keyword{ડાયનેમિક ટોપોલોજી}: નોડ્સ મુક્તપણે જોડાઈ/છૂટી શકે
+    \item \keyword{મલ્ટિ-હોપ રાઉટિંગ}: મેસેજ્સ મધ્યવર્તી નોડ્સ દ્વારા રિલે થાય
+    \item \keyword{વિતરિત નિયંત્રણ}: કોઈ કેન્દ્રિય સત્તા નહીં
+\end{itemize}
+
+\textbf{એપ્લિકેશન્સ:}
+\begin{itemize}
+    \item ઇમર્જન્સી રિસ્પોન્સ, મિલિટરી ઓપરેશન્સ, સેન્સર નેટવર્ક્સ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{SDMD: સ્વ-આયોજિત, ડાયનેમિક, મલ્ટિ-હોપ, વિતરિત}
+\end{mnemonicbox}
+
+\questionmarks{2(બ)}{4}{મોબાઈલ IP માં હેન્ડઓવર મેનેજમેન્ટ સમજાવો.}
+
+\begin{solutionbox}
+\textbf{હેન્ડઓવર} એ પ્રક્રિયા છે જ્યારે મોબાઈલ નોડ નેટવર્ક્સ વચ્ચે ખસે ત્યારે કનેક્ટિવિટી જાળવી રાખવાની.
+
+\textbf{હેન્ડઓવર પ્રક્રિયા:}
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto]
+    \node [gtu state] (mn) {Mobile Node};
+    \node [gtu block, right=of mn] (fa2) {Foreign Agent 2};
+    \node [gtu block, right=of fa2] (ha) {Home Agent};
+    
+    \draw [gtu arrow] (mn) -- node [above] {1. Discovery} (fa2);
+    \draw [gtu arrow] (fa2) -- node [below] {2. Adv} (mn);
+    \draw [gtu arrow] (mn) to[bend left=30] node [above] {3. Register} (ha);
+    \draw [gtu arrow] (ha) to[bend left=30] node [below] {4. Reply} (mn);
+\end{tikzpicture}
+\captionof{figure}{Mobile IP Handover}
+\end{center}
+
+\textbf{પ્રકારો:}
+\begin{itemize}
+    \item \keyword{હાર્ડ હેન્ડઓવર}: બ્રેક-બિફોર-મેક કનેક્શન
+    \item \keyword{સોફ્ટ હેન્ડઓવર}: મેક-બિફોર-બ્રેક કનેક્શન
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{DARU: ડિસ્કવરી, એડવર્ટાઇઝમેન્ટ, રજિસ્ટ્રેશન, અપડેટ}
+\end{mnemonicbox}
+
+\questionmarks{2(ક)}{7}{મોબાઈલ કમ્પ્યુટિંગનું થ્રી ટાયર આર્કિટેક્ચર આકૃતિ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{થ્રી-ટાયર આર્કિટેક્ચર} મોબાઈલ એપ્લિકેશન્સને પ્રેઝન્ટેશન, એપ્લિકેશન લોજિક અને ડેટા લેયર્સમાં વિભાજિત કરે છે.
+
+\begin{center}
+\begin{tikzpicture}[node distance=1cm, auto]
+    \node [gtu block, align=center] (pres) {Tier 1: Presentation\\ \footnotesize (Mobile Device, UI)};
+    \node [gtu block, below=of pres, align=center] (app) {Tier 2: Application\\ \footnotesize (Business Logic, Middleware)};
+    \node [gtu block, below=of app, align=center] (data) {Tier 3: Data\\ \footnotesize (Database, Storage)};
+
+    \draw [gtu arrow] (pres) -- (app);
+    \draw [gtu arrow] (app) -- (data);
+    \draw [gtu arrow] (data) -- (app);
+    \draw [gtu arrow] (app) -- (pres);
+\end{tikzpicture}
+\captionof{figure}{Three-Tier Mobile Architecture}
+\end{center}
+
+\textbf{લેયર ફંક્શન્સ:}
+\begin{itemize}
+    \item \keyword{પ્રેઝન્ટેશન}: યુઝર ઇન્ટરફેસ, મોબાઈલ એપ્સ
+    \item \keyword{એપ્લિકેશન}: બિઝનેસ લોજિક, મિડલવેર સર્વિસેસ
+    \item \keyword{ડેટા}: ડેટાબેસ મેનેજમેન્ટ, સ્ટોરેજ સિસ્ટમ્સ
+\end{itemize}
+
+\textbf{ફાયદા:}
+\begin{itemize}
+    \item \keyword{સ્કેલેબિલિટી}: સ્વતંત્ર લેયર સ્કેલિંગ
+    \item \keyword{મેન્ટેનેબિલિટી}: અલગ ચિંતાવાળા વિષયો
+    \item \keyword{લવચીકતા}: ટેકનોલોજી સ્વતંત્રતા
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{PAD: પ્રેઝન્ટેશન, એપ્લિકેશન, ડેટા}
+\end{mnemonicbox}
+
+\questionmarks{2(અ OR)}{3}{વાયરલેસ નેટવર્કની જરૂરિયાત સમજાવો.}
+
+\begin{solutionbox}
+\textbf{વાયરલેસ નેટવર્ક્સ} ફિઝિકલ કેબલ્સ વગર કનેક્ટિવિટી પ્રદાન કરે છે.
+
+\textbf{જરૂરિયાતો:}
+\begin{itemize}
+    \item \keyword{મોબિલિટી}: યુઝર્સ કનેક્ટેડ રહીને મુક્તપણે ફરી શકે
+    \item \keyword{લવચીકતા}: સરળ નેટવર્ક વિસ્તરણ અને પુનઃ રૂપરેખાંકન
+    \item \keyword{ખર્ચ-અસરકારક}: કેબલિંગ ઇન્ફ્રાસ્ટ્રક્ચર ખર્ચ ઘટાડો
+    \item \keyword{પહોંચ}: દૂરના વિસ્તારોમાં ઇન્ટરનેટ એક્સેસ
+\end{itemize}
+
+\textbf{એપ્લિકેશન્સ:}
+\begin{itemize}
+    \item મોબાઈલ કમ્યુનિકેશન્સ, WiFi હોટસ્પોટ્સ, IoT ડિવાઇસ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{MFCA: મોબિલિટી, લવચીકતા, ખર્ચ, પહોંચ}
+\end{mnemonicbox}
+
+\questionmarks{2(બ OR)}{4}{મોબાઈલ IP માં રજિસ્ટ્રેશન, ટનલિંગ અને ઇન્કેપ્સુલેશન સમજાવો.}
+
+\begin{solutionbox}
+\textbf{મોબાઈલ IP કોમ્પોનન્ટ્સ:}
+
+\begin{center}
+\captionof{table}{Mobile IP Concepts}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પ્રક્રિયા} & \textbf{વર્ણન} & \textbf{હેતુ} \\ \hline
+\textbf{રજિસ્ટ્રેશન} & મોબાઈલ નોડ હોમ એજન્ટ સાથે રજિસ્ટર થાય & લોકેશન અપડેટ \\ \hline
+\textbf{ટનલિંગ} & એજન્ટ્સ વચ્ચે વર્ચ્યુઅલ પાથ બનાવે & પેકેટ્સ રૂટ કરવા \\ \hline
+\textbf{ઇન્કેપ્સુલેશન} & મૂળ પેકેટને નવા હેડરમાં લપેટે & એડ્રેસ ટ્રાન્સલેશન \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{પ્રક્રિયા ફ્લો:}
+\begin{center}
+મૂળ પેકેટ $\rightarrow$ ઇન્કેપ્સુલેશન $\rightarrow$ ટનલ $\rightarrow$ ડીકેપ્સુલેશન $\rightarrow$ ડેસ્ટિનેશન
+\end{center}
+
+\textbf{રજિસ્ટ્રેશન સ્તરો:}
+\begin{itemize}
+    \item મોબાઈલ નોડ ફોરેન એજન્ટ શોધે
+    \item હોમ એજન્ટને રજિસ્ટ્રેશન રિક્વેસ્ટ મોકલે
+    \item હોમ એજન્ટ લોકેશન બાઇન્ડિંગ અપડેટ કરે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{RTE: રજિસ્ટ્રેશન, ટનલિંગ, ઇન્કેપ્સુલેશન}
+\end{mnemonicbox}
+
+\questionmarks{2(ક OR)}{7}{મિડલવેર શું છે? મિડલવેરના ઉદાહરણો લખો અને તેમાંથી કોઈ પણ એકને વિગતે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{મિડલવેર} એ સોફ્ટવેર છે જે વિતરિત સિસ્ટમ્સમાં વિવિધ એપ્લિકેશન્સ અને સેવાઓને જોડે છે.
+
+\textbf{મિડલવેરના ઉદાહરણો:}
+\begin{itemize}
+    \item Message-Oriented Middleware (MOM)
+    \item Remote Procedure Call (RPC)
+    \item Object Request Broker (ORB)
+    \item ડેટાબેસ મિડલવેર
+    \item વેબ સર્વિસ
+\end{itemize}
+
+\textbf{Message-Oriented Middleware (MOM) - વિગતવાર:}
+
+\textbf{આર્કિટેક્ચર:}
+\begin{center}
+\begin{tikzpicture}[node distance=0.5cm, auto]
+    \node [gtu state] (sender) {Sender};
+    \node [gtu block, right=of sender] (q1) {Queue};
+    \node [gtu block, right=of q1] (mom) {MOM Layer};
+    \node [gtu block, right=of mom] (q2) {Queue};
+    \node [gtu state, right=of q2] (recv) {Receiver};
+
+    \draw [gtu arrow] (sender) -- (q1);
+    \draw [gtu arrow] (q1) -- (mom);
+    \draw [gtu arrow] (mom) -- (q2);
+    \draw [gtu arrow] (q2) -- (recv);
+\end{tikzpicture}
+\captionof{figure}{MOM Architecture}
+\end{center}
+
+\textbf{લક્ષણો:}
+\begin{itemize}
+    \item \keyword{અસિંક્રોનસ કમ્યુનિકેશન}: નોન-બ્લોકિંગ મેસેજ એક્સચેન્જ
+    \item \keyword{વિશ્વસનીયતા}: મેસેજ પર્સિસ્ટન્સ અને ડિલિવરી ગેરંટી
+    \item \keyword{સ્કેલેબિલિટી}: મલ્ટિપલ કોન્કરન્ટ કનેક્શન્સ હેન્ડલ કરે
+    \item \keyword{પ્લેટફોર્મ સ્વતંત્રતા}: ક્રોસ-પ્લેટફોર્મ કમ્યુનિકેશન
+\end{itemize}
+
+\textbf{ફાયદા:}
+\begin{itemize}
+    \item એપ્લિકેશન્સ વચ્ચે લૂઝ કપલિંગ
+    \item સિસ્ટમ વિશ્વસનીયતામાં સુધારો
+    \item વધુ સારી ફોલ્ટ ટોલરન્સ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{ARSP: અસિંક્રોનસ, વિશ્વસનીય, સ્કેલેબલ, પ્લેટફોર્મ-સ્વતંત્ર}
+\end{mnemonicbox}
+
+\questionmarks{3(અ)}{3}{'www' નું ફુલ ફોર્મ આપો અને તે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{WWW = World Wide Web}
+
+\textbf{સમજાવટ:}
+\begin{itemize}
+    \item \keyword{ગ્લોબલ ઇન્ફોર્મેશન સિસ્ટમ}: ડોક્યુમેન્ટ્સનો પરસ્પર જોડાયેલો જાળો
+    \item \keyword{HTTP પ્રોટોકોલ}: HyperText Transfer Protocol નો ઉપયોગ કરે
+    \item \keyword{URL એડ્રેસિંગ}: યુનિક રિસોર્સ લોકેટર્સ
+    \item \keyword{હાયપરલિંક્સ}: વેબ પેજો વચ્ચે નેવિગેટ કરવા
+\end{itemize}
+
+\textbf{કોમ્પોનન્ટ્સ:}
+\begin{itemize}
+    \item વેબ સર્વર્સ, બ્રાઉઝર્સ, HTML ડોક્યુમેન્ટ્સ, URL
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{GHUH: ગ્લોબલ, HTTP, URL, હાયપરલિંક્સ}
+\end{mnemonicbox}
+
+\questionmarks{3(બ)}{4}{મોબાઈલ કમ્પ્યુટિંગની ઉપયોગિતા સમજાવો.}
+
+\begin{solutionbox}
+\textbf{મોબાઈલ કમ્પ્યુટિંગ એપ્લિકેશન્સ:}
+
+\begin{center}
+\captionof{table}{Applications}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{કેટેગરી} & \textbf{એપ્લિકેશન્સ} & \textbf{ફાયદા} \\ \hline
+\textbf{બિઝનેસ} & ઇમેઇલ, CRM, સેલ્સ & પ્રોડક્ટિવિટી, રિયલ-ટાઇમ એક્સેસ \\ \hline
+\textbf{હેલ્થકેર} & પેશન્ટ મોનિટરિંગ, ટેલિમેડિસિન & રિમોટ કેર, ઇમર્જન્સી રિસ્પોન્સ \\ \hline
+\textbf{એજ્યુકેશન} & ઇ-લર્નિંગ, ડિજિટલ લાઇબ્રેરી & લવચીક લર્નિંગ, રિસોર્સ એક્સેસ \\ \hline
+\textbf{મનોરંજન} & ગેમિંગ, સ્ટ્રીમિંગ, સોશિયલ મીડિયા & ઓન-ડિમાન્ડ કન્ટેન્ટ, કનેક્ટિવિટી \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{મુખ્ય લક્ષણો:}
+\begin{itemize}
+    \item \keyword{લોકેશન-બેઝ્ડ સર્વિસ}: GPS નેવિગેશન, લોકલ સર્ચ
+    \item \keyword{મોબાઈલ પેમેન્ટ્સ}: ડિજિટલ વોલેટ, કોન્ટેક્ટલેસ ટ્રાન્ઝેક્શન્સ
+    \item \keyword{IoT ઇન્ટીગ્રેશન}: સ્માર્ટ હોમ, વેરેબલ ડિવાઇસેસ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{BHEE: બિઝનેસ, હેલ્થકેર, એજ્યુકેશન, મનોરંજન}
+\end{mnemonicbox}
+
+\questionmarks{3(ક)}{7}{DHCP નું વર્કિંગ આકૃતિ સાથે સમજાવો અને તેના ફાયદા સમજાવો.}
+
+\begin{solutionbox}
+\textbf{DHCP (Dynamic Host Configuration Protocol)} નેટવર્ક ડિવાઇસેસને ઓટોમેટિક IP એડ્રેસ આપે છે.
+
+\textbf{DHCP પ્રક્રિયા (DORA):}
+\begin{center}
+\begin{tikzpicture}[node distance=3cm, auto]
+    \node [gtu state] (client) {Client};
+    \node [gtu state, right=of client] (server) {DHCP Server};
+
+    \draw [gtu arrow] (client) -- node [above] {1. DISCOVER} (server);
+    \draw [gtu arrow] (server) to[bend left=20] node [below] {2. OFFER} (client);
+    \draw [gtu arrow] (client) to[bend left=20] node [above] {3. REQUEST} (server);
+    \draw [gtu arrow] (server) to[bend left=40] node [below] {4. ACK} (client);
+\end{tikzpicture}
+\captionof{figure}{DHCP DORA Process}
+\end{center}
+
+\textbf{પ્રદાન કરેલી કોન્ફિગરેશન માહિતી:}
+\begin{itemize}
+    \item IP એડ્રેસ અને સબનેટ માસ્ક
+    \item ડિફોલ્ટ ગેટવે એડ્રેસ
+    \item DNS સર્વર એડ્રેસેસ
+    \item લીઝ અવધિ
+\end{itemize}
+
+\textbf{ફાયદા:}
+\begin{itemize}
+    \item \keyword{ઓટોમેટિક કોન્ફિગરેશન}: મેન્યુઅલ IP અસાઇનમેન્ટ નહીં
+    \item \keyword{કેન્દ્રિત મેનેજમેન્ટ}: એક જ નિયંત્રણ બિંદુ
+    \item \keyword{કાર્યક્ષમ IP ઉપયોગ}: ડાયનેમિક એલોકેશન બગાડ અટકાવે
+    \item \keyword{ભૂલો ઘટાડો}: મેન્યુઅલ કોન્ફિગરેશન ભૂલો દૂર કરે
+    \item \keyword{સરળ મેન્ટેનન્સ}: સરળ નેટવર્ક ફેરફારો
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{DORA: ડિસ્કવર, ઓફર, રિક્વેસ્ટ, એકનોલેજ}
+\end{mnemonicbox}
+
+\questionmarks{3(અ OR)}{3}{HTTPS નું મહત્વ લખો.}
+
+\begin{solutionbox}
+\textbf{HTTPS (HyperText Transfer Protocol Secure)} સુરક્ષિત વેબ કમ્યુનિકેશન પ્રદાન કરે છે.
+
+\textbf{HTTPS નું મહત્વ:}
+\begin{itemize}
+    \item \keyword{ડેટા એન્ક્રિપ્શન}: SSL/TLS નો ઉપયોગ કરીને ટ્રાન્ઝિટમાં ડેટાને સુરક્ષિત કરે
+    \item \keyword{ઓથેન્ટિકેશન}: સર્ટિફિકેટ્સ સાથે સર્વર આઇડેન્ટિટી વેરિફાઇ કરે
+    \item \keyword{ડેટા ઇન્ટેગ્રિટી}: ટ્રાન્સમિશન દરમિયાન ડેટા ટેમ્પરિંગ અટકાવે
+    \item \keyword{વિશ્વાસ નિર્માણ}: વેબસાઇટ્સમાં યુઝર કોન્ફિડન્સ વધારે
+\end{itemize}
+
+\textbf{સિક્યોરિટી લાભો:}
+\begin{itemize}
+    \item ઇવ્સડ્રોપિંગ અને મેન-ઇન-ધ-મિડલ એટેક સામે રક્ષણ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{EADT: એન્ક્રિપ્શન, ઓથેન્ટિકેશન, ઇન્ટેગ્રિટી, વિશ્વાસ}
+\end{mnemonicbox}
+
+\questionmarks{3(બ OR)}{4}{બેરર નેટવર્ક શું છે? તે વિગતે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{બેરર નેટવર્ક} એ અંતર્ગત નેટવર્ક ઇન્ફ્રાસ્ટ્રક્ચર છે જે એન્ડપોઇન્ટ્સ વચ્ચે ડેટા ટ્રાફિક વહન કરે છે.
+
+\textbf{બેરર નેટવર્ક્સના પ્રકારો:}
+\begin{center}
+\captionof{table}{Bearer Networks}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પ્રકાર} & \textbf{ટેકનોલોજી} & \textbf{લક્ષણો} \\ \hline
+\textbf{Circuit-Switched} & પરંપરાગત ટેલિફોની & સમર્પિત પાથ, ગેરંટીડ બેન્ડવિડ્થ \\ \hline
+\textbf{Packet-Switched} & ઇન્ટરનેટ, IP networks & શેર્ડ રિસોર્સ, વેરિએબલ બેન્ડવિડ્થ \\ \hline
+\textbf{વાયરલેસ} & સેલ્યુલર, WiFi & મોબાઇલ કનેક્ટિવિટી, એર ઇન્ટરફેસ \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{ફંક્શન્સ:}
+\begin{itemize}
+    \item \keyword{ડેટા ટ્રાન્સપોર્ટ}: યુઝર ડેટા અને સિગ્નલિંગ વહન કરે
+    \item \keyword{Quality of Service}: બેન્ડવિડ્થ અને લેટન્સી મેનેજ કરે
+    \item \keyword{રાઉટિંગ}: નેટવર્ક્સ વચ્ચે ટ્રાફિક ડાયરેક્ટ કરે
+    \item \keyword{નેટવર્ક મેનેજમેન્ટ}: ટ્રાફિક મોનિટર અને કંટ્રોલ કરે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{DQRN: ડેટા ટ્રાન્સપોર્ટ, QoS, રાઉટિંગ, નેટવર્ક મેનેજમેન્ટ}
+\end{mnemonicbox}
+
+\questionmarks{3(ક OR)}{7}{TCP ના પ્રકાર લિસ્ટ કરો અને તેમાંથી કોઈ પણ એક સમજાવો.}
+
+\begin{solutionbox}
+\textbf{TCP ના પ્રકારો:}
+\begin{itemize}
+    \item સ્ટાન્ડાર્ડ TCP (TCP Tahoe)
+    \item TCP Reno
+    \item TCP New Reno
+    \item TCP Vegas
+    \item TCP SACK (Selective Acknowledgment)
+    \item TCP Cubic
+\end{itemize}
+
+\textbf{TCP Reno - વિગતવાર સમજાવટ:}
+
+\textbf{લક્ષણો:}
+\begin{itemize}
+    \item \keyword{ફાસ્ટ રિટ્રાન્સમિટ}: ખોવાયેલા પેકેટ્સ ઝડપથી ફરીથી મોકલે
+    \item \keyword{ફાસ્ટ રિકવરી}: ફાસ્ટ રિટ્રાન્સમિટ પછી સ્લો સ્ટાર્ટ ટાળે
+    \item \keyword{કન્જેશન એવોઇડન્સ}: કન્જેશન વિન્ડોમાં લિનિયર વધારો
+    \item \keyword{ડુપ્લિકેટ ACK ડિટેક્શન}: પેકેટ લોસ ઓળખે
+\end{itemize}
+
+\textbf{કન્જેશન કંટ્રોલ અલ્ગોરિધમ:}
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm, auto]
+    \node [gtu state] (slow) {Slow Start};
+    \node [gtu decision, below=of slow] (dupacks) {3 Dup ACKs?};
+    \node [gtu block, right=of dupacks] (fastre) {Fast Retransmit};
+    \node [gtu block, right=of fastre] (fastrec) {Fast Recovery};
+    \node [gtu block, below=of fastrec] (cong) {Congestion Avoidance};
+    \node [gtu decision, left=of cong] (timeout) {Timeout?};
+
+    \draw [gtu arrow] (slow) -- (dupacks);
+    \draw [gtu arrow] (dupacks) -- node [above] {Yes} (fastre);
+    \draw [gtu arrow] (fastre) -- (fastrec);
+    \draw [gtu arrow] (fastrec) -- (cong);
+    \draw [gtu arrow] (dupacks) -- node [left] {No} (timeout);
+    \draw [gtu arrow] (timeout) -- node [left] {Yes} (slow);
+    \draw [gtu arrow] (timeout) -- node [above] {No} (cong);
+\end{tikzpicture}
+\captionof{figure}{TCP Reno phases}
+\end{center}
+
+\textbf{ફાયદા:}
+\begin{itemize}
+    \item \keyword{વધુ સારી પર્ફોર્મન્સ}: પેકેટ લોસથી ઝડપી રિકવરી
+    \item \keyword{કાર્યક્ષમતા}: ઉચ્ચ થ્રુપુટ જાળવે
+    \item \keyword{ન્યાયીપણું}: સમાન બેન્ડવિડ્થ વહેંચણી
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{FFCE: ફાસ્ટ રિટ્રાન્સમિટ, ફાસ્ટ રિકવરી, કન્જેશન એવોઇડન્સ, કાર્યક્ષમતા}
+\end{mnemonicbox}
+
+\questionmarks{4(અ)}{3}{WLAN વ્યાખ્યાયિત કરો. WLAN ના પ્રકારો લિસ્ટ કરો.}
+
+\begin{solutionbox}
+\textbf{WLAN (Wireless Local Area Network)} મર્યાદિત વિસ્તારમાં વાયરલેસ કનેક્ટિવિટી પ્રદાન કરે છે.
+
+\textbf{WLAN ના પ્રકારો:}
+\begin{itemize}
+    \item \keyword{ઇન્ફ્રાસ્ટ્રક્ચર મોડ}: કનેક્ટિવિટી માટે એક્સેસ પોઇન્ટ્સનો ઉપયોગ
+    \item \keyword{એડ-હોક મોડ}: સીધો ડિવાઇસ-ટુ-ડિવાઇસ કમ્યુનિકેશન
+    \item \keyword{મેશ નેટવર્ક્સ}: મલ્ટિ-હોપ વાયરલેસ કનેક્ટિવિટી
+    \item \keyword{હાઇબ્રિડ નેટવર્ક્સ}: ઇન્ફ્રાસ્ટ્રક્ચર અને એડ-હોકનું કોમ્બિનેશન
+\end{itemize}
+
+\textbf{સ્ટાન્ડાર્ડ્સ:}
+\begin{itemize}
+    \item IEEE 802.11a/b/g/n/ac/ax (WiFi 6)
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{IAMH: ઇન્ફ્રાસ્ટ્રક્ચર, એડ-હોક, મેશ, હાઇબ્રિડ}
+\end{mnemonicbox}
+
+\questionmarks{4(બ)}{4}{રાઉટિંગ શું છે? રાઉટિંગના પ્રકાર સમજાવો.}
+
+\begin{solutionbox}
+\textbf{રાઉટિંગ} એ નેટવર્ક્સ પર ડેટા પેકેટ્સ માટે પાથ સિલેક્ટ કરવાની પ્રક્રિયા છે.
+
+\textbf{રાઉટિંગના પ્રકારો:}
+\begin{center}
+\captionof{table}{Routing Types}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પ્રકાર} & \textbf{મેથડ} & \textbf{લક્ષણો} \\ \hline
+\textbf{સ્ટેટિક રાઉટિંગ} & મેન્યુઅલ કોન્ફિગરેશન & નિયત પાથ, કોઈ ઓટોમેટિક અપડેટ્સ નહીં \\ \hline
+\textbf{ડાયનેમિક રાઉટિંગ} & ઓટોમેટિક અપડેટ્સ & અનુકૂલનશીલ પાથ, રિયલ-ટાઇમ ફેરફારો \\ \hline
+\textbf{ડિફોલ્ટ રાઉટિંગ} & કેચ-ઓલ રૂટ & જ્યારે કોઈ સ્પેસિફિક રૂટ અસ્તિત્વમાં ન હોય \\ \hline
+\textbf{ડિસ્ટન્સ વેક્ટર} & હોપ કાઉન્ટ આધારિત & RIP પ્રોટોકોલ, સરળ અમલીકરણ \\ \hline
+\textbf{લિંક સ્ટેટ} & નેટવર્ક ટોપોલોજી & OSPF પ્રોટોકોલ, ઝડપી કન્વર્જન્સ \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{ડાયનેમિક રાઉટિંગના ફાયદા:}
+\begin{itemize}
+    \item \textbf{ઓટોમેટિક અનુકૂલન} નેટવર્ક ફેરફારો માટે
+    \item \textbf{લોડ બેલેન્સિંગ} મલ્ટિપલ પાથ પર
+    \item \textbf{ફોલ્ટ ટોલરન્સ} વૈકલ્પિક રૂટ્સ સાથે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{SDDL: સ્ટેટિક, ડાયનેમિક, ડિફોલ્ટ, લિંક-સ્ટેટ}
+\end{mnemonicbox}
+
+\questionmarks{4(ક)}{7}{WLAN નું આર્કિટેક્ચર સમજાવો.}
+
+\begin{solutionbox}
+\textbf{WLAN આર્કિટેક્ચર કોમ્પોનન્ટ્સ:}
+
+\begin{center}
+\begin{tikzpicture}[node distance=1cm, auto]
+    \node [gtu block] (ds) {Distribution System (DS)};
+    \node [gtu block, below left=of ds] (ap1) {Access Point 1};
+    \node [gtu block, below right=of ds] (ap2) {Access Point 2};
+    
+    \node [gtu state, below=of ap1] (sta1) {Station 1};
+    \node [gtu state, below=of ap2] (sta2) {Station 2};
+
+    \draw [gtu arrow] (ap1) -- (ds);
+    \draw [gtu arrow] (ap2) -- (ds);
+    \draw [dashed] (sta1) -- (ap1);
+    \draw [dashed] (sta2) -- (ap2);
+    
+    \node [draw, dashed, fit=(ap1) (sta1), label=left:BSS 1] {};
+    \node [draw, dashed, fit=(ap2) (sta2), label=right:BSS 2] {};
+    \node [draw, fit=(ds) (ap1) (ap2), label=above:ESS] {};
+\end{tikzpicture}
+\captionof{figure}{WLAN Architecture}
+\end{center}
+
+\textbf{આર્કિટેક્ચર એલિમન્ટ્સ:}
+\begin{itemize}
+    \item \keyword{સ્ટેશન (STA)}: વાયરલેસ ક્લાયન્ટ ડિવાઇસેસ
+    \item \keyword{એક્સેસ પોઇન્ટ (AP)}: કેન્દ્રિય વાયરલેસ હબ
+    \item \keyword{બેસિક સર્વિસ સેટ (BSS)}: સિંગલ AP કવરેજ એરિયા
+    \item \keyword{એક્સટેન્ડેડ સર્વિસ સેટ (ESS)}: મલ્ટિપલ ઇન્ટરકનેક્ટેડ AP
+    \item \keyword{ડિસ્ટ્રિબ્યુશન સિસ્ટમ (DS)}: AP ને જોડતું બેકએન્ડ નેટવર્ક
+\end{itemize}
+
+\textbf{WLAN ટોપોલોજીઝ:}
+\begin{itemize}
+    \item \keyword{ઇન્ફ્રાસ્ટ્રક્ચર મોડ}: AP દ્વારા કેન્દ્રિત
+    \item \keyword{એડ-હોક મોડ}: સીધો પીઅર-ટુ-પીઅર કમ્યુનિકેશન
+    \item \keyword{મેશ ટોપોલોજી}: મલ્ટિ-હોપ વાયરલેસ કનેક્શન્સ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{SABED: સ્ટેશન, એક્સેસ પોઇન્ટ, BSS, ESS, ડિસ્ટ્રિબ્યુશન સિસ્ટમ}
+\end{mnemonicbox}
+
+\questionmarks{4(અ OR)}{3}{WPAN વ્યાખ્યાયિત કરો. WPAN ની ઉપયોગિતા લિસ્ટ કરો.}
+
+\begin{solutionbox}
+\textbf{WPAN (Wireless Personal Area Network)} વ્યક્તિગત જગ્યામાં ડિવાઇસેસ જોડે છે (સામાન્ય રીતે 10 મીટર).
+
+\textbf{WPAN ની ઉપયોગિતા:}
+\begin{itemize}
+    \item \keyword{ડિવાઇસ સિંક્રોનાઇઝેશન}: ફોનથી કમ્પ્યુટર ડેટા ટ્રાન્સફર
+    \item \keyword{ઓડિયો સ્ટ્રીમિંગ}: વાયરલેસ હેડફોન્સ, સ્પીકર્સ
+    \item \keyword{ઇનપુટ ડિવાઇસેસ}: વાયરલેસ કીબોર્ડ, માઉસ
+    \item \keyword{હેલ્થકેર}: મેડિકલ સેન્સર્સ, ફિટનેસ ટ્રેકર્સ
+    \item \keyword{સ્માર્ટ હોમ}: IoT ડિવાઇસ કંટ્રોલ
+\end{itemize}
+
+\textbf{ટેકનોલોજીઝ:}
+\begin{itemize}
+    \item Bluetooth, Zigbee, NFC, infrared
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{DSAHS: ડિવાઇસ સિંક, સ્ટ્રીમિંગ, ઓડિયો, હેલ્થકેર, સ્માર્ટ હોમ}
+\end{mnemonicbox}
+
+\questionmarks{4(બ OR)}{4}{IMAP પ્રોટોકોલનું વર્કિંગ સમજાવો.}
+
+\begin{solutionbox}
+\textbf{IMAP (Internet Message Access Protocol)} મેઇલ સર્વર પર ઇમેઇલ મેનેજ કરે છે.
+
+\textbf{IMAP વર્કિંગ પ્રોસેસ:}
+\begin{center}
+\captionof{table}{IMAP Process}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{સ્તર} & \textbf{ક્રિયા} & \textbf{વર્ણન} \\ \hline
+\textbf{કનેક્શન} & ક્લાયન્ટ સર્વર સાથે કનેક્ટ થાય & પોર્ટ 143/993 પર TCP કનેક્શન સ્થાપિત કરે \\ \hline
+\textbf{ઓથેન્ટિકેશન} & લોગિન ક્રેડેન્શિયલ્સ & યુઝરનેમ/પાસવર્ડ વેરિફિકેશન \\ \hline
+\textbf{મેઇલબોક્સ સિલેક્શન} & ફોલ્ડર પસંદ કરો & INBOX અથવા અન્ય ફોલ્ડર્સ સિલેક્ટ કરો \\ \hline
+\textbf{મેસેજ ઓપરેશન્સ} & વાંચો/ડિલીટ/ફ્લેગ & સર્વર પર મેસેજ્સ મેનિપ્યુલેટ કરો \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{IMAP vs POP3:}
+\begin{itemize}
+    \item \keyword{સર્વર સ્ટોરેજ}: મેસેજ્સ સર્વર પર રહે છે
+    \item \keyword{મલ્ટિ-ડિવાઇસ એક્સેસ}: ડિવાઇસેસ પર સિંક
+    \item \keyword{ફોલ્ડર મેનેજમેન્ટ}: સર્વર-સાઇડ ફોલ્ડર સ્ટ્રક્ચર
+    \item \keyword{પાર્શિયલ ડાઉનલોડ}: પહેલા હેડર્સ, માંગ પર બોડી
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{CAMS: કનેક્શન, ઓથેન્ટિકેશન, મેઇલબોક્સ, સ્ટોરેજ}
+\end{mnemonicbox}
+
+\questionmarks{4(ક OR)}{7}{બ્લૂટૂથ ટેકનોલોજી તેના પ્રોટોકોલ સ્ટેક સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{બ્લૂટૂથ} એ પર્સનલ એરિયા નેટવર્ક્સ માટે શોર્ટ-રેન્જ વાયરલેસ કમ્યુનિકેશન ટેકનોલોજી છે.
+
+\textbf{બ્લૂટૂથ પ્રોટોકોલ સ્ટેક:}
+\begin{center}
+\begin{tikzpicture}[node distance=0cm, outer sep=0pt]
+    \node [gtu block, minimum width=6cm] (app) {Applications};
+    \node [gtu block, minimum width=6cm, below=0.1cm of app] (obex) {OBEX / SDP};
+    \node [gtu block, minimum width=6cm, below=0.1cm of obex] (l2cap) {RFCOMM / L2CAP};
+    \node [gtu block, minimum width=6cm, below=0.1cm of l2cap] (hci) {Host Controller Interface (HCI)};
+    \node [gtu block, minimum width=6cm, below=0.1cm of hci] (lmp) {Link Manager Protocol (LMP)};
+    \node [gtu block, minimum width=6cm, below=0.1cm of lmp] (base) {Baseband / Link Controller};
+    \node [gtu block, minimum width=6cm, below=0.1cm of base] (radio) {Radio Layer (2.4 GHz)};
+\end{tikzpicture}
+\captionof{figure}{Bluetooth Protocol Stack}
+\end{center}
+
+\textbf{લેયર ફંક્શન્સ:}
+\begin{itemize}
+    \item \keyword{રેડિયો લેયર}: 2.4 GHz ISM બેન્ડ, ફ્રીક્વન્સી હોપિંગ
+    \item \keyword{બેસબેન્ડ}: ટાઇમિંગ, એક્સેસ કંટ્રોલ, પેકેટ ફોર્મેટ્સ
+    \item \keyword{LMP}: લિંક સ્થાપના, સિક્યોરિટી, પાવર મેનેજમેન્ટ
+    \item \keyword{L2CAP}: પેકેટ સેગમેન્ટેશન, પ્રોટોકોલ મલ્ટિપ્લેક્સિંગ
+    \item \keyword{RFCOMM}: વાયરલેસ પર સીરિયલ પોર્ટ એમ્યુલેશન
+    \item \keyword{SDP}: સર્વિસ ડિસ્કવરી પ્રોટોકોલ
+    \item \keyword{એપ્લિકેશન્સ}: ફાઇલ ટ્રાન્સફર, ઓડિયો સ્ટ્રીમિંગ, HID
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{RBLSRA: રેડિયો, બેસબેન્ડ, LMP, SDP, RFCOMM, એપ્લિકેશન્સ}
+\end{mnemonicbox}
+
+\questionmarks{5(અ)}{3}{4G શું છે? 4G ના ફીચર્સ લિસ્ટ કરો.}
+
+\begin{solutionbox}
+\textbf{4G (Fourth Generation)} એ હાઇ-સ્પીડ વાયરલેસ ઇન્ટરનેટ પ્રદાન કરતો મોબાઇલ કમ્યુનિકેશન સ્ટાન્ડાર્ડ છે.
+
+\textbf{4G ના ફીચર્સ:}
+\begin{itemize}
+    \item \keyword{હાઇ ડેટા સ્પીડ}: મોબાઇલ પર 100 Mbps, સ્ટેશનરી પર 1 Gbps સુધી
+    \item \keyword{ઓલ-IP નેટવર્ક}: પેકેટ-સ્વિચ્ડ આર્કિટેક્ચર
+    \item \keyword{લો લેટન્સી}: રિયલ-ટાઇમ એપ્લિકેશન્સ માટે ઓછો વિલંબ
+    \item \keyword{Quality of Service}: ગેરંટીડ સર્વિસ લેવલ્સ
+    \item \keyword{ગ્લોબલ રોમિંગ}: વિશ્વવ્યાપી સુસંગતતા
+\end{itemize}
+
+\textbf{ટેકનોલોજીઝ:}
+\begin{itemize}
+    \item LTE (Long Term Evolution), WiMAX
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{HALQG: હાઇ-સ્પીડ, ઓલ-IP, લો લેટન્સી, QoS, ગ્લોબલ રોમિંગ}
+\end{mnemonicbox}
+
+\questionmarks{5(બ)}{4}{સેન્ટ્રલાઇઝ્ડ કમ્પ્યુટિંગ સમજાવો.}
+
+\begin{solutionbox}
+\textbf{સેન્ટ્રલાઇઝ્ડ કમ્પ્યુટિંગ} કેન્દ્રિય સર્વર પર બધા ડેટા અને એપ્લિકેશન્સ પ્રોસેસ કરે છે.
+
+\textbf{આર્કિટેક્ચર:}
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm, auto]
+    \node [gtu block] (server) {Central Server};
+    \node [gtu state, below left=of server] (t1) {Terminal 1};
+    \node [gtu state, below=of server] (t2) {Terminal 2};
+    \node [gtu state, below right=of server] (t3) {Terminal 3};
+
+    \draw [gtu arrow] (t1) -- (server);
+    \draw [gtu arrow] (t2) -- (server);
+    \draw [gtu arrow] (t3) -- (server);
+    
+    \node [right=0.2cm of server, align=left, font=\scriptsize] {Processing, Storage, Apps};
+\end{tikzpicture}
+\captionof{figure}{Centralized Computing}
+\end{center}
+
+\textbf{લક્ષણો:}
+\begin{itemize}
+    \item \keyword{સિંગલ પોઇન્ટ ઓફ કંટ્રોલ}: કેન્દ્રિય સ્થાને બધી પ્રોસેસિંગ
+    \item \keyword{થિન ક્લાયન્ટ્સ}: ન્યૂનતમ લોકલ પ્રોસેસિંગ ક્ષમતા
+    \item \keyword{શેર્ડ રિસોર્સ}: CPU, મેમરી, સ્ટોરેજ કેન્દ્રિય રીતે મેનેજ
+    \item \keyword{નેટવર્ક ડિપેન્ડન્ટ}: વિશ્વસનીય નેટવર્ક કનેક્ટિવિટી જરૂરી
+\end{itemize}
+
+\textbf{ફાયદા:}
+\begin{itemize}
+    \item \keyword{સિક્યોરિટી}: કેન્દ્રિત ડેટા પ્રોટેક્શન
+    \item \keyword{મેનેજમેન્ટ}: સરળ સિસ્ટમ એડમિનિસ્ટ્રેશન
+    \item \keyword{ખર્ચ}: ક્લાયન્ટ-સાઇડ હાર્ડવેર ખર્ચ ઓછો
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{SSNG: સિંગલ કંટ્રોલ, શેર્ડ રિસોર્સ, નેટવર્ક ડિપેન્ડન્ટ, વધુ સિક્યોરિટી}
+\end{mnemonicbox}
+
+\questionmarks{5(ક)}{7}{IPv4 શું છે? IPv4 નું વર્કિંગ ડાયાગ્રામ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{IPv4 (Internet Protocol version 4)} નેટવર્ક ઓળખ માટે 32-બિટ એડ્રેસનો ઉપયોગ કરે છે.
+
+\textbf{IPv4 એડ્રેસ સ્ટ્રક્ચર:}
+\begin{center}
+\begin{tikzpicture}[node distance=0cm, outer sep=0pt]
+    \node [gtu block, minimum width=6cm] (net) {Network Address};
+    \node [gtu block, minimum width=6cm, right=0cm of net] (host) {Host Address};
+    \node [fit=(net)(host), label=above:32 Bits Total] {};
+\end{tikzpicture}
+\captionof{figure}{IPv4 Structure}
+\end{center}
+
+\textbf{IPv4 એડ્રેસ ક્લાસેસ:}
+\begin{center}
+\captionof{table}{Address Classes}
+\begin{tabulary}{\linewidth}{|C|L|C|C|L|}
+\hline
+\textbf{ક્લાસ} & \textbf{રેન્જ} & \textbf{નેટ બિટ્સ} & \textbf{હોસ્ટ બિટ્સ} & \textbf{સબનેટ માસ્ક} \\ \hline
+\textbf{A} & 1-126 & 8 & 24 & 255.0.0.0 \\ \hline
+\textbf{B} & 128-191 & 16 & 16 & 255.255.0.0 \\ \hline
+\textbf{C} & 192-223 & 24 & 8 & 255.255.255.0 \\ \hline
+\textbf{D} & 224-239 & Multicast & - & - \\ \hline
+\textbf{E} & 240-255 & Exp. & - & - \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{IPv4 પેકેટ હેડર:}
+\begin{center}
+\begin{tikzpicture}[node distance=0cm, auto]
+    \node [gtu block, minimum width=1cm] (ver) {Ver};
+    \node [gtu block, minimum width=1cm, right=0cm of ver] (ihl) {IHL};
+    \node [gtu block, minimum width=2cm, right=0cm of ihl] (tos) {Service};
+    \node [gtu block, minimum width=4cm, right=0cm of tos] (len) {Total Length};
+    
+    \node [gtu block, minimum width=4cm, below=0cm of ver.south west, anchor=north west] (id) {Identification};
+    \node [gtu block, minimum width=1cm, right=0cm of id] (flags) {Flg};
+    \node [gtu block, minimum width=3cm, right=0cm of flags] (off) {Frag Offset};
+    
+    \node [gtu block, minimum width=2cm, below=0cm of id.south west, anchor=north west] (ttl) {TTL};
+    \node [gtu block, minimum width=2cm, right=0cm of ttl] (proto) {Proto};
+    \node [gtu block, minimum width=4cm, right=0cm of proto] (check) {Checksum};
+    
+    \node [gtu block, minimum width=8cm, below=0cm of ttl.south west, anchor=north west] (src) {Source IP};
+    \node [gtu block, minimum width=8cm, below=0cm of src.south west, anchor=north west] (dst) {Destination IP};
+\end{tikzpicture}
+\captionof{figure}{IPv4 Header}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Class A-E, Header: Version IHL TOS Length ID Flags TTL Protocol Checksum Source Dest}
+\end{mnemonicbox}
+
+\questionmarks{5(અ OR)}{3}{5G શું છે? 5G ના ફીચર્સ લિસ્ટ કરો.}
+
+\begin{solutionbox}
+\textbf{5G (Fifth Generation)} એ વધારેલી ક્ષમતાઓ સાથે નવીનતમ મોબાઇલ કમ્યુનિકેશન સ્ટાન્ડાર્ડ છે.
+
+\textbf{5G ના ફીચર્સ:}
+\begin{itemize}
+    \item \keyword{અલ્ટ્રા-હાઇ સ્પીડ}: 10 Gbps સુધીના ડેટા રેટ્સ
+    \item \keyword{અલ્ટ્રા-લો લેટન્સી}: 1ms કરતાં ઓછો રિસ્પોન્સ ટાઇમ
+    \item \keyword{મેસિવ કનેક્ટિવિટી}: પ્રતિ km\textsuperscript{2} 1 મિલિયન ડિવાઇસેસ
+    \item \keyword{નેટવર્ક સ્લાઇસિંગ}: વર્ચ્યુઅલ ડેડિકેટેડ નેટવર્ક્સ
+    \item \keyword{એન્હાન્સ્ડ મોબાઇલ બ્રોડબેન્ડ}: સુધારેલ યુઝર એક્સપિરિયન્સ
+\end{itemize}
+
+\textbf{મુખ્ય ટેકનોલોજીઝ:}
+\begin{itemize}
+    \item મિલિમીટર વેવ, મેસિવ MIMO, બીમફોર્મિંગ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{UUMNE: અલ્ટ્રા-સ્પીડ, અલ્ટ્રા-લો લેટન્સી, મેસિવ કનેક્ટિવિટી, નેટવર્ક સ્લાઇસિંગ, એન્હાન્સ્ડ બ્રોડબેન્ડ}
+\end{mnemonicbox}
+
+\questionmarks{5(બ OR)}{4}{ડિસ્ટ્રિબ્યુટેડ કમ્પ્યુટિંગ સમજાવો.}
+
+\begin{solutionbox}
+\textbf{ડિસ્ટ્રિબ્યુટેડ કમ્પ્યુટિંગ} મલ્ટિપલ ઇન્ટરકનેક્ટેડ કમ્પ્યુટર્સ પર પ્રોસેસિંગ વિતરિત કરે છે.
+
+\textbf{આર્કિટેક્ચર:}
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm, auto]
+    \node [gtu block, ellipse, minimum height=1cm] (net) {Network};
+    \node [gtu state, above=of net] (n1) {Node 1};
+    \node [gtu state, left=of net] (n2) {Node 2};
+    \node [gtu state, right=of net] (n3) {Node 3};
+    \node [gtu state, below=of net] (n4) {Node 4};
+    
+    \draw [dashed] (n1) -- (net);
+    \draw [dashed] (n2) -- (net);
+    \draw [dashed] (n3) -- (net);
+    \draw [dashed] (n4) -- (net);
+\end{tikzpicture}
+\captionof{figure}{Distributed System}
+\end{center}
+
+\textbf{લક્ષણો:}
+\begin{itemize}
+    \item \keyword{રિસોર્સ શેરિંગ}: વિતરિત પ્રોસેસિંગ અને સ્ટોરેજ
+    \item \keyword{સ્કેલેબિલિટી}: ક્ષમતા વધારવા વધુ નોડ્સ ઉમેરો
+    \item \keyword{ફોલ્ટ ટોલરન્સ}: કેટલાક નોડ્સ ફેઇલ થાય તો સિસ્ટમ ચાલુ રહે
+    \item \keyword{લોકેશન ટ્રાન્સપેરન્સી}: યુઝર્સને રિસોર્સ લોકેશનની જાણ નથી
+\end{itemize}
+
+\textbf{ફાયદા:}
+\begin{itemize}
+    \item \keyword{વિશ્વસનીયતા}: કોઈ સિંગલ પોઇન્ટ ઓફ ફેઇલ્યર નથી
+    \item \keyword{પર્ફોર્મન્સ}: પેરેલલ પ્રોસેસિંગ ક્ષમતાઓ
+    \item \keyword{ખર્ચ-અસરકારકતા}: કોમોડિટી હાર્ડવેરનો ઉપયોગ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{RSFL: રિસોર્સ શેરિંગ, સ્કેલેબિલિટી, ફોલ્ટ ટોલરન્સ, લોકેશન ટ્રાન્સપેરન્સી}
+\end{mnemonicbox}
+
+\questionmarks{5(ક OR)}{7}{ડેટા લિંક લેયર પ્રોટોકોલ સમજાવો.}
+
+\begin{solutionbox}
+\textbf{ડેટા લિંક લેયર} અડીને આવેલા નેટવર્ક નોડ્સ વચ્ચે વિશ્વસનીય ડેટા ટ્રાન્સફર પ્રદાન કરે છે.
+
+\textbf{ફંક્શન્સ:}
+\begin{itemize}
+    \item \keyword{ફ્રેમિંગ}: બિટ્સને ફ્રેમ્સમાં ગોઠવો
+    \item \keyword{એરર ડિટેક્શન}: ટ્રાન્સમિશન એરર્સ ઓળખો
+    \item \keyword{એરર કરેક્શન}: શોધાયેલી એરર્સ સુધારો
+    \item \keyword{ફ્લો કંટ્રોલ}: ડેટા ટ્રાન્સમિશન રેટ મેનેજ કરો
+    \item \keyword{એક્સેસ કંટ્રોલ}: શેર્ડ મીડિયા એક્સેસ કોઓર્ડિનેટ કરો
+\end{itemize}
+
+\textbf{ફ્રેમ સ્ટ્રક્ચર:}
+\begin{center}
+\begin{tikzpicture}[node distance=0cm, auto]
+    \node [gtu block, minimum width=2cm] (start) {Start};
+    \node [gtu block, minimum width=2cm, right=0cm of start] (addr) {Address};
+    \node [gtu block, minimum width=2cm, right=0cm of addr] (ctrl) {Control};
+    \node [gtu block, minimum width=3cm, right=0cm of ctrl] (data) {Data};
+    \node [gtu block, minimum width=2cm, right=0cm of data] (fcs) {FCS (CRC)};
+    \node [gtu block, minimum width=2cm, right=0cm of fcs] (stop) {Stop};
+\end{tikzpicture}
+\captionof{figure}{Frame Structure}
+\end{center}
+
+\textbf{એરર ડિટેક્શન મેથડ્સ:}
+\begin{itemize}
+    \item પેરિટી ચેક
+    \item ચેકસમ
+    \item CRC (Cyclic Redundancy Check)
+\end{itemize}
+
+\textbf{ફ્લો કંટ્રોલ પ્રોટોકોલ્સ:}
+\begin{itemize}
+    \item સ્ટોપ-એન્ડ-વેઇટ
+    \item સ્લાઇડિંગ વિન્ડો
+    \item ગો-બેક-N ARQ
+    \item સિલેક્ટિવ રિપીટ ARQ
+\end{itemize}
+
+\textbf{વર્કિંગ પ્રક્રિયા:}
+\begin{center}
+\begin{tikzpicture}[node distance=3cm, auto]
+    \node [gtu state] (sender) {Sender};
+    \node [gtu state, right=of sender] (receiver) {Receiver};
+
+    \draw [gtu arrow] (sender) to[bend left=15] node [above] {Data Frame} (receiver);
+    \draw [gtu arrow] (receiver) to[bend left=15] node [below] {ACK} (sender);
+    
+    \path (sender) -- node [below=1cm] {Reliable Transfer} (receiver);
+\end{tikzpicture}
+\captionof{figure}{Data Link Protocol}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{FECFA: ફ્રેમિંગ, એરર ડિટેક્શન, કરેક્શન, ફ્લો કંટ્રોલ, એક્સેસ કંટ્રોલ}
+\end{mnemonicbox}
+
+\end{document}
