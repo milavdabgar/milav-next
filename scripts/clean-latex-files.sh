@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Script to remove LaTeX auxiliary/residual files recursively
-# Preserves .tex and .pdf files
+# Script to remove LaTeX auxiliary/residual files and Typora PDFs recursively
+# Preserves .tex and .pdf files (except Typora-generated PDFs)
 
 # Color codes for output
 RED='\033[0;31m'
@@ -66,7 +66,35 @@ for ext in "${EXTENSIONS[@]}"; do
 done
 
 echo ""
+echo -e "${YELLOW}Cleaning Typora-generated PDF files...${NC}"
+echo ""
+
+# Remove Typora PDF files
+typora_patterns=(
+    "*-solution-typora.pdf"
+    "*-solution-typora.gu.pdf"
+)
+
+for pattern in "${typora_patterns[@]}"; do
+    echo -e "${YELLOW}Searching for $pattern files...${NC}"
+    
+    # Find and count files with this pattern
+    count=$(find "$TARGET_DIR" -type f -name "$pattern" 2>/dev/null | wc -l | tr -d ' ')
+    
+    if [ "$count" -gt 0 ]; then
+        echo -e "${GREEN}Found $count $pattern file(s)${NC}"
+        
+        # Delete the files
+        find "$TARGET_DIR" -type f -name "$pattern" -delete
+        
+        total_deleted=$((total_deleted + count))
+    fi
+done
+
+echo ""
 echo -e "${GREEN}✓ Cleanup complete!${NC}"
 echo -e "${GREEN}Total files deleted: $total_deleted${NC}"
 echo ""
-echo -e "${YELLOW}Note: .tex and .pdf files have been preserved.${NC}"
+echo -e "${YELLOW}Note: LaTeX source (.tex) and compiled PDFs (.pdf) have been preserved.${NC}"
+echo -e "${YELLOW}      Only auxiliary files and Typora-generated PDFs were removed.${NC}"
+
