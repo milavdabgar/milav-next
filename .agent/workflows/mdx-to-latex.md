@@ -29,13 +29,13 @@ Create `.tex` file in same directory as MDX source:
 \begin{document}
 \maketitle
 
-% Convert all questions here (can write ~500 lines per shot)
+% Convert all questions here
 
 \end{document}
 ```
 
 ### 3. Convert Content
-- **Write in large chunks** (~500 lines at a time, multiple questions together)
+- **Write in single shot for each file** (~if fails due to length limits then only try in larger chunks of 500 lines at a time)
 - **Follow example templates** for all formatting patterns
 - **STRICT Content Fidelity**:
   - **DO NOT** create, expand, or streamline text.
@@ -77,10 +77,3 @@ xelatex -interaction=nonstopmode {filename}.tex
 xelatex -interaction=nonstopmode {filename}.tex  # Second run for references
 rm -f *.aux *.log *.out
 ```
-
-## Quick Tips
-- Build in large increments (multiple questions at once)
-- Refer to example templates when unsure
-- Compile frequently to catch errors
-- Keep original MDX content structure intact
-
