@@ -1,0 +1,1514 @@
+\documentclass{article}
+\input{../../../../../../latex-templates/gtu-solutions/preamble.tex}
+\input{../../../../../../latex-templates/gtu-solutions/gujarati-boxes.tex}
+\input{../../../../../../latex-templates/gtu-solutions/commands.tex}
+
+\title{Cyber Security and Digital Forensics (4361601) - Summer 2025 Solution}
+\date{May 8, 2025}
+
+\begin{document}
+\maketitle
+
+\questionmarks{1(a)}{3}{Public key અને Private Key cryptography વચ્ચેનો તફાવત આપો.}
+\begin{solutionbox}
+    \begin{answertable}{Key Cryptography તફાવત}
+    \begin{tabulary}{\textwidth}{|L|L|L|}
+        \hline
+        \textbf{પાસાં} & \textbf{Private Key Cryptography} & \textbf{Public Key Cryptography} \\
+        \hline
+        \textbf{Key Management} & એક જ key encryption/decryption માટે & અલગ keys encryption/decryption માટે \\
+        \hline
+        \textbf{Key Distribution} & સુરક્ષિત channel જરૂરી & સુરક્ષિત channel જરૂરી નથી \\
+        \hline
+        \textbf{Speed} & ઝડપી processing & Private key કરતાં ધીમી \\
+        \hline
+        \textbf{Security Level} & key ગુપ્ત રાખવાથી ઉચ્ચ & ગાણિતિક સુરક્ષા ઉચ્ચ \\
+        \hline
+        \textbf{ઉદાહરણ} & DES, AES & RSA, ECC \\
+        \hline
+    \end{tabulary}
+    \end{answertable}
+
+    \begin{mnemonicbox}
+    "Private Personal, Public Pair"
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{1(b)}{4}{CIA Triad સમજાવો.}
+\begin{solutionbox}
+    CIA Triad એ માહિતી સુરક્ષાનો પાયો છે જેમાં ત્રણ મુખ્ય સિદ્ધાંતો છે:
+
+    \begin{center}
+    \begin{tikzpicture}[node distance=2cm, auto]
+        \node [gtu block] (cia) {CIA Triad};
+        \node [gtu block, below left of=cia, yshift=-1.5cm, xshift=-1cm] (conf) {Confidentiality};
+        \node [gtu block, below of=cia, yshift=-1.5cm] (integ) {Integrity};
+        \node [gtu block, below right of=cia, yshift=-1.5cm, xshift=1cm] (avail) {Availability};
+        
+        \node [gtu block, below of=conf] (privacy) {ડેટા ગોપનીયતા};
+        \node [gtu block, below of=integ] (accuracy) {ડેટા ચોકસાઈ};
+        \node [gtu block, below of=avail] (access) {સિસ્ટમ ઍક્સેસ};
+
+        \draw [gtu arrow] (cia) -- (conf);
+        \draw [gtu arrow] (cia) -- (integ);
+        \draw [gtu arrow] (cia) -- (avail);
+        \draw [gtu arrow] (conf) -- (privacy);
+        \draw [gtu arrow] (integ) -- (accuracy);
+        \draw [gtu arrow] (avail) -- (access);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{itemize}
+        \item \keyword{Confidentiality (ગોપનીયતા)}: ડેટા ફક્ત અધિકૃત વપરાશકર્તાઓ માટે ઉપલબ્ધ હોય
+        \item \keyword{Integrity (અખંડિતતા)}: ડેટાની સચોટતા અને સંપૂર્ણતા જાળવે
+        \item \keyword{Availability (ઉપલબ્ધતા)}: જરૂર પડે ત્યારે સિસ્ટમ્સ ઉપલબ્ધ હોય
+    \end{itemize}
+
+    \begin{mnemonicbox}
+    "Can I Access" (Confidentiality, Integrity, Availability)
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{1(c)}{7}{Md5 અલ્ગોરિધમના પગલાં સમજાવો.}
+\begin{solutionbox}
+    MD5 (Message Digest 5) એ 128-bit hash value બનાવતું cryptographic hash function છે.
+
+    \begin{answertable}{MD5 અલ્ગોરિધમ પગલાં}
+    \begin{tabulary}{\textwidth}{|L|L|L|}
+        \hline
+        \textbf{પગલું} & \textbf{પ્રક્રિયા} & \textbf{વર્ણન} \\
+        \hline
+        1 & \textbf{Padding} & message length $\equiv$ 448 (mod 512) બનાવવા bits ઉમેરવા \\
+        \hline
+        2 & \textbf{Length Addition} & મૂળ message ની 64-bit length ઉમેરવી \\
+        \hline
+        3 & \textbf{Initialize Buffers} & ચાર 32-bit buffers (A, B, C, D) સેટ કરવા \\
+        \hline
+        4 & \textbf{Process Blocks} & 512-bit blocks માં message process કરવો \\
+        \hline
+        5 & \textbf{Round Functions} & 16 operations ના 4 rounds લાગુ કરવા \\
+        \hline
+    \end{tabulary}
+    \end{answertable}
+
+    \begin{codebox}
+\begin{lstlisting}[language=python]
+# MD5 Processing Steps
+def md5_process():
+    # Step 1: Padding
+    padded_message = original + padding_bits
+    # Step 2: Process in 512-bit chunks  
+    for chunk in chunks:
+        # Step 3: Apply round functions
+        result = round_functions(chunk)
+    return final_hash
+\end{lstlisting}
+    \end{codebox}
+
+    \begin{itemize}
+        \item \textbf{Round 1}: F(X,Y,Z) = (X$\land$Y) $\lor$ ($\lnot$X$\land$Z)
+        \item \textbf{Round 2}: G(X,Y,Z) = (X$\land$Z) $\lor$ (Y$\land\lnot$Z)
+        \item \textbf{Round 3}: H(X,Y,Z) = X$\oplus$Y$\oplus$Z
+        \item \textbf{Round 4}: I(X,Y,Z) = Y$\oplus$(X$\lor\lnot$Z)
+    \end{itemize}
+
+    \begin{mnemonicbox}
+    "My Data Needs Proper Processing"
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{1(c)}{7}{RSA ના શોધકોની યાદી બનાવો. RSA અલ્ગોરિધમના સ્ટેપ્સ લખો.}
+\begin{solutionbox}
+    \textbf{RSA શોધકો:}
+
+    \begin{itemize}
+        \item \textbf{Ron Rivest} (MIT)
+        \item \textbf{Adi Shamir} (MIT) 
+        \item \textbf{Leonard Adleman} (MIT)
+    \end{itemize}
+
+    \begin{answertable}{RSA અલ્ગોરિધમ પગલાં}
+    \begin{tabulary}{\textwidth}{|L|L|L|}
+        \hline
+        \textbf{પગલું} & \textbf{પ્રક્રિયા} & \textbf{સૂત્ર} \\
+        \hline
+        1 & \textbf{Primes પસંદ કરો} & p, q (મોટા primes) પસંદ કરો \\
+        \hline
+        2 & \textbf{n ગણતરી} & n = p $\times$ q \\
+        \hline
+        3 & \textbf{$\phi$(n) ગણતરી} & $\phi$(n) = (p-1) $\times$ (q-1) \\
+        \hline
+        4 & \textbf{e પસંદ કરો} & gcd(e, $\phi$(n)) = 1 \\
+        \hline
+        5 & \textbf{d ગણતરી} & d $\times$ e $\equiv$ 1 (mod $\phi$(n)) \\
+        \hline
+        6 & \textbf{Encryption} & C = M$^e$ mod n \\
+        \hline
+        7 & \textbf{Decryption} & M = C$^d$ mod n \\
+        \hline
+    \end{tabulary}
+    \end{answertable}
+
+    \textbf{Key Pairs:}
+
+    \begin{itemize}
+        \item \textbf{Public Key}: (n, e)
+        \item \textbf{Private Key}: (n, d)
+    \end{itemize}
+
+    \begin{mnemonicbox}
+    "RSA: Rivest Shamir Adleman"
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(a)}{3}{વ્યાખ્યા આપો: Firewall. Firewall ની મર્યાદાઓની યાદી બનાવો.}
+\begin{solutionbox}
+    \textbf{વ્યાખ્યા:} Firewall એ network security device છે જે પૂર્વ-નિર્ધારિત સુરક્ષા નિયમોના આધારે આવતા/જતા network traffic ને monitor અને control કરે છે.
+
+    \begin{answertable}{Firewall મર્યાદાઓ}
+    \begin{tabulary}{\textwidth}{|L|L|}
+        \hline
+        \textbf{મર્યાદા} & \textbf{વર્ણન} \\
+        \hline
+        \textbf{આંતરિક ધમકીઓ} & insider attacks થી સુરક્ષા આપી શકતી નથી \\
+        \hline
+        \textbf{Application Layer} & application-specific attacks સામે મર્યાદિત સુરક્ષા \\
+        \hline
+        \textbf{Performance} & network traffic ધીમી કરી શકે છે \\
+        \hline
+        \textbf{Configuration} & યોગ્ય setup અને maintenance જરૂરી \\
+        \hline
+        \textbf{Encrypted Traffic} & encrypted content ને અસરકારક રીતે inspect કરી શકતી નથી \\
+        \hline
+    \end{tabulary}
+    \end{answertable}
+
+    \begin{mnemonicbox}
+    "Fire Walls Limit Internal Protection"
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(b)}{4}{IPsec Tunnel Mode અને Transport mode નું સ્કેચ કરો.}
+\begin{solutionbox}
+    \textbf{IPsec Modes Comparison:}
+
+    \begin{center}
+    \begin{tikzpicture}[node distance=1cm, auto]
+        % Transport Mode
+        \node[text width=4cm, align=left] at (-1, 2) {\textbf{Transport Mode:}};
+        \draw (0,1) rectangle (2.5,2); \node at (1.25,1.5) {Original IP Header};
+        \draw (2.5,1) rectangle (5,2); \node at (3.75,1.5) {IPsec Header};
+        \draw (5,1) rectangle (7.5,2); \node at (6.25,1.5) {Original Payload};
+
+        % Tunnel Mode
+        \node[text width=4cm, align=left] at (-1, -1) {\textbf{Tunnel Mode:}};
+        \draw (0,-2) rectangle (2,-1); \node at (1,-1.5) {New IP Header};
+        \draw (2,-2) rectangle (4,-1); \node at (3,-1.5) {IPsec Header};
+        \draw (4,-2) rectangle (6,-1); \node at (5,-1.5) {Original IP Header};
+        \draw (6,-2) rectangle (8,-1); \node at (7,-1.5) {Original Payload};
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{answertable}{મુખ્ય તફાવતો}
+    \begin{tabulary}{\textwidth}{|L|L|L|}
+        \hline
+        \textbf{પાસું} & \textbf{Transport Mode} & \textbf{Tunnel Mode} \\
+        \hline
+        \textbf{સુરક્ષા} & ફક્ત Payload & સંપૂર્ણ packet \\
+        \hline
+        \textbf{ઉપયોગ} & End-to-end & Gateway-to-gateway \\
+        \hline
+        \textbf{Overhead} & ઓછું & વધારે \\
+        \hline
+        \textbf{IP Header} & મૂળ જાળવાયેલું & નવું header ઉમેર્યું \\
+        \hline
+    \end{tabulary}
+    \end{answertable}
+
+    \begin{mnemonicbox}
+    "Transport Travels, Tunnel Total"
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(c)}{7}{વિવિધ પ્રકારના Active અને Passive attacks નું વિગતવાર વર્ણન કરો.}
+\begin{solutionbox}
+    \textbf{Attack વર્ગીકરણ:}
+
+    \begin{center}
+    \begin{tikzpicture}[node distance=2cm, auto]
+        \node [gtu block] (root) {Network Attacks};
+        \node [gtu block, below left of=root, xshift=-2cm] (active) {Active Attacks};
+        \node [gtu block, below right of=root, xshift=2cm] (passive) {Passive Attacks};
+
+        % Active Children
+        \node [gtu block, below of=active, xshift=-1.5cm] (mod) {Modification};
+        \node [gtu block, below of=active] (fab) {Fabrication};
+        \node [gtu block, below of=active, xshift=1.5cm] (int) {Interruption};
+
+        % Passive Children
+        \node [gtu block, below of=passive, xshift=-1cm] (eaves) {Eavesdropping};
+        \node [gtu block, below of=passive, xshift=1cm] (traffic) {Traffic Analysis};
+
+        \draw [gtu arrow] (root) -- (active);
+        \draw [gtu arrow] (root) -- (passive);
+        \draw [gtu arrow] (active) -- (mod);
+        \draw [gtu arrow] (active) -- (fab);
+        \draw [gtu arrow] (active) -- (int);
+        \draw [gtu arrow] (passive) -- (eaves);
+        \draw [gtu arrow] (passive) -- (traffic);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{answertable}{Active Attacks}
+    \begin{tabulary}{\textwidth}{|L|L|L|}
+        \hline
+        \textbf{પ્રકાર} & \textbf{વર્ણન} & \textbf{ઉદાહરણ} \\
+        \hline
+        \textbf{Masquerade} & અન્ય entity નો નકલી અવતાર & Fake identity \\
+        \hline
+        \textbf{Replay} & captured data ને ફરીથી transmit કરવું & Session replay \\
+        \hline
+        \textbf{Modification} & message content ને બદલવું & Data tampering \\
+        \hline
+        \textbf{DoS} & service availability નો ઇનકાર & Server flooding \\
+        \hline
+    \end{tabulary}
+    \end{answertable}
+
+    \begin{answertable}{Passive Attacks}
+    \begin{tabulary}{\textwidth}{|L|L|L|}
+        \hline
+        \textbf{પ્રકાર} & \textbf{વર્ણન} & \textbf{અસર} \\
+        \hline
+        \textbf{Eavesdropping} & communications સાંભળવું & Data theft \\
+        \hline
+        \textbf{Traffic Analysis} & communication patterns નું analysis & Privacy breach \\
+        \hline
+        \textbf{Monitoring} & network activity નું observation & Information gathering \\
+        \hline
+    \end{tabulary}
+    \end{answertable}
+
+    \begin{mnemonicbox}
+    "Active Acts, Passive Peeks"
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{2(a)}{3}{વ્યાખ્યા આપો: Digital Signature. Digital Signature ના વિવિધ એપ્લિકેશન ક્ષેત્રોરની ચર્ચા કરો.}
+\begin{solutionbox}
+    \textbf{વ્યાખ્યા:} Digital Signature એ cryptographic technique છે જે public key cryptography ના ઉપયોગથી digital messages અથવા documents ની authenticity અને integrity ને validate કરે છે.
+
+    \begin{answertable}{એપ્લિકેશન ક્ષેત્રો}
+    \begin{tabulary}{\textwidth}{|L|L|}
+        \hline
+        \textbf{ક્ષેત્ર} & \textbf{ઉપયોગ} \\
+        \hline
+        \textbf{E-commerce} & Online transactions, contracts \\
+        \hline
+        \textbf{Banking} & Electronic fund transfers, cheques \\
+        \hline
+        \textbf{Government} & Digital certificates, સરકારી documents \\
+        \hline
+        \textbf{Healthcare} & Patient records, prescriptions \\
+        \hline
+        \textbf{Legal} & Electronic contracts, court documents \\
+        \hline
+    \end{tabulary}
+    \end{answertable}
+
+    \begin{mnemonicbox}
+    "Digital Documents Demand Authentic Approval"
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{2(b)}{4}{HTTP અને HTTPS વચ્ચેનો તફાવત આપો.}
+\begin{solutionbox}
+    \begin{answertable}{HTTP vs HTTPS}
+    \begin{tabulary}{\textwidth}{|L|L|L|}
+        \hline
+        \textbf{પેરામીટર} & \textbf{HTTP} & \textbf{HTTPS} \\
+        \hline
+        \textbf{સુરક્ષા} & કોઈ encryption નથી & SSL/TLS encryption \\
+        \hline
+        \textbf{Port} & 80 & 443 \\
+        \hline
+        \textbf{Protocol} & Hypertext Transfer Protocol & HTTP + SSL/TLS \\
+        \hline
+        \textbf{ડેટા સુરક્ષા} & Plain text & Encrypted \\
+        \hline
+        \textbf{Authentication} & Server verification નથી & Server certificate validation \\
+        \hline
+        \textbf{Speed} & વધારે ઝડપી & થોડી ધીમી \\
+        \hline
+        \textbf{URL Prefix} & http:// & https:// \\
+        \hline
+    \end{tabulary}
+    \end{answertable}
+
+    \textbf{આકૃતિ:}
+
+    \begin{center}
+    \begin{tikzpicture}[node distance=3cm, auto]
+        % Client and Server Nodes
+        \node [gtu block] (client) {Client};
+        \node [gtu block, right of=client, xshift=4cm] (server) {Server};
+
+        % HTTP Path
+        \draw [gtu arrow, bend left=20] (client) to node[above] {HTTP: Plain Text} (server);
+
+        % HTTPS Path
+        \draw [gtu arrow, bend right=20] (client) to node[below] {HTTPS: Encrypted} (server);
+        \node [draw, dashed, fit=(client) (server), label=below:SSL/TLS Layer] {};
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{mnemonicbox}
+    "HTTPS Has Security"
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{2(c)}{7}{વ્યાખ્યા આપો: Malicious software. Virus, Worm, Keylogger, Trojans ને વિગતવાર સમજાવો.}
+\begin{solutionbox}
+    \textbf{વ્યાખ્યા:} Malicious software (Malware) એ એવા software છે જે computer systems ને નુકસાન પહોંચાડવા, exploit કરવા અથવા unauthorized access મેળવવા માટે design કરવામાં આવે છે.
+
+    \begin{answertable}{Malware ના પ્રકારો}
+    \begin{tabulary}{\textwidth}{|L|L|L|}
+        \hline
+        \textbf{પ્રકાર} & \textbf{લક્ષણો} & \textbf{વર્તન} \\
+        \hline
+        \textbf{Virus} & Host file જરૂરી & Programs સાથે attach થાય, execute થતાં spread થાય \\
+        \hline
+        \textbf{Worm} & Self-replicating & Networks દ્વારા સ્વતંત્ર રીતે spread થાય \\
+        \hline
+        \textbf{Keylogger} & Keystrokes record કરે & Passwords અને sensitive data steal કરે \\
+        \hline
+        \textbf{Trojan} & Legitimate તરીકે disguise & Attackers ને backdoor access આપે \\
+        \hline
+    \end{tabulary}
+    \end{answertable}
+
+    \textbf{વિગતવાર સમજૂતી:}
+
+    \textbf{Virus:}
+    \begin{itemize}
+        \item Execute થવા માટે host program જરૂરી
+        \item Infected files દ્વારા spread થાય
+        \item Data corrupt અથવા delete કરી શકે
+    \end{itemize}
+
+    \textbf{Worm:}
+    \begin{itemize}
+        \item Self-propagating malware
+        \item Network vulnerabilities exploit કરે
+        \item Network bandwidth consume કરે
+    \end{itemize}
+
+    \textbf{Keylogger:}
+    \begin{itemize}
+        \item User keystrokes record કરે
+        \item Login credentials capture કરે
+        \item Hardware અથવા software-based હોઈ શકે
+    \end{itemize}
+
+    \textbf{Trojan:}
+    \begin{itemize}
+        \item Legitimate software તરીકે દેખાય
+        \item Remote access માટે backdoor બનાવે
+        \item Self-replicate થતું નથી
+    \end{itemize}
+
+    \begin{mnemonicbox}
+    "Viruses Visit, Worms Wander, Keys Captured, Trojans Trick"
+    \end{mnemonicbox}
+\end{solutionbox}
+
+
+\questionmarks{3(a)}{3}{વ્યાખ્યા આપો: Cybercrime. Cyber Law ની જરૂરિયાતો પણ ચર્ચા કરો.}
+\begin{solutionbox}
+    \textbf{વ્યાખ્યા:} Cybercrime એટલે computers, networks અથવા digital devices નો સાધન અથવા લક્ષ્ય તરીકે ઉપયોગ કરીને કરવામાં આવતી ગુનાહિત પ્રવૃત્તિઓ.
+
+    \begin{answertable}{Cyber Law ની જરૂરિયાતો}
+    \begin{tabulary}{\textwidth}{|L|L|}
+        \hline
+        \textbf{જરૂરિયાત} & \textbf{સમર્થન} \\
+        \hline
+        \textbf{કાયદાકીય માળખું} & Cyber અપરાધોની સ્પષ્ટ વ્યાખ્યાઓ સ્થાપિત કરવી \\
+        \hline
+        \textbf{અધિકારક્ષેત્ર} & ભૌગોલિક સીમાઓ પાર સત્તા નક્કી કરવી \\
+        \hline
+        \textbf{પુરાવા} & Digital evidence collection માટે માર્ગદર્શિકા \\
+        \hline
+        \textbf{સજા} & Cybercriminals માટે deterrent પગલાં \\
+        \hline
+        \textbf{સુરક્ષા} & વ્યક્તિગત અને સંસ્થાકીય અધિકારોનું રક્ષણ \\
+        \hline
+    \end{tabulary}
+    \end{answertable}
+
+    \begin{mnemonicbox}
+    "Cyber Laws Create Legal Protection"
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3(b)}{4}{Cyber spying અને Cyber theft સમજાવો.}
+\begin{solutionbox}
+    \textbf{Cyber Spying:}
+    \begin{itemize}
+        \item \textbf{વ્યાખ્યા}: Digital communications અને activities ની અનધિકૃત દેખરેખ
+        \item \textbf{પદ્ધતિઓ}: Malware, phishing, social engineering
+        \item \textbf{લક્ષ્યો}: સરકારી, corporate secrets, વ્યક્તિગત ડેટા
+        \item \textbf{અસર}: રાષ્ટ્રીય સુરક્ષા જોખમો, સ્પર્ધાત્મક ગેરલાભ
+    \end{itemize}
+
+    \textbf{Cyber Theft:}
+    \begin{itemize}
+        \item \textbf{વ્યાખ્યા}: Digital assets અથવા માહિતીની અનધિકૃત ચોરી
+        \item \textbf{પ્રકારો}: Identity theft, financial fraud, intellectual property theft
+        \item \textbf{પદ્ધતિઓ}: Hacking, social engineering, insider threats
+        \item \textbf{પરિણામો}: આર્થિક નુકસાન, પ્રતિષ્ઠા નુકસાન
+    \end{itemize}
+
+    \begin{answertable}{સરખામણી કોષ્ટક}
+    \begin{tabulary}{\textwidth}{|L|L|L|}
+        \hline
+        \textbf{પાસું} & \textbf{Cyber Spying} & \textbf{Cyber Theft} \\
+        \hline
+        \textbf{હેતુ} & માહિતી એકત્રિકરણ & સંપત્તિ પ્રાપ્તિ \\
+        \hline
+        \textbf{Detection} & ઘણીવાર undetected & ધ્યાનમાં આવી શકે \\
+        \hline
+        \textbf{સમયગાળો} & લાંબા ગાળાની monitoring & એક વખત કે સમયાંતરે \\
+        \hline
+        \textbf{પ્રેરણા} & Intelligence/espionage & આર્થિક લાભ \\
+        \hline
+    \end{tabulary}
+    \end{answertable}
+
+    \begin{mnemonicbox}
+    "Spies Spy, Thieves Take"
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3(c)}{7}{Cyber law ની કલમ 66 સમજાવો.}
+\begin{solutionbox}
+    \textbf{Section 66 - Computer Related Offences (IT Act 2008):}
+
+    \begin{answertable}{મુખ્ય જોગવાઈઓ}
+    \begin{tabulary}{\textwidth}{|L|L|L|}
+        \hline
+        \textbf{પેટા-કલમ} & \textbf{ગુનો} & \textbf{સજા} \\
+        \hline
+        \textbf{66(1)} & કમ્પ્યુટર સંસાધન નુકસાન (Dishonestly/fraudulently) & 3 વર્ષ સુધી કેદ + ₹5 લાખ સુધી દંડ \\
+        \hline
+        \textbf{66A} & અપમાનજનક સંદેશા મોકલવા & 3 વર્ષ સુધી + દંડ \\
+        \hline
+        \textbf{66B} & ચોરી કરેલ કમ્પ્યુટર સંસાધન મેળવવું & 3 વર્ષ સુધી + ₹1 લાખ સુધી દંડ \\
+        \hline
+        \textbf{66C} & Identity theft & 3 વર્ષ સુધી + ₹1 લાખ સુધી દંડ \\
+        \hline
+        \textbf{66D} & Computer દ્વારા personation થી છેતરપિંડી & 3 વર્ષ સુધી + ₹1 લાખ સુધી દંડ \\
+        \hline
+        \textbf{66E} & ગોપનીયતા ભંગ & 3 વર્ષ સુધી + ₹2 લાખ સુધી દંડ \\
+        \hline
+        \textbf{66F} & Cyber terrorism & આજીવન કેદ \\
+        \hline
+    \end{tabulary}
+    \end{answertable}
+
+    \textbf{વિગતવાર કવરેજ:}
+
+    \textbf{કલમ 66 મુખ્ય ગુનાઓ:}
+    \begin{itemize}
+        \item \textbf{Hacking}: Computer systems માં અનધિકૃત પ્રવેશ
+        \item \textbf{Data Theft}: પરવાનગી વિના ડેટા ચોરી અથવા નકલ
+        \item \textbf{System Damage}: Computer ડેટા નાશ અથવા ફેરફાર
+        \item \textbf{Virus Introduction}: Malicious code દાખલ કરવો
+    \end{itemize}
+
+    \textbf{જરૂરી તત્વો:}
+    \begin{itemize}
+        \item \textbf{ઈરાદો}: અપ્રમાણિક અથવા છેતરપિંડીનો ઈરાદો
+        \item \textbf{પ્રવેશ}: માલિકની પરવાનગી વિના
+        \item \textbf{નુકસાન}: સિસ્ટમ અથવા ડેટાને નુકસાન પહોંચાડવું
+        \item \textbf{જ્ઞાન}: અનધિકૃત પ્રવેશની જાણકારી
+    \end{itemize}
+
+    \textbf{કાનૂની માળખું:}
+    \begin{itemize}
+        \item \textbf{Cognizable}: પોલીસ વોરંટ વિના ધરપકડ કરી શકે
+        \item \textbf{Non-bailable}: જામીન કોર્ટની મુનસફી પર
+        \item \textbf{Evidence}: Digital evidence કોર્ટમાં માન્ય
+    \end{itemize}
+
+    \begin{mnemonicbox}
+    "Section 66 Stops Cyber Sins"
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{3(a)}{3}{Cyber terrorism સમજાવો.}
+\begin{solutionbox}
+    \textbf{વ્યાખ્યા:} Cyber terrorism એટલે રાજકીય, ધાર્મિક અથવા વૈચારિક હેતુઓ માટે ડર, વિક્ષેપ અથવા નુકસાન પહોંચાડવા digital technologies નો ઉપયોગ કરવો.
+
+    \begin{answertable}{લાક્ષણિકતાઓ}
+    \begin{tabulary}{\textwidth}{|L|L|}
+        \hline
+        \textbf{પાસું} & \textbf{વર્ણન} \\
+        \hline
+        \textbf{લક્ષ્ય} & Critical infrastructure, સરકારી systems \\
+        \hline
+        \textbf{પદ્ધતિ} & DDoS attacks, system infiltration, data destruction \\
+        \hline
+        \textbf{પ્રેરણા} & રાજીકીય, ધાર્મિક, વૈચારિક ધ્યેયો \\
+        \hline
+        \textbf{અસર} & જાહેર ભય, આર્થિક વિક્ષેપ, રાષ્ટ્રીય સુરક્ષા \\
+        \hline
+    \end{tabulary}
+    \end{answertable}
+
+    \textbf{ઉદાહરણો:}
+    \begin{itemize}
+        \item Power grid attacks
+        \item Transportation system disruption
+        \item Financial system targeting
+    \end{itemize}
+
+    \begin{mnemonicbox}
+    "Terror Through Technology"
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{3(b)}{4}{Cyber bullying અને Cyber stalking સમજાવો.}
+\begin{solutionbox}
+    \textbf{Cyber Bullying:}
+    \begin{itemize}
+        \item \textbf{વ્યાખ્યા}: અન્યોને હેરાન કરવા, ડરાવવા અથવા નુકસાન પહોંચાડવા digital platforms નો ઉપયોગ
+        \item \textbf{Platforms}: Social media, messaging apps, online forums
+        \item \textbf{લાક્ષણિકતાઓ}: પુનરાવર્તિત, ઈરાદાપૂર્વક નુકસાન, power imbalance
+        \item \textbf{અસર}: માનસિક આઘાત, ડિપ્રેશન, સામાજિક એકલતા
+    \end{itemize}
+
+    \textbf{Cyber Stalking:}
+    \begin{itemize}
+        \item \textbf{વ્યાખ્યા}: સતત online પજવણી જેનાથી ડર અથવા ભાવનાત્મક તકલીફ થાય
+        \item \textbf{પદ્ધતિઓ}: અનિચ્છનીય સંદેશા, tracking, identity theft
+        \item \textbf{સમયગાળો}: લાંબા ગાળાનું, સતત વર્તન
+        \item \textbf{કાનૂની}: ઘણા અધિકારક્ષેત્રોમાં ફોજદારી ગુનો
+    \end{itemize}
+
+    \begin{answertable}{સરખામણી}
+    \begin{tabulary}{\textwidth}{|L|L|L|}
+        \hline
+        \textbf{પાસું} & \textbf{Cyber Bullying} & \textbf{Cyber Stalking} \\
+        \hline
+        \textbf{સમયગાળો} & Episodes & સતત \\
+        \hline
+        \textbf{વય જૂથ} & મુખ્યત્વે સગીરો & તમામ ઉંમરના \\
+        \hline
+        \textbf{પ્રેરણા} & સામાજિક વર્ચસ્વ & Obsession/control \\
+        \hline
+        \textbf{Platform} & Public/semi-public & Private/public \\
+        \hline
+    \end{tabulary}
+    \end{answertable}
+
+    \begin{mnemonicbox}
+    "Bullies Bother, Stalkers Stalk"
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{3(c)}{7}{Cyber law ની કલમ 67 સમજાવો.}
+\begin{solutionbox}
+    \textbf{Section 67 - Publishing Obscene Information (IT Act 2008):}
+
+    \begin{answertable}{મુખ્ય જોગવાઈઓ}
+    \begin{tabulary}{\textwidth}{|L|L|L|}
+        \hline
+        \textbf{કલમ} & \textbf{સામગ્રી} & \textbf{સજા} \\
+        \hline
+        \textbf{67} & અશ્લીલ સામગ્રી પ્રકાશિત કરવી & પ્રથમ ગુનો: 3 વર્ષ + ₹5 લાખ દંડ \\
+        \hline
+        \textbf{67A} & જાતીય સ્પષ્ટ સામગ્રી & 5 વર્ષ સુધી + ₹10 લાખ દંડ \\
+        \hline
+        \textbf{67B} & બાળ અશ્લીલતા (Child pornography) & પ્રથમ: 5 વર્ષ + ₹10 લાખ, પછી: 7 વર્ષ + ₹10 લાખ \\
+        \hline
+        \textbf{67C} & મધ્યસ્થી જવાબદારી & ગેરકાયદેસર સામગ્રી દૂર કરવામાં નિષ્ફળતા \\
+        \hline
+    \end{tabulary}
+    \end{answertable}
+
+    \textbf{મુખ્ય તત્વો:}
+
+    \textbf{કલમ 67 - અશ્લીલતા:}
+    \begin{itemize}
+        \item \textbf{પ્રકાશન}: Electronic સ્વરૂપમાં ઉપલબ્ધ કરાવવું
+        \item \textbf{સામગ્રી}: કામુક, જાતીય સ્પષ્ટ સામગ્રી
+        \item \textbf{માધ્યમ}: Website, email, social media
+        \item \textbf{ઈરાદો}: દર્શકોને ભ્રષ્ટ કરવાનો
+    \end{itemize}
+
+    \textbf{કલમ 67A - જાતીય સ્પષ્ટ:}
+    \begin{itemize}
+        \item સ્પષ્ટ જાતીય સામગ્રી માટે \textbf{વધારે સજા}
+        \item સામાન્ય અશ્લીલતા કરતાં \textbf{વ્યાપક વ્યાપ}
+        \item \textbf{વ્યાપારી હેતુ} ગંભીર પરિબળ ગણાય
+    \end{itemize}
+
+    \textbf{કલમ 67B - બાળ સુરક્ષા:}
+    \begin{itemize}
+        \item બાળ શોષણ માટે \textbf{Zero tolerance}
+        \item કબજા અને વિતરણ માટે \textbf{સખત જવાબદારી}
+        \item ગંભીરતા દર્શાવતી \textbf{ઉચ્ચ દંડ}
+        \item Platforms માટે \textbf{વય ચકાસણી} આવશ્યકતાઓ
+    \end{itemize}
+
+    \textbf{ઉપલબ્ધ બચાવ:}
+    \begin{itemize}
+        \item \textbf{વૈજ્ઞાનિક/શૈક્ષણિક} હેતુ
+        \item \textbf{કલાત્મક યોગ્યતા} વિચારણા
+        \item કેટલાક કિસ્સાઓમાં \textbf{ખાનગી જોવા}
+        \item સામગ્રીના પ્રકાર વિશે \textbf{જ્ઞાનનો અભાવ}
+    \end{itemize}
+
+    \textbf{Digital Evidence Requirements:}
+    \begin{itemize}
+        \item \textbf{Chain of custody} જાળવણી
+        \item \textbf{તકનીકી અધિકૃતતા} સાબિતી
+        \item \textbf{સ્રોત ઓળખ} પદ્ધતિઓ
+        \item Electronic evidence નું \textbf{સંરક્ષણ}
+    \end{itemize}
+
+    \begin{mnemonicbox}
+    "Section 67 Stops Shameful Sharing"
+    \end{mnemonicbox}
+\end{solutionbox}
+
+
+\questionmarks{4(a)}{3}{Hackers ના પ્રકારોની ચર્ચા કરો.}
+\begin{solutionbox}
+    \textbf{Hacker વર્ગીકરણ:}
+
+    \begin{answertable}{Hacker પ્રકારો}
+    \begin{tabulary}{\textwidth}{|L|L|L|}
+        \hline
+        \textbf{પ્રકાર} & \textbf{પ્રેરણા} & \textbf{પ્રવૃત્તિઓ} \\
+        \hline
+        \textbf{White Hat} & Ethical security testing & અધિકૃત penetration testing \\
+        \hline
+        \textbf{Black Hat} & દૂષિત ઈરાદો & ગેરકાયદેસર system breaking \\
+        \hline
+        \textbf{Gray Hat} & મિશ્ર પ્રેરણા & અનધિકૃત પરંતુ non-malicious \\
+        \hline
+        \textbf{Script Kiddie} & ઓળખ/મજા & અસ્તિત્વમાંના tools નો ઉપયોગ \\
+        \hline
+        \textbf{Hacktivist} & રાજકીય/સામાજિક કારણો & Hacking દ્વારા વિરોધ \\
+        \hline
+    \end{tabulary}
+    \end{answertable}
+
+    \textbf{વિગતવાર પ્રકારો:}
+
+    \begin{itemize}
+        \item \textbf{White Hat}: Ethical hackers, સુરક્ષા વ્યવસાયિકો
+        \item \textbf{Black Hat}: Cybercriminals જે નફો અથવા નુકસાન ઈચ્છે છે
+        \item \textbf{Gray Hat}: Ethical અને malicious ની વચ્ચે
+    \end{itemize}
+
+    \begin{mnemonicbox}
+    "Hats Have Hacker Hierarchy"
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(b)}{4}{RAT સમજાવો.}
+\begin{solutionbox}
+    \textbf{RAT (Remote Administration Tool):}
+
+    \textbf{વ્યાખ્યા:} Software જે computer system નું remote control પરવાનગી આપે છે, ઘણીવાર અનધિકૃત પ્રવેશ માટે દૂષિત રીતે ઉપયોગમાં લેવાય છે.
+
+    \begin{answertable}{લાક્ષણિકતાઓ}
+    \begin{tabulary}{\textwidth}{|L|L|}
+        \hline
+        \textbf{લક્ષણ} & \textbf{વર્ણન} \\
+        \hline
+        \textbf{Remote Control} & દૂરથી સંપૂર્ણ system access \\
+        \hline
+        \textbf{Stealth Mode} & User detection થી છુપાયેલું \\
+        \hline
+        \textbf{Data Theft} & File access અને transfer ક્ષમતાઓ \\
+        \hline
+        \textbf{Keylogging} & Keystroke recording \\
+        \hline
+        \textbf{Screen Capture} & Desktop monitoring \\
+        \hline
+    \end{tabulary}
+    \end{answertable}
+
+    \textbf{સામાન્ય RATs:}
+    \begin{itemize}
+        \item \textbf{BackOrifice}
+        \item \textbf{NetBus}
+        \item \textbf{DarkComet}
+        \item \textbf{Poison Ivy}
+    \end{itemize}
+
+    \textbf{શોધ પદ્ધતિઓ:}
+    \begin{itemize}
+        \item Antivirus software
+        \item Network monitoring
+        \item Process analysis
+        \item Behavioral detection
+    \end{itemize}
+
+    \begin{mnemonicbox}
+    "RATs Run Remote Access Tactics"
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(c)}{7}{Hacking ના પાંચ પગલાં સમજાવો.}
+\begin{solutionbox}
+    \textbf{પાંચ-તબક્કાની Hacking Methodology:}
+
+    \begin{center}
+    \begin{tikzpicture}[node distance=2.2cm, auto]
+        \node [gtu block] (recon) {1. Reconnais-sance};
+        \node [gtu block, right of=recon] (scan) {2. Scanning};
+        \node [gtu block, right of=scan] (gain) {3. Gaining Access};
+        \node [gtu block, right of=gain] (maint) {4. Maintaining Access};
+        \node [gtu block, right of=maint] (cover) {5. Covering Tracks};
+
+        \draw [gtu arrow] (recon) -- (scan);
+        \draw [gtu arrow] (scan) -- (gain);
+        \draw [gtu arrow] (gain) -- (maint);
+        \draw [gtu arrow] (maint) -- (cover);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{answertable}{વિગતવાર પગલાં}
+    \begin{tabulary}{\textwidth}{|L|L|L|L|}
+        \hline
+        \textbf{તબક્કો} & \textbf{હેતુ} & \textbf{તકનીકો} & \textbf{સાધનો} \\
+        \hline
+        \textbf{1. Reconnaissance} & માહિતી એકત્રિકરણ & OSINT, Social Engineering & Google, Shodan, WHOIS \\
+        \hline
+        \textbf{2. Scanning} & Vulnerabilities ઓળખવા & Port scanning, Network mapping & Nmap, Nessus \\
+        \hline
+        \textbf{3. Gaining Access} & Vulnerabilities exploit કરવા & Password attacks, Code injection & Metasploit, Hydra \\
+        \hline
+        \textbf{4. Maintaining Access} & કાયમી નિયંત્રણ & Backdoors, Rootkits & RATs, Trojans \\
+        \hline
+        \textbf{5. Covering Tracks} & પુરાવા છુપાવવા & Log deletion, Steganography & CCleaner, File wipers \\
+        \hline
+    \end{tabulary}
+    \end{answertable}
+
+    \textbf{તબક્કો 1 - Reconnaissance:}
+    \begin{itemize}
+        \item \textbf{Passive}: જાહેર માહિતી એકત્રિકરણ
+        \item \textbf{Active}: સીધો target interaction
+        \item \textbf{Goal}: Target infrastructure નો નકશો બનાવવો
+    \end{itemize}
+
+    \textbf{તબક્કો 2 - Scanning:}
+    \begin{itemize}
+        \item \textbf{Network scanning}: જીવંત system ઓળખ
+        \item \textbf{Port scanning}: Service discovery  
+        \item \textbf{Vulnerability scanning}: નબળાઈ ઓળખ
+    \end{itemize}
+
+    \textbf{તબક્કો 3 - Gaining Access:}
+    \begin{itemize}
+        \item \textbf{Exploitation}: Vulnerability ઉપયોગ
+        \item \textbf{Authentication attacks}: Password cracking
+        \item \textbf{Privilege escalation}: ઉચ્ચ access levels
+    \end{itemize}
+
+    \textbf{તબક્કો 4 - Maintaining Access:}
+    \begin{itemize}
+        \item \textbf{Backdoor installation}: ભવિષ્ય પ્રવેશ
+        \item \textbf{System modification}: Persistence mechanisms
+        \item \textbf{Data collection}: માહિતી એકત્રિકરણ
+    \end{itemize}
+
+    \textbf{તબક્કો 5 - Covering Tracks:}
+    \begin{itemize}
+        \item \textbf{Log manipulation}: પુરાવા દૂર કરવા
+        \item \textbf{File deletion}: નિશાન નાબૂદી
+        \item \textbf{Timeline modification}: પ્રવૃત્તિ છુપાવવી
+    \end{itemize}
+
+    \begin{mnemonicbox}
+    "Real Smart Guys Make Choices"
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{4(a)}{3}{Brute force attack સમજાવો.}
+\begin{solutionbox}
+    \textbf{વ્યાખ્યા:} Brute force attack એ trial-and-error પદ્ધતિ છે જે તમામ શક્ય સંયોજનો (combinations) અજમાવીને encrypted data ને decode કરવા માટે વપરાય છે.
+
+    \begin{answertable}{લાક્ષણિકતાઓ}
+    \begin{tabulary}{\textwidth}{|L|L|}
+        \hline
+        \textbf{પાસું} & \textbf{વર્ણન} \\
+        \hline
+        \textbf{પદ્ધતિ} & સંપૂર્ણ key search \\
+        \hline
+        \textbf{સમય} & ગણતરીની દ્રષ્ટિએ સઘન (Computationally intensive) \\
+        \hline
+        \textbf{સફળતા} & બાંયધરીકૃત પરંતુ સમય લેતું \\
+        \hline
+        \textbf{લક્ષ્ય} & Passwords, encryption keys \\
+        \hline
+        \textbf{સાધનો} & Automated software \\
+        \hline
+    \end{tabulary}
+    \end{answertable}
+
+    \textbf{પ્રકારો:}
+    \begin{itemize}
+        \item \textbf{Simple Brute Force}: તમામ શક્ય સંયોજનો
+        \item \textbf{Dictionary Attack}: સામાન્ય passwords
+        \item \textbf{Hybrid Attack}: Dictionary + વિવિધતાઓ
+    \end{itemize}
+
+    \begin{mnemonicbox}
+    "Brute Force Breaks By Trying"
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{4(b)}{4}{વ્યાખ્યા આપો: Vulnerability, Threat, Exploit}
+\begin{solutionbox}
+    \textbf{Security પરિભાષા:}
+
+    \begin{answertable}{શબ્દ વ્યાખ્યાઓ}
+    \begin{tabulary}{\textwidth}{|L|L|L|}
+        \hline
+        \textbf{શબ્દ} & \textbf{વ્યાખ્યા} & \textbf{ઉદાહરણ} \\
+        \hline
+        \textbf{Vulnerability} & System/software માં નબળાઈ & Unpatched software bug \\
+        \hline
+        \textbf{Threat} & Asset માટે સંભવિત ખતરો & Malicious hacker \\
+        \hline
+        \textbf{Exploit} & Code જે vulnerability નો લાભ લે છે & Buffer overflow attack \\
+        \hline
+    \end{tabulary}
+    \end{answertable}
+
+    \textbf{સંબંધ:}
+
+    \begin{center}
+    \begin{tikzpicture}[node distance=3cm, auto]
+        \node [gtu block] (vuln) {Vulnerability};
+        \node [gtu block, right of=vuln] (exploit) {Exploit};
+        \node [gtu block, left of=vuln] (threat) {Threat};
+
+        \draw [gtu arrow] (threat) -- node [above] {Uses} (exploit);
+        \draw [gtu arrow] (exploit) -- node [above] {Targets} (vuln);
+        
+        \node [gtu block, below of=threat, yshift=1cm] (hacker) {Hacker};
+        \node [gtu block, below of=exploit, yshift=1cm] (code) {Attack Code};
+        \node [gtu block, below of=vuln, yshift=1cm] (weak) {System Weakness};
+
+        \draw [gtu arrow, dashed] (threat) -- (hacker);
+        \draw [gtu arrow, dashed] (exploit) -- (code);
+        \draw [gtu arrow, dashed] (vuln) -- (weak);
+    \end{tikzpicture}
+    \end{center}
+
+    \textbf{ઉદાહરણો:}
+    \begin{itemize}
+        \item \textbf{Vulnerability}: SQL injection flaw
+        \item \textbf{Threat}: Cybercriminal
+        \item \textbf{Exploit}: SQL injection payload
+    \end{itemize}
+
+    \textbf{Risk સૂત્ર:}
+    Risk = Threat $\times$ Vulnerability $\times$ Asset Value
+
+    \begin{mnemonicbox}
+    "Threats Target Vulnerable Exploits"
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{4(c)}{7}{Kali Linux ના કોઈપણ ત્રણ મૂળભૂત commands યોગ્ય ઉદાહરણ સાથે સમજાવો.}
+\begin{solutionbox}
+    \textbf{આવશ્યક Kali Linux Commands:}
+
+    \textbf{1. NMAP (Network Mapper):}
+    \begin{codebox}
+\begin{lstlisting}[language=bash]
+# Port scanning
+nmap -sS target_ip
+nmap -A -T4 192.168.1.1
+\end{lstlisting}
+    \end{codebox}
+
+    \begin{answertable}{Nmap વિકલ્પો}
+    \begin{tabulary}{\textwidth}{|L|L|L|}
+        \hline
+        \textbf{વિકલ્પ} & \textbf{હેતુ} & \textbf{ઉદાહરણ} \\
+        \hline
+        \textbf{-sS} & SYN scan & nmap -sS 192.168.1.1 \\
+        \hline
+        \textbf{-A} & Aggressive scan & nmap -A target.com \\
+        \hline
+        \textbf{-p} & Specific ports & nmap -p 80,443 target.com \\
+        \hline
+    \end{tabulary}
+    \end{answertable}
+
+    \textbf{2. Metasploit:}
+    \begin{codebox}
+\begin{lstlisting}[language=bash]
+# Start Metasploit
+msfconsole
+# Search exploits
+search apache
+# Use exploit
+use exploit/windows/smb/ms17_010_eternalblue
+\end{lstlisting}
+    \end{codebox}
+
+    \textbf{Commands:}
+    \begin{itemize}
+        \item \textbf{search}: Exploits/payloads શોધવા
+        \item \textbf{use}: Module પસંદ કરવા
+        \item \textbf{set}: Options configure કરવા
+        \item \textbf{exploit}: Attack launch કરવા
+    \end{itemize}
+
+    \textbf{3. Wireshark:}
+    \begin{codebox}
+\begin{lstlisting}[language=bash]
+# Command line version
+tshark -i eth0
+# Filter traffic
+tshark -i eth0 -f "port 80"
+\end{lstlisting}
+    \end{codebox}
+
+    \textbf{સુવિધાઓ:}
+    \begin{itemize}
+        \item \textbf{Packet capture}: Real-time network monitoring
+        \item \textbf{Protocol analysis}: Deep packet inspection  
+        \item \textbf{Filter options}: Targeted traffic analysis
+        \item \textbf{GUI interface}: વપરાશકર્તા મૈત્રીપૂર્ણ વિશ્લેષણ
+    \end{itemize}
+
+    \textbf{વધારાના Commands:}
+
+    \textbf{4. Hydra (Password Cracking):}
+    \begin{codebox}
+\begin{lstlisting}[language=bash]
+hydra -l admin -P passwords.txt ssh://192.168.1.1
+\end{lstlisting}
+    \end{codebox}
+
+    \textbf{5. John the Ripper:}
+    \begin{codebox}
+\begin{lstlisting}[language=bash]
+john --wordlist=rockyou.txt hashes.txt
+\end{lstlisting}
+    \end{codebox}
+
+    \textbf{6. Aircrack-ng (WiFi Security):}
+    \begin{codebox}
+\begin{lstlisting}[language=bash]
+airmon-ng start wlan0
+airodump-ng wlan0mon
+\end{lstlisting}
+    \end{codebox}
+
+    \begin{answertable}{Command Categories}
+    \begin{tabulary}{\textwidth}{|L|L|L|}
+        \hline
+        \textbf{Category} & \textbf{Tools} & \textbf{Purpose} \\
+        \hline
+        \textbf{Network Scanning} & nmap, masscan & Host/port discovery \\
+        \hline
+        \textbf{Vulnerability Assessment} & OpenVAS, Nessus & Security scanning \\
+        \hline
+        \textbf{Exploitation} & Metasploit, SQLmap & Vulnerability exploitation \\
+        \hline
+        \textbf{Password Attacks} & Hydra, John & Credential cracking \\
+        \hline
+        \textbf{Wireless Security} & Aircrack-ng & WiFi penetration testing \\
+        \hline
+    \end{tabulary}
+    \end{answertable}
+
+    \begin{mnemonicbox}
+    "Network Maps Make Security"
+    \end{mnemonicbox}
+\end{solutionbox}
+
+
+\questionmarks{5(a)}{3}{Digital Forensics ની શાખાઓની સૂચિ બનાવો.}
+\begin{solutionbox}
+    \textbf{Digital Forensics શાખાઓ:}
+
+    \begin{answertable}{શાખાઓ}
+    \begin{tabulary}{\textwidth}{|L|L|L|}
+        \hline
+        \textbf{શાખા} & \textbf{ફોકસ વિસ્તાર} & \textbf{એપ્લિકેશન્સ} \\
+        \hline
+        \textbf{Computer Forensics} & Desktop/laptop systems & Hard drive analysis \\
+        \hline
+        \textbf{Network Forensics} & Network traffic analysis & Intrusion investigation \\
+        \hline
+        \textbf{Mobile Forensics} & Smartphones/tablets & Call logs, messages \\
+        \hline
+        \textbf{Database Forensics} & Database systems & Data integrity verification \\
+        \hline
+        \textbf{Malware Forensics} & Malicious software & Malware analysis \\
+        \hline
+        \textbf{Email Forensics} & Email communications & Email header analysis \\
+        \hline
+        \textbf{Memory Forensics} & RAM analysis & Live system investigation \\
+        \hline
+    \end{tabulary}
+    \end{answertable}
+
+    \textbf{વિશેષિત વિસ્તારો:}
+    \begin{itemize}
+        \item \textbf{Cloud Forensics}
+        \item \textbf{IoT Forensics}
+        \item \textbf{Blockchain Forensics}
+    \end{itemize}
+
+    \begin{mnemonicbox}
+    "Digital Detectives Discover Many Clues"
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(b)}{4}{Digital Forensics માં લોકાર્ડના વિનિમયના સિદ્ધાંતની ચર્ચા કરો.}
+\begin{solutionbox}
+    \textbf{લોકાર્ડનો વિનિમય સિદ્ધાંત (Locard's Exchange Principle):}
+
+    \textbf{મૂળ સિદ્ધાંત:} "દરેક સંપર્ક નિશાન છોડે છે" ("Every contact leaves a trace")
+
+    \textbf{ડિજિટલ એપ્લિકેશન:}
+
+    \begin{answertable}{ડિજિટલ નિશાનો}
+    \begin{tabulary}{\textwidth}{|L|L|L|}
+        \hline
+        \textbf{ડિજિટલ પ્રવૃત્તિ} & \textbf{છોડવામાં આવેલ નિશાન} & \textbf{સ્થાન} \\
+        \hline
+        \textbf{File Access} & Access timestamps & File metadata \\
+        \hline
+        \textbf{Web Browsing} & Browser history, cookies & Browser cache \\
+        \hline
+        \textbf{Email Communication} & Headers, logs & Mail servers \\
+        \hline
+        \textbf{Network Activity} & Connection logs & Network devices \\
+        \hline
+        \textbf{USB Usage} & Device artifacts & Registry/logs \\
+        \hline
+    \end{tabulary}
+    \end{answertable}
+
+    \textbf{ડિજિટલ પુરાવાના નિશાનો:}
+
+    \textbf{સિસ્ટમ સ્તર:}
+    \begin{itemize}
+        \item \textbf{Registry entries}: સિસ્ટમ ફેરફારો
+        \item \textbf{Log files}: પ્રવૃત્તિ રેકોર્ડ્સ
+        \item \textbf{Temporary files}: Process artifacts
+        \item \textbf{Metadata}: ફાઈલ માહિતી
+    \end{itemize}
+
+    \textbf{નેટવર્ક સ્તર:}
+    \begin{itemize}
+        \item \textbf{Router logs}: Traffic records
+        \item \textbf{Firewall logs}: Connection attempts
+        \item \textbf{DNS queries}: Website visits
+        \item \textbf{Packet captures}: Communication content
+    \end{itemize}
+
+    \textbf{એપ્લિકેશન સ્તર:}
+    \begin{itemize}
+        \item \textbf{Browser artifacts}: Web activity
+        \item \textbf{Application logs}: Software usage
+        \item \textbf{Database changes}: Data modifications
+        \item \textbf{Cache files}: Temporary storage
+    \end{itemize}
+
+    \textbf{ફોરેન્સિક અસરો:}
+    \begin{itemize}
+        \item \textbf{સંપૂર્ણ ગુનો નથી}: ડિજિટલ નિશાનો હંમેશા અસ્તિત્વમાં છે
+        \item \textbf{પુરાવાનું સ્થાન}: અનેક સ્રોતો ઉપલબ્ધ
+        \item \textbf{સમર્થન}: અનેક નિશાન validation
+        \item \textbf{Timeline પુનર્નિર્માણ}: પ્રવૃત્તિ ક્રમ
+    \end{itemize}
+
+    \begin{mnemonicbox}
+    "Every Exchange Exists Electronically"
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(c)}{7}{Digital Evidence સાચવવા માટેના મહત્વના પગલાઓની યાદી બનાવો.}
+\begin{solutionbox}
+    \textbf{ડિજિટલ પુરાવા સંરક્ષણ પ્રક્રિયા:}
+
+    \begin{center}
+    \begin{tikzpicture}[node distance=2.2cm, auto]
+        \node [gtu block] (id) {Identification};
+        \node [gtu block, right of=id] (col) {Collection};
+        \node [gtu block, right of=col] (pres) {Preservation};
+        \node [gtu block, right of=pres] (anal) {Analysis};
+        \node [gtu block, right of=anal] (report) {Reporting};
+
+        \draw [gtu arrow] (id) -- (col);
+        \draw [gtu arrow] (col) -- (pres);
+        \draw [gtu arrow] (pres) -- (anal);
+        \draw [gtu arrow] (anal) -- (report);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{answertable}{મહત્વપૂર્ણ સંરક્ષણ પગલાં}
+    \begin{tabulary}{\textwidth}{|L|L|L|L|}
+        \hline
+        \textbf{પગલું} & \textbf{પ્રક્રિયા} & \textbf{હેતુ} & \textbf{સાધનો} \\
+        \hline
+        \textbf{1. ઓળખ} & સંભવિત પુરાવા શોધવા & અવકાશ નક્કી કરવો & દ્રશ્ય નિરીક્ષણ \\
+        \hline
+        \textbf{2. દસ્તાવેજીકરણ} & દ્રશ્ય વિગતો record કરવી & Chain of custody જાળવવું & ફોટોગ્રાફી, નોંધો \\
+        \hline
+        \textbf{3. અલગીકરણ} & દૂષણ અટકાવવું & અખંડિતતા જાળવવી & Network disconnection \\
+        \hline
+        \textbf{4. Imaging} & Bit-by-bit copy બનાવવી & મૂળ સાચવવું & dd, FTK Imager \\
+        \hline
+        \textbf{5. Hashing} & Integrity checks બનાવવા & અધિકૃતતા ચકાસવી & MD5, SHA-256 \\
+        \hline
+        \textbf{6. સંગ્રહ} & સુરક્ષિત પુરાવા સંગ્રહ & છેડછાડ અટકાવવી & Write-protected media \\
+        \hline
+        \textbf{7. Chain of Custody} & Handling દસ્તાવેજીકરણ & કાનૂની સ્વીકાર્યતા & Forensic forms \\
+        \hline
+    \end{tabulary}
+    \end{answertable}
+
+    \textbf{વિગતવાર સંરક્ષણ પદ્ધતિઓ:}
+
+    \textbf{ભૌતિક સંરક્ષણ:}
+    \begin{itemize}
+        \item \textbf{Power management}: યોગ્ય shutdown procedures
+        \item \textbf{Hardware protection}: Anti-static પગલાં
+        \item \textbf{પર્યાવરણીય નિયંત્રણ}: તાપમાન/ભેજ
+        \item \textbf{પ્રવેશ પ્રતિબંધ}: અધિકૃત કર્મચારીઓ માત્ર
+    \end{itemize}
+
+    \textbf{તર્કસંગત સંરક્ષણ (Logical):}
+    \begin{itemize}
+        \item \textbf{Bit-stream imaging}: હૂબહૂ disk copies
+        \item \textbf{Hash verification}: અખંડિતતા પુષ્ટિ
+        \item \textbf{Write blocking}: ફેરફારો અટકાવવા
+        \item \textbf{Metadata preservation}: Timestamp સુરક્ષા
+    \end{itemize}
+
+    \textbf{કાનૂની સંરક્ષણ:}
+    \begin{itemize}
+        \item \textbf{દસ્તાવેજીકરણ ધોરણો}: વિગતવાર રેકોર્ડ્સ
+        \item \textbf{Chain of custody}: Handling log
+        \item \textbf{પ્રામાણિકતા}: પુરાવા ચકાસણી
+        \item \textbf{સ્વીકાર્યતા}: કોર્ટ જરૂરિયાતો
+    \end{itemize}
+
+    \textbf{શ્રેષ્ઠ પ્રથાઓ:}
+
+    \textbf{કરવા જેવું (Do's):}
+    \begin{itemize}
+        \item પુરાવાની \textbf{અનેક નકલો બનાવવી}
+        \item \textbf{Forensically sound સાધનો} ઉપયોગ કરવા
+        \item \textbf{દરેક ક્રિયા નોંધવી}
+        \item \textbf{Chain of custody જાળવવું}
+        \item Hash સાથે \textbf{અખંડિતતા ચકાસવી}
+    \end{itemize}
+
+    \textbf{ન કરવા જેવું (Don'ts):}
+    \begin{itemize}
+        \item \textbf{કદી મૂળ પુરાવા પર કામ ન કરવું}
+        \item દ્રશ્યનું \textbf{દૂષણ ટાળવું}
+        \item Suspect systems ને \textbf{power on ન કરવા}
+        \item પુરાવાને \textbf{modify ન કરવા}
+        \item \textbf{Chain of custody તોડવું નહીં}
+    \end{itemize}
+
+    \textbf{ગુણવત્તા ખાતરી:}
+    \begin{answertable}{ચેક્સ}
+    \begin{tabulary}{\textwidth}{|L|L|L|}
+        \hline
+        \textbf{ચેક} & \textbf{ચકાસણી પદ્ધતિ} & \textbf{આવર્તન} \\
+        \hline
+        \textbf{Hash Validation} & Original vs copy સરખામણી & પહેલાં/પછી operations \\
+        \hline
+        \textbf{Tool Calibration} & Tool accuracy ચકાસવી & Regular intervals \\
+        \hline
+        \textbf{Process Review} & Procedures audit કરવી & Case completion \\
+        \hline
+        \textbf{Documentation Check} & સંપૂર્ણતા ચકાસવી & દરેક પગલે \\
+        \hline
+    \end{tabulary}
+    \end{answertable}
+
+    \textbf{કાનૂની વિચારણાઓ:}
+    \begin{itemize}
+        \item \textbf{સ્વીકાર્યતા જરૂરિયાતો}: કોર્ટ ધોરણો
+        \item \textbf{નિષ્ણાત સાક્ષી}: તકનીકી સમજૂતી
+        \item \textbf{ઉલટ-સવાલ}: પ્રક્રિયા validation
+        \item \textbf{ધોરણ અનુપાલન}: ઉદ્યોગ શ્રેષ્ઠ પ્રથાઓ
+    \end{itemize}
+
+    \begin{mnemonicbox}
+    "Proper Preservation Prevents Problems"
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{5(a)}{3}{Malware forensics સમજાવો.}
+\begin{solutionbox}
+    \textbf{વ્યાખ્યા:} Malware forensics માં infected systems પર તેના વર્તન, મૂળ અને અસરને સમજવા માટે malicious software નું analysis કરવામાં આવે છે.
+
+    \begin{answertable}{મુખ્ય ઘટકો}
+    \begin{tabulary}{\textwidth}{|L|L|}
+        \hline
+        \textbf{ઘટક} & \textbf{વર્ણન} \\
+        \hline
+        \textbf{Static Analysis} & Execution વિના malware ની તપાસ \\
+        \hline
+        \textbf{Dynamic Analysis} & Controlled environment માં malware ચલાવવું \\
+        \hline
+        \textbf{Code Analysis} & Malware code નું reverse engineering \\
+        \hline
+        \textbf{Behavioral Analysis} & Malware actions નો અભ્યાસ \\
+        \hline
+    \end{tabulary}
+    \end{answertable}
+
+    \textbf{પ્રક્રિયા:}
+    \begin{itemize}
+        \item \textbf{Sample collection}: Malware acquisition
+        \item \textbf{Isolation}: Sandbox environment
+        \item \textbf{Analysis}: Behavior observation
+        \item \textbf{Reporting}: Findings documentation
+    \end{itemize}
+
+    \begin{mnemonicbox}
+    "Malware Makes Mysteries"
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{5(b)}{4}{Digital Forensics તપાસમાં પુરાવા તરીકે CCTV શા માટે મહત્વની ભૂમિકા ભજવે છે તે સમજાવો.}
+\begin{solutionbox}
+    \textbf{Digital Forensics માં CCTV:}
+
+    \begin{answertable}{CCTV પુરાવાનું મહત્વ}
+    \begin{tabulary}{\textwidth}{|L|L|L|}
+        \hline
+        \textbf{ભૂમિકા} & \textbf{વર્ણન} & \textbf{ફાયદો} \\
+        \hline
+        \textbf{દ્રશ્ય દસ્તાવેજીકરણ} & વાસ્તવિક ઘટનાઓ record કરે & Objective પુરાવા \\
+        \hline
+        \textbf{Timeline સ્થાપના} & પ્રવૃત્તિઓ timestamps કરે & કાલક્રમિક ક્રમ \\
+        \hline
+        \textbf{ઓળખ ચકાસણી} & Suspect images capture કરે & વ્યક્તિ ઓળખ \\
+        \hline
+        \textbf{સમર્થન} & અન્ય પુરાવાઓને support કરે & કેસ મજબૂત બનાવે \\
+        \hline
+    \end{tabulary}
+    \end{answertable}
+
+    \textbf{ડિજિટલ પુરાવા ગુણધર્મો:}
+
+    \textbf{તકનીકી પાસાઓ:}
+    \begin{itemize}
+        \item \textbf{Metadata preservation}: Timestamp, camera ID, settings
+        \item \textbf{Chain of custody}: સુરક્ષિત handling procedures
+        \item \textbf{Format integrity}: મૂળ file structure maintenance
+        \item \textbf{Authentication}: Digital signatures, hash values
+    \end{itemize}
+
+    \textbf{ફોરેન્સિક મૂલ્ય:}
+    \begin{itemize}
+        \item \textbf{Real-time documentation}: Live incident recording
+        \item \textbf{Unbiased testimony}: યાંત્રિક સાક્ષી
+        \item \textbf{High resolution}: સ્પષ્ટ image quality
+        \item \textbf{Audio capture}: વધારાના sensory પુરાવા
+    \end{itemize}
+
+    \textbf{Analysis પદ્ધતિઓ:}
+    \begin{itemize}
+        \item \textbf{Frame-by-frame examination}: વિગતવાર scrutiny
+        \item \textbf{Enhancement techniques}: Image improvement
+        \item \textbf{Comparison analysis}: Multiple angle correlation
+        \item \textbf{Motion tracking}: Subject movement patterns
+    \end{itemize}
+
+    \textbf{કાનૂની સ્વીકાર્યતા:}
+    \begin{itemize}
+        \item \textbf{Authenticity verification}: Chain of custody
+        \item \textbf{Technical validation}: Equipment calibration
+        \item \textbf{Expert testimony}: Forensic analysis explanation
+        \item \textbf{Standard compliance}: Industry best practices
+    \end{itemize}
+
+    \begin{mnemonicbox}
+    "CCTV Captures Criminal Conduct Clearly"
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{5(c)}{7}{Digital forensic તપાસના તબક્કાઓ સમજાવો.}
+\begin{solutionbox}
+    \textbf{Digital Forensic તપાસ પ્રક્રિયા:}
+
+    \begin{center}
+    \begin{tikzpicture}[node distance=2.2cm, auto]
+        \node [gtu block] (prep) {Preparation};
+        \node [gtu block, right of=prep] (id) {Identification};
+        \node [gtu block, right of=id] (col) {Collection};
+        \node [gtu block, right of=col] (pres) {Preservation};
+        \node [gtu block, right of=pres] (anal) {Analysis};
+        \node [gtu block, right of=anal] (report) {Presentation};
+
+        \draw [gtu arrow] (prep) -- (id);
+        \draw [gtu arrow] (id) -- (col);
+        \draw [gtu arrow] (col) -- (pres);
+        \draw [gtu arrow] (pres) -- (anal);
+        \draw [gtu arrow] (anal) -- (report);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{answertable}{તબક્કાવાર વિભાજન}
+    \begin{tabulary}{\textwidth}{|L|L|L|L|}
+        \hline
+        \textbf{તબક્કો} & \textbf{હેતુ} & \textbf{પ્રવૃત્તિઓ} & \textbf{આઉટપુટ} \\
+        \hline
+        \textbf{1. તૈયારી} & તત્પરતા સ્થાપના & Tool setup, training & Forensic kit \\
+        \hline
+        \textbf{2. ઓળખ} & પુરાવાનું સ્થાન & Survey, documentation & Evidence list \\
+        \hline
+        \textbf{3. સંગ્રહ} & પુરાવા પ્રાપ્તિ & Imaging, copying & Digital copies \\
+        \hline
+        \textbf{4. સંરક્ષણ} & અખંડિતતા જાળવણી & Hashing, storage & Verified evidence \\
+        \hline
+        \textbf{5. વિશ્લેષણ} & ડેટા તપાસ & Investigation, correlation & Findings \\
+        \hline
+        \textbf{6. પ્રસ્તુતિ} & પરિણામો સંપ્રેષણ & Reporting, testimony & Final report \\
+        \hline
+    \end{tabulary}
+    \end{answertable}
+
+    \textbf{વિગતવાર તબક્કો વિશ્લેષણ:}
+
+    \textbf{તબક્કો 1 - તૈયારી:}
+    \begin{itemize}
+        \item \textbf{Tool readiness}: Forensic software installation
+        \item \textbf{Hardware setup}: Write blockers, imaging devices
+        \item \textbf{Documentation templates}: Chain of custody forms
+        \item \textbf{Team preparation}: Role assignments, training
+        \item \textbf{Legal preparation}: Warrant requirements, permissions
+    \end{itemize}
+
+    \textbf{તબક્કો 2 - ઓળખ:}
+    \begin{itemize}
+        \item \textbf{Scene survey}: Evidence location mapping
+        \item \textbf{Device inventory}: System identification
+        \item \textbf{Volatile evidence}: Memory, network connections
+        \item \textbf{Priority assessment}: Critical evidence first
+        \item \textbf{Photography}: Scene documentation
+    \end{itemize}
+
+    \textbf{તબક્કો 3 - સંગ્રહ:}
+    \begin{itemize}
+        \item \textbf{Live system analysis}: Memory acquisition
+        \item \textbf{Disk imaging}: Bit-for-bit copies
+        \item \textbf{Network evidence}: Log files, packet captures
+        \item \textbf{Mobile devices}: Physical/logical extraction
+        \item \textbf{Cloud evidence}: Remote data acquisition
+    \end{itemize}
+
+    \textbf{તબક્કો 4 - સંરક્ષણ:}
+    \begin{itemize}
+        \item \textbf{Hash generation}: MD5, SHA-256 checksums
+        \item \textbf{Write protection}: Hardware/software blocking
+        \item \textbf{Storage security}: Tamper-evident containers
+        \item \textbf{Chain of custody}: Handling documentation
+        \item \textbf{Backup creation}: Multiple evidence copies
+    \end{itemize}
+
+    \textbf{તબક્કો 5 - વિશ્લેષણ:}
+    \begin{itemize}
+        \item \textbf{File system examination}: Directory structure analysis
+        \item \textbf{Deleted data recovery}: Unallocated space searching
+        \item \textbf{Timeline creation}: Event chronology
+        \item \textbf{Keyword searching}: Relevant content identification
+        \item \textbf{Pattern recognition}: Behavioral analysis
+    \end{itemize}
+
+    \textbf{તબક્કો 6 - પ્રસ્તુતિ:}
+    \begin{itemize}
+        \item \textbf{Report writing}: Findings documentation
+        \item \textbf{Visual aids}: Charts, diagrams, screenshots
+        \item \textbf{Expert testimony}: Court presentation
+        \item \textbf{Peer review}: Quality assurance
+        \item \textbf{Archive maintenance}: Case file storage
+    \end{itemize}
+
+    \textbf{શ્રેષ્ઠ પ્રથાઓ:}
+
+    \textbf{તકનીકી ધોરણો:}
+    \begin{itemize}
+        \item \textbf{Tool validation}: Regular calibration
+        \item \textbf{Methodology consistency}: Standard procedures
+        \item \textbf{Quality control}: Verification checks
+        \item \textbf{Documentation completeness}: Detailed records
+    \end{itemize}
+
+    \textbf{કાનૂની જરૂરિયાતો:}
+    \begin{itemize}
+        \item \textbf{Admissibility standards}: Court requirements
+        \item \textbf{Chain of custody}: Unbroken documentation
+        \item \textbf{Expert qualifications}: Professional certification
+        \item \textbf{Cross-examination preparation}: Defense against challenges
+    \end{itemize}
+
+    \textbf{ગુણવત્તા ખાતરી:}
+    \begin{answertable}{ચેક પોઈન્ટસ}
+    \begin{tabulary}{\textwidth}{|L|L|L|}
+        \hline
+        \textbf{ચેક પોઈન્ટ} & \textbf{ચકાસણી} & \textbf{દસ્તાવેજીકરણ} \\
+        \hline
+        \textbf{Evidence integrity} & Hash comparison & Verification logs \\
+        \hline
+        \textbf{Tool reliability} & Calibration tests & Certification records \\
+        \hline
+        \textbf{Process compliance} & Standard adherence & Procedure checklists \\
+        \hline
+        \textbf{Report accuracy} & Peer review & Review signatures \\
+        \hline
+    \end{tabulary}
+    \end{answertable}
+
+    \textbf{સામાન્ય પડકારો:}
+    \begin{itemize}
+        \item \textbf{Encryption}: Data protection barriers
+        \item \textbf{Anti-forensics}: Evidence hiding techniques
+        \item \textbf{Volume}: Large data sets
+        \item \textbf{Volatility}: Temporary evidence
+        \item \textbf{Legal complexity}: Jurisdiction issues
+    \end{itemize}
+
+    \textbf{સફળતાના પરિબળો:}
+    \begin{itemize}
+        \item \textbf{Systematic approach}: Methodical investigation
+        \item \textbf{Technical expertise}: Skilled personnel
+        \item \textbf{Proper tools}: Adequate resources
+        \item \textbf{Legal knowledge}: Compliance understanding
+        \item \textbf{Documentation discipline}: Thorough records
+    \end{itemize}
+
+    \begin{mnemonicbox}
+    "Proper Planning Prevents Poor Performance"
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\end{document}
+
+
+

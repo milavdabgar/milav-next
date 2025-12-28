@@ -1,0 +1,1289 @@
+\documentclass{article}
+\input{../../../../../../latex-templates/gtu-solutions/preamble.tex}
+\input{../../../../../../latex-templates/gtu-solutions/gujarati-boxes.tex}
+\input{../../../../../../latex-templates/gtu-solutions/commands.tex}
+
+\title{Advanced Java Programming (4351603) - Summer 2025 Solution}
+\date{May 16, 2025}
+
+\begin{document}
+\maketitle
+
+\questionmarks{1(a)}{3}{AWT અને Swing વચ્ચેનો તફાવત લખો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{AWT વિ. Swing તુલના}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{વિશેષતા} & \textbf{AWT} & \textbf{Swing} \\ \hline
+\textbf{પ્લેટફોર્મ} & પ્લેટફોર્મ આધારિત & પ્લેટફોર્મ સ્વતંત્ર \\ \hline
+\textbf{કોમ્પોનેન્ટ્સ} & હેવી વેઇટ & લાઇટ વેઇટ \\ \hline
+\textbf{લુક એન્ડ ફીલ} & નેટિવ OS લુક & પ્લગેબલ લુક એન્ડ ફીલ \\ \hline
+\textbf{પ્રદર્શન} & ઝડપી & AWT કરતાં ધીમું \\ \hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{AWT}: નેટિવ OS કોમ્પોનેન્ટ્સ વાપરે છે.
+    \item \textbf{Swing}: જાવાના પોતાના કોમ્પોનેન્ટ્સ વાપરે છે.
+    \item \textbf{પ્લગેબિલિટી}: Swing કસ્ટમાઇઝેબલ UI સપોર્ટ કરે છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Swing is Smart - Platform Independent and Pluggable}
+\end{mnemonicbox}
+
+\questionmarks{1(b)}{4}{વિવિધ Layout Manager ની યાદી બનાવો. Flow Layout manager ને ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Layout Manager ની યાદી:}
+\begin{itemize}
+    \item \keyword{FlowLayout}: ડાબેથી જમણે ગોઠવણી.
+    \item \keyword{BorderLayout}: ઉત્તર, દક્ષિણ, પૂર્વ, પશ્ચિમ, કેન્દ્ર.
+    \item \keyword{GridLayout}: સમાન કદના ગ્રિડ સેલ્સ.
+    \item \keyword{CardLayout}: કોમ્પોનેન્ટ્સનો સ્ટેક.
+    \item \keyword{BoxLayout}: એક પંક્તિ અથવા કોલમ.
+\end{itemize}
+
+\textbf{FlowLayout ઉદાહરણ:}
+\begin{lstlisting}[language=Java]
+import javax.swing.*;
+import java.awt.*;
+
+public class FlowExample extends JFrame {
+    public FlowExample() {
+        setLayout(new FlowLayout());
+        add(new JButton("બટન 1"));
+        add(new JButton("બટન 2"));
+        add(new JButton("બટન 3"));
+        setSize(300, 100);
+        setVisible(true);
+    }
+}
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{પાણીની જેમ વહે - ડાબેથી જમણે}
+\end{mnemonicbox}
+
+\questionmarks{1(c)}{7}{ચેકબૉક્સનો ઉપયોગ કરીને Swing program લખો જે વપરાશકર્તાઓને વિકલ્પોની સૂચિમાંથી બહુવિધ વિકલ્પો પસંદ કરવાની મંજૂરી આપે અને પસંદ કરેલ વિકલ્પો દર્શાવે.}
+
+\begin{solutionbox}
+\begin{lstlisting}[language=Java]
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class CheckboxExample extends JFrame implements ItemListener {
+    JCheckBox java, python, cpp;
+    JTextArea display;
+    
+    public CheckboxExample() {
+        setLayout(new FlowLayout());
+        
+        java = new JCheckBox("Java");
+        python = new JCheckBox("Python");
+        cpp = new JCheckBox("C++");
+        
+        java.addItemListener(this);
+        python.addItemListener(this);
+        cpp.addItemListener(this);
+        
+        display = new JTextArea(5, 20);
+        
+        add(java);
+        add(python);
+        add(cpp);
+        add(new JScrollPane(display));
+        
+        setSize(300, 200);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setVisible(true);
+    }
+    
+    public void itemStateChanged(ItemEvent e) {
+        String result = "પસંદ કરેલ: ";
+        if(java.isSelected()) result += "Java ";
+        if(python.isSelected()) result += "Python ";
+        if(cpp.isSelected()) result += "C++ ";
+        display.setText(result);
+    }
+    
+    public static void main(String[] args) {
+        new CheckboxExample();
+    }
+}
+\end{lstlisting}
+
+\textbf{મુખ્ય વિશેષતાઓ:}
+\begin{itemize}
+    \item \keyword{બહુવિધ પસંદગી}: વપરાશકર્તાઓ બહુવિધ ચેકબૉક્સ પસંદ કરી શકે.
+    \item \keyword{રીઅલ-ટાઇમ ડિસ્પ્લે}: પસંદ કરેલ આઇટમ્સ તરત જ દર્શાવે.
+    \item \keyword{ItemListener}: ચેકબૉક્સ સ્ટેટ બદલાવ હેન્ડલ કરે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{બહુવિધ ચેક કરો, બધું દર્શાવો}
+\end{mnemonicbox}
+
+\questionmarks{1(c OR)}{7}{વિવિધ swing components ની મદદથી Java program લખો.}
+
+\begin{solutionbox}
+\begin{lstlisting}[language=Java]
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class SwingComponents extends JFrame implements ActionListener {
+    JTextField nameField;
+    JComboBox<String> cityCombo;
+    JRadioButton male, female;
+    JButton submit;
+    JTextArea display;
+    
+    public SwingComponents() {
+        setLayout(new FlowLayout());
+        
+        add(new JLabel("નામ:"));
+        nameField = new JTextField(15);
+        add(nameField);
+        
+        add(new JLabel("શહેર:"));
+        cityCombo = new JComboBox<>(new String[]{"મુંબઈ", "દિલ્હી", "બેંગ્લોર"});
+        add(cityCombo);
+        
+        ButtonGroup gender = new ButtonGroup();
+        male = new JRadioButton("પુરુષ");
+        female = new JRadioButton("સ્ત્રી");
+        gender.add(male);
+        gender.add(female);
+        add(male);
+        add(female);
+        
+        submit = new JButton("સબમિટ");
+        submit.addActionListener(this);
+        add(submit);
+        
+        display = new JTextArea(5, 25);
+        add(new JScrollPane(display));
+        
+        setSize(400, 300);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setVisible(true);
+    }
+    
+    public void actionPerformed(ActionEvent e) {
+        String name = nameField.getText();
+        String city = (String)cityCombo.getSelectedItem();
+        String gender = male.isSelected() ? "પુરુષ" : "સ્ત્રી";
+        
+        display.setText("નામ: " + name + "\nશહેર: " + city + "\nલિંગ: " + gender);
+    }
+    
+    public static void main(String[] args) {
+        new SwingComponents();
+    }
+}
+\end{lstlisting}
+
+\textbf{વપરાયેલ કોમ્પોનેન્ટ્સ:}
+\begin{itemize}
+    \item \keyword{JTextField}: ટેક્સ્ટ ઇનપુટ.
+    \item \keyword{JComboBox}: ડ્રોપડાઉન પસંદગી.
+    \item \keyword{JRadioButton}: એક પસંદગી.
+    \item \keyword{JButton}: એક્શન ટ્રિગર.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{ટેક્સ્ટ, કોમ્બો, રેડિયો, બટન - સંપૂર્ણ ફોર્મ}
+\end{mnemonicbox}
+
+\questionmarks{2(a)}{3}{ઉદાહરણ સાથે Swing controls સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{સામાન્ય Swing Controls}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Control} & \textbf{હેતુ} & \textbf{ઉદાહરણ} \\ \hline
+\textbf{JButton} & ક્લિક એક્શન્સ & \code{new JButton("મને ક્લિક કરો")} \\ \hline
+\textbf{JTextField} & ટેક્સ્ટ ઇનપુટ & \code{new JTextField(10)} \\ \hline
+\textbf{JLabel} & ટેક્સ્ટ દર્શાવવું & \code{new JLabel("નમસ્કાર")} \\ \hline
+\textbf{JCheckBox} & બહુવિધ પસંદગી & \code{new JCheckBox("વિકલ્પ")} \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{મૂળભૂત ઉદાહરણ:}
+\begin{lstlisting}[language=Java]
+JFrame frame = new JFrame();
+JButton btn = new JButton("સબમિટ");
+frame.add(btn);
+frame.setSize(200, 100);
+frame.setVisible(true);
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{બટન, ટેક્સ્ટ, લેબલ, ચેક - મૂળભૂત ચાર}
+\end{mnemonicbox}
+
+\questionmarks{2(b)}{4}{JDBC drivers ની યાદી બનાવો અને કોઈપણ બે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{JDBC Drivers ની યાદી:}
+\begin{enumerate}
+    \item \textbf{Type 1}: JDBC-ODBC Bridge
+    \item \textbf{Type 2}: Native API Driver
+    \item \textbf{Type 3}: Network Protocol Driver
+    \item \textbf{Type 4}: Thin Driver
+\end{enumerate}
+
+\textbf{વિગતવાર સમજૂતી:}
+
+\textbf{Type 1 - JDBC-ODBC Bridge:}
+\begin{itemize}
+    \item \keyword{હેતુ}: JDBC કોલ્સને ODBC કોલ્સમાં રૂપાંતરિત કરે.
+    \item \keyword{ફાયદો}: કોઈપણ ODBC ડેટાબેસ સાથે કામ કરે.
+    \item \keyword{નુકસાન}: પ્લેટફોર્મ આધારિત, ધીમી કાર્યક્ષમતા.
+\end{itemize}
+
+\textbf{Type 4 - Thin Driver:}
+\begin{itemize}
+    \item \keyword{હેતુ}: શુદ્ધ Java driver, સીધો ડેટાબેસ કમ્યુનિકેશન.
+    \item \keyword{ફાયદો}: પ્લેટફોર્મ સ્વતંત્ર, શ્રેષ્ઠ કાર્યક્ષમતા.
+    \item \keyword{નુકસાન}: ડેટાબેસ વિશિષ્ટ.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Bridge-Native-Network-Thin: 1-2-3-4}
+\end{mnemonicbox}
+
+\questionmarks{2(c)}{7}{Object Relational Mapping (ORM) સમજાવો તથા તેના ફાયદા અને tools સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Object Relational Mapping (ORM):}
+ORM એ તકનીક છે જે ઑબ્જેક્ટ-ઓરિએન્ટેડ પ્રોગ્રામિંગ કન્સેપ્ટ્સને રિલેશનલ ડેટાબેસ સ્ટ્રક્ચર સાથે મેપ કરે છે.
+
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto]
+    \node [gtu block] (Obj) {Java Object};
+    \node [gtu block, right=of Obj] (ORM) {ORM Framework};
+    \node [gtu block, right=of ORM] (DB) {Database Table};
+    
+    \path [gtu arrow, <->] (Obj) -- (ORM);
+    \path [gtu arrow, <->] (ORM) -- (DB);
+\end{tikzpicture}
+\captionof{figure}{ORM કન્સેપ્ટ}
+\end{center}
+
+\begin{center}
+\captionof{table}{ORM ફાયદા}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{ફાયદો} & \textbf{વર્ણન} \\ \hline
+\textbf{ઉત્પાદકતા} & કોડિંગ સમય ઘટાડે \\ \hline
+\textbf{જાળવણી} & સુધારા અને અપડેટ કરવા સરળ \\ \hline
+\textbf{ડેટાબેસ સ્વતંત્રતા} & ડેટાબેસ સરળતાથી બદલી શકાય \\ \hline
+\textbf{ઑબ્જેક્ટ-ઓરિએન્ટેડ} & OOP કન્સેપ્ટ્સ સાથે કામ કરે \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{લોકપ્રિય ORM Tools:}
+\begin{itemize}
+    \item \keyword{Hibernate}: સૌથી લોકપ્રિય Java ORM.
+    \item \keyword{JPA}: Java Persistence API સ્ટાન્ડર્ડ.
+    \item \keyword{MyBatis}: SQL મેપિંગ ફ્રેમવર્ક.
+    \item \keyword{EclipseLink}: રેફરન્સ ઇમ્પ્લિમેન્ટેશન.
+\end{itemize}
+
+\textbf{વર્કિંગ મોડલ:}
+\begin{itemize}
+    \item \textbf{Objects} $\rightarrow$ \textbf{ORM} $\rightarrow$ \textbf{Tables}
+    \item ઑટોમેટિક SQL જનરેશન
+    \item Type-safe queries
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Objects Relate Magically}
+\end{mnemonicbox}
+
+\questionmarks{2(a OR)}{3}{ઉદાહરણ સાથે MOUSEEVENT અને MOUSELISTENER interface સમજાવો.}
+
+\begin{solutionbox}
+\textbf{MouseEvent:}
+જ્યારે કોમ્પોનેન્ટ્સ પર માઉસ એક્શન્સ થાય ત્યારે જનરેટ થાય છે.
+
+\textbf{MouseListener Interface Methods:}
+\begin{itemize}
+    \item \keyword{mouseClicked()}: માઉસ બટન ક્લિક.
+    \item \keyword{mousePressed()}: માઉસ બટન દબાવ્યું.
+    \item \keyword{mouseReleased()}: માઉસ બટન છોડ્યું.
+    \item \keyword{mouseEntered()}: માઉસ કોમ્પોનેન્ટમાં પ્રવેશ.
+    \item \keyword{mouseExited()}: માઉસ કોમ્પોનેન્ટમાંથી બહાર.
+\end{itemize}
+
+\textbf{ઉદાહરણ:}
+\begin{lstlisting}[language=Java]
+public class MouseExample extends JFrame implements MouseListener {
+    JLabel label;
+    
+    public MouseExample() {
+        label = new JLabel("મને ક્લિક કરો!");
+        label.addMouseListener(this);
+        add(label);
+        setSize(200, 100);
+        setVisible(true);
+    }
+    
+    public void mouseClicked(MouseEvent e) {
+        label.setText("ક્લિક થયું!");
+    }
+    
+    // અન્ય methods...
+}
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Click-Press-Release-Enter-Exit}
+\end{mnemonicbox}
+
+\questionmarks{2(b OR)}{4}{JDBC API ના components ની સૂચિ બનાવો અને સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{JDBC API Components}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Component} & \textbf{હેતુ} & \textbf{મુખ્ય Classes} \\ \hline
+\textbf{DriverManager} & ડ્રાઇવર્સ મેનેજ કરે & \code{DriverManager.getConnection()} \\ \hline
+\textbf{Connection} & ડેટાબેસ કનેક્શન & \code{Connection conn} \\ \hline
+\textbf{Statement} & SQL એક્ઝિક્યુશન & \code{Statement stmt} \\ \hline
+\textbf{ResultSet} & ક્વેરી પરિણામો & \code{ResultSet rs} \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{Component વિગતો:}
+\begin{itemize}
+    \item \keyword{DriverManager}: ડેટાબેસ સાથે કનેક્શન સ્થાપિત કરે.
+    \item \keyword{Connection}: ડેટાબેસ સેશન રજૂ કરે.
+    \item \keyword{Statement}: SQL ક્વેરીઓ એક્ઝિક્યુટ કરે.
+    \item \keyword{ResultSet}: ક્વેરી પરિણામો સાચવે.
+\end{itemize}
+
+\textbf{મૂળભૂત ઉપયોગ:}
+\begin{lstlisting}[language=Java]
+Connection conn = DriverManager.getConnection(url, user, pass);
+Statement stmt = conn.createStatement();
+ResultSet rs = stmt.executeQuery("SELECT * FROM users");
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{ડ્રાઇવર કનેક્ટ કરે, સ્ટેટમેન્ટ એક્ઝિક્યુટ કરે, ResultSet રિટર્ન કરે}
+\end{mnemonicbox}
+
+\questionmarks{2(c OR)}{7}{હાઇબર્નેટનું આર્કિટેક્ચર દોરો અને સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm, auto]
+    \node [gtu block] (App) {Java Application};
+    \node [gtu block, below=of App] (API) {Hibernate API};
+    \node [gtu block, below left=of API] (Config) {Configuration};
+    \node [gtu block, below right=of API] (Factory) {SessionFactory};
+    
+    \node [gtu block, below=of Factory] (Session) {Session};
+    \node [gtu block, below left=of Session] (Trans) {Transaction};
+    \node [gtu block, below=of Session] (Query) {Query};
+    \node [gtu block, below right=of Session] (Crit) {Criteria};
+    
+    \node [gtu block, below=of Query] (DB) {Database};
+    
+    \node [left=of Config] (CfgFile) {hibernate.cfg.xml};
+    \node [right=of Factory] (MapFile) {Mapping Files};
+    
+    \path [gtu arrow] (App) -- (API);
+    \path [gtu arrow] (API) -- (Config);
+    \path [gtu arrow] (API) -- (Factory);
+    \path [gtu arrow] (Factory) -- (Session);
+    \path [gtu arrow] (Session) -- (Trans);
+    \path [gtu arrow] (Session) -- (Query);
+    \path [gtu arrow] (Session) -- (Crit);
+    \path [gtu arrow] (CfgFile) -- (Config);
+    \path [gtu arrow] (MapFile) -- (Factory);
+    \path [gtu arrow] (Session) -- (DB);
+\end{tikzpicture}
+\captionof{figure}{Hibernate આર્કિટેક્ચર}
+\end{center}
+
+\textbf{ટેબલ: Hibernate આર્કિટેક્ચર કોમ્પોનેન્ટ્સ}
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{Component} & \textbf{કાર્ય} \\ \hline
+\textbf{Configuration} & કોન્ફિગ ફાઇલો વાંચે \\ \hline
+\textbf{SessionFactory} & Session ઑબ્જેક્ટ્સ બનાવે \\ \hline
+\textbf{Session} & ડેટાબેસ ઇન્ટરફેસ \\ \hline
+\textbf{Transaction} & ટ્રાન્ઝેક્શન મેનેજ કરે \\ \hline
+\textbf{Query} & HQL/SQL ક્વેરીઓ \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{લેયર વર્ણન:}
+\begin{itemize}
+    \item \keyword{Application Layer}: Java ઑબ્જેક્ટ્સ અને બિઝનેસ લોજિક.
+    \item \keyword{Hibernate Layer}: ORM મેપિંગ અને સેશન મેનેજમેન્ટ.
+    \item \keyword{Database Layer}: વાસ્તવિક ડેટા સ્ટોરેજ.
+\end{itemize}
+
+\textbf{મુખ્ય વિશેષતાઓ:}
+\begin{itemize}
+    \item \keyword{ઑટોમેટિક ટેબલ ક્રિએશન}: એન્ટિટી ક્લાસીસ આધારે.
+    \item \keyword{HQL સપોર્ટ}: ઑબ્જેક્ટ-ઓરિએન્ટેડ ક્વેરી લેંગ્વેજ.
+    \item \keyword{કેશિંગ}: પ્રથમ અને દ્વિતીય સ્તરની કેશિંગ.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Config-Factory-Session-Transaction: CFST}
+\end{mnemonicbox}
+
+\questionmarks{3(a)}{3}{Servlet ની વિવિધ વિશેષતાઓ સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{Servlet વિશેષતાઓ}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{વિશેષતા} & \textbf{વર્ણન} \\ \hline
+\textbf{પ્લેટફોર્મ સ્વતંત્ર} & JVM સાથે કોઈપણ OS પર ચાલે \\ \hline
+\textbf{કાર્યક્ષમતા} & CGI કરતાં વધુ સારી \\ \hline
+\textbf{મજબૂત} & JVM મેનેજ્ડ મેમરી \\ \hline
+\textbf{સુરક્ષિત} & Java સિક્યોરિટી ફીચર્સ \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{મુખ્ય વિશેષતાઓ:}
+\begin{itemize}
+    \item \keyword{સર્વર-સાઇડ પ્રોસેસિંગ}: ક્લાયન્ટ રિક્વેસ્ટ્સ હેન્ડલ કરે.
+    \item \keyword{પ્રોટોકોલ સ્વતંત્ર}: HTTP, FTP, SMTP સપોર્ટ.
+    \item \keyword{વિસ્તરણીય}: સરળતાથી વિસ્તૃત કરી શકાય.
+    \item \keyword{પોર્ટેબલ}: એકવાર લખો, ગમે ત્યાં ચલાવો.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Platform Performance Robust Secure}
+\end{mnemonicbox}
+
+\questionmarks{3(b)}{4}{Servlet life cycle સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm, auto]
+    \node [gtu state] (Load) {Loading};
+    \node [gtu state, right=of Load] (Inst) {Instantiation};
+    \node [gtu state, right=of Inst] (Init) {init()};
+    \node [gtu state, below=of Init] (Serv) {service()};
+    \node [gtu state, left=of Serv] (Dest) {destroy()};
+    \node [gtu state, left=of Dest] (Unload) {Unloaded};
+    
+    \path [gtu arrow] (Load) -- (Inst);
+    \path [gtu arrow] (Inst) -- (Init);
+    \path [gtu arrow] (Init) -- (Serv);
+    \path [gtu arrow] (Serv) edge [loop below] node {Requests} (Serv);
+    \path [gtu arrow] (Serv) -- (Dest);
+    \path [gtu arrow] (Dest) -- (Unload);
+\end{tikzpicture}
+\captionof{figure}{Servlet Life Cycle}
+\end{center}
+
+\textbf{ટેબલ: Servlet લાઇફ સાઇકલ તબક્કાઓ}
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{તબક્કો} & \textbf{Method} & \textbf{હેતુ} \\ \hline
+\textbf{લોડિંગ} & ક્લાસ લોડિંગ & JVM servlet ક્લાસ લોડ કરે \\ \hline
+\textbf{ઇન્સ્ટન્શિએશન} & Constructor & servlet ઑબ્જેક્ટ બનાવે \\ \hline
+\textbf{ઇનિશિયલાઇઝેશન} & \code{init()} & એકવારની સેટઅપ \\ \hline
+\textbf{રિક્વેસ્ટ પ્રોસેસિંગ} & \code{service()} & રિક્વેસ્ટ્સ હેન્ડલ કરે \\ \hline
+\textbf{વિનાશ} & \code{destroy()} & રિસોર્સ સાફ કરે \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{Method વિગતો:}
+\begin{itemize}
+    \item \keyword{init()}: servlet લોડ થાય ત્યારે એકવાર કોલ થાય.
+    \item \keyword{service()}: દરેક રિક્વેસ્ટ માટે કોલ થાય.
+    \item \keyword{destroy()}: servlet અનલોડ થાય ત્યારે કોલ થાય.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Load-Create-Init-Service-Destroy}
+\end{mnemonicbox}
+
+\questionmarks{3(c)}{7}{Servlet માં session tracking ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Session Tracking પદ્ધતિઓ:}
+
+\begin{center}
+\captionof{table}{Session Tracking તકનીકો}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પદ્ધતિ} & \textbf{વર્ણન} & \textbf{ફાયદા/નુકસાન} \\ \hline
+\textbf{Cookies} & ક્લાયન્ટ-સાઇડ સ્ટોરેજ & સરળ/ગોપનીયતાના મુદ્દા \\ \hline
+\textbf{URL Rewriting} & session ID ઉમેરવું & સાર્વત્રિક/કદરૂપ URLs \\ \hline
+\textbf{Hidden Fields} & ફોર્મ-આધારિત ટ્રેકિંગ & સરળ/ફોર્મ પર આધારિત \\ \hline
+\textbf{HttpSession} & સર્વર-સાઇડ ઑબ્જેક્ટ & સુરક્ષિત/મેમરી ઉપયોગ \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{HttpSession ઉદાહરણ:}
+\begin{lstlisting}[language=Java]
+protected void doGet(HttpServletRequest request, 
+                    HttpServletResponse response) {
+    HttpSession session = request.getSession();
+    
+    // ડેટા સ્ટોર કરવું
+    session.setAttribute("username", "john");
+    
+    // ડેટા મેળવવું
+    String user = (String) session.getAttribute("username");
+    
+    // Session ની માહિતી
+    String sessionId = session.getId();
+    boolean isNew = session.isNew();
+    
+    PrintWriter out = response.getWriter();
+    out.println("વપરાશકર્તા: " + user);
+    out.println("Session ID: " + sessionId);
+}
+\end{lstlisting}
+
+\textbf{Session મેનેજમેન્ટ:}
+\begin{itemize}
+    \item \keyword{બનાવટ}: \code{request.getSession()}
+    \item \keyword{સ્ટોરેજ}: \code{session.setAttribute()}
+    \item \keyword{પુનઃપ્રાપ્તિ}: \code{session.getAttribute()}
+    \item \keyword{રદ કરવું}: \code{session.invalidate()}
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Cookies-URLs-Hidden-HttpSession: CUHS}
+\end{mnemonicbox}
+
+\questionmarks{3(a OR)}{3}{Servlet life cycle ની methods સમજાવો.}
+
+\begin{solutionbox}
+\textbf{લાઇફ સાઇકલ Methods:}
+
+\begin{center}
+\captionof{table}{Servlet લાઇફ સાઇકલ Methods}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Method} & \textbf{ક્યારે કોલ થાય} & \textbf{Parameters} \\ \hline
+\textbf{init()} & Servlet ઇનિશિયલાઇઝેશન & \code{ServletConfig config} \\ \hline
+\textbf{service()} & દરેક રિક્વેસ્ટ & \code{ServletRequest req, ServletResponse res} \\ \hline
+\textbf{destroy()} & Servlet cleanup & કોઈ નહીં \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{Method વિગતો:}
+\begin{itemize}
+    \item \keyword{init(ServletConfig config)}: ઇનિશિયલાઇઝેશન કોડ, ડેટાબેસ કનેક્શન્સ.
+    \item \keyword{service(req, res)}: રિક્વેસ્ટ હેન્ડલિંગ, બિઝનેસ લોજિક.
+    \item \keyword{destroy()}: cleanup કોડ, કનેક્શન્સ બંધ કરવા.
+\end{itemize}
+
+\textbf{ઉદાહરણ:}
+\begin{lstlisting}[language=Java]
+public void init(ServletConfig config) {
+    // ડેટાબેસ કનેક્શન ઇનિશિયલાઇઝ કરો
+}
+
+public void service(ServletRequest req, ServletResponse res) {
+    // રિક્વેસ્ટ હેન્ડલ કરો
+}
+
+public void destroy() {
+    // કનેક્શન્સ બંધ કરો
+}
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Init-Service-Destroy: ISD}
+\end{mnemonicbox}
+
+\questionmarks{3(b OR)}{4}{ઉદાહરણ સાથે HTTPSERVLET class સમજાવો.}
+
+\begin{solutionbox}
+\textbf{HttpServlet Class:}
+HTTP પ્રોટોકોલ માટે ખાસ કરીને GenericServlet ને વિસ્તૃત કરતો abstract class.
+
+\textbf{HTTP Methods:}
+
+\begin{center}
+\captionof{table}{HttpServlet Methods}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Method} & \textbf{HTTP Verb} & \textbf{હેતુ} \\ \hline
+\textbf{doGet()} & GET & ડેટા પુનઃપ્રાપ્ત કરવું \\ \hline
+\textbf{doPost()} & POST & ડેટા સબમિટ કરવું \\ \hline
+\textbf{doPut()} & PUT & ડેટા અપડેટ કરવું \\ \hline
+\textbf{doDelete()} & DELETE & ડેટા દૂર કરવું \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{ઉદાહરણ:}
+\begin{lstlisting}[language=Java]
+public class MyServlet extends HttpServlet {
+    protected void doGet(HttpServletRequest request,
+                        HttpServletResponse response) {
+        response.setContentType("text/html");
+        PrintWriter out = response.getWriter();
+        out.println("<h1>GET Request</h1>");
+    }
+    
+    protected void doPost(HttpServletRequest request,
+                         HttpServletResponse response) {
+        String name = request.getParameter("name");
+        response.getWriter().println("નમસ્કાર " + name);
+    }
+}
+\end{lstlisting}
+
+\textbf{મુખ્ય વિશેષતાઓ:}
+\begin{itemize}
+    \item \keyword{HTTP-વિશિષ્ટ}: વેબ એપ્લિકેશન માટે ડિઝાઇન કરેલ.
+    \item \keyword{Method handling}: વિવિધ HTTP verbs માટે અલગ methods.
+    \item \keyword{Request/Response}: HttpServletRequest અને HttpServletResponse.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Get-Post-Put-Delete: GPPD}
+\end{mnemonicbox}
+
+\questionmarks{3(c OR)}{7}{GET અને POST method નો તફાવત લખો અને POST method નો ઉપયોગ કરીને Servlet બનવા માટેનો java code લખો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{GET વિ. POST તુલના}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{વિશેષતા} & \textbf{GET} & \textbf{POST} \\ \hline
+\textbf{ડેટા સ્થાન} & URL parameters & Request body \\ \hline
+\textbf{ડેટા મર્યાદા} & મર્યાદિત ($\sim$2KB) & અમર્યાદિત \\ \hline
+\textbf{સુરક્ષા} & ઓછી સુરક્ષિત & વધુ સુરક્ષિત \\ \hline
+\textbf{કેશિંગ} & કેશેબલ & કેશેબલ નથી \\ \hline
+\textbf{બુકમાર્કિંગ} & શક્ય & શક્ય નથી \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{POST Method Servlet ઉદાહરણ:}
+\begin{lstlisting}[language=Java]
+import javax.servlet.*;
+import javax.servlet.http.*;
+import java.io.*;
+
+public class LoginServlet extends HttpServlet {
+    protected void doPost(HttpServletRequest request,
+                         HttpServletResponse response) 
+                         throws ServletException, IOException {
+        
+        response.setContentType("text/html");
+        PrintWriter out = response.getWriter();
+        
+        // ફોર્મ ડેટા મેળવવું
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+        
+        // ઓળખપત્રો ચકાસવા
+        if("admin".equals(username) && "123".equals(password)) {
+            out.println("<h2>લોગિન સફળ!</h2>");
+            out.println("<p>આવકાર છે " + username + "</p>");
+        } else {
+            out.println("<h2>લોગિન નિષ્ફળ!</h2>");
+            out.println("<p>અયોગ્ય ઓળખપત્રો</p>");
+        }
+        
+        out.close();
+    }
+}
+\end{lstlisting}
+
+\textbf{HTML ફોર્મ:}
+\begin{lstlisting}[language=HTML]
+<form method="post" action="LoginServlet">
+    વપરાશકર્તા નામ: <input type="text" name="username"><br />
+    પાસવર્ડ: <input type="password" name="password"><br />
+    <input type="submit" value="લોગિન">
+</form>
+\end{lstlisting}
+
+\textbf{મુખ્ય તફાવતો:}
+\begin{itemize}
+    \item \keyword{GET}: ડેટા URL માં, દેખાય છે, મર્યાદિત કદ.
+    \item \keyword{POST}: ડેટા body માં, છુપાયેલ, અમર્યાદિત કદ.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{GET મેળવે, POST સુરક્ષિત કરે}
+\end{mnemonicbox}
+
+\questionmarks{4(a)}{3}{JSP Implicit Objects ની યાદી બનાવો અને કોઈપણ બે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{JSP Implicit Objects યાદી:}
+\begin{enumerate}
+    \item \textbf{request} (HttpServletRequest)
+    \item \textbf{response} (HttpServletResponse)
+    \item \textbf{session} (HttpSession)
+    \item \textbf{application} (ServletContext)
+    \item \textbf{out} (JspWriter)
+    \item \textbf{page} (Object)
+    \item \textbf{pageContext} (PageContext)
+    \item \textbf{config} (ServletConfig)
+    \item \textbf{exception} (Throwable)
+\end{enumerate}
+
+\textbf{વિગતવાર સમજૂતી:}
+
+\textbf{request Object:}
+\begin{itemize}
+    \item \keyword{પ્રકાર}: HttpServletRequest
+    \item \keyword{હેતુ}: રિક્વેસ્ટ ડેટા અને parameters ને એક્સેસ કરવું.
+    \item \keyword{ઉદાહરણ}: \code{String name = request.getParameter("name");}
+\end{itemize}
+
+\textbf{session Object:}
+\begin{itemize}
+    \item \keyword{પ્રકાર}: HttpSession
+    \item \keyword{હેતુ}: રિક્વેસ્ટ્સ પર વપરાશકર્તા-વિશિષ્ટ ડેટા સ્ટોર કરવું.
+    \item \keyword{ઉદાહરણ}: \code{session.setAttribute("user", username);}
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Request Response Session Application Out}
+\end{mnemonicbox}
+
+\questionmarks{4(b)}{4}{JSP ની વિવિધ વિશેષતાઓ સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{JSP વિશેષતાઓ}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{વિશેષતા} & \textbf{વર્ણન} & \textbf{ફાયદો} \\ \hline
+\textbf{સહેલું ડેવલપમેન્ટ} & HTML + Java & ઝડપી કોડિંગ \\ \hline
+\textbf{પ્લેટફોર્મ સ્વતંત્ર} & એકવાર લખો, ગમે ત્યાં ચલાવો & પોર્ટેબિલિટી \\ \hline
+\textbf{કોમ્પોનેન્ટ-આધારિત} & પુનઃઉપયોગ્ય કોમ્પોનેન્ટ્સ & જાળવણીયોગ્યતા \\ \hline
+\textbf{સુરક્ષિત} & Java સિક્યોરિટી મોડલ & સુરક્ષિત એક્ઝિક્યુશન \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{મુખ્ય વિશેષતાઓ:}
+\begin{itemize}
+    \item \keyword{Separation of Concerns}: ડિઝાઇન અને લોજિક અલગ.
+    \item \keyword{વિસ્તરણીય}: કસ્ટમ ટેગ્સ અને લાઇબ્રેરીઓ.
+    \item \keyword{કમ્પાઇલ્ડ}: કાર્યક્ષમતા માટે servlets માં ટ્રાન્સલેટ.
+    \item \keyword{Expression Language}: સરળ સિન્ટેક્સ.
+\end{itemize}
+
+\textbf{JSP એલિમેન્ટ્સ:}
+\begin{itemize}
+    \item \keyword{Directives}: \code{<\%@ \%>}
+    \item \keyword{Declarations}: \code{<\%! \%>}
+    \item \keyword{Expressions}: \code{<\%= \%>}
+    \item \keyword{Scriptlets}: \code{<\% \%>}
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Easy Platform Component Secure}
+\end{mnemonicbox}
+
+\questionmarks{4(c)}{7}{Servlet માંથી JSP કઇ રીતે કોલ થશે તે ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Servlet માંથી JSP કોલ કરવાની પદ્ધતિઓ:}
+
+\begin{center}
+\captionof{table}{JSP કોલિંગ પદ્ધતિઓ}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પદ્ધતિ} & \textbf{Interface} & \textbf{હેતુ} \\ \hline
+\textbf{Forward} & RequestDispatcher & કંટ્રોલ ટ્રાન્સફર કરવું \\ \hline
+\textbf{Include} & RequestDispatcher & કન્ટેન્ટ ઇન્ક્લુડ કરવું \\ \hline
+\textbf{Redirect} & HttpServletResponse & નવી રિક્વેસ્ટ \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{Forward ઉદાહરણ:}
+
+\textbf{Servlet કોડ:}
+\begin{lstlisting}[language=Java]
+public class DataServlet extends HttpServlet {
+    protected void doGet(HttpServletRequest request,
+                        HttpServletResponse response) 
+                        throws ServletException, IOException {
+        
+        // ડેટા પ્રોસેસ કરવું
+        String username = "જોન ડો";
+        int age = 25;
+        
+        // Attributes સેટ કરવા
+        request.setAttribute("username", username);
+        request.setAttribute("age", age);
+        
+        // JSP ને ફોરવર્ડ કરવું
+        RequestDispatcher dispatcher = 
+            request.getRequestDispatcher("display.jsp");
+        dispatcher.forward(request, response);
+    }
+}
+\end{lstlisting}
+
+\textbf{JSP કોડ (display.jsp):}
+\begin{lstlisting}[language=Java]
+<%@ page language="java" contentType="text/html" %>
+<html>
+<head><title>વપરાશકર્તા માહિતી</title></head>
+<body>
+    <h2>વપરાશકર્તા માહિતી</h2>
+    <p>નામ: <%= request.getAttribute("username") %></p>
+    <p>ઉંમર: <%= request.getAttribute("age") %></p>
+</body>
+</html>
+\end{lstlisting}
+
+\textbf{પગલાઓ:}
+\begin{enumerate}
+    \item \textbf{ડેટા પ્રોસેસ} servlet માં.
+    \item \textbf{Attributes સેટ} કરવા request માં.
+    \item \textbf{RequestDispatcher મેળવવું} JSP path સાથે.
+    \item \textbf{Forward} JSP ને.
+\end{enumerate}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Process-Set-Get-Forward: PSGF}
+\end{mnemonicbox}
+
+\questionmarks{4(a OR)}{3}{JSP scripting elements ની યાદી બનાવો અને સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{JSP Scripting Elements}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{Element} & \textbf{Syntax} & \textbf{હેતુ} & \textbf{ઉદાહરણ} \\ \hline
+\textbf{Directive} & \code{<\%@ \%>} & પેજ સેટિંગ્સ & \code{<\%@ page import... \%>} \\ \hline
+\textbf{Declaration} & \code{<\%! \%>} & methods/variables વ્યાખ્યા & \code{<\%! int count = 0; \%>} \\ \hline
+\textbf{Expression} & \code{<\%= \%>} & વેલ્યુઝ આઉટપુટ & \code{<\%= new Date() \%>} \\ \hline
+\textbf{Scriptlet} & \code{<\% \%>} & Java કોડ & \code{<\% for(int i=0... \%>} \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{વિગતવાર સમજૂતી:}
+\begin{itemize}
+    \item \keyword{Directives}: Page directive, Include directive, Taglib directive.
+    \item \keyword{Declarations}: Instance variables અને methods વ્યાખ્યાયિત કરવા. servlet class ના ભાગ બને છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Direct Declare Express Script}
+\end{mnemonicbox}
+
+\questionmarks{4(b OR)}{4}{JSP life cycle સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm, auto]
+    \node [gtu state] (Req) {Request};
+    \node [gtu state, right=of Req] (Trans) {Translation};
+    \node [gtu state, right=of Trans] (Comp) {Compilation};
+    \node [gtu state, below=of Comp] (Load) {Loading};
+    \node [gtu state, left=of Load] (Init) {jspInit()};
+    \node [gtu state, left=of Init] (Serv) {\_jspService()};
+    \node [gtu state, below=of Serv] (Dest) {jspDestroy()};
+    
+    \path [gtu arrow] (Req) -- (Trans);
+    \path [gtu arrow] (Trans) -- (Comp);
+    \path [gtu arrow] (Comp) -- (Load);
+    \path [gtu arrow] (Load) -- (Init);
+    \path [gtu arrow] (Init) -- (Serv);
+    \path [gtu arrow] (Serv) edge [loop below] node {Requests} (Serv);
+    \path [gtu arrow] (Serv) -- (Dest);
+\end{tikzpicture}
+\captionof{figure}{JSP Life Cycle}
+\end{center}
+
+\begin{center}
+\captionof{table}{JSP લાઇફ સાઇકલ તબક્કાઓ}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{તબક્કો} & \textbf{Method} & \textbf{હેતુ} \\ \hline
+\textbf{Translation} & - & JSP થી Java servlet \\ \hline
+\textbf{Compilation} & - & Java થી bytecode \\ \hline
+\textbf{Initialization} & \code{jspInit()} & રિસોર્સ સેટઅપ \\ \hline
+\textbf{Request Processing} & \code{\_jspService()} & રિક્વેસ્ટ હેન્ડલ કરવા \\ \hline
+\textbf{Destruction} & \code{jspDestroy()} & Cleanup \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{મુખ્ય મુદ્દાઓ:}
+\begin{itemize}
+    \item \keyword{Translation}: JSP engine JSP ને servlet માં કન્વર્ટ કરે.
+    \item \keyword{Compilation}: Java compiler .class ફાઇલ બનાવે.
+    \item \keyword{Execution}: Servlet container કમ્પાઇલ થયેલ servlet એક્ઝિક્યુટ કરે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Translate-Compile-Init-Service-Destroy}
+\end{mnemonicbox}
+
+\questionmarks{4(c OR)}{7}{Cookie શું છે? ઉદાહરણ સાથે cookie નું working સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Cookie વ્યાખ્યા:}
+Cookie એ વેબ બ્રાઉઝર દ્વારા ક્લાયન્ટના કમ્પ્યુટર પર સ્ટોર કરવામાં આવતા ડેટાનો નાનો ભાગ છે.
+
+\textbf{Cookie Working Process:}
+\begin{itemize}
+    \item Client HTTP Request મોકલે છે.
+    \item Server HTTP Response + \code{Set-Cookie} મોકલે છે.
+    \item Client HTTP Request + \code{Cookie} મોકલે છે.
+    \item Server HTTP Response (cookie ડેટા વાપરે) મોકલે છે.
+\end{itemize}
+
+\begin{center}
+\captionof{table}{Cookie Attributes}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Attribute} & \textbf{હેતુ} & \textbf{ઉદાહરણ} \\ \hline
+\textbf{Name} & Cookie identifier & \code{username} \\ \hline
+\textbf{Value} & Cookie ડેટા & \code{john123} \\ \hline
+\textbf{Domain} & વેલિડ ડોમેન & \code{.example.com} \\ \hline
+\textbf{Path} & વેલિડ પાથ & \code{/shop/} \\ \hline
+\textbf{Max-Age} & એક્સપાયરી ટાઇમ & \code{3600} સેકંડ \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{Cookie ઉદાહરણ:}
+
+\textbf{Cookie બનાવવું (Servlet):}
+\begin{lstlisting}[language=Java]
+public class SetCookieServlet extends HttpServlet {
+    protected void doGet(HttpServletRequest request,
+                        HttpServletResponse response) {
+        
+        // Cookie બનાવવી
+        Cookie userCookie = new Cookie("username", "john123");
+        userCookie.setMaxAge(60 * 60 * 24); // 1 દિવસ
+        userCookie.setPath("/");
+        
+        // Response માં ઉમેરવી
+        response.addCookie(userCookie);
+        
+        response.getWriter().println("Cookie સફળતાપૂર્વક સેટ થઈ!");
+    }
+}
+\end{lstlisting}
+
+\textbf{Cookie વાંચવી (Servlet):}
+\begin{lstlisting}[language=Java]
+public class GetCookieServlet extends HttpServlet {
+    protected void doGet(HttpServletRequest request,
+                        HttpServletResponse response) {
+        
+        Cookie[] cookies = request.getCookies();
+        String username = null;
+        
+        if(cookies != null) {
+            for(Cookie cookie : cookies) {
+                if("username".equals(cookie.getName())) {
+                    username = cookie.getValue();
+                    break;
+                }
+            }
+        }
+        
+        response.getWriter().println("પાછા આવવા બદલ આભાર, " + username);
+    }
+}
+\end{lstlisting}
+
+\textbf{Cookie ફાયદા:}
+\begin{itemize}
+    \item \keyword{વપરાશકર્તા વ્યક્તિકરણ}: પસંદગીઓ યાદ રાખવી.
+    \item \keyword{Session tracking}: state જાળવવા.
+    \item \keyword{Analytics}: વપરાશકર્તા વર્તન ટ્રેક કરવું.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Create-Set-Add-Read: CSAR}
+\end{mnemonicbox}
+
+\questionmarks{5(a)}{3}{JSP અને Servlet વચ્ચેનો તફાવત લખો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{JSP વિ. Servlet તુલના}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{વિશેષતા} & \textbf{JSP} & \textbf{Servlet} \\ \hline
+\textbf{ડેવલપમેન્ટ} & HTML + Java & શુદ્ધ Java \\ \hline
+\textbf{કમ્પાઇલેશન} & ઑટોમેટિક & મેન્યુઅલ \\ \hline
+\textbf{જાળવણી} & સરળ & વધુ જટિલ \\ \hline
+\textbf{કાર્યક્ષમતા} & ધીમી (પ્રથમ રિક્વેસ્ટ) & ઝડપી \\ \hline
+\textbf{હેતુ} & Presentation layer & Business logic \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{મુખ્ય તફાવતો:}
+\begin{itemize}
+    \item \keyword{JSP}: presentation માટે સારી, વેબ ડિઝાઇનર્સ માટે સરળ.
+    \item \keyword{Servlet}: business logic માટે સારી, વધુ કંટ્રોલ.
+    \item \keyword{કોડિંગ}: JSP HTML અને Java મિક્સ કરે, Servlet શુદ્ધ Java.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{JSP Presentation માટે, Servlet Logic માટે}
+\end{mnemonicbox}
+
+\questionmarks{5(b)}{4}{Spring Boot શું છે? અને તેના ફાયદા સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Spring Boot વ્યાખ્યા:}
+Spring Boot એ ફ્રેમવર્ક છે જે ઑટો-કોન્ફિગરેશન અને embedded servers પ્રદાન કરીને Spring-આધારિત એપ્લિકેશનોનું ડેવલપમેન્ટ સરળ બનાવે છે.
+
+\begin{center}
+\captionof{table}{Spring Boot ફાયદા}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{ફાયદો} & \textbf{વર્ણન} \\ \hline
+\textbf{ઑટો કોન્ફિગરેશન} & Spring એપ્લિકેશનો ઑટોમેટિક કોન્ફિગર કરે \\ \hline
+\textbf{Embedded Servers} & બિલ્ટ-ઇન Tomcat, Jetty સપોર્ટ \\ \hline
+\textbf{Starter Dependencies} & પ્રી-કોન્ફિગર્ડ dependency સેટ્સ \\ \hline
+\textbf{Production Ready} & Health checks, metrics, monitoring \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{મુખ્ય વિશેષતાઓ:}
+\begin{itemize}
+    \item \keyword{ઝડપી ડેવલપમેન્ટ}: ન્યૂનતમ કોન્ફિગરેશન જરૂરી.
+    \item \keyword{Microservices}: microservice આર્કિટેક્ચર માટે પરફેક્ટ.
+    \item \keyword{XML નહીં}: Convention over configuration.
+    \item \keyword{Cloud Ready}: cloud platforms પર સરળ deployment.
+\end{itemize}
+
+\textbf{ઉદાહરણ:}
+\begin{lstlisting}[language=Java]
+@SpringBootApplication
+public class MyApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(MyApplication.class, args);
+    }
+}
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Auto Embedded Starter Production}
+\end{mnemonicbox}
+
+\questionmarks{5(c)}{7}{Spring framework નું આર્કિટેક્ચર સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm, auto]
+    \node [gtu block] (App) {Spring Framework Architecture};
+    \node [gtu block, below left=of App] (Core) {Core Container};
+    \node [gtu block, below=of App] (Data) {Data Access};
+    \node [gtu block, below right=of App] (Web) {Web MVC};
+    \node [gtu block, below=of Core] (AOP) {AOP};
+    \node [gtu block, below=of Web] (Test) {Test};
+    
+    \path [gtu arrow] (App) -- (Core);
+    \path [gtu arrow] (App) -- (Data);
+    \path [gtu arrow] (App) -- (Web);
+    \path [gtu arrow] (App) -- (AOP);
+    \path [gtu arrow] (App) -- (Test);
+\end{tikzpicture}
+\captionof{figure}{Spring Framework Architecture}
+\end{center}
+
+\textbf{ટેબલ: Spring Framework Modules}
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Module} & \textbf{Components} & \textbf{હેતુ} \\ \hline
+\textbf{Core Container} & Core, Beans, Context & IoC અને DI \\ \hline
+\textbf{Data Access} & JDBC, ORM, JMS & ડેટાબેસ ઓપરેશન્સ \\ \hline
+\textbf{Web MVC} & Web, Servlet, MVC & વેબ એપ્લિકેશન્સ \\ \hline
+\textbf{AOP} & Aspects, Weaving & Cross-cutting concerns \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{મુખ્ય કન્સેપ્ટ્સ:}
+\begin{itemize}
+    \item \keyword{IoC (Inversion of Control)}: ફ્રેમવર્ક ઑબ્જેક્ટ બનાવટ કંટ્રોલ કરે.
+    \item \keyword{DI (Dependency Injection)}: Dependencies ઑટોમેટિક inject થાય.
+    \item \keyword{AOP}: Modular cross-cutting concerns.
+    \item \keyword{MVC}: Model-View-Controller પેટર્ન.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Core Data Web AOP Test}
+\end{mnemonicbox}
+
+\questionmarks{5(a OR)}{3}{Servlet ની સરખામણીમાં JSP ના ફાયદા લખો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{Servlet પર JSP ના ફાયદા}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{ફાયદો} & \textbf{JSP} & \textbf{Servlet મર્યાદા} \\ \hline
+\textbf{સહેલું ડેવલપમેન્ટ} & HTML + Java ટેગ્સ & Java માં જટિલ HTML \\ \hline
+\textbf{ઑટોમેટિક કમ્પાઇલેશન} & ઑટો-કમ્પાઇલ્ડ & મેન્યુઅલ કમ્પાઇલેશન \\ \hline
+\textbf{ડિઝાઇનર ફ્રેન્ડલી} & વેબ ડિઝાઇનર્સ કામ કરી શકે & Java જ્ઞાન જરૂરી \\ \hline
+\textbf{જાળવણી} & સુધારવા સરળ & કોડ બદલાવ માટે recompilation \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{મુખ્ય ફાયદા:}
+\begin{itemize}
+    \item \keyword{ડિઝાઇન અને લોજિકનું વિભાજન}: HTML અને Java અલગ.
+    \item \keyword{ઝડપી ડેવલપમેન્ટ}: ઝડપી prototyping અને development.
+    \item \keyword{ઓછો કોડ}: out.println() statements ની જરૂર નહીં.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Easy Auto Designer Maintenance}
+\end{mnemonicbox}
+
+\questionmarks{5(b OR)}{4}{Spring Boot ના ફાયદા સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{Spring Boot ફાયદા}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{ફાયદો} & \textbf{વર્ણન} & \textbf{લાભ} \\ \hline
+\textbf{ઑટો કોન્ફિગરેશન} & Classpath આધારે ઑટોમેટિક સેટઅપ & ઘટેલ કોન્ફિગરેશન \\ \hline
+\textbf{Embedded Server} & બિલ્ટ-ઇન Tomcat/Jetty & બાહ્ય deployment નહીં \\ \hline
+\textbf{Starter POMs} & પ્રી-કોન્ફિગર્ડ dependencies & સરળ dependency management \\ \hline
+\textbf{Actuator} & Production monitoring & Health checks અને metrics \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{વિગતવાર ફાયદા:}
+\begin{enumerate}
+    \item \textbf{ઑટો કોન્ફિગરેશન}: Dependencies આધારે Spring application ઑટોમેટિક કોન્ફિગર કરે.
+    \item \textbf{Embedded Servers}: બાહ્ય application servers ની જરૂર નહીં. ચલાવવા સરળ.
+    \item \textbf{Starter Dependencies}: પ્રી-કોન્ફિગર્ડ dependency સેટ્સ.
+    \item \textbf{Production ફીચર્સ}: Health endpoints, metrics collection.
+\end{enumerate}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Auto Embedded Starter Production}
+\end{mnemonicbox}
+
+\questionmarks{5(c OR)}{7}{MVC આર્કિટેક્ચર સમજાવો.}
+
+\begin{solutionbox}
+\textbf{MVC (Model-View-Controller) આર્કિટેક્ચર:}
+
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto]
+    \node [gtu block] (View) {View};
+    \node [gtu block, right=of View] (Cont) {Controller};
+    \node [gtu block, right=of Cont] (Model) {Model};
+    \node [gtu block, below=of View] (User) {User};
+    
+    \path [gtu arrow] (User) -- (View);
+    \path [gtu arrow] (View) -- (Cont);
+    \path [gtu arrow] (Cont) -- (Model);
+    \path [gtu arrow] (Model) -- (Cont);
+    \path [gtu arrow] (Cont) -- (View);
+    \path [gtu arrow] (View) -- (User);
+\end{tikzpicture}
+\captionof{figure}{MVC આર્કિટેક્ચર}
+\end{center}
+
+\begin{center}
+\captionof{table}{MVC કોમ્પોનેન્ટ્સ}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Component} & \textbf{જવાબદારી} & \textbf{ઉદાહરણ} \\ \hline
+\textbf{Model} & ડેટા અને બિઝનેસ લોજિક & Entity classes, DAOs \\ \hline
+\textbf{View} & વપરાશકર્તા ઇન્ટરફેસ & JSP, HTML, Templates \\ \hline
+\textbf{Controller} & રિક્વેસ્ટ હેન્ડલિંગ & Servlets, Spring Controllers \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{MVC ફ્લો:}
+\begin{enumerate}
+    \item વપરાશકર્તા Input View ને મોકલે છે.
+    \item View Controller ને રિક્વેસ્ટ મોકલે છે.
+    \item Controller Model સાથે ડેટા પ્રોસેસ કરે છે.
+    \item Model Controller ને ડેટા રિટર્ન કરે છે.
+    \item Controller View પસંદ કરે છે.
+    \item View વપરાશકર્તા ને Response આપે છે.
+\end{enumerate}
+
+\textbf{Spring MVC ઉદાહરણ:}
+
+\textbf{Controller:}
+\begin{lstlisting}[language=Java]
+@Controller
+public class StudentController {
+    @Autowired
+    private StudentService studentService;
+    
+    @GetMapping("/students")
+    public ModelAndView getStudents() {
+        List<Student> students = studentService.getAllStudents();
+        ModelAndView mv = new ModelAndView("students");
+        mv.addObject("studentList", students);
+        return mv;
+    }
+}
+\end{lstlisting}
+
+\textbf{MVC ફાયદા:}
+\begin{itemize}
+    \item \keyword{Separation of Concerns}: જવાબદારીઓનું સ્પષ્ટ વિભાજન.
+    \item \keyword{જાળવણીયોગ્યતા}: જાળવવા અને સુધારવા સરળ.
+    \item \keyword{ટેસ્ટેબિલિટી}: દરેક કોમ્પોનેન્ટ સ્વતંત્ર રીતે ટેસ્ટ કરી શકાય.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Model ડેટા મેનેજ કરે, View ડેટા દર્શાવે, Controller ફ્લો કંટ્રોલ કરે}
+\end{mnemonicbox}
+
+\end{document}

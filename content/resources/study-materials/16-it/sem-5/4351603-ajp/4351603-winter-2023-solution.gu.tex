@@ -1,0 +1,1476 @@
+\documentclass{article}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/preamble.tex}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/gujarati-boxes.tex}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/commands.tex}
+
+\title{એડવાન્સ જાવા પ્રોગ્રામિંગ (4351603) - શિયાળો 2023 સમાધાન}
+\date{December 08, 2023}
+
+\begin{document}
+\maketitle
+
+\questionmarks{1(a)}{3}{સ્વિંગ ક્લાસ હાયરાર્કી દોરો અને સમજાવો.}
+\begin{solutionbox}
+    \textbf{ડાયાગ્રામ:}
+    
+    \begin{center}
+    \begin{tikzpicture}[
+        node distance=1.5cm,
+        level 1/.style={sibling distance=6cm},
+        level 2/.style={sibling distance=3cm},
+        every node/.style={gtu block, align=center, text width=2.5cm}
+    ]
+        \node {Object}
+            child { node {Component}
+                child { node {Container}
+                    child { node {JComponent}
+                        child { node {JLabel} }
+                        child { node {JButton} }
+                        child { node {JTextField} }
+                        child { node {JPanel} }
+                    }
+                    child { node {Window}
+                        child { node {Frame}
+                            child { node {JFrame} }
+                        }
+                        child { node {Dialog}
+                            child { node {JDialog} }
+                        }
+                    }
+                }
+            };
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{itemize}
+        \item \keyword{Component}: તમામ GUI કોમ્પોનન્ટ્સ માટે બેઝ ક્લાસ
+        \item \keyword{Container}: અન્ય કોમ્પોનન્ટ્સ ધરાવી શકે તેવા કોમ્પોનન્ટ્સ
+        \item \keyword{JComponent}: તમામ સ્વિંગ કોમ્પોનન્ટ્સ માટે બેઝ ક્લાસ
+    \end{itemize}
+
+    \begin{mnemonicbox}
+        \mnemonic{Objects Contain Components Jointly}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{1(b)}{4}{વિવિધ લેઆઉટ મેનેજરોની યાદી બનાવો. ફ્લો લેઆઉટ મેનેજરને ઉદાહરણ સાથે સમજાવો.}
+\begin{solutionbox}
+    \textbf{લેઆઉટ મેનેજરોનું ટેબલ:}
+    
+    \begin{tabulary}{\textwidth}{|L|L|}
+        \hline
+        \textbf{લેઆઉટ મેનેજર} & \textbf{વર્ણન} \\
+        \hline
+        FlowLayout & કોમ્પોનન્ટ્સને ડાબેથી જમણે ગોઠવે છે \\
+        \hline
+        BorderLayout & પાંચ વિસ્તારો: ઉત્તર, દક્ષિણ, પૂર્વ, પશ્ચિમ, કેન્દ્ર \\
+        \hline
+        GridLayout & સમાન કદના લંબચોરસ ગ્રિડ \\
+        \hline
+        CardLayout & કોમ્પોનન્ટ્સનો સ્ટેક \\
+        \hline
+        BoxLayout & એકલ પંક્તિ અથવા કૉલમ \\
+        \hline
+    \end{tabulary}
+
+    \textbf{FlowLayout ઉદાહરણ:}
+
+    \begin{lstlisting}[language=java]
+JFrame frame = new JFrame();
+frame.setLayout(new FlowLayout());
+frame.add(new JButton("Button1"));
+frame.add(new JButton("Button2"));
+frame.setSize(300, 100);
+frame.setVisible(true);
+    \end{lstlisting}
+
+    \begin{itemize}
+        \item \keyword{ડિફૉલ્ટ એલાઇનમેન્ટ}: કોમ્પોનન્ટ્સ ડાબેથી જમણે વહે છે
+        \item \keyword{રેપિંગ}: જરૂર પડે તો કોમ્પોનન્ટ્સ આગલી લાઇનમાં જાય છે
+    \end{itemize}
+
+    \begin{mnemonicbox}
+        \mnemonic{Flow Goes Left Right}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{1(c)}{7}{કાઉન્ટર એપ્લિકેશન માટે જાવા સ્વિંગ પ્રોગ્રામ વિકસાવો જેમાં લેબલમાં પ્રદર્શિત 0 ની પ્રારંભિક ગણતરી સાથે "વધારો" અને "ઘટાડો" બટન હોય. જ્યારે "વધારો" પર ક્લિક કરવામાં આવે છે, ત્યારે ગણતરી 1 થી વધે છે, અને જ્યારે "ઘટાડો" ક્લિક કરવામાં આવે છે, ત્યારે ગણતરી 1 થી ઓછી થાય છે. જ્યારે કાઉન્ટર 0 થી નીચે જાય ત્યારે message dialog પ્રદર્શિત થવો જોઈએ.}
+\begin{solutionbox}
+    \textbf{કોડ:}
+
+    \begin{lstlisting}[language=java]
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class CounterApp extends JFrame implements ActionListener {
+    private int count = 0;
+    private JLabel countLabel;
+    private JButton incButton, decButton;
+    
+    public CounterApp() {
+        setTitle("કાઉન્ટર એપ્લિકેશન");
+        setLayout(new FlowLayout());
+        
+        countLabel = new JLabel("ગણતરી: " + count);
+        incButton = new JButton("વધારો");
+        decButton = new JButton("ઘટાડો");
+        
+        incButton.addActionListener(this);
+        decButton.addActionListener(this);
+        
+        add(countLabel);
+        add(incButton);
+        add(decButton);
+        
+        setSize(250, 100);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setVisible(true);
+    }
+    
+    public void actionPerformed(ActionEvent e) {
+        if(e.getSource() == incButton) {
+            count++;
+        } else if(e.getSource() == decButton) {
+            count--;
+            if(count < 0) {
+                JOptionPane.showMessageDialog(this, "કાઉન્ટર શૂન્ય થી નીચે!");
+            }
+        }
+        countLabel.setText("ગણતરી: " + count);
+    }
+    
+    public static void main(String[] args) {
+        new CounterApp();
+    }
+}
+    \end{lstlisting}
+
+    \begin{itemize}
+        \item \keyword{ઇવેન્ટ હેન્ડલિંગ}: ActionListener ઇન્ટરફેસ અમલીકરણ
+        \item \keyword{ડાયલોગ ડિસ્પ્લે}: નેગેટિવ કાઉન્ટર ચેતવણી માટે JOptionPane
+        \item \keyword{લેબલ અપડેટ}: રીઅલ-ટાઇમ કાઉન્ટ ડિસ્પ્લે
+    \end{itemize}
+
+    \begin{mnemonicbox}
+        \mnemonic{Increment Decrements Create Dialogs}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{1(c)}{7}{"File" મેનૂમાં મેનૂ આઈટમ્સ "New", "Open" અને "Exit" ધરાવતી સ્વિંગ એપ્લિકેશન બનાવો. જ્યારે વપરાશકર્તા "Exit" ક્લિક કરે છે, ત્યારે એપ્લિકેશન બંધ થવી જોઈએ. ફાઇલ મેનૂ આઈટમ્સ માટે કીબોર્ડ શૉર્ટકટ્સ ઉમેરો. "Help" મેનૂમાં મેનુ આઈટમ "About" પણ ઉમેરો. જ્યારે 'About' ક્લિક કરવામાં આવે ત્યારે એપ્લિકેશન વિશેની માહિતી પ્રદર્શિત કરવા માટે message dialog દેખાવું જોઈએ.}
+\begin{solutionbox}
+    \textbf{કોડ:}
+
+    \begin{lstlisting}[language=java]
+import javax.swing.*;
+import java.awt.event.*;
+
+public class MenuApp extends JFrame implements ActionListener {
+    
+    public MenuApp() {
+        setTitle("મેનૂ એપ્લિકેશન");
+        
+        JMenuBar menuBar = new JMenuBar();
+        
+        JMenu fileMenu = new JMenu("File");
+        JMenuItem newItem = new JMenuItem("New");
+        JMenuItem openItem = new JMenuItem("Open");
+        JMenuItem exitItem = new JMenuItem("Exit");
+        
+        newItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
+        openItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
+        exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK));
+        
+        newItem.addActionListener(this);
+        openItem.addActionListener(this);
+        exitItem.addActionListener(this);
+        
+        fileMenu.add(newItem);
+        fileMenu.add(openItem);
+        fileMenu.addSeparator();
+        fileMenu.add(exitItem);
+        
+        JMenu helpMenu = new JMenu("Help");
+        JMenuItem aboutItem = new JMenuItem("About");
+        aboutItem.addActionListener(this);
+        helpMenu.add(aboutItem);
+        
+        menuBar.add(fileMenu);
+        menuBar.add(helpMenu);
+        
+        setJMenuBar(menuBar);
+        setSize(400, 300);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setVisible(true);
+    }
+    
+    public void actionPerformed(ActionEvent e) {
+        String command = e.getActionCommand();
+        
+        if(command.equals("Exit")) {
+            System.exit(0);
+        } else if(command.equals("About")) {
+            JOptionPane.showMessageDialog(this, 
+                "મેનૂ એપ્લિકેશન v1.0\nશૉર્ટકટ્સ સાથે સ્વિંગ મેનૂ દર્શાવે છે");
+        }
+    }
+    
+    public static void main(String[] args) {
+        new MenuApp();
+    }
+}
+    \end{lstlisting}
+
+    \begin{itemize}
+        \item \keyword{કીબોર્ડ શૉર્ટકટ્સ}: Ctrl+N, Ctrl+O, Ctrl+X એક્સેલેરેટર્સ
+        \item \keyword{મેનૂ સ્ટ્રક્ચર}: સેપેરેટર્સ સાથે File અને Help મેનૂ
+        \item \keyword{About ડાયલોગ}: પ્રોગ્રામ વર્ણન ડિસ્પ્લે
+    \end{itemize}
+
+    \begin{mnemonicbox}
+        \mnemonic{Menus Need Shortcuts Always}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(a)}{3}{JDBC ડ્રાઇવરના પ્રકારની યાદી બનાવો. પ્રકાર-4 ડ્રાઈવર સમજાવો.}
+\begin{solutionbox}
+    \textbf{JDBC ડ્રાઇવર્સનું ટેબલ:}
+    
+    \begin{tabulary}{\textwidth}{|L|L|L|}
+        \hline
+        \textbf{પ્રકાર} & \textbf{નામ} & \textbf{વર્ણન} \\
+        \hline
+        Type-1 & JDBC-ODBC Bridge & ODBC ડ્રાઇવરનો ઉપયોગ કરે છે \\
+        \hline
+        Type-2 & Native-API Driver & ડેટાબેસની મૂળ લાઇબ્રેરીઓ વાપરે છે \\
+        \hline
+        Type-3 & Network Protocol Driver & મિડલવેર સર્વર વાપરે છે \\
+        \hline
+        Type-4 & Thin Driver & શુદ્ધ જાવા ડ્રાઇવર \\
+        \hline
+    \end{tabulary}
+
+    \textbf{Type-4 ડ્રાઇવરની વિશેષતાઓ:}
+
+    \begin{itemize}
+        \item \keyword{શુદ્ધ જાવા}: કોઈ મૂળ કોડની જરૂર નથી
+        \item \keyword{સીધો સંદેશાવ્યવહાર}: ડેટાબેસ સાથે સીધું જોડાણ
+        \item \keyword{પ્લેટફોર્મ સ્વતંત્ર}: JVM સાથે કોઈપણ OS પર કામ કરે છે
+    \end{itemize}
+
+    \begin{mnemonicbox}
+        \mnemonic{Type Four: Pure Java Door}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(b)}{4}{જાવા ફાઉન્ડેશન ક્લાસ (JFC) ની વિશેષતાઓ સમજાવો.}
+\begin{solutionbox}
+    \textbf{JFC કોમ્પોનન્ટ્સ:}
+
+    \begin{itemize}
+        \item \keyword{સ્વિંગ}: અદ્યતન GUI કોમ્પોનન્ટ્સ
+        \item \keyword{AWT}: મૂળભૂત GUI ટૂલકિટ
+        \item \keyword{Accessibility}: અક્ષમ વપરાશકર્તાઓ માટે સપોર્ટ
+        \item \keyword{2D ગ્રાફિક્સ}: વિસ્તૃત ડ્રોઇંગ ક્ષમતાઓ
+        \item \keyword{Drag and Drop}: ફાઇલ ટ્રાન્સફર સપોર્ટ
+    \end{itemize}
+
+    \textbf{મુખ્ય વિશેષતાઓ:}
+
+    \begin{itemize}
+        \item \keyword{Pluggable Look and Feel}: UI દેખાવ બદલી શકાય છે
+        \item \keyword{લાઇટવેઇટ કોમ્પોનન્ટ્સ}: બેહતર કાર્યક્ષમતા
+        \item \keyword{MVC આર્કિટેકચર}: ચિંતાઓનું વિભાજન
+        \item \keyword{ઇવેન્ટ હેન્ડલિંગ}: મજબૂત ઇવેન્ટ સિસ્ટમ
+    \end{itemize}
+
+    \begin{mnemonicbox}
+        \mnemonic{Java Foundation Creates Swing}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(c)}{7}{હાઇબરનેટનું આર્કિટેકચર દોરો અને સમજાવો.}
+\begin{solutionbox}
+    \textbf{ડાયાગ્રામ:}
+
+    \begin{center}
+    \begin{tikzpicture}[node distance=2.5cm, auto]
+        \node [gtu block] (app) {Java Application};
+        \node [gtu block, below of=app] (api) {Hibernate API};
+        \node [gtu block, below left of=api, xshift=-2cm] (config) {Configuration};
+        \node [gtu block, below of=api] (sf) {SessionFactory};
+        \node [gtu block, below of=sf] (session) {Session};
+        \node [gtu block, below left of=session, xshift=-2cm] (tx) {Transaction};
+        \node [gtu block, below of=session] (query) {Query};
+        \node [gtu block, below right of=session, xshift=2cm] (criteria) {Criteria};
+        \node [gtu block, left of=config, xshift=-2cm] (mapping) {Mapping Files};
+        \node [gtu block, below of=mapping] (props) {Hibernate Properties};
+        \node [gtu block, below of=query] (jdbc) {JDBC};
+        \node [gtu block, below of=jdbc] (db) {Database};
+
+        \draw [gtu arrow] (app) -- (api);
+        \draw [gtu arrow] (api) -- (config);
+        \draw [gtu arrow] (api) -- (sf);
+        \draw [gtu arrow] (sf) -- (session);
+        \draw [gtu arrow] (session) -- (tx);
+        \draw [gtu arrow] (session) -- (query);
+        \draw [gtu arrow] (session) -- (criteria);
+        \draw [gtu arrow] (mapping) -- (config);
+        \draw [gtu arrow] (props) -- (config);
+        \draw [gtu arrow] (session) -- (jdbc);
+        \draw [gtu arrow] (jdbc) -- (db);
+    \end{tikzpicture}
+    \end{center}
+
+    \textbf{આર્કિટેકચર કોમ્પોનન્ટ્સ:}
+
+    \begin{itemize}
+        \item \keyword{Configuration}: મેપિંગ ફાઇલો અને પ્રોપર્ટીઝ વાંચે છે
+        \item \keyword{SessionFactory}: Session ઓબ્જેક્ટ્સ માટે ફેક્ટરી
+        \item \keyword{Session}: એપ્લિકેશન અને ડેટાબેસ વચ્ચે ઇન્ટરફેસ
+        \item \keyword{Transaction}: ડેટાબેસ ટ્રાન્ઝેક્શનને દર્શાવે છે
+        \item \keyword{Query/Criteria}: ડેટાબેસ ક્વેરીઝ માટે
+    \end{itemize}
+
+    \textbf{હાઇબરનેટના ફાયદા:}
+
+    \begin{itemize}
+        \item \keyword{Object-Relational Mapping}: જાવા ઓબ્જેક્ટ્સને ડેટાબેસ ટેબલ સાથે મેપ કરે છે
+        \item \keyword{આપોઆપ SQL જનરેશન}: મેન્યુઅલ SQL લખવાની જરૂર નથી
+        \item \keyword{કેશિંગ}: પ્રથમ-સ્તર અને બીજા-સ્તરની કેશિંગ
+        \item \keyword{લેઝી લોડિંગ}: જરૂર પડે ત્યારે જ ડેટા લોડ કરે છે
+    \end{itemize}
+
+    \begin{mnemonicbox}
+        \mnemonic{Sessions Configure Factories Automatically}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{2(a)}{3}{JDBC API ના ઘટકો સમજાવો.}
+\begin{solutionbox}
+    \textbf{JDBC API કોમ્પોનન્ટ્સ:}
+
+    \begin{itemize}
+        \item \keyword{DriverManager}: ડેટાબેસ ડ્રાઇવર્સનું સંચાલન કરે છે
+        \item \keyword{Connection}: ડેટાબેસ કનેક્શનને દર્શાવે છે
+        \item \keyword{Statement}: SQL ક્વેરીઝ એક્ઝિક્યૂટ કરે છે
+        \item \keyword{ResultSet}: ક્વેરી પરિણામો ધરાવે છે
+        \item \keyword{SQLException}: SQL એરર્સનું સંચાલન કરે છે
+    \end{itemize}
+
+    \textbf{કોમ્પોનન્ટ ફંક્શન્સ:}
+
+    \begin{itemize}
+        \item \keyword{ડ્રાઇવર રજિસ્ટ્રેશન}: \code{DriverManager.registerDriver()}
+        \item \keyword{કનેક્શન સ્થાપના}: \code{DriverManager.getConnection()}
+        \item \keyword{ક્વેરી એક્ઝિક્યૂશન}: \code{Statement.executeQuery()}
+    \end{itemize}
+
+    \begin{mnemonicbox}
+        \mnemonic{Drivers Connect Statements Returning Results}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{2(b)}{4}{કોઈપણ બે સ્વિંગ નિયંત્રણોને ઉદાહરણ સાથે સમજાવો.}
+\begin{solutionbox}
+    \textbf{JButton કન્ટ્રોલ:}
+
+    \begin{lstlisting}[language=java]
+JButton button = new JButton("મને ક્લિક કરો");
+button.addActionListener(new ActionListener() {
+    public void actionPerformed(ActionEvent e) {
+        System.out.println("બટન ક્લિક થયું!");
+    }
+});
+    \end{lstlisting}
+
+    \textbf{JTextField કન્ટ્રોલ:}
+
+    \begin{lstlisting}[language=java]
+JTextField textField = new JTextField(20);
+textField.setText("અહીં ટેક્સ્ટ લખો");
+String text = textField.getText();
+    \end{lstlisting}
+
+    \textbf{વિશેષતાઓ:}
+
+    \begin{itemize}
+        \item \keyword{JButton}: ક્લિક કરવામાં આવે ત્યારે ક્રિયાઓ ટ્રિગર કરે છે
+        \item \keyword{JTextField}: સિંગલ-લાઇન ટેક્સ્ટ ઇનપુટ ફીલ્ડ
+        \item \keyword{ઇવેન્ટ હેન્ડલિંગ}: બંને ActionListener સાથે કામ કરે છે
+    \end{itemize}
+
+    \begin{mnemonicbox}
+        \mnemonic{Buttons Text Fields Handle Events}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{2(c)}{7}{Prepared સ્ટેટમેન્ટનો ઉપયોગ કરીને 'info' ડેટાબેઝના 'student' ટેબલમાં એનરોલમેન્ટ\_નંબર, નામ અને ઉમરનો ડેટા દાખલ કરવા JDBC નો ઉપયોગ કરીને Java પ્રોગ્રામ લખો.}
+\begin{solutionbox}
+    \textbf{કોડ:}
+
+    \begin{lstlisting}[language=java]
+import java.sql.*;
+
+public class StudentInsert {
+    public static void main(String[] args) {
+        String url = "jdbc:mysql://localhost:3306/info";
+        String username = "root";
+        String password = "password";
+        
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection conn = DriverManager.getConnection(url, username, password);
+            
+            String sql = "INSERT INTO student (enrollment_number, name, age) VALUES (?, ?, ?)";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            
+            pstmt.setString(1, "21IT001");
+            pstmt.setString(2, "જ્યોતિ પટેલ");
+            pstmt.setInt(3, 20);
+            
+            int rowsAffected = pstmt.executeUpdate();
+            System.out.println("દાખલ થયેલી પંક્તિઓ: " + rowsAffected);
+            
+            pstmt.close();
+            conn.close();
+        } catch(Exception e) {
+            System.out.println("ત્રુટિ: " + e.getMessage());
+        }
+    }
+}
+    \end{lstlisting}
+
+    \textbf{મુખ્ય કોમ્પોનન્ટ્સ:}
+
+    \begin{itemize}
+        \item \keyword{PreparedStatement}: SQL injection અટકાવે છે
+        \item \keyword{પેરામીટર બાઇન્ડિંગ}: ? પ્લેસહોલ્ડર્સનો ઉપયોગ
+        \item \keyword{કનેક્શન મેનેજમેન્ટ}: યોગ્ય રિસોર્સ ક્લીનઅપ
+        \item \keyword{એક્સેપ્શન હેન્ડલિંગ}: ડેટાબેસ એરર્સ માટે try-catch
+    \end{itemize}
+
+    \begin{mnemonicbox}
+        \mnemonic{Prepared Statements Prevent Problems}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+
+\questionmarks{3(a)}{3}{સર્વલેટની વિવિધ વિશેષતાઓ સમજાવો.}
+\begin{solutionbox}
+    \textbf{સર્વલેટની વિશેષતાઓ:}
+
+    \begin{itemize}
+        \item \keyword{પ્લેટફોર્મ સ્વતંત્ર}: જાવા સાથે કોઈપણ OS પર ચાલે છે
+        \item \keyword{સર્વર-સાઇડ પ્રોસેસિંગ}: વેબ સર્વર પર એક્ઝિક્યૂટ થાય છે
+        \item \keyword{પ્રોટોકોલ સ્વતંત્ર}: માત્ર HTTP સુધી મર્યાદિત નથી
+        \item \keyword{વિસ્તૃત}: વિશિષ્ટ જરૂરિયાતો માટે વિસ્તૃત કરી શકાય છે
+        \item \keyword{મજબૂત}: બિલ્ટ-ઇન એક્સેપ્શન હેન્ડલિંગ
+    \end{itemize}
+
+    \textbf{વધારાની વિશેષતાઓ:}
+
+    \begin{itemize}
+        \item \keyword{મલ્ટિથ્રેડિંગ}: એકસાથે ઘણી વિનંતીઓ હેન્ડલ કરે છે
+        \item \keyword{પોર્ટેબલ}: એકવાર લખો, ગમે ત્યાં ચલાવો
+        \item \keyword{સુરક્ષિત}: જાવાની સુરક્ષા વિશેષતાઓ
+    \end{itemize}
+
+    \begin{mnemonicbox}
+        \mnemonic{Servlets Process Protocols Portably}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3(b)}{4}{સર્વલેટની life cycle સમજાવો.}
+\begin{solutionbox}
+    \textbf{સર્વલેટ લાઇફ સાઇકલ તબક્કાઓ:}
+
+    \begin{tabulary}{\textwidth}{|L|L|L|}
+        \hline
+        \textbf{તબક્કો} & \textbf{મેથડ} & \textbf{વર્ણન} \\
+        \hline
+        લોડિંગ & - & કન્ટેનર દ્વારા સર્વલેટ ક્લાસ લોડ થાય છે \\
+        \hline
+        ઇન્સ્ટેન્શિએશન & - & સર્વલેટ ઓબ્જેક્ટ બનાવવામાં આવે છે \\
+        \hline
+        પ્રારંભિકીકરણ & init() & સર્વલેટ શરૂ થાય ત્યારે એકવાર કૉલ થાય છે \\
+        \hline
+        સેવા & service() & દરેક ક્લાયન્ટ વિનંતી હેન્ડલ કરે છે \\
+        \hline
+        વિનાશ & destroy() & સર્વલેટ દૂર કરવા પહેલાં કૉલ થાય છે \\
+        \hline
+    \end{tabulary}
+
+    \textbf{લાઇફ સાઇકલ ફ્લો:}
+
+    \begin{enumerate}
+        \item \keyword{કન્ટેનર લોડ કરે છે} સર્વલેટ ક્લાસ
+        \item \keyword{ઇન્સ્ટન્સ બનાવે છે} સર્વલેટનું
+        \item \keyword{init() કૉલ કરે છે} એકવાર
+        \item \keyword{service() કૉલ કરે છે} દરેક વિનંતી માટે
+        \item \keyword{destroy() કૉલ કરે છે} દૂર કરવા પહેલાં
+    \end{enumerate}
+
+    \begin{mnemonicbox}
+        \mnemonic{Load Instance Initialize Service Destroy}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3(c)}{7}{session શું છે? જરૂરી HTML ફાઇલો સહિત HttpSession ઑબ્જેક્ટનો ઉપયોગ કરીને session manage કેવી રીતે કરી શકાય તે દશાવતો Java servlet પ્રોગ્રામ લખો.}
+\begin{solutionbox}
+    \textbf{સેશનની વ્યાખ્યા:}
+    સેશન એ બહુવિધ HTTP વિનંતીઓમાં વપરાશકર્તા-વિશિષ્ટ ડેટા સંગ્રહિત કરવાની રીત છે. તે ક્લાયન્ટ અને સર્વર વચ્ચે સ્થિતિ જાળવે છે.
+
+    \textbf{સર્વલેટ કોડ:}
+
+    \begin{lstlisting}[language=java]
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class SessionServlet extends HttpServlet {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        
+        HttpSession session = request.getSession(true);
+        String name = request.getParameter("name");
+        
+        if(name != null) {
+            session.setAttribute("username", name);
+        }
+        
+        String username = (String)session.getAttribute("username");
+        Integer visitCount = (Integer)session.getAttribute("visitCount");
+        
+        if(visitCount == null) {
+            visitCount = 1;
+        } else {
+            visitCount++;
+        }
+        session.setAttribute("visitCount", visitCount);
+        
+        out.println("<html><body>");
+        out.println("<h2>સેશન ડેમો</h2>");
+        if(username != null) {
+            out.println("<p>આવકાર " + username + "!</p>");
+        }
+        out.println("<p>મુલાકાત ગણતરી: " + visitCount + "</p>");
+        out.println("<p>સેશન ID: " + session.getId() + "</p>");
+        out.println("<a href='index.html'>ફોર્મ પર પાછા જાઓ</a>");
+        out.println("</body></html>");
+    }
+}
+    \end{lstlisting}
+
+    \textbf{HTML ફાઇલ (index.html):}
+
+    \begin{lstlisting}[language=html]
+<!DOCTYPE html>
+<html>
+<head>
+    <title>સેશન ડેમો</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <h2>તમારું નામ દાખલ કરો</h2>
+    <form action="SessionServlet" method="get">
+        નામ: <input type="text" name="name" required>
+        <input type="submit" value="સબમિટ">
+    </form>
+</body>
+</html>
+    \end{lstlisting}
+
+    \textbf{સેશન મેનેજમેન્ટ વિશેષતાઓ:}
+
+    \begin{itemize}
+        \item \keyword{getAttribute/setAttribute}: સેશન ડેટા સંગ્રહિત અને પુનઃપ્રાપ્ત કરો
+        \item \keyword{સેશન ID}: દરેક સેશન માટે અનન્ય ઓળખકર્તા
+        \item \keyword{આપોઆપ બનાવટ}: જરૂર પડે ત્યારે સેશન બનાવવામાં આવે છે
+    \end{itemize}
+
+    \begin{mnemonicbox}
+        \mnemonic{Sessions Store State Safely}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{3(a)}{3}{servlet માં web.xml ફાઇલ સમજાવો.}
+\begin{solutionbox}
+    \textbf{web.xml હેતુ:}
+    Web.xml ડિપ્લોયમેન્ટ ડિસ્ક્રિપ્ટર ફાઇલ છે જે સર્વલેટ મેપિંગ, પેરામીટર્સ અને અન્ય વેબ એપ્લિકેશન સેટિંગ્સ કોન્ફિગર કરે છે.
+
+    \textbf{મુખ્ય એલિમેન્ટ્સ:}
+
+    \begin{itemize}
+        \item \keyword{servlet}: સર્વલેટ કોન્ફિગરેશન વ્યાખ્યાયિત કરે છે
+        \item \keyword{servlet-mapping}: URL પેટર્ન સર્વલેટ સાથે મેપ કરે છે
+        \item \keyword{init-param}: સર્વલેટ પ્રારંભિકીકરણ પેરામીટર્સ
+        \item \keyword{welcome-file-list}: ડિફોલ્ટ પૃષ્ઠો
+    \end{itemize}
+
+    \textbf{ઉદાહરણ કોન્ફિગરેશન:}
+
+    \begin{lstlisting}[language=xml]
+<servlet>
+    <servlet-name>MyServlet</servlet-name>
+    <servlet-class>com.example.MyServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+    <servlet-name>MyServlet</servlet-name>
+    <url-pattern>/myservlet</url-pattern>
+</servlet-mapping>
+    \end{lstlisting}
+
+    \begin{mnemonicbox}
+        \mnemonic{Web XML Maps Servlets}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{3(b)}{4}{સર્વલેટ્સના ફાયદા અને ગેરફાયદા સમજાવો.}
+\begin{solutionbox}
+    \textbf{ફાયદા:}
+
+    \begin{itemize}
+        \item \keyword{પ્લેટફોર્મ સ્વતંત્ર}: જાવા-આધારિત પોર્ટેબિલિટી
+        \item \keyword{પ્રદર્શન}: CGI સ્ક્રિપ્ટ્સ કરતાં ઝડપી
+        \item \keyword{મજબૂત}: એક્સેપ્શન હેન્ડલિંગ અને મેમરી મેનેજમેન્ટ
+        \item \keyword{સુરક્ષિત}: જાવાની સુરક્ષા વિશેષતાઓ
+        \item \keyword{વિસ્તૃત}: વિસ્તૃત અને કસ્ટમાઇઝ કરી શકાય છે
+    \end{itemize}
+
+    \textbf{ગેરફાયદા:}
+
+    \begin{itemize}
+        \item \keyword{જાવા જ્ઞાન જરૂરી}: જાવા પ્રોગ્રામિંગ કુશળતાની જરૂર
+        \item \keyword{પ્રેઝન્ટેશન મિશ્રણ}: HTML જાવા કોડ સાથે મિક્સ
+        \item \keyword{ડિબગિંગ જટિલતા}: સર્વર-સાઇડ ડિબગિંગ પડકારો
+        \item \keyword{મર્યાદિત ડિઝાઇન વિભાજન}: તર્ક અને પ્રેઝન્ટેશન એકસાથે
+    \end{itemize}
+
+    \textbf{સરખામણી ટેબલ:}
+
+    \begin{tabulary}{\textwidth}{|L|L|L|}
+        \hline
+        \textbf{પાસું} & \textbf{ફાયદો} & \textbf{ગેરફાયદો} \\
+        \hline
+        પ્રદર્શન & ઝડપી એક્ઝિક્યૂશન & - \\
+        \hline
+        વિકાસ & - & જટિલ ડિબગિંગ \\
+        \hline
+        પોર્ટેબિલિટી & પ્લેટફોર્મ સ્વતંત્ર & - \\
+        \hline
+        કોડ મિશ્રણ & - & જાવામાં HTML \\
+        \hline
+    \end{tabulary}
+
+    \begin{mnemonicbox}
+        \mnemonic{Performance Portability Presents Problems}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{3(c)}{7}{'info' ડેટાબેઝના "student" tableમાંથી ચોક્કસ એન્ટ્રી કાઢી નાખવા માટે જાવા સર્વલેટ પ્રોગ્રામ લખો. સર્વલેટે HTML ફોર્મમાંથી વિદ્યાર્થી ID ઇનપુટ સ્વીકારવું જોઈએ અને ડેટાબેઝમાંથી અનુરૂપ રેકોર્ડ કાઢી નાખવો જોઈએ.}
+\begin{solutionbox}
+    \textbf{સર્વલેટ કોડ:}
+
+    \begin{lstlisting}[language=java]
+import java.io.*;
+import java.sql.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class DeleteStudentServlet extends HttpServlet {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        
+        String studentId = request.getParameter("studentId");
+        
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection conn = DriverManager.getConnection(
+                "jdbc:mysql://localhost:3306/info", "root", "password");
+            
+            String sql = "DELETE FROM student WHERE id = ?";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, studentId);
+            
+            int rowsDeleted = pstmt.executeUpdate();
+            
+            out.println("<html><body>");
+            out.println("<h2>વિદ્યાર્થી કાઢી નાખવાનું પરિણામ</h2>");
+            
+            if(rowsDeleted > 0) {
+                out.println("<p>ID " + studentId + " ધરાવતો વિદ્યાર્થી સફળતાપૂર્વક કાઢી નાખવામાં આવ્યો!</p>");
+            } else {
+                out.println("<p>ID " + studentId + " સાથે કોઈ વિદ્યાર્થી મળ્યો નથી</p>");
+            }
+            
+            out.println("<a href='delete.html'>બીજો વિદ્યાર્થી કાઢી નાખો</a>");
+            out.println("</body></html>");
+            
+            pstmt.close();
+            conn.close();
+            
+        } catch(Exception e) {
+            out.println("<p>ત્રુટિ: " + e.getMessage() + "</p>");
+        }
+    }
+}
+    \end{lstlisting}
+
+    \textbf{HTML ફોર્મ (delete.html):}
+
+    \begin{lstlisting}[language=html]
+<!DOCTYPE html>
+<html>
+<head>
+    <title>વિદ્યાર્થી કાઢી નાખો</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <h2>વિદ્યાર્થીનો રેકોર્ડ કાઢી નાખો</h2>
+    <form action="DeleteStudentServlet" method="post">
+        વિદ્યાર્થી ID: <input type="text" name="studentId" required>
+        <input type="submit" value="વિદ્યાર્થી કાઢી નાખો">
+    </form>
+</body>
+</html>
+    \end{lstlisting}
+
+    \textbf{મુખ્ય વિશેષતાઓ:}
+
+    \begin{itemize}
+        \item \keyword{SQL DELETE ઓપરેશન}: ડેટાબેઝમાંથી રેકોર્ડ દૂર કરે છે
+        \item \keyword{PreparedStatement}: SQL injection હુમલાઓ અટકાવે છે
+        \item \keyword{એરર હેન્ડલિંગ}: ડેટાબેઝ એક્સેપ્શન્સ માટે try-catch
+        \item \keyword{વપરાશકર્તા પ્રતિસાદ}: સફળતા/નિષ્ફળતા સંદેશાઓ
+    \end{itemize}
+
+    \begin{mnemonicbox}
+        \mnemonic{Delete Database Data Dynamically}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+
+\questionmarks{4(a)}{3}{JSP અને સર્વલેટ વચ્ચેનો તફાવત સમજાવો.}
+\begin{solutionbox}
+    \textbf{JSP vs સર્વલેટ સરખામણી:}
+
+    \begin{tabulary}{\textwidth}{|L|L|L|}
+        \hline
+        \textbf{પાસું} & \textbf{JSP} & \textbf{સર્વલેટ} \\
+        \hline
+        \textbf{કોડ સ્ટ્રક્ચર} & જાવા કોડ સાથે HTML & HTML આઉટપુટ સાથે જાવા \\
+        \hline
+        \textbf{વિકાસ} & વેબ ડિઝાઇનરો માટે સરળ & જાવા ડેવલપર્સ માટે બેહતર \\
+        \hline
+        \textbf{કમ્પાઇલેશન} & આપોઆપ સર્વલેટમાં કમ્પાઇલ & મેન્યુઅલ કમ્પાઇલેશન જરૂરી \\
+        \hline
+        \textbf{જાળવણી} & જાળવવા માટે સરળ & વધુ જટિલ જાળવણી \\
+        \hline
+        \textbf{પ્રદર્શન} & પ્રથમ વિનંતી ધીમી & ઝડપી એક્ઝિક્યૂશન \\
+        \hline
+    \end{tabulary}
+
+    \textbf{મુખ્ય તફાવતો:}
+
+    \begin{itemize}
+        \item \keyword{JSP}: એમ્બેડેડ જાવા સાથે પ્રેઝન્ટેશન-કેન્દ્રિત
+        \item \keyword{સર્વલેટ}: HTML જનરેશન સાથે તર્ક-કેન્દ્રિત
+        \item \keyword{ઉપયોગ}: UI માટે JSP, બિઝનેસ લોજિક માટે સર્વલેટ
+    \end{itemize}
+
+    \begin{mnemonicbox}
+        \mnemonic{JSP Presents, Servlets Serve}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(b)}{4}{JSPની life cycle સમજાવો.}
+\begin{solutionbox}
+    \textbf{JSP લાઇફ સાઇકલ તબક્કાઓ:}
+    
+    \begin{center}
+    \begin{tikzpicture}[node distance=1.5cm, auto]
+        \node [gtu block] (jsp) {JSP Page};
+        \node [gtu block, right of=jsp, xshift=2cm] (trans) {Translation};
+        \node [gtu block, below of=trans] (comp) {Compilation};
+        \node [gtu block, left of=comp, xshift=-2cm] (load) {Class Loading};
+        \node [gtu block, below of=load] (inst) {Instantiation};
+        \node [gtu block, right of=inst, xshift=2cm] (init) {Initialization (jspInit)};
+        \node [gtu block, below of=init] (req) {Request Processing (\_jspService)};
+        \node [gtu block, left of=req, xshift=-2cm] (dest) {Destruction (jspDestroy)};
+
+        \draw [gtu arrow] (jsp) -- (trans);
+        \draw [gtu arrow] (trans) -- (comp);
+        \draw [gtu arrow] (comp) -- (load);
+        \draw [gtu arrow] (load) -- (inst);
+        \draw [gtu arrow] (inst) -- (init);
+        \draw [gtu arrow] (init) -- (req);
+        \draw [gtu arrow] (req) -- (dest);
+    \end{tikzpicture}
+    \end{center}
+
+    \textbf{તબક્કાઓનું વર્ણન:}
+
+    \begin{itemize}
+        \item \keyword{ભાષાંતર}: JSP સર્વલેટ સોર્સ કોડમાં રૂપાંતરિત થાય છે
+        \item \keyword{કમ્પાઇલેશન}: સર્વલેટ સોર્સ બાઇટકોડમાં કમ્પાઇલ થાય છે
+        \item \keyword{લોડિંગ}: સર્વલેટ ક્લાસ મેમરીમાં લોડ થાય છે
+        \item \keyword{ઇન્સ્ટેન્શિએશન}: સર્વલેટ ઓબ્જેક્ટ બનાવવામાં આવે છે
+        \item \keyword{પ્રારંભિકીકરણ}: jspInit() મેથડ એકવાર કૉલ થાય છે
+        \item \keyword{સેવા}: \_jspService() દરેક વિનંતી હેન્ડલ કરે છે
+        \item \keyword{વિનાશ}: દૂર કરવા પહેલાં jspDestroy() કૉલ થાય છે
+    \end{itemize}
+
+    \begin{mnemonicbox}
+        \mnemonic{Translation Compiles Loading Instances Initialize Service Destroy}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4(c)}{7}{એક JSP પ્રોગ્રામ બનાવો જે એક સરળ કેલ્ક્યુલેટર તરીકે કાર્ય કરે. પ્રોગ્રામમાં HTML ફોર્મ હોવું જોઈએ જેમાં બે ટેક્સ્ટબોક્સ નંબરો ઇનપુટ કરવા માટે તથા વપરાશકર્તાઓ ઑપરેશન (ઉમેર, બાદબાકી, ગુણાકાર અથવા ભાગાકાર) પસંદ કરવા માટે ડ્રોપડાઉન મેનૂ હોય. જ્યારે વપરાશકર્તા ફોર્મ સબમિટ કરે છે, ત્યારે દાખલ કરેલ નંબરો અને પસંદ કરેલ કામગીરી આગલા પૃષ્ઠ પર મોકલવી જોઈએ. આગલા પૃષ્ઠ પર, વપરાશકર્તાએ પસંદ કરેલા ઓપરેશનના આધારે પરિણામની ગણતરી કરવી જોઈએ અને તેને પ્રદર્શિત કરવી જોઈએ.}
+\begin{solutionbox}
+    \textbf{HTML ફોર્મ (calculator.html):}
+
+    \begin{lstlisting}[language=html]
+<!DOCTYPE html>
+<html>
+<head>
+    <title>સરળ કેલ્ક્યુલેટર</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <h2>સરળ કેલ્ક્યુલેટર</h2>
+    <form action="calculate.jsp" method="post">
+        <table>
+            <tr>
+                <td>પ્રથમ નંબર:</td>
+                <td><input type="number" name="num1" required></td>
+            </tr>
+            <tr>
+                <td>બીજો નંબર:</td>
+                <td><input type="number" name="num2" required></td>
+            </tr>
+            <tr>
+                <td>ઓપરેશન:</td>
+                <td>
+                    <select name="operation" required>
+                        <option value="add">ઉમેરો (+)</option>
+                        <option value="subtract">બાદબાકી (-)</option>
+                        <option value="multiply">ગુણાકાર (*)</option>
+                        <option value="divide">ભાગાકાર (/)</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <input type="submit" value="ગણતરી કરો">
+                    <input type="reset" value="સાફ કરો">
+                </td>
+            </tr>
+        </table>
+    </form>
+</body>
+</html>
+    \end{lstlisting}
+
+    \textbf{JSP કેલ્ક્યુલેટર (calculate.jsp):}
+
+    \begin{lstlisting}
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>કેલ્ક્યુલેટર પરિણામ</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <h2>કેલ્ક્યુલેટર પરિણામ</h2>
+    
+    <%
+        String num1Str = request.getParameter("num1");
+        String num2Str = request.getParameter("num2");
+        String operation = request.getParameter("operation");
+        
+        double num1 = Double.parseDouble(num1Str);
+        double num2 = Double.parseDouble(num2Str);
+        double result = 0;
+        String operationSymbol = "";
+        boolean validOperation = true;
+        
+        switch(operation) {
+            case "add":
+                result = num1 + num2;
+                operationSymbol = "+";
+                break;
+            case "subtract":
+                result = num1 - num2;
+                operationSymbol = "-";
+                break;
+            case "multiply":
+                result = num1 * num2;
+                operationSymbol = "*";
+                break;
+            case "divide":
+                if(num2 != 0) {
+                    result = num1 / num2;
+                    operationSymbol = "/";
+                } else {
+                    validOperation = false;
+                }
+                break;
+            default:
+                validOperation = false;
+        }
+    %>
+    
+    <div style="border: 1px solid #ccc; padding: 20px; width: 300px;">
+        <h3>ગણતરીની વિગતો:</h3>
+        <p><strong>પ્રથમ નંબર:</strong> <%= num1 %></p>
+        <p><strong>બીજો નંબર:</strong> <%= num2 %></p>
+        <p><strong>ઓપરેશન:</strong> <%= operationSymbol %></p>
+        
+        <% if(validOperation) { %>
+            <p><strong>પરિણામ:</strong> <%= num1 %> <%= operationSymbol %> <%= num2 %> = <span style="color: blue; font-size: 18px;"><%= result %></span></p>
+        <% } else { %>
+            <p style="color: red;"><strong>ત્રુટિ:</strong> શૂન્ય દ્વારા ભાગાકારની મંજૂરી નથી!</p>
+        <% } %>
+    </div>
+    
+    <br />
+    <a href="calculator.html"><- કેલ્ક્યુલેટર પર પાછા જાઓ</a>
+</body>
+</html>
+    \end{lstlisting}
+
+    \begin{itemize}
+        \item \keyword{ફોર્મ વેલિડેશન}: આવશ્યક ફીલ્ડ્સ અને નંબર ઇનપુટ્સ
+        \item \keyword{ઓપરેશન પસંદગી}: ચાર મૂળભૂત ઓપરેશન્સ સાથે ડ્રોપડાઉન
+        \item \keyword{એરર હેન્ડલિંગ}: શૂન્ય દ્વારા ભાગાકાર અટકાવવું
+        \item \keyword{યુઝર-ફ્રેન્ડલી ડિસ્પ્લે}: ફોર્મેટેડ પરિણામ પ્રસ્તુતિ
+    \end{itemize}
+
+    \begin{mnemonicbox}
+        \mnemonic{Calculate Add Subtract Multiply Divide}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{4(a)}{3}{JSP માં પેજ ડાયરેક્ટિવ સમજાવો.}
+\begin{solutionbox}
+    \textbf{પેજ ડાયરેક્ટિવનો હેતુ:}
+    પેજ ડાયરેક્ટિવ JSP કન્ટેનરને પેજ કોન્ફિગરેશન અને પ્રોસેસિંગ વિશે સૂચનાઓ પ્રદાન કરે છે.
+
+    \textbf{સિન્ટેક્સ:}
+
+    \begin{lstlisting}[language=html]
+<%@ page attribute="value" %>
+    \end{lstlisting}
+
+    \textbf{સામાન્ય એટ્રિબ્યુટ્સ:}
+
+    \begin{itemize}
+        \item \keyword{language}: સ્ક્રિપ્ટિંગ ભાષા (ડિફોલ્ટ: java)
+        \item \keyword{contentType}: MIME ટાઇપ અને કેરેક્ટર એન્કોડિંગ
+        \item \keyword{import}: આયાત કરવા માટે જાવા પેકેજીસ
+        \item \keyword{session}: સેશન સક્ષમ/અક્ષમ (true/false)
+        \item \keyword{errorPage}: એરર હેન્ડલિંગ પેજ URL
+    \end{itemize}
+
+    \textbf{ઉદાહરણ:}
+
+    \begin{lstlisting}
+<%@ page language="java" 
+         contentType="text/html; charset=UTF-8"
+         import="java.util.*,java.sql.*"
+         session="true"
+         errorPage="error.jsp" %>
+    \end{lstlisting}
+
+    \begin{mnemonicbox}
+        \mnemonic{Page Directives Direct Processing}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{4(b)}{4}{ઉદાહરણ સાથે JSP declaration ટેગ સમજાવો.}
+\begin{solutionbox}
+    \textbf{JSP ડિક્લેરેશન ટેગ:}
+    ડિક્લેરેશન ટેગનો ઉપયોગ વેરિએબલ્સ, મેથડ્સ અને ક્લાસીસ ડિક્લેર કરવા માટે થાય છે જે સર્વલેટ ક્લાસનો ભાગ બને છે.
+
+    \textbf{સિન્ટેક્સ:}
+
+    \begin{lstlisting}[language=html]
+<%! declaration code %>
+    \end{lstlisting}
+
+    \textbf{ઉદાહરણ:}
+
+    \begin{lstlisting}
+<%! 
+    int counter = 0;
+    
+    public String getCurrentTime() {
+        return new java.util.Date().toString();
+    }
+    
+    private void logVisit() {
+        System.out.println("પેજની મુલાકાત: " + getCurrentTime());
+    }
+%>
+
+<html>
+<body>
+    <h2>ડિક્લેરેશન ટેગ ડેમો</h2>
+    <%
+        counter++;
+        logVisit();
+    %>
+    <p>પેજ મુલાકાત ગણતરી: <%= counter %></p>
+    <p>વર્તમાન સમય: <%= getCurrentTime() %></p>
+</body>
+</html>
+    \end{lstlisting}
+
+    \textbf{મુખ્ય મુદ્દાઓ:}
+
+    \begin{itemize}
+        \item \keyword{ક્લાસ-લેવલ સ્કોપ}: વેરિએબલ્સ ઇન્સ્ટન્સ વેરિએબલ્સ છે
+        \item \keyword{મેથડ ડિક્લેરેશન}: મેથડ્સ અને ક્લાસીસ ડિક્લેર કરી શકાય છે
+        \item \keyword{વિનંતીઓ વચ્ચે શેર}: મૂલ્યો વિનંતીઓ વચ્ચે ટકી રહે છે
+        \item \keyword{થ્રેડ સેફ્ટી}: સંમિલિત એક્સેસ હેન્ડલ કરવાની જરૂર
+    \end{itemize}
+
+    \begin{mnemonicbox}
+        \mnemonic{Declarations Define Class Data}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{4(c)}{7}{કૂકી શું છે? જરૂરી HTML ફાઇલો સહિત કૂકીઝનો ઉપયોગ કરીને session manage કેવી રીતે કરી શકાય તે દશાવતો JSP પ્રોગ્રામ લખો.}
+\begin{solutionbox}
+    \textbf{કૂકીની વ્યાખ્યા:}
+    કૂકી એ ક્લાયન્ટ-સાઇડ બ્રાઉઝરમાં સંગ્રહિત થતો નાનો ડેટા છે જે HTTP વિનંતીઓ વચ્ચે સ્થિતિ જાળવવા માટે વપરાય છે.
+
+    \textbf{HTML ફોર્મ (login.html):}
+
+    \begin{lstlisting}[language=html]
+<!DOCTYPE html>
+<html>
+<head>
+    <title>કૂકીઝ સાથે લોગિન</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <h2>વપરાશકર્તા લોગિન</h2>
+    <form action="setCookie.jsp" method="post">
+        <table>
+            <tr>
+                <td>વપરાશકર્તા નામ:</td>
+                <td><input type="text" name="username" required></td>
+            </tr>
+            <tr>
+                <td>પાસવર્ડ:</td>
+                <td><input type="password" name="password" required></td>
+            </tr>
+            <tr>
+                <td>મને યાદ રાખો:</td>
+                <td><input type="checkbox" name="remember" value="yes"></td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <input type="submit" value="લોગિન">
+                </td>
+            </tr>
+        </table>
+    </form>
+</body>
+</html>
+    \end{lstlisting}
+
+    \textbf{કૂકી સેટ કરવાનું JSP (setCookie.jsp):}
+
+    \begin{lstlisting}
+<%@ page language="java" contentType="text/html; charset=UTF-8" %>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>લોગિન સફળ</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <%
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+        String remember = request.getParameter("remember");
+        
+        if("admin".equals(username) && "password".equals(password)) {
+            if("yes".equals(remember)) {
+                Cookie userCookie = new Cookie("username", username);
+                Cookie loginTime = new Cookie("loginTime", String.valueOf(System.currentTimeMillis()));
+                
+                userCookie.setMaxAge(7 * 24 * 60 * 60); // 7 દિવસ
+                loginTime.setMaxAge(7 * 24 * 60 * 60);
+                
+                response.addCookie(userCookie);
+                response.addCookie(loginTime);
+            }
+    %>
+            <h2>લોગિન સફળ!</h2>
+            <p>આવકાર, <%= username %>!</p>
+            <p>લોગિન સમય: <%= new java.util.Date() %></p>
+            <a href="welcome.jsp">સ્વાગત પૃષ્ઠ પર જાઓ</a>
+    <%
+        } else {
+    %>
+            <h2>લોગિન નિષ્ફળ!</h2>
+            <p style="color: red;">અમાન્ય વપરાશકર્તા નામ અથવા પાસવર્ડ!</p>
+            <a href="login.html">ફરી પ્રયાસ કરો</a>
+    <%
+        }
+    %>
+</body>
+</html>
+    \end{lstlisting}
+
+    \textbf{સ્વાગત પૃષ્ઠ JSP (welcome.jsp):}
+
+    \begin{lstlisting}
+<%@ page language="java" contentType="text/html; charset=UTF-8" %>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>સ્વાગત પૃષ્ઠ</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <h2>સ્વાગત પૃષ્ઠ</h2>
+    <%
+        Cookie[] cookies = request.getCookies();
+        String savedUsername = null;
+        String loginTime = null;
+        
+        if(cookies != null) {
+            for(Cookie cookie : cookies) {
+                if("username".equals(cookie.getName())) {
+                    savedUsername = cookie.getValue();
+                } else if("loginTime".equals(cookie.getName())) {
+                    loginTime = cookie.getValue();
+                }
+            }
+        }
+        
+        if(savedUsername != null) {
+    %>
+            <p>હેલો, <%= savedUsername %>! તમે લોગિન છો.</p>
+            <% if(loginTime != null) { %>
+                <p>છેલ્લું લોગિન: <%= new java.util.Date(Long.parseLong(loginTime)) %></p>
+            <% } %>
+            <a href="logout.jsp">લોગઆઉટ</a>
+    <%
+        } else {
+    %>
+            <p>કૃપા કરીને આ પૃષ્ઠને એક્સેસ કરવા માટે <a href="login.html">લોગિન</a> કરો.</p>
+    <%
+        }
+    %>
+</body>
+</html>
+    \end{lstlisting}
+
+    \begin{itemize}
+        \item \keyword{ક્લાયન્ટ-સાઇડ સ્ટોરેજ}: બ્રાઉઝરમાં ડેટા સંગ્રહિત થાય છે
+        \item \keyword{દૃઢતા}: બ્રાઉઝર સેશન્સ પછી પણ ટકી શકે છે
+        \item \keyword{આપોઆપ મોકલવું}: દરેક વિનંતી સાથે મોકલવામાં આવે છે
+        \item \keyword{કદની મર્યાદા}: પ્રતિ કૂકી મહત્તમ 4KB
+    \end{itemize}
+
+    \begin{mnemonicbox}
+        \mnemonic{Cookies Create Client Cache}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+
+\questionmarks{5(a)}{3}{Spring and Spring Boot ની સરખામણી કરો.}
+\begin{solutionbox}
+    \textbf{Spring vs Spring Boot સરખામણી:}
+
+    \begin{tabulary}{\textwidth}{|L|L|L|}
+        \hline
+        \textbf{વિશેષતા} & \textbf{Spring Framework} & \textbf{Spring Boot} \\
+        \hline
+        \textbf{કોન્ફિગરેશન} & XML/Annotation આધારિત & ઓટો-કોન્ફિગરેશન \\
+        \hline
+        \textbf{સેટઅપ સમય} & વધુ સમય જરૂરી & ઝડપી સેટઅપ \\
+        \hline
+        \textbf{ડિપેન્ડન્સી મેનેજમેન્ટ} & મેન્યુઅલ ડિપેન્ડન્સી & સ્ટાર્ટર ડિપેન્ડન્સીઝ \\
+        \hline
+        \textbf{એમ્બેડેડ સર્વર} & બાહ્ય સર્વર જરૂરી & બિલ્ટ-ઇન Tomcat/Jetty \\
+        \hline
+        \textbf{પ્રોડક્શન તૈયાર} & વધારાનું કોન્ફિગરેશન & તૈયાર-બનેલી વિશેષતાઓ \\
+        \hline
+    \end{tabulary}
+
+    \textbf{મુખ્ય તફાવતો:}
+
+    \begin{itemize}
+        \item \keyword{Spring Boot}: ડિફોલ્ટ્સ સાથે અભિપ્રાય આધારિત ફ્રેમવર્ક
+        \item \keyword{Spring Framework}: લવચીક પરંતુ વધુ સેટઅપ જરૂરી
+        \item \keyword{વિકાસની ઝડપ}: Spring Boot વિકસાવવામાં ઝડપી
+    \end{itemize}
+
+    \begin{mnemonicbox}
+        \mnemonic{Boot Builds Better Beginnings}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(b)}{4}{JSP માં તમામ implicit ઑબ્જેક્ટની સૂચિ બનાવો અને કોઈપણ બે સમજાવો.}
+\begin{solutionbox}
+    \textbf{JSP Implicit ઑબ્જેક્ટ્સની યાદી:}
+
+    \begin{itemize}
+        \item \keyword{request}: HttpServletRequest ઑબ્જેક્ટ
+        \item \keyword{response}: HttpServletResponse ઑબ્જેક્ટ
+        \item \keyword{session}: HttpSession ઑબ્જેક્ટ
+        \item \keyword{application}: ServletContext ઑબ્જેક્ટ
+        \item \keyword{out}: JspWriter ઑબ્જેક્ટ
+        \item \keyword{page}: વર્તમાન JSP પૃષ્ઠ ઇન્સ્ટન્સ
+        \item \keyword{pageContext}: PageContext ઑબ્જેક્ટ
+        \item \keyword{config}: ServletConfig ઑબ્જેક્ટ
+        \item \keyword{exception}: Exception ઑબ્જેક્ટ (માત્ર એરર પૃષ્ઠો)
+    \end{itemize}
+
+    \textbf{વિગતવાર સમજૂતી:}
+
+    \textbf{1. request ઑબ્જેક્ટ:}
+
+    \begin{lstlisting}
+<%
+    String name = request.getParameter("name");
+    String method = request.getMethod();
+    String ip = request.getRemoteAddr();
+%>
+<p>નામ: <%= name %></p>
+<p>મેથડ: <%= method %></p>
+<p>IP સરનામું: <%= ip %></p>
+    \end{lstlisting}
+
+    \textbf{2. session ઑબ્જેક્ટ:}
+
+    \begin{lstlisting}
+<%
+    session.setAttribute("user", "admin");
+    String user = (String)session.getAttribute("user");
+    String sessionId = session.getId();
+%>
+<p>વપરાશકર્તા: <%= user %></p>
+<p>સેશન ID: <%= sessionId %></p>
+    \end{lstlisting}
+
+    \begin{mnemonicbox}
+        \mnemonic{Request Response Session Application Out}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5(c)}{7}{MVC આર્કિટેકચર સમજાવો.}
+\begin{solutionbox}
+    \textbf{MVC આર્કિટેકચર ડાયાગ્રામ:}
+
+    \begin{center}
+    \begin{tikzpicture}[node distance=2.5cm, auto]
+        \node [gtu block] (user) {User};
+        \node [gtu block, right of=user, xshift=1cm] (controller) {Controller};
+        \node [gtu block, right of=controller, xshift=1cm] (model) {Model};
+        \node [gtu block, right of=model, xshift=1cm] (db) {Database};
+        \node [gtu block, below of=controller] (view) {View};
+
+        \draw [gtu arrow] (user) -- (controller);
+        \draw [gtu arrow] (controller) -- (model);
+        \draw [gtu arrow] (model) -- (db);
+        \draw [gtu arrow] (model) -- (controller);
+        \draw [gtu arrow] (controller) -- (view);
+        \draw [gtu arrow] (view) -| (user);
+        \draw [gtu arrow, dashed] (view) -- (model);
+    \end{tikzpicture}
+    \end{center}
+
+    \textbf{MVC કોમ્પોનન્ટ્સ:}
+
+    \textbf{મોડેલ લેયર:}
+    \begin{itemize}
+        \item \keyword{ડેટા પ્રતિનિધિત્વ}: બિઝનેસ ઑબ્જેક્ટ્સ અને ડેટા
+        \item \keyword{બિઝનેસ લોજિક}: કોર એપ્લિકેશન કાર્યક્ષમતા
+        \item \keyword{ડેટાબેસ ઇન્ટરેક્શન}: ડેટા એક્સેસ અને મેનિપ્યુલેશન
+        \item \keyword{વેલિડેશન}: ડેટા અખંડતા તપાસ
+    \end{itemize}
+
+    \textbf{વ્યૂ લેયર:}
+    \begin{itemize}
+        \item \keyword{પ્રેઝન્ટેશન લોજિક}: યુઝર ઇન્ટરફેસ કોમ્પોનન્ટ્સ
+        \item \keyword{ડેટા ડિસ્પ્લે}: વપરાશકર્તાને માહિતી બતાવે છે
+        \item \keyword{યુઝર ઇન્ટરેક્શન}: ફોર્મ્સ, બટન્સ, મેનૂઝ
+    \end{itemize}
+
+    \textbf{કન્ટ્રોલર લેયર:}
+    \begin{itemize}
+        \item \keyword{વિનંતી હેન્ડલિંગ}: વપરાશકર્તાની વિનંતીઓને પ્રોસેસ કરે છે
+        \item \keyword{ફ્લો કન્ટ્રોલ}: એપ્લિકેશન ફ્લોનું સંચાલન કરે છે
+        \item \keyword{મોડેલ કોઓર્ડિનેશન}: મોડેલ લેયર સાથે ઇન્ટરેક્ટ કરે છે
+        \item \keyword{વ્યૂ પસંદગી}: યોગ્ય વ્યૂ પસંદ કરે છે
+    \end{itemize}
+
+    \begin{mnemonicbox}
+        \mnemonic{Models View Controllers Separate}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{5(a)}{3}{ડિપેન્ડન્સી ઇન્જેક્શન સમજાવો.}
+\begin{solutionbox}
+    \textbf{ડિપેન્ડન્સી ઇન્જેક્શનની વ્યાખ્યા:}
+    ડિપેન્ડન્સી ઇન્જેક્શન એ ડિઝાઇન પેટર્ન છે જ્યાં ઑબ્જેક્ટ પોતે ડિપેન્ડન્સીઝ બનાવવાને બદલે તેઓ પ્રદાન કરવામાં આવે છે.
+
+    \textbf{DI ના પ્રકારો:}
+
+    \begin{itemize}
+        \item \keyword{કન્સ્ટ્રક્ટર ઇન્જેક્શન}: કન્સ્ટ્રક્ટર દ્વારા ડિપેન્ડન્સીઝ પાસ કરવી
+        \item \keyword{સેટર ઇન્જેક્શન}: સેટર મેથડ્સ દ્વારા ડિપેન્ડન્સીઝ સેટ કરવી
+        \item \keyword{ફીલ્ડ ઇન્જેક્શન}: ફીલ્ડ્સમાં સીધી ડિપેન્ડન્સીઝ ઇન્જેક્ટ કરવી
+    \end{itemize}
+
+    \textbf{ઉદાહરણ:}
+
+    \begin{lstlisting}[language=java]
+// DI વિના
+public class UserService {
+    private UserRepository repository = new UserRepository();
+}
+
+// DI સાથે
+public class UserService {
+    private UserRepository repository;
+    
+    public UserService(UserRepository repository) {
+        this.repository = repository;
+    }
+}
+    \end{lstlisting}
+
+    \textbf{DI ના ફાયદા:}
+
+    \begin{itemize}
+        \item \keyword{લૂઝ કપલિંગ}: ક્લાસીસ વચ્ચે ઓછી ડિપેન્ડન્સી
+        \item \keyword{ટેસ્ટેબિલિટી}: ડિપેન્ડન્સીઝને મૉક કરવાનું સરળ
+        \item \keyword{લવચીકતા}: ઇમ્પ્લિમેન્ટેશન બદલવાનું સરળ
+    \end{itemize}
+
+    \begin{mnemonicbox}
+        \mnemonic{Dependencies Injected, Not Instantiated}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{5(b)}{4}{JSTL કોર ટૅગ્સની સૂચિ બનાવો અને ઉદાહરણ સાથે કોઈપણ બે સમજાવો.}
+\begin{solutionbox}
+    \textbf{JSTL કોર ટૅગ્સની યાદી:}
+
+    \begin{itemize}
+        \item \keyword{c:out}: એક્સપ્રેશન વેલ્યુ ડિસ્પ્લે કરે છે
+        \item \keyword{c:set}: વેરિએબલ વેલ્યુ સેટ કરે છે
+        \item \keyword{c:if}: શરતી પ્રોસેસિંગ
+        \item \keyword{c:choose}: બહુવિધ શરતી પ્રોસેસિંગ
+        \item \keyword{c:forEach}: લૂપ ઇટરેશન
+    \end{itemize}
+
+    \textbf{વિગતવાર ઉદાહરણો:}
+
+    \textbf{1. c:forEach ટૅગ:}
+
+    \begin{lstlisting}
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
+<c:set var="numbers" value="1,2,3,4,5" />
+<ul>
+<c:forEach var="num" items="${numbers}" varStatus="status">
+    <li>નંબર ${status.index + 1}: ${num}</li>
+</c:forEach>
+</ul>
+    \end{lstlisting}
+
+    \textbf{2. c:if ટૅગ:}
+
+    \begin{lstlisting}
+<c:set var="age" value="20" />
+<c:if test="${age >= 18}">
+    <p style="color: green;">તમે મતદાન માટે લાયક છો!</p>
+</c:if>
+<c:if test="${age < 18}">
+    <p style="color: red;">તમે મતદાન માટે લાયક નથી!</p>
+</c:if>
+    \end{lstlisting}
+
+    \begin{mnemonicbox}
+        \mnemonic{Core Tags Control Conditions}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{5(c)}{7}{સ્પ્રિંગ ફ્રેમવર્કનું આર્કિટેકચર સમજાવો.}
+\begin{solutionbox}
+    \textbf{સ્પ્રિંગ ફ્રેમવર્ક આર્કિટેકચર:}
+
+    \begin{center}
+    \begin{tikzpicture}[node distance=2cm, auto, every node/.style={gtu block, align=center, text width=2.5cm}]
+        \node (spring) {Spring Framework};
+        
+        \node [below of=spring] (core) {Core Container};
+        \node [left of=core, xshift=-2cm] (data) {Data Access/ Integration};
+        \node [right of=core, xshift=2cm] (web) {Web};
+        \node [below of=data] (aop) {AOP};
+        \node [below of=web] (test) {Test};
+
+        \draw [gtu arrow] (spring) -- (core);
+        \draw [gtu arrow] (spring) -- (data);
+        \draw [gtu arrow] (spring) -- (web);
+        \draw [gtu arrow] (spring) -- (aop);
+        \draw [gtu arrow] (spring) -- (test);
+    \end{tikzpicture}
+    \end{center}
+
+    \textbf{કોર કન્ટેનર:}
+
+    \begin{itemize}
+        \item \keyword{કોર મોડ્યુલ}: મૂળભૂત વિશેષતાઓ અને IoC કન્ટેનર
+        \item \keyword{બીન્સ મોડ્યુલ}: બીન ફેક્ટરી અને ડિપેન્ડન્સી ઇન્જેક્શન
+        \item \keyword{કન્ટેક્સ્ટ મોડ્યુલ}: એપ્લિકેશન કન્ટેક્સ્ટ અને આંતરરાષ્ટ્રીયકરણ
+        \item \keyword{SpEL મોડ્યુલ}: સ્પ્રિંગ એક્સપ્રેશન લેંગ્વેજ
+    \end{itemize}
+
+    \textbf{ડેટા એક્સેસ/ઇન્ટિગ્રેશન:}
+
+    \begin{itemize}
+        \item \keyword{JDBC મોડ્યુલ}: ડેટાબેસ કનેક્ટિવિટી અને ટેમ્પ્લેટ્સ
+        \item \keyword{ORM મોડ્યુલ}: Hibernate, JPA સાથે ઇન્ટિગ્રેશન
+        \item \keyword{JMS મોડ્યુલ}: જાવા મેસેજ સર્વિસ સપોર્ટ
+        \item \keyword{ટ્રાન્ઝેક્શન મોડ્યુલ}: ડિક્લેરેટિવ ટ્રાન્ઝેક્શન મેનેજમેન્ટ
+    \end{itemize}
+
+    \textbf{વેબ લેયર:}
+
+    \begin{itemize}
+        \item \keyword{વેબ મોડ્યુલ}: મૂળભૂત વેબ વિશેષતાઓ અને HTTP યુટિલિટીઝ
+        \item \keyword{વેબ-MVC મોડ્યુલ}: મોડેલ-વ્યૂ-કન્ટ્રોલર ઇમ્પ્લિમેન્ટેશન
+        \item \keyword{વેબ-સોકેટ મોડ્યુલ}: WebSocket સપોર્ટ
+    \end{itemize}
+
+    \textbf{AOP (Aspect-Oriented Programming):}
+
+    \begin{itemize}
+        \item \keyword{ક્રોસ-કટિંગ કન્સર્ન્સ}: લોગિંગ, સિક્યોરિટી, ટ્રાન્ઝેક્શન
+        \item \keyword{ડિક્લેરેટિવ}: એનોટેશન-આધારિત કોન્ફિગરેશન
+    \end{itemize}
+
+    \begin{mnemonicbox}
+        \mnemonic{Springs Architecture Supports Complete Applications}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\end{document}

@@ -1,0 +1,1486 @@
+\documentclass{article}
+\input{../../../../../../latex-templates/gtu-solutions/preamble.tex}
+\input{../../../../../../latex-templates/gtu-solutions/gujarati-boxes.tex}
+\input{../../../../../../latex-templates/gtu-solutions/commands.tex}
+
+\title{એડવાન્સ જાવા પ્રોગ્રામિંગ (4351603) - ઉનાળા 2024 સોલ્યુશન}
+\date{મે 21, 2024}
+
+\begin{document}
+\maketitle
+
+\questionmarks{1(અ)}{3}{AWT અને Swing વચ્ચેનો તફાવત સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{AWT vs Swing}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{લક્ષણ} & \textbf{AWT} & \textbf{Swing} \\ \hline
+\textbf{Platform} & Platform dependent & Platform independent \\ \hline
+\textbf{Components} & Heavy weight & Light weight \\ \hline
+\textbf{Look \& Feel} & Native OS look & Pluggable look \& feel \\ \hline
+\textbf{Performance} & ઝડપી & AWT કરતાં ધીમું \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{મુખ્ય મુદ્દાઓ:}
+\begin{itemize}
+    \item \keyword{Heavy vs Light}: AWT native OS components વાપરે છે, Swing pure Java વાપરે છે.
+    \item \keyword{દેખાવ}: AWT OS style અનુસરે છે, Swing બધા platforms પર સમાન look આપે છે.
+    \item \keyword{સુવિધાઓ}: Swing વધુ advanced components જેમ કે JTable, JTree પ્રદાન કરે છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Swing Provides Lightweight Components}
+\end{mnemonicbox}
+
+\questionmarks{1(બ)}{4}{Mouse Motion Listener ને ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+MouseMotionListener interface Java Swing applications માં mouse movement events ને handle કરે છે.
+
+\begin{center}
+\captionof{table}{Mouse Motion Events}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{Method} & \textbf{હેતુ} \\ \hline
+\textbf{mouseDragged()} & જ્યારે mouse drag થાય ત્યારે call થાય \\ \hline
+\textbf{mouseMoved()} & જ્યારે mouse ખસે ત્યારે call થાય \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{કોડ ઉદાહરણ:}
+\begin{lstlisting}[language=Java]
+import javax.swing.*;
+import java.awt.event.*;
+
+class MouseMotionExample extends JFrame implements MouseMotionListener {
+    JLabel label;
+    
+    MouseMotionExample() {
+        label = new JLabel("અહીં mouse ખસાડો");
+        add(label);
+        addMouseMotionListener(this);
+        setSize(400, 300);
+        setVisible(true);
+    }
+    
+    public void mouseMoved(MouseEvent e) {
+        label.setText("Mouse આ સ્થાને: " + e.getX() + ", " + e.getY());
+    }
+    
+    public void mouseDragged(MouseEvent e) {
+        label.setText("Dragging આ સ્થાને: " + e.getX() + ", " + e.getY());
+    }
+}
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Mouse Motion Makes Dynamic}
+\end{mnemonicbox}
+
+\questionmarks{1(ક)}{7}{યુનિવર્સિટી સાથે જોડાયેલા વિવિધ અભ્યાસક્રમો માટે checkboxes બનાવવા માટે એક પ્રોગ્રામ ડેવલપ કરો જેથી પસંદ કરેલ કોર્સ પ્રદર્શિત થાય.}
+
+\begin{solutionbox}
+\begin{lstlisting}[language=Java]
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class CourseSelection extends JFrame implements ItemListener {
+    JCheckBox java, python, cpp, web;
+    JTextArea display;
+    
+    public CourseSelection() {
+        setTitle("યુનિવર્સિટી કોર્સ પસંદગી");
+        setLayout(new FlowLayout());
+        
+        // checkboxes બનાવો
+        java = new JCheckBox("Java Programming");
+        python = new JCheckBox("Python Programming");
+        cpp = new JCheckBox("C++ Programming");
+        web = new JCheckBox("Web Development");
+        
+        // listeners ઉમેરો
+        java.addItemListener(this);
+        python.addItemListener(this);
+        cpp.addItemListener(this);
+        web.addItemListener(this);
+        
+        // Display area
+        display = new JTextArea(10, 30);
+        display.setEditable(false);
+        
+        // components ઉમેરો
+        add(new JLabel("કોર્સ પસંદ કરો:"));
+        add(java); add(python); add(cpp); add(web);
+        add(new JScrollPane(display));
+        
+        setSize(400, 300);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setVisible(true);
+    }
+    
+    public void itemStateChanged(ItemEvent e) {
+        String courses = "પસંદ કરેલ કોર્સ:\n";
+        if(java.isSelected()) courses += "- Java Programming\n";
+        if(python.isSelected()) courses += "- Python Programming\n";
+        if(cpp.isSelected()) courses += "- C++ Programming\n";
+        if(web.isSelected()) courses += "- Web Development\n";
+        display.setText(courses);
+    }
+    
+    public static void main(String[] args) {
+        new CourseSelection();
+    }
+}
+\end{lstlisting}
+
+\textbf{મુખ્ય લક્ષણો:}
+\begin{itemize}
+    \item \keyword{ItemListener}: checkbox state changes ને detect કરે છે.
+    \item \keyword{Dynamic Display}: real-time માં પસંદ કરેલા કોર્સ update કરે છે.
+    \item \keyword{Multiple Selection}: એકથી વધુ કોર્સ પસંદ કરવાની મંજૂરી આપે છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Check Items Listen Dynamically}
+\end{mnemonicbox}
+
+\questionmarks{1(ક OR)}{7}{Swing components નો ઉપયોગ કરીને (JFrame, JRadioButton, ItemListener વગેરેનો ઉપયોગ કરીને) Traffic signal (લાલ, લીલો અને પીળો) implement કરવા માટે એક પ્રોગ્રામ વિકસાવો.}
+
+\begin{solutionbox}
+\begin{lstlisting}[language=Java]
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class TrafficSignal extends JFrame implements ItemListener {
+    JRadioButton red, green, yellow;
+    ButtonGroup group;
+    JPanel signalPanel;
+    
+    public TrafficSignal() {
+        setTitle("Traffic Signal સિમ્યુલેટર");
+        setLayout(new BorderLayout());
+        
+        // radio buttons બનાવો
+        red = new JRadioButton("લાલ");
+        green = new JRadioButton("લીલો"); 
+        yellow = new JRadioButton("પીળો");
+        
+        // radio buttons ને group કરો
+        group = new ButtonGroup();
+        group.add(red); group.add(green); group.add(yellow);
+        
+        // listeners ઉમેરો
+        red.addItemListener(this);
+        green.addItemListener(this);
+        yellow.addItemListener(this);
+        
+        // Signal display panel
+        signalPanel = new JPanel() {
+            public void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.setColor(Color.BLACK);
+                g.fillRect(50, 50, 100, 200);
+                
+                // વર્તુળો દોરો
+                g.setColor(red.isSelected() ? Color.RED : Color.GRAY);
+                g.fillOval(65, 65, 70, 70);
+                
+                g.setColor(yellow.isSelected() ? Color.YELLOW : Color.GRAY);
+                g.fillOval(65, 105, 70, 70);
+                
+                g.setColor(green.isSelected() ? Color.GREEN : Color.GRAY);
+                g.fillOval(65, 145, 70, 70);
+            }
+        };
+        
+        JPanel controlPanel = new JPanel();
+        controlPanel.add(red); controlPanel.add(yellow); controlPanel.add(green);
+        
+        add(controlPanel, BorderLayout.SOUTH);
+        add(signalPanel, BorderLayout.CENTER);
+        
+        setSize(300, 400);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setVisible(true);
+    }
+    
+    public void itemStateChanged(ItemEvent e) {
+        signalPanel.repaint();
+    }
+    
+    public static void main(String[] args) {
+        new TrafficSignal();
+    }
+}
+\end{lstlisting}
+
+\begin{center}
+\begin{tikzpicture}
+    % Traffic Box
+    \draw[thick] (0,0) rectangle (2,4);
+    % Circles
+    \draw (1,3.2) circle (0.5) node {RED};
+    \draw (1,2) circle (0.5) node {YEL};
+    \draw (1,0.8) circle (0.5) node {GRN};
+\end{tikzpicture}
+\captionof{figure}{Traffic Signal Representation}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Radio Buttons Paint Graphics}
+\end{mnemonicbox}
+
+\questionmarks{2(અ)}{3}{JDBC Type-4 driver સમજાવો.}
+
+\begin{solutionbox}
+\textbf{JDBC Type-4 Driver (Native Protocol Driver)}
+
+\begin{center}
+\captionof{table}{JDBC Type-4 Driver}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{લક્ષણ} & \textbf{વર્ણન} \\ \hline
+\textbf{પ્રકાર} & Pure Java driver \\ \hline
+\textbf{Communication} & Direct database protocol \\ \hline
+\textbf{Platform} & Platform independent \\ \hline
+\textbf{Performance} & સર્વોચ્ચ પ્રદર્શન \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{મુખ્ય મુદ્દાઓ:}
+\begin{itemize}
+    \item \keyword{Pure Java}: કોઈ native code ની જરૂર નથી.
+    \item \keyword{Direct Connection}: ડેટાબેઝ સાથે સીધો સંપર્ક કરે છે.
+    \item \keyword{Network Protocol}: ડેટાબેઝના native network protocol નો ઉપયોગ કરે છે.
+    \item \keyword{શ્રેષ્ઠ પ્રદર્શન}: બધા driver types માં સૌથી ઝડપી.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Pure Java Direct Protocol}
+\end{mnemonicbox}
+
+\questionmarks{2(બ)}{4}{Component class ની સામાન્ય રીતે વપરાતી methods સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{Component Class Methods}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{Method} & \textbf{હેતુ} \\ \hline
+\textbf{add()} & container માં component ઉમેરે છે \\ \hline
+\textbf{setSize()} & component ના dimensions સેટ કરે છે \\ \hline
+\textbf{setLayout()} & layout manager સેટ કરે છે \\ \hline
+\textbf{setVisible()} & component ને દૃશ્યમાન/અદૃશ્ય બનાવે છે \\ \hline
+\textbf{setBounds()} & position અને size સેટ કરે છે \\ \hline
+\textbf{getSize()} & component નું size return કરે છે \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{મુખ્ય લક્ષણો:}
+\begin{itemize}
+    \item \keyword{Layout Management}: component arrangement ને control કરે છે.
+    \item \keyword{Visibility Control}: components ને દેખાડે/છુપાવે છે.
+    \item \keyword{Size Management}: component dimensions ને control કરે છે.
+    \item \keyword{Container Operations}: child components ને manage કરે છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Add Set Get Visibility}
+\end{mnemonicbox}
+
+\questionmarks{2(ક)}{7}{ટેબલ 'StuRec' માંથી વિદ્યાર્થીના રેકોર્ડ (Enroll No, Name, Address, Mobile No અને Email-ID) દર્શાવવા માટે JDBC નો ઉપયોગ કરીને પ્રોગ્રામ વિકસાવો.}
+
+\begin{solutionbox}
+\begin{lstlisting}[language=Java]
+import java.sql.*;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+
+public class StudentRecordDisplay extends JFrame {
+    JTable table;
+    DefaultTableModel model;
+    
+    public StudentRecordDisplay() {
+        setTitle("વિદ્યાર્થી રેકોર્ડ્સ");
+        
+        // table model બનાવો
+        String[] columns = {"Enroll No", "Name", "Address", "Mobile", "Email"};
+        model = new DefaultTableModel(columns, 0);
+        table = new JTable(model);
+        
+        // ડેટા લોડ કરો
+        loadStudentData();
+        
+        add(new JScrollPane(table));
+        setSize(600, 400);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setVisible(true);
+    }
+    
+    private void loadStudentData() {
+        try {
+            // ડેટાબેઝ કનેક્શન
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection(
+                "jdbc:mysql://localhost:3306/university", "root", "password");
+            
+            // query execute કરો
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM StuRec");
+            
+            // table માં ડેટા ઉમેરો
+            while(rs.next()) {
+                String[] row = {
+                    rs.getString("enrollno"),
+                    rs.getString("name"),
+                    rs.getString("address"),
+                    rs.getString("mobile"),
+                    rs.getString("email")
+                };
+                model.addRow(row);
+            }
+            
+            con.close();
+        } catch(Exception e) {
+            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+        }
+    }
+    
+    public static void main(String[] args) {
+        new StudentRecordDisplay();
+    }
+}
+\end{lstlisting}
+
+\textbf{ડેટાબેઝ ટેબલ માળખું:}
+\begin{lstlisting}[language=SQL]
+CREATE TABLE StuRec (
+    enrollno VARCHAR(20) PRIMARY KEY,
+    name VARCHAR(50),
+    address VARCHAR(100),
+    mobile VARCHAR(15),
+    email VARCHAR(50)
+);
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Connect Query Display Records}
+\end{mnemonicbox}
+
+\questionmarks{2(અ OR)}{3}{JDBC ના ફાયદા અને ગેરફાયદા લખો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{JDBC ફાયદા અને ગેરફાયદા}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{ફાયદા} & \textbf{ગેરફાયદા} \\ \hline
+\textbf{Platform Independent} & \textbf{Performance Overhead} \\ \hline
+\textbf{Database Independent} & \textbf{શરૂઆતી લોકો માટે જટિલ} \\ \hline
+\textbf{Standard API} & \textbf{SQL dependency} \\ \hline
+\textbf{Transactions ને support કરે} & \textbf{Manual resource management} \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{મુખ્ય મુદ્દાઓ:}
+\begin{itemize}
+    \item \keyword{પોર્ટેબિલિટી}: વિવિધ platforms અને databases પર કામ કરે છે.
+    \item \keyword{સ્ટાન્ડર્ડાઇઝેશન}: database operations માટે uniform API.
+    \item \keyword{પ્રદર્શન}: વધારાનું layer performance માં overhead લાવે છે.
+    \item \keyword{જટિલતા}: યોગ્ય resource management જરૂરી.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Platform Independent Standard Complex}
+\end{mnemonicbox}
+
+\questionmarks{2(બ OR)}{4}{Border Layout સમજાવો.}
+
+\begin{solutionbox}
+BorderLayout container ને પાંચ વિસ્તારોમાં વહેંચે છે: North, South, East, West, અને Center.
+
+\begin{center}
+\begin{tikzpicture}
+    \draw (0,0) rectangle (4,3);
+    \draw (0,2.5) -- (4,2.5);
+    \draw (0,0.5) -- (4,0.5);
+    \draw (1,0.5) -- (1,2.5);
+    \draw (3,0.5) -- (3,2.5);
+    
+    \node at (2,2.75) {NORTH};
+    \node at (2,0.25) {SOUTH};
+    \node at (0.5,1.5) {WEST};
+    \node at (3.5,1.5) {EAST};
+    \node at (2,1.5) {CENTER};
+\end{tikzpicture}
+\captionof{figure}{Border Layout Regions}
+\end{center}
+
+\begin{center}
+\captionof{table}{Border Layout વિસ્તારો}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{વિસ્તાર} & \textbf{સ્થાન} & \textbf{વર્તન} \\ \hline
+\textbf{NORTH} & ઉપર & Preferred height, full width \\ \hline
+\textbf{SOUTH} & નીચે & Preferred height, full width \\ \hline
+\textbf{EAST} & જમણે & Preferred width, full height \\ \hline
+\textbf{WEST} & ડાબે & Preferred width, full height \\ \hline
+\textbf{CENTER} & વચ્ચે & બાકીની જગ્યા લે છે \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{કોડ ઉદાહરણ:}
+\begin{lstlisting}[language=Java]
+setLayout(new BorderLayout());
+add(new JButton("ઉત્તર"), BorderLayout.NORTH);
+add(new JButton("મધ્ય"), BorderLayout.CENTER);
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{North South East West Center}
+\end{mnemonicbox}
+
+\questionmarks{2(ક OR)}{7}{Hibernate CRUD operations નો ઉપયોગ કરીને Employee (NAME, AGE, SALARY અને DEPARTMENT) નો ડેટા store, update, fetch અને delete માટે એપ્લિકેશન ડેવલપ કરો.}
+
+\begin{solutionbox}
+\textbf{Employee Entity Class:}
+\begin{lstlisting}[language=Java]
+import javax.persistence.*;
+
+@Entity
+@Table(name = "employees")
+public class Employee {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+    
+    private String name;
+    private int age;
+    private double salary;
+    private String department;
+    
+    // Constructors, getters, setters
+    public Employee() {}
+    
+    public Employee(String name, int age, double salary, String dept) {
+        this.name = name;
+        this.age = age;
+        this.salary = salary;
+        this.department = dept;
+    }
+    
+    // Getters અને Setters
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+    
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    
+    // ... અન્ય getters/setters
+}
+\end{lstlisting}
+
+\textbf{CRUD Operations Class:}
+\begin{lstlisting}[language=Java]
+import org.hibernate.*;
+import org.hibernate.cfg.Configuration;
+
+public class EmployeeCRUD {
+    private SessionFactory factory;
+    
+    public EmployeeCRUD() {
+        factory = new Configuration()
+                    .configure("hibernate.cfg.xml")
+                    .addAnnotatedClass(Employee.class)
+                    .buildSessionFactory();
+    }
+    
+    // CREATE
+    public void saveEmployee(Employee emp) {
+        Session session = factory.openSession();
+        Transaction tx = session.beginTransaction();
+        session.save(emp);
+        tx.commit();
+        session.close();
+    }
+    
+    // READ
+    public Employee getEmployee(int id) {
+        Session session = factory.openSession();
+        Employee emp = session.get(Employee.class, id);
+        session.close();
+        return emp;
+    }
+    
+    // UPDATE
+    public void updateEmployee(Employee emp) {
+        Session session = factory.openSession();
+        Transaction tx = session.beginTransaction();
+        session.update(emp);
+        tx.commit();
+        session.close();
+    }
+    
+    // DELETE
+    public void deleteEmployee(int id) {
+        Session session = factory.openSession();
+        Transaction tx = session.beginTransaction();
+        Employee emp = session.get(Employee.class, id);
+        session.delete(emp);
+        tx.commit();
+        session.close();
+    }
+}
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Save Get Update Delete Hibernate}
+\end{mnemonicbox}
+
+\questionmarks{3(અ)}{3}{Deployment Descriptor સમજાવો.}
+
+\begin{solutionbox}
+Deployment Descriptor (web.xml) web applications માટે configuration file છે જેમાં servlet mappings, initialization parameters, અને security settings હોય છે.
+
+\begin{center}
+\captionof{table}{Deployment Descriptor Elements}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{Element} & \textbf{હેતુ} \\ \hline
+\textbf{\textless servlet\textgreater} & servlet configuration define કરે છે \\ \hline
+\textbf{\textless servlet-mapping\textgreater} & servlet ને URL pattern સાથે map કરે છે \\ \hline
+\textbf{\textless init-param\textgreater} & initialization parameters સેટ કરે છે \\ \hline
+\textbf{\textless welcome-file-list\textgreater} & default files serve કરવા માટે \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{મુખ્ય લક્ષણો:}
+\begin{itemize}
+    \item \keyword{Configuration}: web app માટે કેન્દ્રીય configuration.
+    \item \keyword{Servlet Mapping}: URL to servlet mapping.
+    \item \keyword{Parameters}: initialization અને context parameters.
+    \item \keyword{Security}: authentication અને authorization settings.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Web XML Configuration Mapping}
+\end{mnemonicbox}
+
+\questionmarks{3(બ)}{4}{servlet માં get અને post method વચ્ચેનો તફાવત સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{GET vs POST Methods}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{લક્ષણ} & \textbf{GET} & \textbf{POST} \\ \hline
+\textbf{Data Location} & URL query string & Request body \\ \hline
+\textbf{Data Size} & મર્યાદિત (2048 chars) & અમર્યાદિત \\ \hline
+\textbf{Security} & ઓછું સુરક્ષિત (દૃશ્યમાન) & વધુ સુરક્ષિત \\ \hline
+\textbf{Caching} & Cache થઈ શકે છે & Cache થતું નથી \\ \hline
+\textbf{Bookmarking} & Bookmark કરી શકાય & Bookmark કરી શકાતું નથી \\ \hline
+\textbf{હેતુ} & ડેટા retrieve કરવા & ડેટા submit/modify કરવા \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{મુખ્ય મુદ્દાઓ:}
+\begin{itemize}
+    \item \keyword{દૃશ્યતા}: GET ડેટા URL માં દેખાય છે, POST છુપાયેલું હોય છે.
+    \item \keyword{ક્ષમતા}: POST મોટો ડેટા handle કરી શકે છે.
+    \item \keyword{સુરક્ષા}: POST sensitive ડેટા માટે વધુ સારી.
+    \item \keyword{ઉપયોગ}: GET fetching માટે, POST form submission માટે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{GET Visible Limited, POST Hidden Unlimited}
+\end{mnemonicbox}
+
+\questionmarks{3(ક)}{7}{એક સરળ servlet પ્રોગ્રામ વિકસાવો જે તેના લોડિંગ પછી કેટલી વખત તેને access કરવામાં આવ્યું છે તેમાટે counter જાળવી રાખે છે; deployment descriptor નો ઉપયોગ કરીને counter ને પ્રારંભ કરો.}
+
+\begin{solutionbox}
+\textbf{Servlet કોડ:}
+\begin{lstlisting}[language=Java]
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class CounterServlet extends HttpServlet {
+    private int counter;
+    
+    public void init() throws ServletException {
+        String initialValue = getInitParameter("initialCount");
+        counter = Integer.parseInt(initialValue);
+    }
+    
+    protected void doGet(HttpServletRequest request, 
+                        HttpServletResponse response) 
+                        throws ServletException, IOException {
+        
+        response.setContentType("text/html");
+        PrintWriter out = response.getWriter();
+        
+        synchronized(this) {
+            counter++;
+        }
+        
+        out.println("<html><body>");
+        out.println("<h2>પેજ Access કાઉન્ટર</h2>");
+        out.println("<p>આ પેજ " + counter + " વખત access કરવામાં આવ્યું છે</p>");
+        out.println("<p><a href='CounterServlet'>Refresh</a></p>");
+        out.println("</body></html>");
+        
+        out.close();
+    }
+}
+\end{lstlisting}
+
+\textbf{web.xml Configuration:}
+\begin{lstlisting}[language=XML]
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app>
+    <servlet>
+        <servlet-name>CounterServlet</servlet-name>
+        <servlet-class>CounterServlet</servlet-class>
+        <init-param>
+            <param-name>initialCount</param-name>
+            <param-value>0</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>CounterServlet</servlet-name>
+        <url-pattern>/counter</url-pattern>
+    </servlet-mapping>
+</web-app>
+\end{lstlisting}
+
+\textbf{મુખ્ય લક્ષણો:}
+\begin{itemize}
+    \item \keyword{Thread Safety}: synchronized counter increment.
+    \item \keyword{Initialization}: web.xml માંથી counter initialized.
+    \item \keyword{Persistent}: requests ની વચ્ચે counter maintained.
+    \item \keyword{Configuration}: deployment descriptor setup.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Initialize Synchronize Count Display}
+\end{mnemonicbox}
+
+\questionmarks{3(અ OR)}{3}{servlet ના life cycle સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm, auto]
+    \node [gtu state] (Load) {Loading};
+    \node [gtu state, right=of Load] (Init) {init()};
+    \node [gtu state, right=of Init] (Serv) {service()};
+    \node [gtu state, right=of Serv] (Dest) {destroy()};
+    
+    \path [gtu arrow] (Load) -- (Init);
+    \path [gtu arrow] (Init) -- (Serv);
+    \path [gtu arrow] (Serv) -- (Dest);
+    
+    \path [gtu arrow] (Serv) edge [loop above] node {Requests} (Serv);
+\end{tikzpicture}
+\captionof{figure}{Servlet Life Cycle}
+\end{center}
+
+\begin{center}
+\captionof{table}{Servlet Life Cycle Methods}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Method} & \textbf{હેતુ} & \textbf{Called} \\ \hline
+\textbf{init()} & servlet initialize કરે છે & startup પર એક વખત \\ \hline
+\textbf{service()} & requests handle કરે છે & દરેક request માટે \\ \hline
+\textbf{destroy()} & resources cleanup કરે છે & shutdown પર એક વખત \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{મુખ્ય મુદ્દાઓ:}
+\begin{itemize}
+    \item \keyword{Initialization}: servlet load થાય ત્યારે એક વખત call થાય છે.
+    \item \keyword{Service}: બધી client requests handle કરે છે.
+    \item \keyword{Cleanup}: servlet unload થાય તે પહેલાં call થાય છે.
+    \item \keyword{Container Managed}: web container lifecycle ને control કરે છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Initialize Service Destroy}
+\end{mnemonicbox}
+
+\questionmarks{3(બ OR)}{4}{Servlet Config class ને યોગ્ય ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+ServletConfig servlet-specific configuration information અને initialization parameters પ્રદાન કરે છે.
+
+\begin{center}
+\captionof{table}{ServletConfig Methods}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{Method} & \textbf{હેતુ} \\ \hline
+\textbf{getInitParameter()} & init parameter value મેળવે છે \\ \hline
+\textbf{getInitParameterNames()} & બધા parameter names મેળવે છે \\ \hline
+\textbf{getServletContext()} & servlet context મેળવે છે \\ \hline
+\textbf{getServletName()} & servlet name મેળવે છે \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{ઉદાહરણ:}
+\begin{lstlisting}[language=Java]
+public class ConfigServlet extends HttpServlet {
+    String databaseURL, username;
+    
+    public void init() throws ServletException {
+        ServletConfig config = getServletConfig();
+        databaseURL = config.getInitParameter("dbURL");
+        username = config.getInitParameter("dbUser");
+    }
+    
+    protected void doGet(HttpServletRequest request, 
+                        HttpServletResponse response) 
+                        throws ServletException, IOException {
+        
+        PrintWriter out = response.getWriter();
+        out.println("Database URL: " + databaseURL);
+        out.println("Username: " + username);
+    }
+}
+\end{lstlisting}
+
+\textbf{web.xml:}
+\begin{lstlisting}[language=XML]
+<servlet>
+    <servlet-name>ConfigServlet</servlet-name>
+    <servlet-class>ConfigServlet</servlet-class>
+    <init-param>
+        <param-name>dbURL</param-name>
+        <param-value>jdbc:mysql://localhost:3306/test</param-value>
+    </init-param>
+    <init-param>
+        <param-name>dbUser</param-name>
+        <param-value>root</param-value>
+    </init-param>
+</servlet>
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Config Gets Parameters Context}
+\end{mnemonicbox}
+
+\questionmarks{3(ક OR)}{7}{એક સરળ પ્રોગ્રામ ડેવલપ કરો, જ્યારે વપરાશકર્તા subject code પસંદ કરશે, ત્યારે subject નું નામ servlet અને MySQL database નો ઉપયોગ કરીને પ્રદર્શિત થશે.}
+
+\begin{solutionbox}
+\textbf{HTML Form (index.html):}
+\begin{lstlisting}[language=HTML]
+<!DOCTYPE html>
+<html>
+<head>
+    <title>વિષય પસંદગી</title>
+</head>
+<body>
+    <h2>વિષય કોડ પસંદ કરો</h2>
+    <form action="SubjectServlet" method="get">
+        <select name="subjectCode">
+            <option value="">વિષય પસંદ કરો</option>
+            <option value="4351603">4351603</option>
+            <option value="4351604">4351604</option>
+            <option value="4351605">4351605</option>
+        </select>
+        <input type="submit" value="વિષયનું નામ મેળવો">
+    </form>
+</body>
+</html>
+\end{lstlisting}
+
+\textbf{Servlet કોડ:}
+\begin{lstlisting}[language=Java]
+import java.io.*;
+import java.sql.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class SubjectServlet extends HttpServlet {
+    
+    protected void doGet(HttpServletRequest request, 
+                        HttpServletResponse response) 
+                        throws ServletException, IOException {
+        
+        response.setContentType("text/html;charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        
+        String subjectCode = request.getParameter("subjectCode");
+        String subjectName = "";
+        
+        if(subjectCode != null && !subjectCode.equals("")) {
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver");
+                Connection con = DriverManager.getConnection(
+                    "jdbc:mysql://localhost:3306/university", "root", "password");
+                
+                PreparedStatement ps = con.prepareStatement(
+                    "SELECT subject_name FROM subjects WHERE subject_code = ?");
+                ps.setString(1, subjectCode);
+                
+                ResultSet rs = ps.executeQuery();
+                if(rs.next()) {
+                    subjectName = rs.getString("subject_name");
+                }
+                
+                con.close();
+            } catch(Exception e) {
+                subjectName = "Error: " + e.getMessage();
+            }
+        }
+        
+        out.println("<html><body>");
+        out.println("<h2>વિષયની માહિતી</h2>");
+        if(!subjectName.equals("")) {
+            out.println("<p>વિષય કોડ: " + subjectCode + "</p>");
+            out.println("<p>વિષયનું નામ: " + subjectName + "</p>");
+        } else {
+            out.println("<p>કૃપા કરીને વિષય કોડ પસંદ કરો</p>");
+        }
+        out.println("<p><a href='index.html'>પાછા જાઓ</a></p>");
+        out.println("</body></html>");
+    }
+}
+\end{lstlisting}
+
+\textbf{ડેટાબેઝ ટેબલ:}
+\begin{lstlisting}[language=SQL]
+CREATE TABLE subjects (
+    subject_code VARCHAR(10) PRIMARY KEY,
+    subject_name VARCHAR(100)
+);
+
+INSERT INTO subjects VALUES 
+('4351603', 'Advanced Java Programming'),
+('4351604', 'Web Technology'),
+('4351605', 'Database Management System');
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Select Query Display Subject}
+\end{mnemonicbox}
+
+\questionmarks{4(અ)}{3}{JSP life cycle સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[node distance=1.2cm, auto]
+    \node [gtu state] (Trans) {Translation};
+    \node [gtu state, right=of Trans] (Comp) {Compilation};
+    \node [gtu state, right=of Comp] (Load) {Loading};
+    \node [gtu state, below=of Trans] (Init) {jspInit()};
+    \node [gtu state, right=of Init] (Serv) {\_jspService()};
+    \node [gtu state, right=of Serv] (Dest) {jspDestroy()};
+    
+    \path [gtu arrow] (Trans) -- (Comp);
+    \path [gtu arrow] (Comp) -- (Load);
+    \path [gtu arrow] (Load) -- (Init);
+    \path [gtu arrow] (Init) -- (Serv);
+    \path [gtu arrow] (Serv) -- (Dest);
+    \path [gtu arrow] (Serv) edge [loop above] node {Requests} (Serv);
+\end{tikzpicture}
+\captionof{figure}{JSP Life Cycle}
+\end{center}
+
+\begin{center}
+\captionof{table}{JSP Life Cycle તબક્કાઓ}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{તબક્કો} & \textbf{વર્ણન} \\ \hline
+\textbf{Translation} & JSP to Servlet conversion \\ \hline
+\textbf{Compilation} & Servlet to bytecode \\ \hline
+\textbf{Loading} & servlet class ને load કરે છે \\ \hline
+\textbf{Initialization} & jspInit() call થાય છે \\ \hline
+\textbf{Request Processing} & \_jspService() requests handle કરે છે \\ \hline
+\textbf{Destruction} & jspDestroy() cleanup \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Translate Compile Load Initialize Service Destroy}
+\end{mnemonicbox}
+
+\questionmarks{4(બ)}{4}{JSP અને Servlet ની સરખામણી કરો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{JSP vs Servlet સરખામણી}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{લક્ષણ} & \textbf{JSP} & \textbf{Servlet} \\ \hline
+\textbf{કોડ પ્રકાર} & HTML with Java code & Pure Java code \\ \hline
+\textbf{ડેવલપમેન્ટ} & web designers માટે સરળ & Java developers માટે વધુ સારું \\ \hline
+\textbf{કમ્પાઈલેશન} & આપોઆપ & મેન્યુઅલ \\ \hline
+\textbf{ફેરફાર} & restart ની જરૂર નથી & restart જરૂરી \\ \hline
+\textbf{પર્ફોર્મન્સ} & પહેલી request ધીમી & ઝડપી \\ \hline
+\textbf{જાળવણી} & સરળ & જટિલ \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{મુખ્ય મુદ્દાઓ:}
+\begin{itemize}
+    \item \keyword{ઉપયોગમાં સરળતા}: JSP presentation layer માટે સરળ.
+    \item \keyword{પર્ફોર્મન્સ}: Servlet business logic માટે વધુ સારું.
+    \item \keyword{લવચીકતા}: JSP dynamic content માટે વધુ સારું.
+    \item \keyword{નિયંત્રણ}: Servlet વધુ control પ્રદાન કરે છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{JSP Easy HTML, Servlet Pure Java}
+\end{mnemonicbox}
+
+\questionmarks{4(ક)}{7}{Enrollment number દ્વારા વર્તમાન સેમેસ્ટરના દરેક વિષયમાં વિદ્યાર્થીની માસિક હાજરી દર્શાવવા માટે JSP web application ડેવલપ કરો.}
+
+\begin{solutionbox}
+\textbf{Input Form (attendance.html):}
+\begin{lstlisting}[language=HTML]
+<!DOCTYPE html>
+<html>
+<head>
+    <title>વિદ્યાર્થી હાજરી</title>
+</head>
+<body>
+    <h2>વિદ્યાર્થી હાજરી તપાસો</h2>
+    <form action="attendanceCheck.jsp" method="post">
+        <table>
+            <tr>
+                <td>Enrollment નંબર:</td>
+                <td><input type="text" name="enrollNo" required></td>
+            </tr>
+            <tr>
+                <td>મહિનો:</td>
+                <td>
+                    <select name="month" required>
+                        <option value="">મહિનો પસંદ કરો</option>
+                        <option value="January">જાન્યુઆરી</option>
+                        <option value="February">ફેબ્રુઆરી</option>
+                        <option value="March">માર્ચ</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <input type="submit" value="હાજરી તપાસો">
+                </td>
+            </tr>
+        </table>
+    </form>
+</body>
+</html>
+\end{lstlisting}
+
+\textbf{JSP Page (attendanceCheck.jsp):}
+\begin{lstlisting}[language=Java]
+<%@ page import="java.sql.*" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
+
+<html>
+<head>
+    <title>હાજરી રિપોર્ટ</title>
+    <style>
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid black; padding: 8px; text-align: center; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h2>માસિક હાજરી રિપોર્ટ</h2>
+    
+    <%
+        String enrollNo = request.getParameter("enrollNo");
+        String month = request.getParameter("month");
+        
+        if(enrollNo != null && month != null) {
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver");
+                Connection con = DriverManager.getConnection(
+                    "jdbc:mysql://localhost:3306/university", "root", "password");
+                
+                // વિદ્યાર્થીની માહિતી મેળવો
+                PreparedStatement ps1 = con.prepareStatement(
+                    "SELECT name FROM students WHERE enroll_no = ?");
+                ps1.setString(1, enrollNo);
+                ResultSet rs1 = ps1.executeQuery();
+                
+                String studentName = "";
+                if(rs1.next()) {
+                    studentName = rs1.getString("name");
+                }
+                
+                out.println("<p><strong>વિદ્યાર્થી:</strong> " + studentName + 
+                           " (" + enrollNo + ")</p>");
+                out.println("<p><strong>મહિનો:</strong> " + month + "</p>");
+                
+                // હાજરી ડેટા મેળવો
+                PreparedStatement ps2 = con.prepareStatement(
+                    "SELECT s.subject_name, a.total_classes, a.attended_classes, " +
+                    "ROUND((a.attended_classes/a.total_classes)*100, 2) as percentage " +
+                    "FROM attendance a JOIN subjects s ON a.subject_code = s.subject_code " +
+                    "WHERE a.enroll_no = ? AND a.month = ?");
+                ps2.setString(1, enrollNo);
+                ps2.setString(2, month);
+                ResultSet rs2 = ps2.executeQuery();
+                
+                out.println("<table>");
+                out.println("<tr><th>વિષય</th><th>કુલ વર્ગો</th>" +
+                           "<th>હાજર થયેલ</th><th>ટકાવારી</th><th>સ્થિતિ</th></tr>");
+                
+                while(rs2.next()) {
+                    String subjectName = rs2.getString("subject_name");
+                    int totalClasses = rs2.getInt("total_classes");
+                    int attendedClasses = rs2.getInt("attended_classes");
+                    double percentage = rs2.getDouble("percentage");
+                    String status = percentage >= 75 ? "સારી" : "નબળી";
+                    String rowColor = percentage >= 75 ? "lightgreen" : "lightcoral";
+                    
+                    out.println("<tr style='background-color:" + rowColor + "'>");
+                    out.println("<td>" + subjectName + "</td>");
+                    out.println("<td>" + totalClasses + "</td>");
+                    out.println("<td>" + attendedClasses + "</td>");
+                    out.println("<td>" + percentage + "%</td>");
+                    out.println("<td>" + status + "</td>");
+                    out.println("</tr>");
+                }
+                
+                out.println("</table>");
+                con.close();
+                
+            } catch(Exception e) {
+                out.println("<p style='color:red'>Error: " + e.getMessage() + "</p>");
+            }
+        }
+    %>
+    
+    <br />
+    <a href="attendance.html">બીજા વિદ્યાર્થીની તપાસ કરો</a>
+</body>
+</html>
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{JSP Database Query Display Table}
+\end{mnemonicbox}
+
+\questionmarks{4(અ OR)}{3}{JSP માં implicit objects સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{JSP Implicit Objects}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Object} & \textbf{Type} & \textbf{હેતુ} \\ \hline
+\textbf{request} & HttpServletRequest & request ડેટા મેળવે છે \\ \hline
+\textbf{response} & HttpServletResponse & response મોકલે છે \\ \hline
+\textbf{out} & JspWriter & client ને output \\ \hline
+\textbf{session} & HttpSession & session management \\ \hline
+\textbf{application} & ServletContext & application scope \\ \hline
+\textbf{config} & ServletConfig & servlet configuration \\ \hline
+\textbf{pageContext} & PageContext & page scope access \\ \hline
+\textbf{page} & Object & વર્તમાન servlet instance \\ \hline
+\textbf{exception} & Throwable & error page exception \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{મુખ્ય લક્ષણો:}
+\begin{itemize}
+    \item \keyword{આપોઆપ}: declaration વિના ઉપલબ્ધ.
+    \item \keyword{Scope Access}: વિવિધ scope levels.
+    \item \keyword{Request Handling}: input/output operations.
+    \item \keyword{Session Management}: વપરાશકર્તા session tracking.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Request Response Out Session Application}
+\end{mnemonicbox}
+
+\questionmarks{4(બ OR)}{4}{servlet કરતાં JSP શા માટે પસંદ કરવામાં આવે છે તે સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{Servlet કરતાં JSP ના ફાયદા}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{પાસું} & \textbf{JSP ફાયદો} \\ \hline
+\textbf{ડેવલપમેન્ટ} & HTML integration સરળ \\ \hline
+\textbf{જાળવણી} & presentation ને logic થી અલગ કરે \\ \hline
+\textbf{કમ્પાઈલેશન} & આપોઆપ compilation \\ \hline
+\textbf{ફેરફાર} & server restart ની જરૂર નથી \\ \hline
+\textbf{ડિઝાઈન} & web designer friendly \\ \hline
+\textbf{કોડ પુનઃઉપયોગ} & tag libraries અને custom tags \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{મુખ્ય મુદ્દાઓ:}
+\begin{itemize}
+    \item \keyword{Separation of Concerns}: presentation અને business logic નું સ્પષ્ટ વિભાજન.
+    \item \keyword{ઝડપી ડેવલપમેન્ટ}: ઝડપી development cycle.
+    \item \keyword{Designer Friendly}: web designers HTML-જેવા syntax સાથે કામ કરી શકે.
+    \item \keyword{આપોઆપ સુવિધાઓ}: container compilation અને lifecycle handle કરે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Easy HTML Automatic Designer Friendly}
+\end{mnemonicbox}
+
+\questionmarks{4(ક OR)}{7}{પાંચ વિષયોના ગુણ સ્વીકારીને વિદ્યાર્થીના ગ્રેડ દર્શાવવા માટે JSP પ્રોગ્રામ વિકસાવો.}
+
+\begin{solutionbox}
+\textbf{Input Form (gradeInput.html):}
+\begin{lstlisting}[language=HTML]
+<!DOCTYPE html>
+<html>
+<head>
+    <title>વિદ્યાર્થી ગ્રેડ કેલ્ક્યુલેટર</title>
+</head>
+<body>
+    <h2 style="text-align: center;">વિદ્યાર્થી ગ્રેડ કેલ્ક્યુલેટર</h2>
+    <form action="gradeCalculator.jsp" method="post">
+        <table border="1">
+            <tr>
+                <td>વિદ્યાર્થીનું નામ:</td>
+                <td><input type="text" name="studentName" required></td>
+            </tr>
+            <tr>
+                <td>વિષય 1 ગુણ:</td>
+                <td><input type="number" name="marks1" min="0" max="100" required></td>
+            </tr>
+            <!-- Repeat for marks2 to marks5 -->
+            <tr>
+                <td colspan="2" style="text-align: center;">
+                    <input type="submit" value="ગ્રેડ કેલ્ક્યુલેટ કરો">
+                </td>
+            </tr>
+        </table>
+    </form>
+</body>
+</html>
+\end{lstlisting}
+
+\textbf{JSP Grade Calculator (gradeCalculator.jsp):}
+\begin{lstlisting}[language=Java]
+<%@ page contentType="text/html;charset=UTF-8" %>
+<html>
+<head>
+    <title>ગ્રેડ પરિણામ</title>
+</head>
+<body>
+    <h2 style="text-align: center;">ગ્રેડ રિપોર્ટ</h2>
+    
+    <%
+        String studentName = request.getParameter("studentName");
+        
+        // ગુણ મેળવો
+        int marks1 = Integer.parseInt(request.getParameter("marks1"));
+        int marks2 = Integer.parseInt(request.getParameter("marks2"));
+        int marks3 = Integer.parseInt(request.getParameter("marks3"));
+        int marks4 = Integer.parseInt(request.getParameter("marks4"));
+        int marks5 = Integer.parseInt(request.getParameter("marks5"));
+        
+        // કુલ અને ટકાવારી કેલ્ક્યુલેટ કરો
+        int totalMarks = marks1 + marks2 + marks3 + marks4 + marks5;
+        double percentage = totalMarks / 5.0;
+        
+        // ગ્રેડ નક્કી કરો
+        String grade;
+        if(percentage >= 90) grade = "A+";
+        else if(percentage >= 80) grade = "A";
+        else if(percentage >= 70) grade = "B";
+        else if(percentage >= 60) grade = "C";
+        else if(percentage >= 50) grade = "D";
+        else grade = "F";
+        
+        String result = percentage >= 50 ? "પાસ" : "ફેલ";
+    %>
+    
+    <table>
+        <tr><th colspan="2">વિદ્યાર્થીની માહિતી</th></tr>
+        <tr><td><strong>નામ:</strong></td><td><%= studentName %></td></tr>
+        <tr><th colspan="2">પરિણામ સારાંશ</th></tr>
+        <tr><td><strong>કુલ ગુણ:</strong></td><td><%= totalMarks %> / 500</td></tr>
+        <tr><td><strong>ટકાવારી:</strong></td><td><%= String.format("%.2f", percentage) %>%</td></tr>
+        <tr><td><strong>ગ્રેડ:</strong></td><td><%= grade %></td></tr>
+        <tr><td><strong>પરિણામ:</strong></td><td><%= result %></td></tr>
+    </table>
+</body>
+</html>
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Calculate Total Percentage Grade Result}
+\end{mnemonicbox}
+
+\questionmarks{5(અ)}{3}{Aspect-oriented programming (AOP) સમજાવો.}
+
+\begin{solutionbox}
+AOP એ programming paradigm છે જે cross-cutting concerns ને business logic થી aspects નો ઉપયોગ કરીને અલગ કરે છે.
+
+\begin{center}
+\captionof{table}{AOP મુખ્ય ખ્યાલો}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{ખ્યાલ} & \textbf{વર્ણન} \\ \hline
+\textbf{Aspect} & cross-cutting concern ને encapsulate કરતું module \\ \hline
+\textbf{Join Point} & program execution માં બિંદુ \\ \hline
+\textbf{Pointcut} & join points નો સમૂહ \\ \hline
+\textbf{Advice} & join point પર લેવાતી action \\ \hline
+\textbf{Weaving} & aspects apply કરવાની પ્રક્રિયા \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{મુખ્ય લાભો:}
+\begin{itemize}
+    \item \keyword{વિભાજન}: business logic ને system services થી અલગ કરે છે.
+    \item \keyword{મોડ્યુલારિટી}: કોડ modularity સુધારે છે.
+    \item \keyword{પુનઃઉપયોગ}: cross-cutting concerns reusable છે.
+    \item \keyword{જાળવણી}: maintain અને modify કરવું સરળ.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Aspect Join Pointcut Advice Weaving}
+\end{mnemonicbox}
+
+\questionmarks{5(બ)}{4}{Servlet ની વિવિધ વિશેષતાઓની યાદી બનાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{Servlet વિશેષતાઓ}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{વિશેષતા} & \textbf{વર્ણન} \\ \hline
+\textbf{Platform Independent} & Java સપોર્ટ કરતા કોઈપણ server પર ચાલે છે \\ \hline
+\textbf{Server Independent} & વિવિધ web servers સાથે કામ કરે છે \\ \hline
+\textbf{Protocol Independent} & HTTP, HTTPS, FTP સપોર્ટ કરે છે \\ \hline
+\textbf{Persistent} & requests ની વચ્ચે memory માં રહે છે \\ \hline
+\textbf{Robust} & મજબૂત memory management \\ \hline
+\textbf{Secure} & Built-in security features \\ \hline
+\textbf{Portable} & એક વખત લખો, ગમે ત્યાં ચલાવો \\ \hline
+\textbf{Powerful} & સંપૂર્ણ Java API access \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{મુખ્ય મુદ્દાઓ:}
+\begin{itemize}
+    \item \keyword{પર્ફોર્મન્સ}: CGI કરતાં વધુ સારું પર્ફોર્મન્સ.
+    \item \keyword{Memory Management}: કાર્યક્ષમ memory ઉપયોગ.
+    \item \keyword{Multithreading}: એકસાથે અનેક requests handle કરે છે.
+    \item \keyword{Extensible}: ચોક્કસ protocols માટે extend કરી શકાય છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Platform Server Protocol Persistent Robust}
+\end{mnemonicbox}
+
+\questionmarks{5(ક)}{7}{Model layer, View layer અને Controller layer ને વિગતોમાં સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto]
+    \node [gtu block] (User) {User};
+    \node [gtu block, below right=of User] (View) {View};
+    \node [gtu block, right=of View] (Cont) {Controller};
+    \node [gtu block, above=of Cont] (Model) {Model};
+    
+    \path [gtu arrow] (User) -- (Cont);
+    \path [gtu arrow] (Cont) -- (Model);
+    \path [gtu arrow, <->] (Model) -- (View);
+    \path [gtu arrow] (View) -- (User);
+\end{tikzpicture}
+\captionof{figure}{MVC આર્કિટેક્ચર}
+\end{center}
+
+\begin{center}
+\captionof{table}{MVC Layer વિગતો}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{Layer} & \textbf{જવાબદારી} & \textbf{Components} & \textbf{હેતુ} \\ \hline
+\textbf{Model} & ડેટા અને business logic & Entities, DAOs, Services & ડેટા management \\ \hline
+\textbf{View} & Presentation layer & JSP, HTML, CSS & વપરાશકર્તા interface \\ \hline
+\textbf{Controller} & Request handling & Servlets, Actions & Flow control \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{Layer વિગતો:}
+\begin{itemize}
+    \item \textbf{Model}: ડેટાબેઝ operations, business logic, validation, અને entity classes.
+    \item \textbf{View}: Presentation, display logic, user interaction, અને responsive design.
+    \item \textbf{Controller}: Request handling, flow control, model coordination, અને response generation.
+\end{itemize}
+
+\textbf{MVC ના ફાયદા:}
+\begin{itemize}
+    \item \keyword{Separation of Concerns}: જવાબદારીનું સ્પષ્ટ વિભાજન.
+    \item \keyword{Maintainability}: maintain અને modify કરવું સરળ.
+    \item \keyword{Testability}: દરેક layer ને અલગ થી test કરી શકાય.
+    \item \keyword{Scalability}: મોટા application development ને સપોર્ટ કરે છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Model Data View Present Controller Handle}
+\end{mnemonicbox}
+
+\questionmarks{5(અ OR)}{3}{Spring Boot ની વિશેષતાઓ સમજાવો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{Spring Boot વિશેષતાઓ}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{વિશેષતા} & \textbf{વર્ણન} \\ \hline
+\textbf{Auto Configuration} & dependencies આધારે આપોઆપ configuration \\ \hline
+\textbf{Starter Dependencies} & curated dependencies નો સેટ \\ \hline
+\textbf{Embedded Servers} & built-in Tomcat, Jetty servers \\ \hline
+\textbf{Production Ready} & health checks, metrics, monitoring \\ \hline
+\textbf{No XML Configuration} & annotation-based configuration \\ \hline
+\textbf{Developer Tools} & hot reloading, automatic restart \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{મુખ્ય લાભો:}
+\begin{itemize}
+    \item \keyword{ઝડપી ડેવલપમેન્ટ}: ઝડપી project setup અને development.
+    \item \keyword{Convention over Configuration}: sensible defaults.
+    \item \keyword{Microservices Ready}: સરળ microservices development.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Auto Starter Embedded Production Annotation Developer}
+\end{mnemonicbox}
+
+\questionmarks{5(બ OR)}{4}{JSP scripting elements પર ટૂંકી નોંધ લખો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{JSP Scripting Elements}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Element} & \textbf{Syntax} & \textbf{હેતુ} \\ \hline
+\textbf{Scriptlet} & \code{<\% \%>} & Java code execution \\ \hline
+\textbf{Expression} & \code{<\%= \%>} & Output value \\ \hline
+\textbf{Declaration} & \code{<\%! \%>} & Variable/method declaration \\ \hline
+\textbf{Directive} & \code{<\%@ \%>} & Page configuration \\ \hline
+\textbf{Comment} & \code{<\%-- --\%>} & JSP comments \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{ઉદાહરણ:}
+\begin{lstlisting}[language=Java]
+<%-- JSP Comment --%>
+<%@ page contentType="text/html" %>
+
+<%! 
+    private int counter = 0;
+%>
+
+<html>
+<body>
+    <% 
+        String name = "Student";
+        counter++;
+    %>
+    
+    <h1><%= "Welcome " + name %></h1>
+    <p>પેજ <%= counter %> વખત visit કર્યું</p>
+</body>
+</html>
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Script Express Declare Direct Comment}
+\end{mnemonicbox}
+
+\questionmarks{5(ક OR)}{7}{Dependency injection (DI) અને Plain Old Java Object (POJO) ને વિગતોમાં સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Dependency Injection (DI):}
+Dependency Injection એ design pattern છે જ્યાં objects તેમની dependencies external source માંથી receive કરે છે internal creation કરવાને બદલે.
+
+\begin{center}
+\captionof{table}{DI પ્રકારો}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પ્રકાર} & \textbf{વર્ણન} & \textbf{ઉદાહરણ} \\ \hline
+\textbf{Constructor} & constructor દ્વારા dependencies & \code{public Service(Repo r)} \\ \hline
+\textbf{Setter} & setter methods દ્વારા dependencies & \code{setRepo(Repo r)} \\ \hline
+\textbf{Field} & સીધું field injection & \code{@Autowired Repo r} \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{Plain Old Java Object (POJO):}
+POJO એ સરળ Java object છે જે કોઈ ચોક્કસ framework classes માંથી inherit કરતું નથી અથવા ચોક્કસ interfaces implement કરતું નથી.
+
+\textbf{POJO લાક્ષણિકતાઓ:}
+\begin{itemize}
+    \item \keyword{કોઈ inheritance નથી}: framework classes માંથી extend કરતું નથી.
+    \item \keyword{કોઈ interfaces નથી}: framework interfaces implement કરતું નથી.
+    \item \keyword{કોઈ annotations નથી}: framework annotations વિના કામ કરી શકે છે.
+    \item \keyword{સરળ}: માત્ર business logic અને ડેટા ધરાવે છે.
+\end{itemize}
+
+\textbf{ઉદાહરણ:}
+\begin{lstlisting}[language=Java]
+// POJO Entity
+public class Student {
+    private String name;
+    // constructors, getters, setters
+}
+
+// Service with DI
+@Service
+public class StudentService {
+    @Autowired
+    private StudentRepository repository;
+    
+    public void save(Student s) {
+        repository.save(s);
+    }
+}
+\end{lstlisting}
+
+\textbf{ફાયદા:}
+\begin{itemize}
+    \item \keyword{DI}: Loose Coupling, Testability, Flexibility.
+    \item \keyword{POJO}: સરળતા, Testability, Portability, Lightweight.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{DI Injects Dependencies, POJO Plain Objects}
+\end{mnemonicbox}
+
+\end{document}
