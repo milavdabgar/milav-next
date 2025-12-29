@@ -1,0 +1,1439 @@
+\documentclass{article}
+\input{../../../../../../latex-templates/gtu-solutions/preamble.tex}
+\input{../../../../../../latex-templates/gtu-solutions/gujarati-boxes.tex}
+\input{../../../../../../latex-templates/gtu-solutions/commands.tex}
+
+\title{ડિજિટલ ઇલેક્ટ્રોનિક્સ (4321102) - શિયાળો 2023 સોલ્યુશન}
+\date{જાન્યુઆરી 18, 2023}
+
+\begin{document}
+\maketitle
+
+\questionmarks{1}{અ}{3}
+\textbf{(726)$_{10}$ = (\_\_\_\_\_\_\_\_\_)$_{2}$}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\captionof{table}{દશાંશમાંથી બાઈનરીમાં રૂપાંતર}
+\begin{center}
+\begin{tabulary}{\linewidth}{c c c}
+\hline
+\textbf{સ્ટેપ} & \textbf{ગણતરી} & \textbf{શેષ} \\
+\hline
+1 & 726 $\div$ 2 = 363 & 0 \\
+2 & 363 $\div$ 2 = 181 & 1 \\
+3 & 181 $\div$ 2 = 90 & 1 \\
+4 & 90 $\div$ 2 = 45 & 0 \\
+5 & 45 $\div$ 2 = 22 & 1 \\
+6 & 22 $\div$ 2 = 11 & 0 \\
+7 & 11 $\div$ 2 = 5 & 1 \\
+8 & 5 $\div$ 2 = 2 & 1 \\
+9 & 2 $\div$ 2 = 1 & 0 \\
+10 & 1 $\div$ 2 = 0 & 1 \\
+\hline
+\end{tabulary}
+\end{center}
+
+નીચેથી ઉપર વાંચતા: (726)$_{10}$ = (1011010110)$_{2}$
+
+\mnemonicbox{બે વડે ભાગો, શેષ ઉપરથી વાંચો}
+\end{solutionbox}
+
+\questionmarks{1}{બ}{4}
+\textbf{1) નીચેના બાઈનરી નંબર (10110101)$_{2}$ ને ગ્રે નંબરમાં કન્વર્ટ કરો.}\\
+\textbf{2) નીચેના ગ્રે નંબર (10110110)$_{gray}$ ને બાઈનરી નંબરમાં કન્વર્ટ કરો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{બાઈનરીથી ગ્રે કન્વર્ઝન:}
+\begin{lstlisting}
+Binary:   1 0 1 1 0 1 0 1
+           | | | | | | |
+XOR:      1^0 0^1 1^1 1^0 0^1 1^0 0^1
+           |   |   |   |   |   |   |
+Gray:     1   1   0   1   1   1   1
+\end{lstlisting}
+
+તેથી: (10110101)$_{2}$ = (1101111)$_{gray}$
+
+\textbf{ગ્રેથી બાઈનરી કન્વર્ઝન:}
+\begin{lstlisting}
+Gray:     1 0 1 1 0 1 1 0
+           |
+Binary:   1
+          1^0 = 1
+          1^1 = 0
+          0^1 = 1
+          1^0 = 1
+          1^1 = 0
+          0^1 = 1
+          1^0 = 1
+\end{lstlisting}
+
+તેથી: (10110110)$_{gray}$ = (10110101)$_{2}$
+
+\mnemonicbox{પ્રથમ બિટ સરખો, બાકી XOR અગાઉના બાઈનરી સાથે}
+\end{solutionbox}
+
+\questionmarks{1}{ક}{7}
+\textbf{NAND ને યુનિવર્સલ ગેટ તરીકે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{આકૃતિ: NAND યુનિવર્સલ ગેટ તરીકે}
+
+\begin{center}
+\begin{tikzpicture}[
+    node distance=2cm,
+    auto,
+    block/.style={rectangle, draw, minimum width=1.5cm, minimum height=1cm, align=center},
+    nand/.style={nand gate US, draw, logic gate inputs=nn}
+]
+
+% NOT using NAND
+\node (A1) at (0,0) {A};
+\node[nand, right of=A1, xshift=0.5cm] (N1) {};
+\draw (A1) -- ++(0.5,0) |- (N1.input 1);
+\draw (A1) -- ++(0.5,0) |- (N1.input 2);
+\node[right of=N1] (Z1) {A'};
+\draw (N1.output) -- (Z1);
+\node[below=0.5cm of N1] {NOT ગેટ};
+
+% AND using NAND
+\node (A2) at (5,0.5) {A};
+\node (B2) at (5,-0.5) {B};
+\node[nand, right of=A2, yshift=-0.5cm, xshift=0.5cm] (N2) {};
+\node[nand, right of=N2, xshift=0.5cm] (N3) {};
+\draw (A2) -| (N2.input 1);
+\draw (B2) -| (N2.input 2);
+\draw (N2.output) -- ++(0.2,0) |- (N3.input 1);
+\draw (N2.output) -- ++(0.2,0) |- (N3.input 2);
+\node[right of=N3] (Z2) {A$\cdot$B};
+\draw (N3.output) -- (Z2);
+\node[below=0.5cm of N2, xshift=1cm] {AND ગેટ};
+
+% OR using NAND
+\node (A3) at (0,-3) {A};
+\node (B3) at (0,-4) {B};
+\node[nand, right of=A3, xshift=0.5cm] (N4) {};
+\node[nand, right of=B3, xshift=0.5cm] (N5) {};
+\node[nand, right of=N4, yshift=-0.5cm, xshift=1.5cm] (N6) {};
+
+\draw (A3) -- ++(0.5,0) |- (N4.input 1);
+\draw (A3) -- ++(0.5,0) |- (N4.input 2);
+\draw (B3) -- ++(0.5,0) |- (N5.input 1);
+\draw (B3) -- ++(0.5,0) |- (N5.input 2);
+
+\draw (N4.output) -| (N6.input 1);
+\draw (N5.output) -| (N6.input 2);
+
+\node[right of=N6] (Z3) {A+B};
+\draw (N6.output) -- (Z3);
+\node[below=0.5cm of N6, xshift=-1cm] {OR ગેટ};
+
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{યુનિવર્સલ ગુણધર્મ}: NAND ગેટ કોઈપણ બુલિયન ફંક્શન બીજા કોઈપણ ગેટની જરૂર વિના બનાવી શકે છે.
+    \item \textbf{NOT ઇમ્પ્લિમેન્ટેશન}: NAND ગેટના બંને ઇનપુટ જોડવાથી NOT ગેટ બને છે.
+    \item \textbf{AND ઇમ્પ્લિમેન્ટેશન}: NAND પછી બીજો NAND ગેટ જોડવાથી AND ગેટ બને છે.
+    \item \textbf{OR ઇમ્પ્લિમેન્ટેશન}: બે NAND ગેટના સિંગલ ઇનપુટ્સ, પછી NAND જોડવાથી OR ગેટ બને છે.
+\end{itemize}
+
+\captionof{table}{NAND ગેટ ઇમ્પ્લિમેન્ટેશન}
+\begin{center}
+\begin{tabulary}{\linewidth}{l l}
+\hline
+\textbf{લોજિક ફંક્શન} & \textbf{NAND ઇમ્પ્લિમેન્ટેશન} \\
+\hline
+NOT(A) & NAND(A,A) \\
+AND(A,B) & NAND(NAND(A,B),NAND(A,B)) \\
+OR(A,B) & NAND(NAND(A,A),NAND(B,B)) \\
+\hline
+\end{tabulary}
+\end{center}
+
+\mnemonicbox{NAND બધા ગેટ બનાવી શકે છે}
+\end{solutionbox}
+
+\questionmarks{1}{ક}{7}
+\textbf{OR: NOR ને યુનિવર્સલ ગેટ તરીકે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{આકૃતિ: NOR યુનિવર્સલ ગેટ તરીકે}
+
+\begin{center}
+\begin{tikzpicture}[
+    node distance=2cm,
+    auto,
+    block/.style={rectangle, draw, minimum width=1.5cm, minimum height=1cm, align=center},
+    nor/.style={nor gate US, draw, logic gate inputs=nn}
+]
+
+% NOT using NOR
+\node (A1) at (0,0) {A};
+\node[nor, right of=A1, xshift=0.5cm] (N1) {};
+\draw (A1) -- ++(0.5,0) |- (N1.input 1);
+\draw (A1) -- ++(0.5,0) |- (N1.input 2);
+\node[right of=N1] (Z1) {A'};
+\draw (N1.output) -- (Z1);
+\node[below=0.5cm of N1] {NOT ગેટ};
+
+% OR using NOR
+\node (A2) at (5,0.5) {A};
+\node (B2) at (5,-0.5) {B};
+\node[nor, right of=A2, yshift=-0.5cm, xshift=0.5cm] (N2) {};
+\node[nor, right of=N2, xshift=0.5cm] (N3) {};
+\draw (A2) -| (N2.input 1);
+\draw (B2) -| (N2.input 2);
+\draw (N2.output) -- ++(0.2,0) |- (N3.input 1);
+\draw (N2.output) -- ++(0.2,0) |- (N3.input 2);
+\node[right of=N3] (Z2) {A+B};
+\draw (N3.output) -- (Z2);
+\node[below=0.5cm of N2, xshift=1cm] {OR ગેટ};
+
+% AND using NOR
+\node (A3) at (0,-3) {A};
+\node (B3) at (0,-4) {B};
+\node[nor, right of=A3, xshift=0.5cm] (N4) {};
+\node[nor, right of=B3, xshift=0.5cm] (N5) {};
+\node[nor, right of=N4, yshift=-0.5cm, xshift=1.5cm] (N6) {};
+
+\draw (A3) -- ++(0.5,0) |- (N4.input 1);
+\draw (A3) -- ++(0.5,0) |- (N4.input 2);
+\draw (B3) -- ++(0.5,0) |- (N5.input 1);
+\draw (B3) -- ++(0.5,0) |- (N5.input 2);
+
+\draw (N4.output) -| (N6.input 1);
+\draw (N5.output) -| (N6.input 2);
+
+\node[right of=N6] (Z3) {A$\cdot$B};
+\draw (N6.output) -- (Z3);
+\node[below=0.5cm of N6, xshift=-1cm] {AND ગેટ};
+
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{યુનિવર્સલ ગુણધર્મ}: NOR ગેટ કોઈપણ બુલિયન ફંક્શન બીજા કોઈપણ ગેટની જરૂર વિના બનાવી શકે છે.
+    \item \textbf{NOT ઇમ્પ્લિમેન્ટેશન}: NOR ગેટના બંને ઇનપુટ જોડવાથી NOT ગેટ બને છે.
+    \item \textbf{OR ઇમ્પ્લિમેન્ટેશન}: NOR પછી બીજો NOR ગેટ જોડવાથી OR ગેટ બને છે.
+    \item \textbf{AND ઇમ્પ્લિમેન્ટેશન}: બે NOR ગેટના સિંગલ ઇનપુટ્સ, પછી NOR જોડવાથી AND ગેટ બને છે.
+\end{itemize}
+
+\captionof{table}{NOR ગેટ ઇમ્પ્લિમેન્ટેશન}
+\begin{center}
+\begin{tabulary}{\linewidth}{l l}
+\hline
+\textbf{લોજિક ફંક્શન} & \textbf{NOR ઇમ્પ્લિમેન્ટેશન} \\
+\hline
+NOT(A) & NOR(A,A) \\
+OR(A,B) & NOR(NOR(A,B),NOR(A,B)) \\
+AND(A,B) & NOR(NOR(A,A),NOR(B,B)) \\
+\hline
+\end{tabulary}
+\end{center}
+
+\mnemonicbox{NOR બધા લોજિક સર્કિટ બનાવી શકે છે}
+\end{solutionbox}
+
+\questionmarks{2}{અ}{3}
+\textbf{(11011011)$_{2}$ X (110)$_{2}$ = (\_\_\_\_\_\_\_\_\_)$_{2}$}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\captionof{table}{બાઈનરી ગુણાકાર}
+\begin{center}
+\begin{lstlisting}
+    1 1 0 1 1 0 1 1
+  x         1 1 0
+  ---------------
+    0 0 0 0 0 0 0 0  (x 0)
+  1 1 0 1 1 0 1 1    (x 1)
+1 1 0 1 1 0 1 1      (x 1)
+-----------------
+1 0 0 0 0 0 0 1 1 0
+\end{lstlisting}
+\end{center}
+
+તેથી: (11011011)$_{2}$ $\times$ (110)$_{2}$ = (10000001110)$_{2}$
+
+\mnemonicbox{દરેક બિટ સાથે ગુણાકાર કરો, પંક્તિઓ ઉમેરો}
+\end{solutionbox}
+
+\questionmarks{2}{બ}{4}
+\textbf{ડીમોર્ગનનો પ્રમેય સાબિત કરો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\captionof{table}{ડીમોર્ગનના પ્રમેયની સાબિતી}
+\begin{center}
+\begin{tabulary}{\linewidth}{c c c c c c c}
+\hline
+\textbf{A} & \textbf{B} & \textbf{A'} & \textbf{B'} & \textbf{A+B} & \textbf{(A+B)'} & \textbf{A'$\cdot$B'} \\
+\hline
+0 & 0 & 1 & 1 & 0 & 1 & 1 \\
+0 & 1 & 1 & 0 & 1 & 0 & 0 \\
+1 & 0 & 0 & 1 & 1 & 0 & 0 \\
+1 & 1 & 0 & 0 & 1 & 0 & 0 \\
+\hline
+\end{tabulary}
+\end{center}
+
+\textbf{ડીમોર્ગનના પ્રમેય:}
+\begin{enumerate}
+    \item $(A+B)' = A' \cdot B'$
+    \item $(A \cdot B)' = A' + B'$
+\end{enumerate}
+
+ટ્રુથ ટેબલ સાબિત કરે છે કે $(A+B)' = A' \cdot B'$ કારણ કે બંને કોલમ મેચ થાય છે.
+
+\mnemonicbox{રેખાને તોડો, ચિહ્ન બદલો}
+\end{solutionbox}
+
+\questionmarks{2}{ક}{7}
+\textbf{લોજિક સર્કિટ, બુલિયન સમીકરણ અને ટ્રુથ ટેબલનો ઉપયોગ કરીને ફુલ એડર સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{આકૃતિ: ફુલ એડર સર્કિટ}
+
+\begin{center}
+\begin{tikzpicture}[
+    node distance=2.5cm,
+    auto,
+    block/.style={rectangle, draw, minimum width=1.5cm, minimum height=1cm, align=center}
+]
+    % Inputs
+    \node (A) at (0, 2) {A};
+    \node (B) at (0, 0) {B};
+    \node (Cin) at (0, -2) {Cin};
+
+    % Gates for Sum
+    \node[xor gate US, draw, logic gate inputs=nn] (xor1) at (3, 1) {};
+    \node[xor gate US, draw, logic gate inputs=nn] (xor2) at (6, 0) {};
+    
+    % Gates for Carry
+    \node[and gate US, draw, logic gate inputs=nn] (and1) at (3, -1) {};
+    \node[and gate US, draw, logic gate inputs=nn] (and2) at (3, -3) {};
+    \node[and gate US, draw, logic gate inputs=nn] (and3) at (4.5, 3) {};  % A.B
+    \node[or gate US, draw, logic gate inputs=nnn] (or1) at (7, -2) {};
+
+    % Connections for Sum
+    \draw (A) -| (xor1.input 1);
+    \draw (B) -| (xor1.input 2);
+    \draw (xor1.output) -- (xor2.input 1);
+    \draw (Cin) -- ++(2,0) |- (xor2.input 2);
+    \draw (xor2.output) -- ++(1,0) node[right] {Sum};
+
+    % Connections for Carry
+    \draw (A) |- (and3.input 1);
+    \draw (B) |- (and3.input 2);
+    
+    \draw (B) |- (and1.input 1);
+    \draw (Cin) |- (and1.input 2);
+    
+    \draw (A) to[out=0,in=180] ++(1,-3.5) |- (and2.input 1);
+    \draw (Cin) to[out=0,in=180] ++(1,-0.5) |- (and2.input 2);
+
+    \draw (and3.output) -| (or1.input 1);
+    \draw (and1.output) -- (or1.input 2);
+    \draw (and2.output) -| (or1.input 3);
+    
+    \draw (or1.output) -- ++(1,0) node[right] {Cout};
+
+\end{tikzpicture}
+\end{center}
+
+\captionof{table}{ફુલ એડર ટ્રુથ ટેબલ}
+\begin{center}
+\begin{tabulary}{\linewidth}{c c c c c}
+\hline
+\textbf{A} & \textbf{B} & \textbf{Cin} & \textbf{Sum} & \textbf{Cout} \\
+\hline
+0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 1 & 1 & 0 \\
+0 & 1 & 0 & 1 & 0 \\
+0 & 1 & 1 & 0 & 1 \\
+1 & 0 & 0 & 1 & 0 \\
+1 & 0 & 1 & 0 & 1 \\
+1 & 1 & 0 & 0 & 1 \\
+1 & 1 & 1 & 1 & 1 \\
+\hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{બુલિયન સમીકરણો}:
+    \begin{itemize}
+        \item Sum = $A \oplus B \oplus Cin$
+        \item Cout = $(A \cdot B) + (B \cdot Cin) + (A \cdot Cin)$
+    \end{itemize}
+\end{itemize}
+
+\mnemonicbox{સરવાળા માટે ત્રણ XOR, કેરી માટે AND પછી OR}
+\end{solutionbox}
+
+\questionmarks{2}{અ}{3}
+\textbf{OR: (11010010)$_{2}$ સાથે (101)$_{2}$ નો ભાગાકાર = (\_\_\_\_\_\_\_\_\_)$_{2}$}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\captionof{table}{બાઈનરી ભાગાકાર}
+\begin{center}
+\begin{lstlisting}
+            1 0 1 0 1 1
+         ____________
+1 0 1 ) 1 1 0 1 0 0 1 0
+        1 0 1
+        -----
+          0 1 1
+          0 0 0
+          -----
+            1 1 0
+            1 0 1
+            -----
+              0 1 0
+              0 0 0
+              -----
+                1 0 1
+                1 0 1
+                -----
+                  0 0 0
+\end{lstlisting}
+\end{center}
+
+તેથી: (11010010)$_{2}$ $\div$ (101)$_{2}$ = (101011)$_{2}$ બાકી (0)$_{2}$
+
+\mnemonicbox{દશાંશની જેમ ભાગો, પણ બાઈનરી બાદબાકી વાપરો}
+\end{solutionbox}
+
+\questionmarks{2}{બ}{4}
+\textbf{OR: બુલિયન અભિવ્યક્તિ Y = A'B+AB'+A'B'+AB ને સરળ બનાવો}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\captionof{table}{બુલિયન સરલીકરણ}
+\begin{center}
+\begin{tabulary}{\linewidth}{c l l}
+\hline
+\textbf{સ્ટેપ} & \textbf{અભિવ્યક્તિ} & \textbf{વપરાયેલ નિયમ} \\
+\hline
+1 & Y = A'B+AB'+A'B'+AB & મૂળ \\
+2 & Y = A'(B+B')+A(B'+B) & ફેક્ટરિંગ \\
+3 & Y = A'(1)+A(1) & B+B' = 1 \\
+4 & Y = A'+A & સરલીકરણ \\
+5 & Y = 1 & A'+A = 1 \\
+\hline
+\end{tabulary}
+\end{center}
+
+તેથી: Y = 1 (હંમેશા TRUE)
+
+\mnemonicbox{પહેલા ફેક્ટર કરો, ઓળખો લાગુ કરો, સમાન પદો જોડો}
+\end{solutionbox}
+
+\questionmarks{2}{ક}{7}
+\textbf{OR: લોજિક સર્કિટ, બુલિયન સમીકરણ અને ટ્રુથ ટેબલનો ઉપયોગ કરીને ફુલ સબટ્રેક્ટર સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{આકૃતિ: ફુલ સબટ્રેક્ટર સર્કિટ}
+
+\begin{center}
+\begin{tikzpicture}[
+    node distance=2.5cm,
+    auto,
+    block/.style={rectangle, draw, minimum width=1.5cm, minimum height=1cm, align=center}
+]
+    % Inputs
+    \node (A) at (0, 2) {A};
+    \node (B) at (0, 0) {B};
+    \node (Bin) at (0, -2) {Bin};
+
+    % Gates for Difference
+    \node[xor gate US, draw, logic gate inputs=nn] (xor1) at (3, 1) {};
+    \node[xor gate US, draw, logic gate inputs=nn] (xor2) at (6, 0) {};
+    
+    % Gates for Borrow
+    \node[not gate US, draw] (not1) at (1.5, 0.5) {}; 
+    
+    % Logic for Bout
+    \node[and gate US, draw, logic gate inputs=nn] (and1) at (4, -1.5) {}; 
+    \node[and gate US, draw, logic gate inputs=nn] (and2) at (4, -3) {};
+    \node[and gate US, draw, logic gate inputs=nn] (and3) at (4, 3) {};
+    \node[or gate US, draw, logic gate inputs=nnn] (or1) at (7, -1) {};
+    
+    % Connections
+    \draw (A) -| (xor1.input 1);
+    \draw (B) -| (xor1.input 2);
+    \draw (xor1.output) -- (xor2.input 1);
+    \draw (Bin) -- ++(2,0) |- (xor2.input 2);
+    \draw (xor2.output) -- ++(1,0) node[right] {Diff};
+    
+    \draw (A) -- ++(0.5,0) |- (not1.input);
+    \draw (not1.output) -- ++(0.5,0) coordinate (notA);
+    
+    % A'B
+    \draw (notA) |- (and3.input 1);
+    \draw (B) |- (and3.input 2);
+    
+    % A'Bin
+    \draw (notA) |- (and1.input 1);
+    \draw (Bin) |- (and1.input 2);
+    
+    % BBin
+    \draw (B) |- (and2.input 1);
+    \draw (Bin) |- (and2.input 2);
+    
+    \draw (and3.output) -| (or1.input 1);
+    \draw (and1.output) -- (or1.input 2);
+    \draw (and2.output) -| (or1.input 3);
+    
+    \draw (or1.output) -- ++(1,0) node[right] {Bout};
+
+\end{tikzpicture}
+\end{center}
+
+\captionof{table}{ફુલ સબટ્રેક્ટર ટ્રુથ ટેબલ}
+\begin{center}
+\begin{tabulary}{\linewidth}{c c c c c}
+\hline
+\textbf{A} & \textbf{B} & \textbf{Bin} & \textbf{Difference} & \textbf{Bout} \\
+\hline
+0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 1 & 1 & 1 \\
+0 & 1 & 0 & 1 & 1 \\
+0 & 1 & 1 & 0 & 1 \\
+1 & 0 & 0 & 1 & 0 \\
+1 & 0 & 1 & 0 & 0 \\
+1 & 1 & 0 & 0 & 0 \\
+1 & 1 & 1 & 1 & 1 \\
+\hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{બુલિયન સમીકરણો}:
+    \begin{itemize}
+        \item Difference = $A \oplus B \oplus Bin$
+        \item Bout = $(A' \cdot B) + (A' \cdot Bin) + (B \cdot Bin)$
+    \end{itemize}
+\end{itemize}
+
+\mnemonicbox{તફાવત માટે ત્રિગણો XOR, ઇનપુટ મોટો હોય ત્યારે બોરો}
+\end{solutionbox}
+
+\questionmarks{3}{અ}{3}
+\textbf{૨'s કોંપ્લીમેંટનો ઉપયોગ કરીને (1011001)$_{2}$ ને (1101101)$_{2}$ માંથી બાદ કરો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\captionof{table}{2's કોંપ્લીમેંટ બાદબાકી}
+\begin{center}
+\begin{tabulary}{\linewidth}{c l l}
+\hline
+\textbf{સ્ટેપ} & \textbf{ઓપરેશન} & \textbf{પરિણામ} \\
+\hline
+1 & બાદ કરવાની સંખ્યા: & 1011001 \\
+2 & 1's કોંપ્લીમેંટ: & 0100110 \\
+3 & 2's કોંપ્લીમેંટ: & 0100111 \\
+4 & (1101101) + (0100111) = & 10010100 \\
+5 & કેરી છોડી દો: & 0010100 \\
+\hline
+\end{tabulary}
+\end{center}
+
+તેથી: (1101101)$_{2}$ - (1011001)$_{2}$ = (0010100)$_{2}$ = (20)$_{10}$
+
+\mnemonicbox{બિટ્સ ફ્લિપ કરો, એક ઉમેરો, પછી સંખ્યાઓ ઉમેરો}
+\end{solutionbox}
+
+\questionmarks{3}{બ}{4}
+\textbf{કનોફ મેપ (K' મેપ) પદ્ધતિનો ઉપયોગ કરીને બુલિયન સમીકરણને સરળ બનાવો: F(A,B,C,D) = $\Sigma$m(0,1,2,6,7,8,12,15)}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{આકૃતિ: K-map ગ્રુપિંગ}
+
+\begin{center}
+\begin{tikzpicture}
+\matrix (map) [matrix of nodes,
+               nodes={draw, minimum size=0.8cm, anchor=center},
+               column sep=-\pgflinewidth,
+               row sep=-\pgflinewidth]
+{
+1 & 1 & 0 & 1 \\
+0 & 0 & 1 & 1 \\
+1 & 0 & 1 & 0 \\
+1 & 0 & 0 & 0 \\
+};
+
+\node[above=0.1cm] at (map-1-1.north west) {CD};
+\node[left=0.1cm] at (map-1-1.north west) {AB};
+\node[above] at (map-1-1.north) {00};
+\node[above] at (map-1-2.north) {01};
+\node[above] at (map-1-3.north) {11};
+\node[above] at (map-1-4.north) {10};
+\node[left] at (map-1-1.west) {00};
+\node[left] at (map-2-1.west) {01};
+\node[left] at (map-3-1.west) {11};
+\node[left] at (map-4-1.west) {10};
+
+\draw[red, rounded corners, thick] (map-1-1.north west) rectangle (map-1-2.south east);
+\draw[red, rounded corners, thick] (map-4-1.north west) rectangle (map-4-1.south east);
+
+\draw[blue, rounded corners, thick] (map-2-3.north west) rectangle (map-2-4.south east);
+\draw[blue, rounded corners, thick] (map-3-3.north west) rectangle (map-3-3.south east);
+
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+    \item ગ્રુપ A: A'B'C' (4 સેલ)
+    \item ગ્રુપ B: BCD (3 સેલ)
+    \item ગ્રુપ C: A'B'CD' (1 સેલ)
+\end{itemize}
+
+સરળ અભિવ્યક્તિ: F(A,B,C,D) = A'B'C' + BCD + A'B'CD'
+
+\mnemonicbox{2\textsuperscript{n} ના મોટામાં મોટા સમૂહો શોધો, લઘુત્તમ પદો વાપરો}
+\end{solutionbox}
+
+\questionmarks{3}{ક}{7}
+\textbf{લોજિક સર્કિટ અને ટ્રુથ ટેબલનો ઉપયોગ કરીને 3 થી 8 ડીકોડર સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{આકૃતિ: 3-થી-8 ડીકોડર}
+
+\begin{center}
+\begin{tikzpicture}[
+    node distance=1.5cm,
+    auto,
+    block/.style={rectangle, draw, minimum width=1.5cm, minimum height=1cm, align=center}
+]
+    % Inputs
+    \node (A) at (0, 8) {A};
+    \node (B) at (1, 8) {B};
+    \node (C) at (2, 8) {C};
+    
+    % Inverters
+    \node[not gate US, draw, rotate=-90] (notA) at (0.5, 7) {};
+    \node[not gate US, draw, rotate=-90] (notB) at (1.5, 7) {};
+    \node[not gate US, draw, rotate=-90] (notC) at (2.5, 7) {};
+    
+    \draw (A) |- (notA.input);
+    \draw (B) |- (notB.input);
+    \draw (C) |- (notC.input);
+    
+    % Lines down
+    \draw (A) -- (0, -1);
+    \draw (notA.output) -- (0.5, -1);
+    \draw (B) -- (1, -1);
+    \draw (notB.output) -- (1.5, -1);
+    \draw (C) -- (2, -1);
+    \draw (notC.output) -- (2.5, -1);
+    
+    % AND Gates
+    \foreach \i in {0,1,2,3,4,5,6,7} {
+        \node[and gate US, draw, logic gate inputs=nnn, scale=0.8] (and\i) at (5, 6.5-\i) {};
+        \node[right] at (and\i.output) {D\i};
+        \draw (and\i.output) -- ++(0.5,0);
+    }
+    
+    % Connections
+    \draw (0.5, 6.5) -- (and0.input 1);
+    \draw (1.5, 6.5) -- (and0.input 2);
+    \draw (2.5, 6.5) -- (and0.input 3);
+    
+    \draw (0, -0.5) -- (and7.input 1);
+    \draw (1, -0.5) -- (and7.input 2);
+    \draw (2, -0.5) -- (and7.input 3);
+    
+    \node at (3.5, 3) {Decoder Logic Array};
+
+\end{tikzpicture}
+\end{center}
+
+\captionof{table}{3-થી-8 ડીકોડર ટ્રુથ ટેબલ}
+\begin{center}
+\begin{tabulary}{\linewidth}{c c c c c c c c c c c}
+\hline
+\textbf{A} & \textbf{B} & \textbf{C} & \textbf{D0} & \textbf{D1} & \textbf{D2} & \textbf{D3} & \textbf{D4} & \textbf{D5} & \textbf{D6} & \textbf{D7} \\
+\hline
+0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 1 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 \\
+0 & 1 & 1 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 \\
+1 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 \\
+1 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 \\
+1 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 \\
+1 & 1 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 \\
+\hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{કાર્ય}: 3-બિટ બાઈનરી ઇનપુટના આધારે 8 આઉટપુટ લાઈનમાંથી એક સક્રિય કરે છે.
+    \item \textbf{ઉપયોગો}: મેમરી એડ્રેસિંગ, ડેટા રાઉટિંગ, ઇન્સ્ટ્રક્શન ડિકોડિંગ.
+    \item \textbf{બુલિયન સમીકરણો}: D0 = A'$\cdot$B'$\cdot$C', D1 = A'$\cdot$B'$\cdot$C, વગેરે.
+\end{itemize}
+
+\mnemonicbox{બાઈનરી એડ્રેસ પર એક હોટ આઉટપુટ}
+\end{solutionbox}
+
+\questionmarks{3}{અ}{3}
+\textbf{OR: નિર્દેશ મુજબ કરો. 1) (101011010111)$_{2}$ = (\_\_\_\_\_\_\_\_\_)$_{8}$}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\captionof{table}{બાઈનરીથી ઑક્ટલ કન્વર્ઝન}
+\begin{center}
+\begin{lstlisting}
+Binary:    1 0 1 | 0 1 1 | 0 1 0 | 1 1 1
+             |       |       |       |
+Octal:       5       3       2       7
+\end{lstlisting}
+\end{center}
+
+તેથી: (101011010111)$_{2}$ = (5327)$_{8}$
+
+\mnemonicbox{જમણેથી ડાબે ત્રણના સમૂહમાં વિભાજિત કરો}
+\end{solutionbox}
+
+\questionmarks{3}{બ}{4}
+\textbf{OR: કનોફ મેપ (K' મેપ) પદ્ધતિનો ઉપયોગ કરીને બુલિયન સમીકરણને સરળ બનાવો: F(A,B,C,D) = $\Sigma$m(1,3,5,7,8,9,10,11)}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{આકૃતિ: K-map ગ્રુપિંગ}
+
+\begin{center}
+\begin{tikzpicture}
+\matrix (map) [matrix of nodes,
+               nodes={draw, minimum size=0.8cm, anchor=center},
+               column sep=-\pgflinewidth,
+               row sep=-\pgflinewidth]
+{
+0 & 1 & 1 & 0 \\
+0 & 1 & 1 & 0 \\
+0 & 0 & 0 & 0 \\
+1 & 1 & 1 & 1 \\
+};
+
+\node[above=0.1cm] at (map-1-1.north west) {CD};
+\node[left=0.1cm] at (map-1-1.north west) {AB};
+\node[above] at (map-1-1.north) {00};
+\node[above] at (map-1-2.north) {01};
+\node[above] at (map-1-3.north) {11};
+\node[above] at (map-1-4.north) {10};
+\node[left] at (map-1-1.west) {00};
+\node[left] at (map-2-1.west) {01};
+\node[left] at (map-3-1.west) {11};
+\node[left] at (map-4-1.west) {10};
+
+\draw[red, rounded corners, thick] (map-1-2.north west) rectangle (map-2-3.south east); 
+\draw[blue, rounded corners, thick] (map-4-1.north west) rectangle (map-4-4.south east);
+
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+    \item ગ્રુપ A: A'CD (4 સેલ)
+    \item ગ્રુપ B: AB' (4 સેલ)
+\end{itemize}
+
+સરળ અભિવ્યક્તિ: F(A,B,C,D) = A'CD + AB'
+
+\mnemonicbox{2\textsuperscript{n} ના મોટામાં મોટા સમૂહો શોધો, લઘુત્તમ પદો વાપરો}
+\end{solutionbox}
+
+\questionmarks{3}{ક}{7}
+\textbf{OR: લોજિક સર્કિટ અને ટ્રુથ ટેબલનો ઉપયોગ કરીને 8 થી 1 મલ્ટિપ્લેક્સર સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{આકૃતિ: 8-થી-1 મલ્ટિપ્લેક્સર}
+
+\begin{center}
+\begin{tikzpicture}[
+    node distance=1.5cm,
+    auto,
+    block/.style={rectangle, draw, minimum width=1.5cm, minimum height=1cm, align=center}
+]
+    % Select Lines
+    \node (S0) at (2, 0) {S0};
+    \node (S1) at (3, 0) {S1};
+    \node (S2) at (4, 0) {S2};
+    
+    % AND Gates
+    \foreach \i in {0,1,2,3,4,5,6,7} {
+        \node[and gate US, draw, logic gate inputs=nnnn, scale=0.7] (and\i) at (6, \i*0.8) {};
+        \node[left] at (and\i.input 1) {D\i};
+        \draw (and\i.input 1) -- ++(-0.5,0);
+    }
+    
+    % OR Gate
+    \node[or gate US, draw, logic gate inputs=nnnnnnnn, scale=1.5] (or1) at (9, 3) {};
+    
+    \foreach \i [evaluate=\i as \j using int(\i+1)] in {0,1,2,3,4,5,6,7} {
+        \draw (and\i.output) -- (or1.input \j); 
+    }
+    
+    \draw (or1.output) -- ++(1,0) node[right] {Y};
+    
+    \node at (6, -2) {Logic Circuit Structure};
+
+\end{tikzpicture}
+\end{center}
+
+\captionof{table}{8-થી-1 મલ્ટિપ્લેક્સર ટ્રુથ ટેબલ}
+\begin{center}
+\begin{tabulary}{\linewidth}{c c c c}
+\hline
+\textbf{S2} & \textbf{S1} & \textbf{S0} & \textbf{આઉટપુટ Y} \\
+\hline
+0 & 0 & 0 & D0 \\
+0 & 0 & 1 & D1 \\
+0 & 1 & 0 & D2 \\
+0 & 1 & 1 & D3 \\
+1 & 0 & 0 & D4 \\
+1 & 0 & 1 & D5 \\
+1 & 1 & 0 & D6 \\
+1 & 1 & 1 & D7 \\
+\hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{કાર્ય}: 8 ઇનપુટ ડેટા લાઈન્સમાંથી એક પસંદ કરી આઉટપુટ પર રૂટ કરે છે.
+    \item \textbf{ઉપયોગો}: ડેટા રૂટિંગ, ફંક્શન જનરેશન, પેરેલલ-ટુ-સીરિયલ કન્વર્ઝન.
+    \item \textbf{બુલિયન સમીકરણ}: Y = S2'·S1'·S0'·D0 + S2'·S1'·S0·D1 + ... + S2·S1·S0·D7
+\end{itemize}
+
+\mnemonicbox{સિલેક્ટ બિટ્સ એક ઇનપુટને આઉટપુટ પર મોકલે છે}
+\end{solutionbox}
+
+\questionmarks{4}{અ}{3}
+\textbf{બાઈનરીથી ગ્રે કન્વર્ટર માટે લોજિક સર્કિટ દોરો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{આકૃતિ: બાઈનરીથી ગ્રે કોડ કન્વર્ટર}
+
+\begin{center}
+\begin{tikzpicture}[
+    node distance=1.5cm,
+    auto,
+    block/.style={rectangle, draw, minimum width=1.5cm, minimum height=1cm, align=center}
+]
+    % Inputs
+    \node (B3) at (0, 3) {B3};
+    \node (B2) at (0, 2) {B2};
+    \node (B1) at (0, 1) {B1};
+    \node (B0) at (0, 0) {B0};
+    
+    % Outputs
+    \node (G3) at (5, 3) {G3};
+    \node (G2) at (5, 2) {G2};
+    \node (G1) at (5, 1) {G1};
+    \node (G0) at (5, 0) {G0};
+    
+    % XOR Gates
+    \node[xor gate US, draw, logic gate inputs=nn] (xor1) at (3, 2) {};
+    \node[xor gate US, draw, logic gate inputs=nn] (xor2) at (3, 1) {};
+    \node[xor gate US, draw, logic gate inputs=nn] (xor3) at (3, 0) {};
+    
+    % Connections
+    \draw (B3) -- (G3);
+    
+    \draw (B3) -- ++(1,0) |- (xor1.input 1);
+    \draw (B2) -- (xor1.input 2);
+    \draw (xor1.output) -- (G2);
+    
+    \draw (B2) -- ++(0.5,0) |- (xor2.input 1);
+    \draw (B1) -- (xor2.input 2);
+    \draw (xor2.output) -- (G1);
+    
+    \draw (B1) -- ++(0.5,0) |- (xor3.input 1);
+    \draw (B0) -- (xor3.input 2);
+    \draw (xor3.output) -- (G0);
+
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{બાઈનરી ઇનપુટ્સ}: B3, B2, B1, B0 (સૌથી વધુ થી ઓછા મહત્વના બિટ્સ)
+    \item \textbf{ગ્રે આઉટપુટ્સ}: G3, G2, G1, G0
+    \item \textbf{કન્વર્ઝન નિયમ}: G3 = B3, G2 = B3 $\oplus$ B2, G1 = B2 $\oplus$ B1, G0 = B1 $\oplus$ B0
+\end{itemize}
+
+\mnemonicbox{પ્રથમ બિટ સરખો, બાકી પડોશીઓ સાથે XOR}
+\end{solutionbox}
+
+\questionmarks{4}{બ}{4}
+\textbf{સીરીયલ ઇન સીરીયલ આઉટ શિફ્ટ રજિસ્ટરનું કાર્ય સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{આકૃતિ: સીરીયલ-ઇન સીરીયલ-આઉટ શિફ્ટ રજિસ્ટર}
+
+\begin{center}
+\begin{tikzpicture}[
+    node distance=2cm,
+    auto,
+    block/.style={rectangle, draw, minimum width=1.5cm, minimum height=1.5cm, align=center}
+]
+    \foreach \i in {0,1,2,3} {
+        \node[block] (FF\i) at (\i*2.5, 0) {FF\i\\D \hspace{0.5cm} Q};
+        \draw[->] (\i*2.5, -1) -- (\i*2.5, -0.75) node[right, scale=0.7] {CLK} -- (FF\i.south);
+    }
+    
+    \node (Din) at (-1.5, 0) {ડેટા ઇન};
+    \draw[->] (Din) -- (FF0.west);
+    
+    \draw[->] (FF0.east) -- (FF1.west);
+    \draw[->] (FF1.east) -- (FF2.west);
+    \draw[->] (FF2.east) -- (FF3.west);
+    
+    \node (Dout) at (9, 0) {ડેટા આઉટ};
+    \draw[->] (FF3.east) -- (Dout);
+    
+    % Clock Line
+    \draw (-0.5, -2) node[left] {ક્લોક} -- (8, -2);
+    \foreach \i in {0,1,2,3} {
+        \draw (\i*2.5, -2) -- (\i*2.5, -1);
+    }
+
+\end{tikzpicture}
+\end{center}
+
+\captionof{table}{સીરીયલ-ઇન સીરીયલ-આઉટ કામગીરી}
+\begin{center}
+\begin{tabulary}{\linewidth}{c c c c c c}
+\hline
+\textbf{ક્લોક સાયકલ} & \textbf{FF0} & \textbf{FF1} & \textbf{FF2} & \textbf{FF3} & \textbf{ડેટા આઉટ} \\
+\hline
+Initial & 0 & 0 & 0 & 0 & 0 \\
+1 (Din=1) & 1 & 0 & 0 & 0 & 0 \\
+2 (Din=0) & 0 & 1 & 0 & 0 & 0 \\
+3 (Din=1) & 1 & 0 & 1 & 0 & 0 \\
+4 (Din=1) & 1 & 1 & 0 & 1 & 1 \\
+\hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{કાર્ય}: ડેટા બિટ્સ સીરીયલી ઇનપુટમાં પ્રવેશે છે, બધા ફ્લિપ-ફ્લોપમાંથી શિફ્ટ થઈને સીરીયલી બહાર નીકળે છે.
+    \item \textbf{ઉપયોગો}: ડેટા ટ્રાન્સમિશન, સમય વિલંબ (time delay), સીરીયલ-ટુ-સીરીયલ કન્વર્ઝન.
+\end{itemize}
+
+\mnemonicbox{એક બિટ અંદર, બધું શિફ્ટ, એક બિટ બહાર}
+\end{solutionbox}
+
+\questionmarks{4}{ક}{7}
+\textbf{સર્કિટ ડાયાગ્રામ અને ટ્રુથ ટેબલનો ઉપયોગ કરીને D ફ્લિપ ફ્લોપ અને JK ફ્લિપ ફ્લોપનું કાર્ય સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{આકૃતિ: D ફ્લિપ-ફ્લોપ}
+\begin{center}
+\begin{tikzpicture}[block/.style={rectangle, draw, minimum width=2cm, minimum height=1.5cm}]
+    \node[block] (DFF) at (0,0) {D ફ્લિપ-ફ્લોપ};
+    \draw[<-] (DFF.west) ++(0,0.3) -- ++(-1,0) node[left] {D};
+    \draw[<-] (DFF.west) ++(0,-0.3) -- ++(-1,0) node[left] {CLK};
+    \draw[->] (DFF.east) ++(0,0.3) -- ++(1,0) node[right] {Q};
+    \draw[->] (DFF.east) ++(0,-0.3) -- ++(1,0) node[right] {Q'};
+\end{tikzpicture}
+\end{center}
+
+\captionof{table}{D ફ્લિપ-ફ્લોપ ટ્રુથ ટેબલ}
+\begin{center}
+\begin{tabulary}{\linewidth}{c c c}
+\hline
+\textbf{D} & \textbf{ક્લોક} & \textbf{Q(next)} \\
+\hline
+0 & $\uparrow$ & 0 \\
+1 & $\uparrow$ & 1 \\
+\hline
+\end{tabulary}
+\end{center}
+
+\textbf{આકૃતિ: JK ફ્લિપ-ફ્લોપ}
+\begin{center}
+\begin{tikzpicture}[block/.style={rectangle, draw, minimum width=2cm, minimum height=1.5cm}]
+    \node[block] (JKFF) at (0,0) {JK ફ્લિપ-ફ્લોપ};
+    \draw[<-] (JKFF.west) ++(0,0.4) -- ++(-1,0) node[left] {J};
+    \draw[<-] (JKFF.west) ++(0,0) -- ++(-1,0) node[left] {CLK};
+    \draw[<-] (JKFF.west) ++(0,-0.4) -- ++(-1,0) node[left] {K};
+    \draw[->] (JKFF.east) ++(0,0.3) -- ++(1,0) node[right] {Q};
+    \draw[->] (JKFF.east) ++(0,-0.3) -- ++(1,0) node[right] {Q'};
+\end{tikzpicture}
+\end{center}
+
+\captionof{table}{JK ફ્લિપ-ફ્લોપ ટ્રુથ ટેબલ}
+\begin{center}
+\begin{tabulary}{\linewidth}{c c c c}
+\hline
+\textbf{J} & \textbf{K} & \textbf{ક્લોક} & \textbf{Q(next)} \\
+\hline
+0 & 0 & $\uparrow$ & Q (ફેરફાર નહીં) \\
+0 & 1 & $\uparrow$ & 0 \\
+1 & 0 & $\uparrow$ & 1 \\
+1 & 1 & $\uparrow$ & Q' (ટોગલ) \\
+\hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{D ફ્લિપ-ફ્લોપ}: ડેટા (D) ઇનપુટ પોઝિટિવ ક્લોક એજ પર આઉટપુટ Q પર ટ્રાન્સફર થાય છે.
+    \item \textbf{JK ફ્લિપ-ફ્લોપ}: સેટ (J), રિસેટ (K), હોલ્ડ અને ટોગલ ક્ષમતાઓ સાથે વધુ સર્વતોમુખી.
+\end{itemize}
+
+\mnemonicbox{D જે છે તે કરે છે, JK જલદી કીપ-ટોગલ-સેટ કરે છે}
+\end{solutionbox}
+
+\questionmarks{4}{અ}{3}
+\textbf{OR: ગ્રે થી બાઈનરી કન્વર્ટર માટે લોજિક સર્કિટ દોરો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{આકૃતિ: ગ્રે થી બાઈનરી કોડ કન્વર્ટર}
+
+\begin{center}
+\begin{tikzpicture}[
+    node distance=1.5cm,
+    auto,
+    block/.style={rectangle, draw, minimum width=1.5cm, minimum height=1cm, align=center}
+]
+    % Inputs
+    \node (G3) at (0, 3) {G3};
+    \node (G2) at (0, 2) {G2};
+    \node (G1) at (0, 1) {G1};
+    \node (G0) at (0, 0) {G0};
+    
+    % Outputs
+    \node (B3) at (5, 3) {B3};
+    \node (B2) at (5, 2) {B2};
+    \node (B1) at (5, 1) {B1};
+    \node (B0) at (5, 0) {B0};
+    
+    % XOR Gates
+    \node[xor gate US, draw, logic gate inputs=nn] (xor1) at (3, 2) {};
+    \node[xor gate US, draw, logic gate inputs=nn] (xor2) at (3, 1) {};
+    \node[xor gate US, draw, logic gate inputs=nn] (xor3) at (3, 0) {};
+    
+    % Connections
+    \draw (G3) -- (B3);
+    
+    \draw (G3) -- ++(1,0) -- ++(0,-0.5) -- ++(1.5,-0.5) |- (xor1.input 1); 
+    
+    \draw (B3) ++(-1,0) -- ++(0,-0.5) |- (xor1.input 1); 
+    \draw (G2) -- (xor1.input 2);
+    \draw (xor1.output) -- (B2);
+    
+    \draw (xor1.output) ++(0.5,0) -- ++(0,-0.5) |- (xor2.input 1);
+    \draw (G1) -- (xor2.input 2);
+    \draw (xor2.output) -- (B1);
+    
+    \draw (xor2.output) ++(0.5,0) -- ++(0,-0.5) |- (xor3.input 1);
+    \draw (G0) -- (xor3.input 2);
+    \draw (xor3.output) -- (B0);
+
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{ગ્રે ઇનપુટ્સ}: G3, G2, G1, G0
+    \item \textbf{બાઈનરી આઉટપુટ્સ}: B3, B2, B1, B0
+    \item \textbf{કન્વર્ઝન નિયમ}: B3 = G3, B2 = B3 $\oplus$ G2, B1 = B2 $\oplus$ G1, B0 = B1 $\oplus$ G0
+\end{itemize}
+
+\mnemonicbox{પ્રથમ બિટ સરખો, બાકી અગાઉના પરિણામ સાથે XOR}
+\end{solutionbox}
+
+\questionmarks{4}{બ}{4}
+\textbf{OR: પેરેલલ ઇન પેરેલલ આઉટ શિફ્ટ રજિસ્ટરનું કાર્ય સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{આકૃતિ: પેરેલલ-ઇન પેરેલલ-આઉટ શિફ્ટ રજિસ્ટર}
+
+\begin{center}
+\begin{tikzpicture}[
+    node distance=2cm,
+    auto,
+    block/.style={rectangle, draw, minimum width=1.5cm, minimum height=1.5cm, align=center}
+]
+    \foreach \i in {0,1,2,3} {
+        \node[block] (FF\i) at (\i*2.5, 0) {FF\i\\D \hspace{0.5cm} Q};
+        \node[above] at (FF\i.north) {D\i};
+        \draw[->] (\i*2.5, 1) -- (FF\i.north);
+        \draw[->] (FF\i.south) -- (\i*2.5, -1) node[below] {Q\i};
+        \draw[->] (\i*2.5, -2) -- (\i*2.5, -1.8) node[right, scale=0.7] {CLK} -- (FF\i.south);
+    }
+    
+    % Clock Line
+    \draw (-0.5, -2) node[left] {ક્લોક} -- (8, -2);
+    
+    % Load control
+    \draw (-0.5, 1.5) node[left] {લોડ} -- (8, 1.5);
+    \foreach \i in {0,1,2,3} {
+        \draw (\i*2.5, 1.5) -- (\i*2.5, 1.2);
+    }
+
+\end{tikzpicture}
+\end{center}
+
+\captionof{table}{પેરેલલ-ઇન પેરેલલ-આઉટ કામગીરી}
+\begin{center}
+\begin{tabulary}{\linewidth}{c c c c}
+\hline
+\textbf{લોડ} & \textbf{ક્લોક} & \textbf{D0-D3} & \textbf{Q0-Q3 (ક્લોક પછી)} \\
+\hline
+1 & $\uparrow$ & 1010 & 1010 \\
+0 & $\uparrow$ & xxxx & 1010 (ફેરફાર નહીં) \\
+1 & $\uparrow$ & 0101 & 0101 \\
+\hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{કાર્ય}: ડેટા પેરેલલ લોડ થાય છે, બધા બિટ્સ એક સાથે આઉટપુટ પર ટ્રાન્સફર થાય છે.
+    \item \textbf{ઉપયોગો}: ડેટા સ્ટોરેજ, બફરિંગ, કામચલાઉ હોલ્ડિંગ રજિસ્ટર.
+\end{itemize}
+
+\mnemonicbox{બધું અંદર, બધું બહાર, બધું એક સાથે}
+\end{solutionbox}
+
+\questionmarks{4}{ક}{7}
+\textbf{OR: T ફ્લિપ ફ્લોપ અને SR ફ્લિપ ફ્લોપનું સર્કિટ ડાયાગ્રામ અને ટ્રુથ ટેબલનો ઉપયોગ કરીને કાર્ય સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{આકૃતિ: T ફ્લિપ-ફ્લોપ}
+\begin{center}
+\begin{tikzpicture}[block/.style={rectangle, draw, minimum width=2cm, minimum height=1.5cm}]
+    \node[block] (TFF) at (0,0) {T ફ્લિપ-ફ્લોપ};
+    \draw[<-] (TFF.west) ++(0,0.3) -- ++(-1,0) node[left] {T};
+    \draw[<-] (TFF.west) ++(0,-0.3) -- ++(-1,0) node[left] {CLK};
+    \draw[->] (TFF.east) ++(0,0.3) -- ++(1,0) node[right] {Q};
+    \draw[->] (TFF.east) ++(0,-0.3) -- ++(1,0) node[right] {Q'};
+\end{tikzpicture}
+\end{center}
+
+\captionof{table}{T ફ્લિપ-ફ્લોપ ટ્રુથ ટેબલ}
+\begin{center}
+\begin{tabulary}{\linewidth}{c c c}
+\hline
+\textbf{T} & \textbf{ક્લોક} & \textbf{Q(next)} \\
+\hline
+0 & $\uparrow$ & Q (ફેરફાર નહીં) \\
+1 & $\uparrow$ & Q' (ટોગલ) \\
+\hline
+\end{tabulary}
+\end{center}
+
+\textbf{આકૃતિ: SR ફ્લિપ-ફ્લોપ}
+\begin{center}
+\begin{tikzpicture}[block/.style={rectangle, draw, minimum width=2cm, minimum height=1.5cm}]
+    \node[block] (SRFF) at (0,0) {SR ફ્લિપ-ફ્લોપ};
+    \draw[<-] (SRFF.west) ++(0,0.4) -- ++(-1,0) node[left] {S};
+    \draw[<-] (SRFF.west) ++(0,0) -- ++(-1,0) node[left] {CLK};
+    \draw[<-] (SRFF.west) ++(0,-0.4) -- ++(-1,0) node[left] {R};
+    \draw[->] (SRFF.east) ++(0,0.3) -- ++(1,0) node[right] {Q};
+    \draw[->] (SRFF.east) ++(0,-0.3) -- ++(1,0) node[right] {Q'};
+\end{tikzpicture}
+\end{center}
+
+\captionof{table}{SR ફ્લિપ-ફ્લોપ ટ્રુથ ટેબલ}
+\begin{center}
+\begin{tabulary}{\linewidth}{c c c c}
+\hline
+\textbf{S} & \textbf{R} & \textbf{ક્લોક} & \textbf{Q(next)} \\
+\hline
+0 & 0 & $\uparrow$ & Q (ફેરફાર નહીં) \\
+0 & 1 & $\uparrow$ & 0 (રિસેટ) \\
+1 & 0 & $\uparrow$ & 1 (સેટ) \\
+1 & 1 & $\uparrow$ & અમાન્ય \\
+\hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{T ફ્લિપ-ફ્લોપ}: ટોગલ ફ્લિપ-ફ્લોપ જ્યારે T=1 હોય ત્યારે સ્ટેટ બદલે છે.
+    \item \textbf{SR ફ્લિપ-ફ્લોપ}: મૂળભૂત ફ્લિપ-ફ્લોપ સેટ (S) અને રિસેટ (R) ઇનપુટ્સ સાથે.
+\end{itemize}
+
+\mnemonicbox{T ટોગલ કરે જ્યારે True, SR સેટ અથવા રિસેટ}
+\end{solutionbox}
+
+\questionmarks{5}{અ}{3}
+\textbf{TTL, CMOS અને ECL લોજિક ફેમિલીની સરખામણી કરો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\captionof{table}{લોજિક ફેમિલીની સરખામણી}
+\begin{center}
+\begin{tabulary}{\linewidth}{l l l l}
+\hline
+\textbf{પેરામીટર} & \textbf{TTL} & \textbf{CMOS} & \textbf{ECL} \\
+\hline
+પાવર વપરાશ & મધ્યમ & ખૂબ ઓછો & ઉચ્ચ \\
+ઝડપ & મધ્યમ & ઓછી-મધ્યમ & ખૂબ ઉચ્ચ \\
+નોઈઝ ઇમ્યુનિટી & મધ્યમ & ઉચ્ચ & ઓછી \\
+ફેન-આઉટ & 10 & $>$50 & 25 \\
+સપ્લાય વોલ્ટેજ & +5V & +3V થી +15V & -5.2V \\
+જટિલતા & મધ્યમ & ઓછી & ઉચ્ચ \\
+\hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{TTL}: ટ્રાન્ઝિસ્ટર-ટ્રાન્ઝિસ્ટર લોજિક - ઝડપ અને પાવરનું સારું સંતુલન.
+    \item \textbf{CMOS}: કોમ્પ્લિમેન્ટરી મેટલ-ઓક્સાઇડ-સેમિકન્ડક્ટર - ઓછો પાવર.
+    \item \textbf{ECL}: એમિટર-કપલ્ડ લોજિક - સૌથી વધુ ઝડપ.
+\end{itemize}
+
+\mnemonicbox{TCE: TTL સમાધાન, CMOS બચત, ECL ઝડપમાં શ્રેષ્ઠ}
+\end{solutionbox}
+
+\questionmarks{5}{બ}{4}
+\textbf{લોજિક સર્કિટ ડાયાગ્રામ અને ટ્રુથ ટેબલની મદદથી ડીકેડ કાઉન્ટર સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{આકૃતિ: ડીકેડ કાઉન્ટર (BCD કાઉન્ટર)}
+
+\begin{center}
+\begin{tikzpicture}[
+    node distance=2.5cm,
+    auto,
+    block/.style={rectangle, draw, minimum width=1.5cm, minimum height=1.5cm, align=center}
+]
+    \foreach \i in {0,1,2,3} {
+        \node[block] (JK\i) at (\i*2.8, 0) {JK FF\i\\J \hspace{0.5cm} K};
+        \draw (JK\i) -- ++(0,1) node[above] {Q\i}; 
+        \node at (\i*2.8, 1) {Q\i};
+    }
+    \node at (4.5, -2) {લોજિક: 1010 (10) પર NAND રિસેટ સાથે JK ફ્લિપ-ફ્લોપ્સ};
+    \draw (0, -1) -- (8.5, -1) node[right] {ક્લોક/કંટ્રોલ};
+
+\end{tikzpicture}
+\end{center}
+
+\captionof{table}{ડીકેડ કાઉન્ટર સ્ટેટ્સ}
+\begin{center}
+\begin{tabulary}{\linewidth}{c c c c c}
+\hline
+\textbf{કાઉન્ટ} & \textbf{Q3} & \textbf{Q2} & \textbf{Q1} & \textbf{Q0} \\
+\hline
+0 & 0 & 0 & 0 & 0 \\
+1 & 0 & 0 & 0 & 1 \\
+... & ... & ... & ... & ... \\
+8 & 1 & 0 & 0 & 0 \\
+9 & 1 & 0 & 0 & 1 \\
+0 & 0 & 0 & 0 & 0 \\
+\hline
+\end{tabulary}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{કાર્ય}: 0 થી 9 (દશાંશ) સુધી ગણતરી કરે છે અને પછી 0 પર રિસેટ થાય છે.
+    \item \textbf{ઉપયોગો}: ડિજિટલ ઘડિયાળો, ફ્રીક્વન્સી ડિવાઈડર.
+\end{itemize}
+
+\mnemonicbox{એક દાયકો ગણે, નવ પછી રિસેટ થાય}
+\end{solutionbox}
+
+\questionmarks{5}{ક}{7}
+\textbf{મેમરીનું વર્ગીકરણ વિગતવાર આપો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{આકૃતિ: મેમરી વર્ગીકરણ}
+
+\begin{center}
+\begin{tikzpicture}[
+    edge from parent/.style={draw, -latex},
+    sibling distance=4cm,
+    level distance=2cm,
+    every node/.style={rectangle, draw, rounded corners, align=center}
+]
+\node {મેમરી}
+    child { node {પ્રાઇમરી મેમરી}
+        child { node {RAM}
+            child { node {SRAM} }
+            child { node {DRAM} }
+        }
+        child { node {ROM}
+            child { node {PROM} }
+            child { node {EPROM} }
+            child { node {EEPROM} }
+            child { node {Flash} }
+        }
+    }
+    child { node {સેકન્ડરી મેમરી}
+        child { node {હાર્ડ ડિસ્ક} }
+        child { node {ઓપ્ટિકલ ડિસ્ક} }
+        child { node {USB} }
+        child { node {SD કાર્ડ્સ} }
+    };
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{RAM (રેન્ડમ એક્સેસ મેમરી)}: કામચલાઉ, વોલેટાઈલ વર્કિંગ મેમરી.
+    \item \textbf{ROM (રીડ ઓન્લી મેમરી)}: કાયમી, નોન-વોલેટાઈલ પ્રોગ્રામ સ્ટોરેજ.
+\end{itemize}
+
+\mnemonicbox{RAM ગાયબ થાય, ROM રહે છે}
+\end{solutionbox}
+
+\questionmarks{5}{અ}{3}
+\textbf{OR: વ્યાખ્યા આપો: ફેન આઉટ, ફેન ઇન અને ફિગર ઓફ મેરિટ.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\captionof{table}{ડિજિટલ લોજિક પેરામીટર્સ}
+\begin{center}
+\begin{tabulary}{\linewidth}{l L l}
+\hline
+\textbf{પેરામીટર} & \textbf{વ્યાખ્યા} & \textbf{સામાન્ય મૂલ્યો} \\
+\hline
+ફેન-આઉટ & ગેટ આઉટપુટ ડ્રાઈવ કરી શકે તેવા સ્ટાન્ડર્ડ લોડ્સની સંખ્યા & TTL: 10, CMOS: $>$50 \\
+ફેન-ઇન & લોજિક ગેટ હેન્ડલ કરી શકે તેવા ઇનપુટ્સની સંખ્યા & TTL: 8, CMOS: 100+ \\
+ફિગર ઓફ મેરિટ & સ્પીડ-પાવર પ્રોડક્ટ (પ્રોપગેશન ડિલે $\times$ પાવર વપરાશ) & જેટલું ઓછું તેટલું સારું \\
+\hline
+\end{tabulary}
+\end{center}
+
+\mnemonicbox{આઉટ ઘણાને ડ્રાઈવ કરે, ઇન ઘણાને સ્વીકારે, મેરિટ ગુણવત્તા માપે}
+\end{solutionbox}
+
+\questionmarks{5}{બ}{4}
+\textbf{OR: લોજિક સર્કિટ ડાયાગ્રામ અને ટ્રુથ ટેબલની મદદથી એસિન્ક્રોનસ અપ કાઉન્ટર સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{આકૃતિ: 4-બિટ એસિન્ક્રોનસ અપ કાઉન્ટર}
+
+\begin{center}
+\begin{tikzpicture}[
+    node distance=2.5cm,
+    auto,
+    block/.style={rectangle, draw, minimum width=1.5cm, minimum height=1.5cm, align=center}
+]
+    \foreach \i in {0,1,2,3} {
+        \node[block] (TFF\i) at (\i*2.8, 0) {T FF\i\\T \hspace{0.5cm} Q};
+        \node at (\i*2.8, 1) {Q\i};
+    }
+    
+    \node at (4.5, -2) {લોજિક: FF નું Q આઉટપુટ આગામી FF ના ક્લોક સાથે જોડાય છે};
+    \draw (0, -1) -- (8.5, -1) node[right] {સામાન્ય ક્લિયર};
+
+\end{tikzpicture}
+\end{center}
+
+\captionof{table}{4-બિટ એસિન્ક્રોનસ કાઉન્ટર સ્ટેટ્સ}
+\begin{center}
+\begin{tabulary}{\linewidth}{c c c c c}
+\hline
+\textbf{કાઉન્ટ} & \textbf{Q3} & \textbf{Q2} & \textbf{Q1} & \textbf{Q0} \\
+\hline
+0 & 0 & 0 & 0 & 0 \\
+1 & 0 & 0 & 0 & 1 \\
+... & .. & .. & .. & .. \\
+14 & 1 & 1 & 1 & 0 \\
+15 & 1 & 1 & 1 & 1 \\
+\hline
+\end{tabulary}
+\end{center}
+
+\mnemonicbox{િપલ્સ અપ, દરેક બિટ આગામીને ટ્રિગર કરે છે}
+\end{solutionbox}
+
+\questionmarks{5}{ક}{7}
+\textbf{OR: ડિજિટલ IC ના ઈ-વેસ્ટ મેનેજમેન્ટના પગલાં અને જરૂરિયાત વર્ણવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ}:
+
+\textbf{આકૃતિ: ઈ-વેસ્ટ મેનેજમેન્ટ ચક્ર}
+
+\begin{center}
+\begin{tikzpicture}[
+    node distance=2cm,
+    auto,
+    block/.style={rectangle, draw, rounded corners, minimum width=2cm, align=center},
+    arrow/.style={thick, ->, >=stealth}
+]
+    \node[block] (C) at (0, 0) {કલેક્શન};
+    \node[block] (S) at (2.5, 1) {સોર્ટિંગ};
+    \node[block] (D) at (5, 0) {ડિસએસેમ્બલી};
+    \node[block] (R) at (5, -2) {રિસાયક્લિંગ};
+    \node[block] (M) at (2.5, -3) {મટિરિયલ\\રિકવરી};
+    \node[block] (N) at (0, -2) {નવા\\પ્રોડક્ટ્સ};
+    
+    \draw[arrow] (C) -- (S);
+    \draw[arrow] (S) -- (D);
+    \draw[arrow] (D) -- (R);
+    \draw[arrow] (R) -- (M);
+    \draw[arrow] (M) -- (N);
+    \draw[arrow] (N) -- (C);
+
+\end{tikzpicture}
+\end{center}
+
+\captionof{table}{ઈ-વેસ્ટ મેનેજમેન્ટ સ્ટેપ્સ}
+\begin{center}
+\begin{tabulary}{\linewidth}{l l l}
+\hline
+\textbf{સ્ટેપ} & \textbf{વર્ણન} & \textbf{મહત્વ} \\
+\hline
+કલેક્શન & નકામી ICs એકત્ર કરવી & અયોગ્ય નિકાલ અટકાવે છે \\
+સોર્ટિંગ & પ્રકાર according વર્ગીકરણ & કાર્યક્ષમ પ્રક્રિયા સક્ષમ કરે છે \\
+ડિસએસેમ્બલી & ઘટકો છૂટા પાડવા & મટિરિયલ રિકવરી સરળ બનાવે છે \\
+રિસાયક્લિંગ & મટિરિયલ્સ પર પ્રક્રિયા & પર્યાવરણીય અસર ઘટાડે છે \\
+મટિરિયલ રિકવરી & કિંમતી ધાતુઓ કાઢવી & સંસાધનો બચાવે છે \\
+સલામત નિકાલ & ઝેરી ઘટકો સંભાળવા & દૂષણ અટકાવે છે \\
+\hline
+\end{tabulary}
+\end{center}
+
+\mnemonicbox{એકત્ર કરો, સોર્ટ કરો, ડિસએસેમ્બલ, રિસાયકલ, રિકવર, ફરી વાપરો}
+\end{solutionbox}
+
+\end{document}
+
+

@@ -1,0 +1,1175 @@
+\documentclass{article}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/preamble.tex}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/gujarati-boxes.tex}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/commands.tex}
+
+\title{ઔદ્યોગિક ઇલેક્ટ્રોનિક્સ (4331103) - ઉનાળુ-2024 પરીક્ષા ઉકેલ}
+\date{June 12, 2024}
+
+\begin{document}
+\maketitle
+
+\questionmarks{1(a)}{3}{SCR ની બે ટ્રાન્ઝિસ્ટર સામ્યતા સમજાવો.}
+
+\begin{solutionbox}
+SCR એ પરસ્પર જોડાયેલા PNP અને NPN ટ્રાન્ઝિસ્ટર તરીકે રજૂ કરી શકાય છે.
+
+\begin{center}
+\begin{tikzpicture}[gtu block/.style={draw, rectangle, minimum width=2cm, minimum height=1cm, align=center}]
+    % Transistors representation
+    \node (anode) at (0,4) {Anode};
+    \node (cathode) at (0,-4) {Cathode};
+    
+    % PNP Transistor Q1
+    \draw (0,2) node[pnp, rotate=-90] (Q1) {};
+    \node[right] at (Q1) {$Q_1$ (PNP)};
+    
+    % NPN Transistor Q2
+    \draw (0,-2) node[npn, rotate=-90] (Q2) {};
+    \node[right] at (Q2) {$Q_2$ (NPN)};
+    
+    % Connections
+    \draw (anode) -- (Q1.E);
+    \draw (Q1.C) -- (Q2.B);
+    \draw (Q2.C) -- (Q1.B); % Feedback loop
+    \draw (Q2.E) -- (cathode);
+    
+    % Gate
+    \draw (Q2.B) -- ++(-1.5,0) node[left] {Gate};
+
+\end{tikzpicture}
+\captionof{figure}{SCR ની બે ટ્રાન્ઝિસ્ટર સામ્યતા}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{પુનઃઉત્પાદક ક્રિયા}: જ્યારે ગેટ પ્રવાહ NPN ને ટ્રિગર કરે છે, તે PNP ને વહન કરવા માટે કારણભૂત બને છે, જે સ્વ-ટકાઉ પ્રવાહ બનાવે છે
+    \item \keyword{લેચિંગ મિકેનિઝમ}: એકવાર બંને ટ્રાન્ઝિસ્ટર ચાલુ થઈ જાય, ગેટ નિયંત્રણ ગુમાવે છે કારણ કે ફીડબેક પાથ વહન જાળવી રાખે છે
+\end{itemize}
+\end{solutionbox}
+\mnemonicbox{પુશ-પુલ નેટવર્ક સતત વહન ટ્રિગર કરે છે}
+
+\questionmarks{1(b)}{4}{IGBT ની કામગીરી અને લાક્ષણિકતા સમજાવો.}
+
+\begin{solutionbox}
+IGBT (ઇન્સુલેટેડ ગેટ બાયપોલર ટ્રાન્ઝિસ્ટર) MOSFET ઇનપુટ લાક્ષણિકતાઓને BJT આઉટપુટ ક્ષમતાઓ સાથે જોડે છે.
+
+\begin{center}
+\begin{tikzpicture}
+    % IGBT Symbol
+    \draw (0,0) node[nigbt] (igbt) {};
+    \node[right] at (igbt.C) {Collector};
+    \node[right] at (igbt.E) {Emitter};
+    \node[left] at (igbt.G) {Gate};
+    
+    % Equivalent Circuit Representation
+    \draw (4, 1) node[nmos] (mos) {};
+    \draw (5.5, 0) node[pnp] (bjt) {};
+    
+    \node[above] at (mos.D) {Drain};
+    \node[left] at (mos.G) {Gate};
+    \node[right] at (bjt.E) {Emitter (IGBT Collect)};
+    \node[below] at (bjt.C) {Collector (IGBT Emit)};
+    
+    % Connections for equivalent circuit concept
+    \draw[dashed] (mos.S) -- (bjt.B); 
+\end{tikzpicture}
+\captionof{figure}{IGBT પ્રતીક અને બંધારણ}
+\end{center}
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline \textbf{વિશેષતા} & \textbf{લાક્ષણિકતા} \\ \hline
+સ્વિચિંગ & ઝડપી ચાલુ થવું, મધ્યમ બંધ થવું \\
+નિયંત્રણ & MOSFET જેવું વોલ્ટેજ-નિયંત્રિત \\
+વહન & BJT જેવું ઓછું ફોરવર્ડ વોલ્ટેજ ડ્રોપ \\
+ઉપયોગો & ઉચ્ચ વોલ્ટેજ, મધ્યમ આવૃત્તિ સ્વિચિંગ \\
+\hline
+\end{tabulary}
+\captionof{table}{IGBT લાક્ષણિકતાઓ}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{ઇનપુટ ફાયદો}: ઉચ્ચ અવરોધ સાથે વોલ્ટેજ-નિયંત્રિત ગેટ જેને લઘુત્તમ ડ્રાઇવ પાવરની જરૂર છે
+    \item \keyword{આઉટપુટ ફાયદો}: ઉચ્ચ વિદ્યુત ઘનતા પર પણ ઓછો ઓન-સ્ટેટ વોલ્ટેજ ડ્રોપ
+\end{itemize}
+\end{solutionbox}
+\mnemonicbox{MOSFET ઇનપુટ, BJT આઉટપુટ, સંપૂર્ણ પાવર સ્વિચ બનાવે છે}
+
+\questionmarks{1(c)}{7}{DIAC નું બાંધકામ, કાર્ય અને લાક્ષણિકતા સમજાવો.}
+
+\begin{solutionbox}
+DIAC (ડાયોડ ફોર ઓલ્ટરનેટિંગ કરંટ) એ દ્વિદિશ ટ્રિગરિંગ ઉપકરણ છે જે થાઇરિસ્ટર નિયંત્રણ સર્કિટોમાં વપરાય છે.
+
+\begin{center}
+\begin{tikzpicture}
+    % Construction
+    \draw (0,0) rectangle (4,2);
+    \draw (0,1.5) -- (4,1.5);
+    \draw (0,0.5) -- (4,0.5);
+    \node at (2, 1.75) {N2 (Terminal B)};
+    \node at (2, 1) {P2 - N1 - P1};
+    \node at (2, 0.25) {N1 (Terminal A)};
+    
+    % Symbol
+    \draw (6,1) to[diac] (8,1);
+    \node[left] at (6,1) {MT1};
+    \node[right] at (8,1) {MT2};
+\end{tikzpicture}
+\captionof{figure}{DIAC બાંધકામ અને પ્રતીક}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}
+    % V-I Curve
+    \draw[->] (-3,0) -- (3,0) node[right] {$V$};
+    \draw[->] (0,-3) -- (0,3) node[above] {$I$};
+    
+    \draw[blue, thick] (0,0) -- (1,0.1) -- (2, 2) -- (1.5, 2.5);
+    \draw[blue, thick] (0,0) -- (-1,-0.1) -- (-2, -2) -- (-1.5, -2.5);
+    
+    \node[right] at (2,2) {$V_{BO}$};
+    \node[left] at (-2,-2) {$-V_{BO}$};
+\end{tikzpicture}
+\captionof{figure}{DIAC V-I લાક્ષણિકતાઓ}
+\end{center}
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline \textbf{વિશેષતા} & \textbf{વર્ણન} \\ \hline
+સ્ટ્રક્ચર & ગેટ ટર્મિનલ વગરનું પાંચ સ્તરીય P-N-P-N \\
+કાર્ય & બ્રેક-ઓવર વોલ્ટેજ પહોંચતા સુધી પ્રવાહને અવરોધે છે \\
+બ્રેકઓવર & સામાન્ય રીતે બંને દિશામાં 30-40V \\
+સમમિતિ & બંને દિશાઓમાં સમાન પ્રતિક્રિયા \\
+ઉપયોગ & AC સર્કિટમાં TRIAC માટે ટ્રિગર ઉપકરણ \\
+\hline
+\end{tabulary}
+\captionof{table}{DIAC વિશેષતાઓ}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{અવરોધ અવસ્થા}: બ્રેકઓવર વોલ્ટેજથી નીચે, ઉચ્ચ અવરોધ પ્રવાહને રોકે છે
+    \item \keyword{વહન અવસ્થા}: બ્રેકઓવર વોલ્ટેજથી ઉપર, નકારાત્મક અવરોધ વિસ્તાર અચાનક વહન સક્ષમ કરે છે
+    \item \keyword{દ્વિદિશીય}: હકારાત્મક અને નકારાત્મક વોલ્ટેજ માટે સમાન રીતે કાર્ય કરે છે
+\end{itemize}
+\end{solutionbox}
+\mnemonicbox{બંને દિશામાં બ્રેક વોલ્ટેજ, પછી પ્રવાહ વહે છે}
+
+\questionmarks{1(c) OR}{7}{ઓપ્ટો-આઇસોલેટર અને ઓપ્ટો-એસસીઆરનું બાંધકામ અને કાર્ય સમજાવો.}
+
+\begin{solutionbox}
+ઓપ્ટો-ઉપકરણો સર્કિટો વચ્ચે વિદ્યુત અલગાવ જાળવતા સિગ્નલો ટ્રાન્સફર કરવા માટે પ્રકાશનો ઉપયોગ કરે છે.
+
+\begin{center}
+\begin{tikzpicture}
+    % Opto-Isolator
+    \draw[dashed] (-1,-1) rectangle (3,2);
+    \node at (1,2.3) {Opto-Isolator};
+    \draw (0,0.5) node[led, rotate=90] (led) {};
+    \draw (led.anode) -- (0, 1.5) node[above] {In+};
+    \draw (led.cathode) -- (0, -0.5) node[below] {In-};
+    
+    \draw (2,0.5) node[npn, photo] (photo) {};
+    \draw (photo.C) -- (2,1.5) node[above] {VCC};
+    \draw (photo.E) -- (2,-0.5) node[below] {Out};
+    
+    \draw[->, wave] (0.5, 0.5) -- (1.5, 0.5);
+\end{tikzpicture}
+\captionof{figure}{ઓપ્ટો-આઇસોલેટર}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}
+    % Opto-SCR
+    \draw[dashed] (-1,-1) rectangle (3,2);
+    \node at (1,2.3) {Opto-SCR};
+    \draw (0,0.5) node[led, rotate=90] (led) {};
+    \draw (led.anode) -- (0, 1.5) node[above] {In+};
+    \draw (led.cathode) -- (0, -0.5) node[below] {In-};
+    
+    \draw (2,0.5) node[thyristor] (scr) {};
+    \draw (scr.A) -- (2,1.5) node[above] {A};
+    \draw (scr.K) -- (2,-0.5) node[below] {K};
+    
+    \draw[->, wave] (0.5, 0.5) -- (1.5, 0.5);
+\end{tikzpicture}
+\captionof{figure}{ઓપ્ટો-SCR}
+\end{center}
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline \textbf{વિશેષતા} & \textbf{ઓપ્ટો-આઇસોલેટર} & \textbf{ઓપ્ટો-SCR} \\ \hline
+ઇનપુટ & LED & LED \\
+આઉટપુટ ઉપકરણ & ફોટોટ્રાન્ઝિસ્ટર/ફોટોડાયોડ & પ્રકાશ-સંવેદનશીલ SCR \\
+અલગાવ & 2-5 kV & 2-5 kV \\
+વિદ્યુત પ્રવાહ & ઓછો-મધ્યમ (100mA) & ઉચ્ચ (ઘણા એમ્પિયર) \\
+ઉપયોગો & ડિજિટલ સિગ્નલ આઇસોલેશન & પાવર નિયંત્રણ, AC સ્વિચિંગ \\
+\hline
+\end{tabulary}
+\captionof{table}{ઓપ્ટો-ઉપકરણોની તુલના}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{વિદ્યુત આઇસોલેશન}: સંપૂર્ણ વિદ્યુત અલગતા અવાજ પ્રતિરક્ષા અને સુરક્ષા પ્રદાન કરે છે
+    \item \keyword{સિગ્નલ ટ્રાન્સફર}: પ્રકાશ કપલિંગ ગ્રાઉન્ડ લૂપ્સ અને વોલ્ટેજ સ્તરના મુદ્દાઓને દૂર કરે છે
+    \item \keyword{ટ્રિગરિંગ}: ઓપ્ટો-SCRમાં પ્રકાશ ગેટ વિદ્યુત પ્રવાહને SCR સક્રિયકરણ માટે બદલે છે
+\end{itemize}
+\end{solutionbox}
+\mnemonicbox{પ્રકાશ અંતર કૂદે છે જ્યારે વિદ્યુત ઘરે રહે છે}
+
+\questionmarks{2(a)}{3}{1) UJT 2) SCS 3) MCT નું પ્રતીક દોરો અને ઉપયોગ આપો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tabulary}{\linewidth}{|C|C|L|}
+\hline \textbf{ઉપકરણ} & \textbf{પ્રતીક} & \textbf{ઉપયોગો} \\ \hline
+UJT & 
+\begin{tikzpicture}[scale=0.5, baseline]
+    \draw (0,0) node[ujt] {};
+\end{tikzpicture} & 
+રિલેક્સેશન ઓસિલેટર, ટાઇમિંગ સર્કિટ, SCR ટ્રિગરિંગ \\ \hline
+SCS & 
+\begin{tikzpicture}[scale=0.5, baseline]
+    \draw (0,0) -- (0,-0.5) node[thyristor] (T) {} -- (0,-1.5);
+    \draw (T.west) -- (-0.5, -0.7) node[left] {G1};
+    \draw (0.3, -0.3) -- (0.5, -0.3) node[right] {G2}; 
+\end{tikzpicture} & 
+ઓછી પાવર સ્વિચિંગ, લેવલ ડિટેક્શન, પલ્સ જનરેશન \\ \hline
+MCT & 
+\begin{tikzpicture}[scale=0.5, baseline]
+    \draw (0,0) node[thyristor] (T) {};
+    \draw (T.west) -- ++(-0.5,0) node[left] {G};
+    \node at (0.8,0) {MCT};
+\end{tikzpicture} & 
+ઉચ્ચ પાવર સ્વિચિંગ, મોટર નિયંત્રણ, ઇન્વર્ટર \\ \hline
+\end{tabulary}
+\captionof{table}{પાવર ઉપકરણોના પ્રતીકો અને ઉપયોગો}
+\end{center}
+\end{solutionbox}
+\mnemonicbox{અનોખી ટાઇમિંગ, નિયંત્રિત સ્વિચિંગ, મુખ્ય પાવર}
+
+\questionmarks{2(b)}{4}{SCR માટે ગેટ પ્રોટેક્શનનું મહત્વ સમજાવો.}
+
+\begin{solutionbox}
+ગેટ પ્રોટેક્શન સર્કિટ SCRને નકલી ટ્રિગરિંગ અને વોલ્ટેજ સ્પાઇક્સથી સુરક્ષિત રાખે છે.
+
+\begin{center}
+\begin{tikzpicture}
+    \draw (0,0) node[thyristor] (S) {};
+    \draw (S.G) -- (-2, -0.7); % Gate line
+    
+    % Protection components
+    \draw (-1, -0.7) to[R, l=$R_g$] (-1, -2) node[ground]{}; % Gate resistor
+    \draw (-1.5, -0.7) to[D, l=D] (-1.5, -2) node[ground]{}; % Protecting Diode
+    
+    \node at (0, 1) {Anode};
+    \node at (0, -2) {Cathode};
+\end{tikzpicture}
+\captionof{figure}{ગેટ પ્રોટેક્શન સર્કિટ}
+\end{center}
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline \textbf{સમસ્યા} & \textbf{સુરક્ષા પદ્ધતિ} & \textbf{હેતુ} \\ \hline
+રિવર્સ વોલ્ટેજ & ગેટમાં ડાયોડ & ગેટ-કેથોડ જંક્શન નુકસાન અટકાવે છે \\
+નોઇઝ & RC ફિલ્ટર & ઉચ્ચ-આવૃત્તિ ક્ષણિક અવરોધે છે \\
+dV/dt ટ્રિગરિંગ & RC સ્નબર & વોલ્ટેજ વધારાનો દર નિયંત્રિત કરે છે \\
+ખોટું ટ્રિગરિંગ & ગેટ રેસિસ્ટર & ગેટ કરંટને મર્યાદિત કરે છે અને નોઇઝ ટ્રિગરિંગ ટાળે છે \\
+\hline
+\end{tabulary}
+\captionof{table}{ગેટ પ્રોટેક્શન પદ્ધતિઓ}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{જંક્શન સુરક્ષા}: ગેટ-કેથોડ જંક્શનને રિવર્સ વોલ્ટેજ નુકસાનથી બચાવે છે
+    \item \keyword{નોઇઝ પ્રતિરક્ષા}: વિદ્યુત ઘોંઘાટને ફિલ્ટર કરે છે જે અનિચ્છનીય ટ્રિગરિંગનું કારણ બની શકે છે
+\end{itemize}
+\end{solutionbox}
+\mnemonicbox{ગેટની રક્ષા કરો સમસ્યાઓ અટકાવવા માટે}
+
+\questionmarks{2(c)}{7}{SCR ને ટ્રિગર કરવાની વિવિધ પદ્ધતિઓની યાદી બનાવો અને તેમાંથી કોઈપણ ત્રણ સમજાવો.}
+
+\begin{solutionbox}
+SCR ટ્રિગરિંગ પદ્ધતિઓ ગેટ સક્રિયકરણ દ્વારા ઉપકરણને અવરોધનથી વહન અવસ્થામાં રૂપાંતરિત કરે છે.
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline \textbf{પદ્ધતિ} & \textbf{સિદ્ધાંત} & \textbf{ઉપયોગો} \\ \hline
+ગેટ ટ્રિગરિંગ & ગેટમાં સીધો પ્રવાહ & સૌથી સામાન્ય પદ્ધતિ \\
+થર્મલ ટ્રિગરિંગ & તાપમાન વધારો & થર્મલ પ્રોટેક્શન \\
+પ્રકાશ ટ્રિગરિંગ & જંક્શન પર ફોટોન & રિમોટ સક્રિયકરણ \\
+dV/dt ટ્રિગરિંગ & ઝડપી વોલ્ટેજ વધારો & ઘણીવાર અનિચ્છનીય ટ્રિગરિંગ \\
+વોલ્ટેજ ટ્રિગરિંગ & બ્રેકઓવર વોલ્ટેજ ઓળંગવું & પ્રોટેક્શન સર્કિટ \\
+RF ટ્રિગરિંગ & રેડિયો ફ્રિક્વન્સી સિગ્નલ & વાયરલેસ કંટ્રોલ \\
+\hline
+\end{tabulary}
+\captionof{table}{ટ્રિગરિંગ પદ્ધતિઓ ઓવરવ્યૂ}
+\end{center}
+
+\textbf{1. ગેટ કરંટ ટ્રિગરિંગ:}
+\begin{center}
+\begin{tikzpicture}
+    \draw (0,0) node[thyristor] (S) {};
+    \draw (S.G) -- (-2, -0.7) to[battery] (-2, -2) -- (S.K);
+    \node at (-1.5, -1) {$I_g$};
+\end{tikzpicture}
+\end{center}
+\begin{itemize}
+    \item \keyword{સીધું નિયંત્રણ}: નાનો ગેટ પ્રવાહ મોટા એનોડ પ્રવાહને શરૂ કરે છે
+    \item \keyword{પ્રવાહ રેન્જ}: SCR રેટિંગ પર આધાર રાખીને સામાન્ય રીતે 10-100mA જરૂરી
+\end{itemize}
+
+\textbf{2. પ્રકાશ ટ્રિગરિંગ (LASCR):}
+\begin{center}
+\begin{tikzpicture}
+    \draw (0,0) node[thyristor] (S) {};
+    \draw[->, wave] (-1.5, 0) -- (-0.5, 0);
+    \node at (-2, 0) {Light};
+\end{tikzpicture}
+\end{center}
+\begin{itemize}
+    \item \keyword{ઓપ્ટિકલ કંટ્રોલ}: ફોટોન્સ જંક્શન પર કેરિયર્સ ઉત્પન્ન કરે છે
+    \item \keyword{અલગાવ}: કંટ્રોલ અને પાવર સર્કિટ વચ્ચે વિદ્યુત અલગાવ પ્રદાન કરે છે
+\end{itemize}
+
+\textbf{3. dV/dt ટ્રિગરિંગ:}
+\begin{center}
+\begin{tikzpicture}
+    \draw (0,0) node[thyristor] (S) {};
+    \draw (0,1) node[above] {High $dV/dt$};
+\end{tikzpicture}
+\end{center}
+\begin{itemize}
+    \item \keyword{રેટ સંવેદનશીલતા}: ઝડપી વોલ્ટેજ વધારો જંક્શન કેપેસિટન્સ ચાર્જિંગનું કારણ બને છે
+    \item \keyword{નિવારણ}: સ્નબર સર્કિટ (RC નેટવર્ક) વોલ્ટેજ વધારાના દરને નિયંત્રિત કરે છે
+\end{itemize}
+\end{solutionbox}
+\mnemonicbox{ગેટ, પ્રકાશ, અને વોલ્ટેજ પરિવર્તન SCRને ચાલુ કરે છે}
+
+\questionmarks{2(a) OR}{3}{ઓપ્ટો-એસસીઆરનો ઉપયોગ કરીને સોલિડ સ્ટેટ રિલેનું કાર્ય સમજાવો.}
+
+\begin{solutionbox}
+સોલિડ સ્ટેટ રિલે (SSRs) વિદ્યુત અલગાવ સાથે સંપર્ક વગરના સ્વિચિંગ માટે ઓપ્ટો-SCRનો ઉપયોગ કરે છે.
+
+\begin{center}
+\begin{tikzpicture}[gtu block/.style={draw, rectangle, minimum width=2cm, minimum height=1cm, align=center}, node distance=3cm]
+    \node[gtu block] (in) {Control \\ Input};
+    \node[gtu block, right of=in] (iso) {Opto-Iso \\ (LED+SCR)};
+    \node[gtu block, right of=iso] (sw) {Thyristor \\ Switch};
+    \node[right of=sw] (load) {Load};
+    
+    \draw[->] (in) -- (iso);
+    \draw[->] (iso) -- (sw);
+    \draw[->] (sw) -- (load);
+\end{tikzpicture}
+\captionof{figure}{SSR બ્લોક ડાયાગ્રામ}
+\end{center}
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline \textbf{સ્ટેજ} & \textbf{કાર્ય} & \textbf{લાભ} \\ \hline
+ઇનપુટ સ્ટેજ & કંટ્રોલ સિગ્નલનો ઉપયોગ કરીને LED ચલાવે છે & ઓછી શક્તિ નિયંત્રણ \\
+અલગાવ & પ્રકાશ વિદ્યુત અંતર પુલ કરે છે & સુરક્ષા અને અવાજ પ્રતિરક્ષા \\
+ટ્રિગરિંગ & પ્રકાશ SCRને સક્રિય કરે છે & યાંત્રિક સંપર્કો નથી \\
+સ્વિચિંગ & થાઇરિસ્ટર લોડ કરંટનું વહન કરે છે & આર્કિંગ કે સંપર્ક ઘસારો નથી \\
+\hline
+\end{tabulary}
+\captionof{table}{SSR ઓપરેશન}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{મૌન ઓપરેશન}: સ્વિચિંગ દરમિયાન કોઈ યાંત્રિક અવાજ નથી
+    \item \keyword{લાંબુ આયુષ્ય}: ઇલેક્ટ્રોમેકેનિકલ રિલેની જેમ સંપર્ક અવનતિ નથી
+\end{itemize}
+\end{solutionbox}
+\mnemonicbox{પ્રકાશ લોજિકને લોડ સાથે જોડે છે}
+
+\questionmarks{2(b) OR}{4}{સ્નબર સર્કિટ વ્યાખ્યાયિત કરો અને સ્નબર સર્કિટનું મહત્વ સમજાવો.}
+
+\begin{solutionbox}
+સ્નબર સર્કિટ એ સુરક્ષાત્મક નેટવર્ક છે જે સ્વિચિંગ ઉપકરણોમાં વોલ્ટેજ અને કરંટ ક્ષણિકોને દબાવે છે.
+
+\begin{center}
+\begin{tikzpicture}
+    \draw (0,0) node[thyristor] (S) {};
+    \draw (S.north) -- (0, 2);
+    \draw (S.south) -- (0, -2);
+    
+    % Snubber R-C
+    \draw (0,1.5) -- (2,1.5) to[R, l=$R_s$] (2,0) to[C, l=$C_s$] (2,-1.5) -- (0,-1.5);
+\end{tikzpicture}
+\captionof{figure}{RC સ્નબર સર્કિટ}
+\end{center}
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline \textbf{કાર્ય} & \textbf{લાભ} & \textbf{અમલીકરણ} \\ \hline
+dV/dt દમન & ખોટા ટ્રિગરિંગને રોકે છે & SCR આસપાસ RC સર્કિટ \\
+વોલ્ટેજ સ્પાઇક ઘટાડો & ઓવરવોલ્ટેજથી રક્ષણ & કેપેસિટર ઊર્જા શોષે છે \\
+ઓસીલેશન ડેમ્પિંગ & EMI ઘટાડે છે & રેસિસ્ટર ડેમ્પિંગ પ્રદાન કરે છે \\
+ટર્ન-ઓફ સહાય & કોમ્યુટેશન સુધારે છે & ટર્ન-ઓફ દરમિયાન પ્રવાહ વાળે છે \\
+\hline
+\end{tabulary}
+\captionof{table}{સ્નબર મહત્વ}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{સર્કિટ સુરક્ષા}: ઉપકરણ પર તણાવને મર્યાદિત કરીને થાઇરિસ્ટરનું આયુષ્ય વધારે છે
+    \item \keyword{અવાજ ઘટાડો}: આસપાસની સર્કિટોમાં ઇલેક્ટ્રોમેગ્નેટિક ઇન્ટરફેરન્સ ઘટાડે છે
+\end{itemize}
+\end{solutionbox}
+\mnemonicbox{અવાજ દબાવો, સંતુલિત વર્તન સરળતાથી પુનઃસ્થાપિત થાય}
+
+\questionmarks{2(c) OR}{7}{SCR ની વિવિધ કોમ્યુટેશન પદ્ધતિઓની યાદી બનાવો અને તેમાંથી કોઈપણ બે સમજાવો}
+
+\begin{solutionbox}
+કોમ્યુટેશન એ એનોડ પ્રવાહને હોલ્ડિંગ વેલ્યુ નીચે ઘટાડીને SCRને બંધ કરવાની પ્રક્રિયા છે.
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline \textbf{પદ્ધતિ} & \textbf{સિદ્ધાંત} & \textbf{ઉપયોગો} \\ \hline
+નૈસર્ગિક & AC શૂન્ય ક્રોસિંગ & AC પાવર કંટ્રોલ \\
+ફોર્સ્ડ & બાહ્ય સર્કિટ & DC એપ્લિકેશન \\
+વર્ગ A & LC રેઝોનન્સ & ઇન્વર્ટર \\
+વર્ગ B & ઓક્ઝિલરી SCR & DC ચોપર \\
+વર્ગ C & લોડ સાથે LC & વેરિએબલ ફ્રિક્વન્સી \\
+વર્ગ D & ઓક્ઝિલરી સ્ત્રોત & મોટર કંટ્રોલ \\
+વર્ગ E & બાહ્ય પલ્સ & ઇલેક્ટ્રોનિક સર્કિટ \\
+\hline
+\end{tabulary}
+\captionof{table}{કોમ્યુટેશન પદ્ધતિઓ}
+\end{center}
+
+\textbf{1. નૈસર્ગિક કોમ્યુટેશન:}
+\begin{center}
+\begin{tikzpicture}
+    \draw (0,0) to[sV, l=AC] (0,2) -- (2,2) to[thyristor] (2,0) to[R, l=Load] (0,0);
+\end{tikzpicture}
+\captionof{figure}{નૈસર્ગિક કોમ્યુટેશન}
+\end{center}
+\begin{itemize}
+    \item \keyword{શૂન્ય ક્રોસિંગ}: જ્યારે AC શૂન્ય પાર કરે છે અને એનોડ કરંટ હોલ્ડિંગથી નીચે પડે છે ત્યારે SCR બંધ થાય છે
+    \item \keyword{સરળતા}: કોમ્યુટેશન માટે કોઈ વધારાના ઘટકોની જરૂર નથી
+    \item \keyword{મર્યાદા}: ફક્ત AC સર્કિટમાં નિશ્ચિત આવૃત્તિ પર કામ કરે છે
+\end{itemize}
+
+\textbf{2. ફોર્સ્ડ કોમ્યુટેશન (વર્ગ B):}
+\begin{center}
+\begin{tikzpicture}
+    \draw (0,3) -- (2,3) node[above] {Vdc} -- (4,3);
+    \draw (2,3) to[thyristor, l=SCR1] (2,0);
+    \draw (4,3) to[C] (4,1.5) -- (2,1.5); % Capacitor coupling
+    \draw (4,3) -- (6,3) to[thyristor, l=SCR2] (6,0);
+    \draw (2,0) to[R, l=Load] (2,-2) node[ground]{};
+    \draw (6,0) -- (6,-2) node[ground]{};
+\end{tikzpicture}
+\captionof{figure}{વર્ગ B કોમ્યુટેશન}
+\end{center}
+\begin{itemize}
+    \item \keyword{ઓક્ઝિલરી SCR}: બીજું SCR (SCR2) મુખ્ય SCRને રિવર્સ બાયસ કરવા કેપેસિટર ડિસ્ચાર્જ કરે છે
+    \item \keyword{ટાઇમિંગ કંટ્રોલ}: SCR ક્યારે બંધ થાય તેના પર ચોક્કસ નિયંત્રણ
+    \item \keyword{એપ્લિકેશન}: DC સર્કિટમાં વપરાય છે જ્યાં નૈસર્ગિક કોમ્યુટેશન શક્ય નથી
+\end{itemize}
+\end{solutionbox}
+\mnemonicbox{પ્રકૃતિ પ્રવાહને અનુસરે છે, ફોર્સ્ડ પ્રવાહ કોલેપ્સ બનાવે છે}
+
+\questionmarks{3(a)}{3}{સિંગલ ફેઝ રેક્ટિફાયર કરતાં પોલિફેસ રેક્ટિફાયરના ફાયદા સમજાવો.}
+
+\begin{solutionbox}
+પોલિફેઝ રેક્ટિફાયર પાવર એપ્લિકેશનમાં સિંગલ-ફેઝ ડિઝાઇન કરતાં નોંધપાત્ર સુધારા આપે છે.
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline \textbf{પેરામીટર} & \textbf{સિંગલ ફેઝ} & \textbf{પોલિફેઝ} \\ \hline
+રિપલ ફેક્ટર & ઊંચો (FW માટે 0.482) & નીચો (3-ફેઝ માટે 0.042) \\
+ફોર્મ ફેક્ટર & ઊંચો & નીચો \\
+કાર્યક્ષમતા & ઓછી & ઊંચી (ટ્રાન્સફોર્મર વધુ સારી રીતે વપરાય છે) \\
+પાવર રેટિંગ & મર્યાદિત & ઊંચું પાવર હેન્ડલિંગ \\
+હાર્મોનિક કન્ટેન્ટ & વધુ & ઓછું (વધુ સરળ DC) \\
+\hline
+\end{tabulary}
+\captionof{table}{સિંગલ ફેઝ vs પોલિફેઝ રેક્ટિફાયર}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{આઉટપુટ સ્મૂધનેસ}: નોંધપાત્ર રીતે ઓછો રિપલ જેને નાના ફિલ્ટરિંગ ઘટકોની જરૂર પડે છે
+    \item \keyword{ટ્રાન્સફોર્મર ઉપયોગ}: વધુ સારો ઉપયોગ ફેક્ટર (0.955 vs 0.812) ટ્રાન્સફોર્મર કદ ઘટાડે છે
+\end{itemize}
+\end{solutionbox}
+\mnemonicbox{વધુ ફેઝ એટલે વધુ સરળ પાવર}
+
+\questionmarks{3(b)}{4}{UPS પર ટૂંકી નોંધ લખો.}
+
+\begin{solutionbox}
+UPS (અનઇન્ટરપ્ટિબલ પાવર સપ્લાય) મુખ્ય પાવર સપ્લાય નિષ્ફળ થાય ત્યારે સતત પાવર પ્રદાન કરે છે.
+
+\begin{center}
+\begin{tikzpicture}[gtu block/.style={draw, rectangle, minimum width=2cm, minimum height=1cm, align=center}, node distance=3cm]
+    \node[gtu block] (rect) {Rectifier};
+    \node[gtu block, right of=rect] (dc) {DC Bus};
+    \node[gtu block, right of=dc] (inv) {Inverter};
+    \node[gtu block, below of=dc] (batt) {Battery};
+    
+    \draw[->] (-1.5, 0) node[left]{AC In} -- (rect);
+    \draw[->] (rect) -- (dc);
+    \draw[->] (dc) -- (inv);
+    \draw[->] (inv) -- (4.5, 0) node[right]{AC Out};
+    \draw[<->] (dc) -- (batt);
+\end{tikzpicture}
+\captionof{figure}{બેઝિક UPS બ્લોક ડાયાગ્રામ}
+\end{center}
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline \textbf{પ્રકાર} & \textbf{ઓપરેશન} & \textbf{એપ્લિકેશન} \\ \hline
+ઓનલાઇન & હંમેશા બેટરી/ઇન્વર્ટર દ્વારા & ક્રિટિકલ સિસ્ટમ, મેડિકલ \\
+ઓફલાઇન & નિષ્ફળતા પર બેટરી પર સ્વિચ & પર્સનલ કમ્પ્યુટર, નાના ઓફિસ \\
+લાઇન-ઇન્ટરેક્ટિવ & વોલ્ટેજ રેગ્યુલેશન + બેકઅપ & સર્વર, નેટવર્ક ઇક્વિપમેન્ટ \\
+\hline
+\end{tabulary}
+\captionof{table}{UPS પ્રકારો}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{બેકઅપ સમય}: બેટરી ક્ષમતા પર આધાર રાખીને સામાન્ય રીતે 5-30 મિનિટ
+    \item \keyword{સુરક્ષા}: સર્જ પ્રોટેક્શન, વોલ્ટેજ રેગ્યુલેશન, અને ફ્રિક્વન્સી સ્ટેબિલાઇઝેશન
+\end{itemize}
+\end{solutionbox}
+\mnemonicbox{પાવર સતત સ્વિચ હેઠળ સુરક્ષિત}
+
+\questionmarks{3(c)}{7}{ઇન્વર્ટરનું કાર્ય આપો અને ઇન્વર્ટરના મૂળભૂત સિદ્ધાંતને સમજાવો પણ સુઘડ ડાયાગ્રામ અને વેવફોર્મ સાથે શ્રેણી ઇન્વર્ટર સમજાવો.}
+
+\begin{solutionbox}
+ઇન્વર્ટર ડીસી પાવરને એસી પાવરમાં રૂપાંતરિત કરે છે, ડીસીને ટ્રાન્સફોર્મર દ્વારા કે સીધા જ સ્વિચ કરીને વૈકલ્પિક તરંગ બનાવે છે.
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline \textbf{કાર્ય} & \textbf{વર્ણન} \\ \hline
+DC થી AC રૂપાંતરણ & સ્થિર DC ને વૈકલ્પિક AC માં રૂપાંતરિત કરે છે \\
+આવૃત્તિ નિયંત્રણ & ચલિત આવૃત્તિ આઉટપુટ ઉત્પન્ન કરે છે \\
+વોલ્ટેજ નિયંત્રણ & લોડ વેરિએશન છતાં સ્થિર આઉટપુટ જાળવે છે \\
+વેવ શેપિંગ & સાઇન, સ્ક્વેર, કે મોડિફાઇડ સાઇન વેવ્સ ઉત્પન્ન કરે છે \\
+\hline
+\end{tabulary}
+\captionof{table}{ઇન્વર્ટર કાર્યો}
+\end{center}
+
+\textbf{શ્રેણી ઇન્વર્ટર સર્કિટ:}
+\begin{center}
+\begin{tikzpicture}
+    % Series Inverter
+    \draw (0,4) -- (4,4) node[right]{+Vdc};
+    \draw (0,0) -- (4,0) node[right]{GND};
+    
+    \draw (2,4) -- (2,3) to[L, l=$L$] (2,2) to[C, l=$C$] (2,1) -- (2,0.5);
+    \draw (2,0.5) node[thyristor] (T) {};
+    \draw (T.south) -- (2, -1) to[R, l=Load] (2,-2) node[ground]{};
+\end{tikzpicture}
+\captionof{figure}{શ્રેણી ઇન્વર્ટર}
+\end{center}
+\begin{itemize}
+    \item \keyword{ઓસીલેશન}: SCR ટ્રિગર થતાં શ્રેણી LC સર્કિટ રેઝોનન્ટ ઓસીલેશન બનાવે છે
+    \item \keyword{કોમ્યુટેશન}: રેઝોનન્સ દ્વારા કરંટ રિવર્સ થાય ત્યારે SCR આપમેળે બંધ થાય છે
+    \item \keyword{આવૃત્તિ}: LC વેલ્યુ દ્વારા નક્કી થાય છે: $f = 1/(2\pi\sqrt{LC})$
+\end{itemize}
+\end{solutionbox}
+\mnemonicbox{ડાયરેક્ટ કરંટ સ્વિચ થઈને રેઝોનન્ટ સર્કિટ દ્વારા ઓલ્ટરનેટિંગ કરંટ બને છે}
+
+\questionmarks{3(a) OR}{3}{ચોપરના મૂળ સિદ્ધાંતને સમજાવો.}
+
+\begin{solutionbox}
+ચોપર એ DC-થી-DC કન્વર્ટર છે જે નિયંત્રિત સરેરાશ DC આઉટપુટ ઉત્પન્ન કરવા માટે DC ઇનપુટને ચાલુ/બંધ કરે છે.
+
+\begin{center}
+\begin{tikzpicture}
+    \draw (0,2) to[battery, l=$V_{dc}$] (0,0);
+    \draw (0,2) -- (2,2) node[switch] (S) {} -- (4,2);
+    \draw (4,2) to[R, l=Load] (4,0) -- (0,0);
+    \node at (2,2.5) {Switch (Chopper)};
+\end{tikzpicture}
+\captionof{figure}{બેઝિક ચોપર સર્કિટ}
+\end{center}
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline \textbf{પેરામીટર} & \textbf{સંબંધ} & \textbf{નિયંત્રણ} \\ \hline
+આઉટપુટ વોલ્ટેજ & $V_o = V_{dc} \times (T_{on}/T)$ & ડ્યુટી સાયકલ એડજસ્ટમેન્ટ \\
+ડ્યુટી સાયકલ & $k = T_{on}/T$ & આઉટપુટ વોલ્ટેજ નિયંત્રિત કરે છે \\
+આવૃત્તિ & $f = 1/T$ & રિપલ પર અસર કરે છે \\
+વોલ્ટેજ રેગ્યુલેશન & લોડ સાથે બદલાય છે & ફીડબેક કંટ્રોલ ડ્યુટી સાયકલ એડજસ્ટ કરે છે \\
+\hline
+\end{tabulary}
+\captionof{table}{ચોપર સિદ્ધાંત}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{સ્વિચિંગ એક્શન}: DC ઇનપુટને ચોપ કરવા માટે ઝડપથી ON/OFF થાય છે
+    \item \keyword{પલ્સ વિડ્થ મોડ્યુલેશન}: ON-ટાઇમ રેશિઓને બદલીને વોલ્ટેજ નિયંત્રિત કરે છે
+\end{itemize}
+\end{solutionbox}
+\mnemonicbox{ચોપિંગ નિયંત્રિત DC બનાવે છે}
+
+\questionmarks{3(b) OR}{4}{SMPS ના બ્લોક ડાયાગ્રામ દોરો અને દરેક બ્લોકનું કાર્ય સમજાવો.}
+
+\begin{solutionbox}
+SMPS (સ્વિચ્ડ મોડ પાવર સપ્લાય) ઉચ્ચ-આવૃત્તિ સ્વિચિંગનો ઉપયોગ કરીને ઇનપુટ પાવરને નિયંત્રિત આઉટપુટમાં રૂપાંતરિત કરે છે.
+
+\begin{center}
+\begin{tikzpicture}[gtu block/.style={draw, rectangle, minimum width=2cm, minimum height=1.2cm, align=center}, node distance=2.5cm, auto]
+    \node[gtu block] (rect) {Rectifier \\ \& Filter};
+    \node[gtu block, right of=rect] (switch) {HF \\ Switching};
+    \node[gtu block, right of=switch] (trans) {Trans- \\ former};
+    \node[gtu block, right of=trans] (outrect) {Output \\ Rectifier};
+    \node[right of=outrect] (load) {DC Out};
+    
+    \node[gtu block, below of=switch] (ctrl) {Control \\ PWM};
+    
+    \draw[->] (-1.5, 0) node[left]{AC} -- (rect);
+    \draw[->] (rect) -- (switch);
+    \draw[->] (switch) -- (trans);
+    \draw[->] (trans) -- (outrect);
+    \draw[->] (outrect) -- (load);
+    \draw[->] (outrect) |- (ctrl);
+    \draw[->] (ctrl) -- (switch);
+\end{tikzpicture}
+\captionof{figure}{SMPS બ્લોક ડાયાગ્રામ}
+\end{center}
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline \textbf{બ્લોક} & \textbf{કાર્ય} \\ \hline
+EMI ફિલ્ટર & SMPSમાં પ્રવેશતા/છોડતા અવાજને દબાવે છે \\
+રેક્ટિફાયર અને ફિલ્ટર & ACને અનિયમિત DCમાં રૂપાંતરિત કરે છે \\
+સ્વિચિંગ સર્કિટ & ઉચ્ચ આવૃત્તિ (20-200kHz) પર DC ચોપ કરે છે \\
+ટ્રાન્સફોર્મર & અલગાવ અને વોલ્ટેજ ટ્રાન્સફોર્મેશન પ્રદાન કરે છે \\
+આઉટપુટ રેક્ટિફાયર & ઉચ્ચ-આવૃત્તિ ACને પાછો DCમાં રૂપાંતરિત કરે છે \\
+આઉટપુટ ફિલ્ટર & DC આઉટપુટને સ્મૂધ કરે છે અને રિપલ દૂર કરે છે \\
+ફીડબેક કંટ્રોલ & ડ્યુટી સાયકલ એડજસ્ટ કરીને આઉટપુટ નિયંત્રિત કરે છે \\
+\hline
+\end{tabulary}
+\captionof{table}{SMPS બ્લોક કાર્યો}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{ઉચ્ચ કાર્યક્ષમતા}: લિનિયર સપ્લાય માટે 30-60\% ની સરખામણીએ 70-90\%
+    \item \keyword{નાનું કદ}: ઉચ્ચ આવૃત્તિ નાના ટ્રાન્સફોર્મર અને ઘટકોની મંજૂરી આપે છે
+\end{itemize}
+\end{solutionbox}
+\mnemonicbox{ફિલ્ટર, રેક્ટિફાય, ટ્રાન્સફોર્મર મારફતે સ્વિચ, રેક્ટિફાય, ફિલ્ટર}
+
+\questionmarks{3(c) OR}{7}{વેવફોર્મ સાથે 1 ફેઝ હાફ વેવ રેક્ટિફાયર સમજાવો પણ વેવફોર્મ સાથે 3 ફેઝ ફુલ વેવ રેક્ટિફાયર સમજાવો.}
+
+\begin{solutionbox}
+રેક્ટિફાયર એક દિશામાં પ્રવાહની મંજૂરી આપીને અને રિવર્સ ફ્લોને અવરોધીને AC થી DC માં રૂપાંતરિત કરે છે.
+
+\textbf{1-ફેઝ હાફ વેવ રેક્ટિફાયર:}
+\begin{center}
+\begin{tikzpicture}
+    \draw (0,0) to[sV, l=AC] (0,2) to[D] (2,2) to[R, l=Load] (2,0) -- (0,0);
+\end{tikzpicture}
+\end{center}
+
+\textbf{3-ફેઝ ફુલ વેવ રેક્ટિફાયર:}
+\begin{center}
+\begin{tikzpicture}
+    % 3 Phase bridge
+    \draw (0,0) -- (0,4);
+    \draw (2,0) -- (2,4);
+    \draw (4,0) -- (4,4);
+    
+    % Diodes on top
+    \draw (0,4) to[D] (1,5) -- (5,5);
+    \draw (2,4) to[D] (3,5) -- (5,5);
+    \draw (4,4) to[D] (5,5) -- (6,5) node[right]{+Vdc};
+    
+    % Diodes on bottom
+    \draw (0,0) to[D, invert] (1,-1) -- (5,-1);
+    \draw (2,0) to[D, invert] (3,-1) -- (5,-1);
+    \draw (4,0) to[D, invert] (5,-1) -- (6,-1) node[right]{-Vdc};
+    
+    % Inputs
+    \node at (0,2) {R};
+    \node at (2,2) {Y};
+    \node at (4,2) {B};
+\end{tikzpicture}
+\end{center}
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline \textbf{પેરામીટર} & \textbf{1-ફેઝ હાફ વેવ} & \textbf{3-ફેઝ ફુલ વેવ} \\ \hline
+રિપલ ફેક્ટર & 1.21 & 0.042 \\
+રેક્ટિફિકેશન કાર્યક્ષમતા & 40.6\% & 95.5\% \\
+TUF & 0.287 & 0.955 \\
+પીક ઇન્વર્સ વોલ્ટેજ & $V_m$ & $2.09V_m$ \\
+ફોર્મ ફેક્ટર & 1.57 & 1.0007 \\
+\hline
+\end{tabulary}
+\captionof{table}{રેક્ટિફાયર તુલના}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{1-ફેઝ હાફ વેવ}: સૌથી સરળ ડિઝાઇન પરંતુ ઉચ્ચ રિપલ અને ઓછી કાર્યક્ષમતા સાથે
+    \item \keyword{3-ફેઝ ફુલ વેવ}: એક ચક્ર દીઠ 6 પલ્સ સાથે ઘણો સરળ આઉટપુટ
+\end{itemize}
+\end{solutionbox}
+\mnemonicbox{અર્ધ માત્ર શિખરો પસાર કરે છે, ત્રણ ફેઝ ખીણો ભરે છે}
+
+\questionmarks{4(a)}{3}{બ્લોક ડાયાગ્રામ સાથે સૌર ફોટોવોલ્ટેઇક આધારિત પાવર જનરેશનની કામગીરીનું વર્ણન કરો.}
+
+\begin{solutionbox}
+સોલર PV પાવર જનરેશન ફોટોવોલ્ટાઇક ઇફેક્ટ દ્વારા સૂર્યપ્રકાશને સીધો વિદ્યુતમાં રૂપાંતરિત કરે છે.
+
+\begin{center}
+\begin{tikzpicture}[gtu block/.style={draw, rectangle, minimum width=2cm, minimum height=1cm, align=center}, node distance=2.5cm]
+    \node[gtu block] (solar) {Solar \\ Array};
+    \node[gtu block, right of=solar] (charge) {Charge \\ Controller};
+    \node[gtu block, below of=charge] (batt) {Battery};
+    \node[gtu block, right of=charge] (inv) {Inverter};
+    \node[right of=inv] (ac) {AC Load};
+    \node[above of=charge] (dc) {DC Load};
+    
+    \draw[->] (solar) -- (charge);
+    \draw[<->] (charge) -- (batt);
+    \draw[->] (charge) -- (inv);
+    \draw[->] (inv) -- (ac);
+    \draw[->] (charge) -- (dc);
+\end{tikzpicture}
+\captionof{figure}{સોલર PV સિસ્ટમ}
+\end{center}
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline \textbf{ઘટક} & \textbf{કાર્ય} \\ \hline
+સોલર પેનલ & સૂર્યપ્રકાશને DC વિદ્યુતમાં રૂપાંતરિત કરે છે \\
+ચાર્જ કંટ્રોલર & ચાર્જિંગને નિયંત્રિત કરે છે, ઓવરચાર્જ અટકાવે છે \\
+બેટરી બેંક & પછીના ઉપયોગ માટે ઊર્જા સંગ્રહિત કરે છે \\
+ઇન્વર્ટર & ઘરેલું ઉપકરણો માટે DC ને AC માં રૂપાંતરિત કરે છે \\
+ડિસ્ટ્રિબ્યુશન પેનલ & વિદ્યુતને લોડ તરફ રૂટ કરે છે \\
+\hline
+\end{tabulary}
+\captionof{table}{PV ઘટકો}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{ઊર્જા રૂપાંતરણ}: ફોટોન્સ અર્ધવાહક સામગ્રીમાં ઇલેક્ટ્રોનને ઉત્તેજિત કરીને પ્રવાહ બનાવે છે
+    \item \keyword{સ્કેલેબિલિટી}: પાવર જરૂરિયાતો અનુસાર સિસ્ટમનું કદ સમાયોજિત કરી શકાય છે
+\end{itemize}
+\end{solutionbox}
+\mnemonicbox{સૂર્યપ્રકાશ વોલ્ટેજ ઉત્પન્ન કરે છે, બેટરી લોડને મદદ કરે છે}
+
+\questionmarks{4(b)}{4}{સ્ટેટિક સ્વીચ તરીકે SCR નો ઉપયોગ સમજાવો.}
+
+\begin{solutionbox}
+SCR વિશ્વસનીય અને ઝડપી સ્વિચિંગ માટે કોઈ હલનચલન ભાગો વગરના સોલિડ-સ્ટેટ સ્વિચ તરીકે કાર્ય કરે છે.
+
+\begin{center}
+\begin{tikzpicture}
+    \draw (0,3) -- (2,3) node[thyristor] (T) {} -- (2,0);
+    \draw (0,3) node[left] {+V} -- (0,0) to[R, l=Load] (2,0) node[ground]{};
+    \draw (T.west) -- (1, 2.3) node[left] {Trigger};
+\end{tikzpicture}
+\captionof{figure}{SCR સ્ટેટિક સ્વિચ કન્સેપ્ટ}
+\end{center}
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline \textbf{એપ્લિકેશન} & \textbf{ફાયદો} & \textbf{અમલીકરણ} \\ \hline
+પાવર કંટ્રોલ & ચોક્સાઈપૂર્ણ નિયંત્રણ, આર્કિંગ નથી & ફેઝ એંગલ કંટ્રોલ \\
+મોટર સ્ટાર્ટિંગ & સરળ એક્સેલરેશન & ક્રમશઃ વોલ્ટેજ વધારો \\
+સર્કિટ પ્રોટેક્શન & ઝડપી પ્રતિસાદ & કરંટ સેન્સિંગ ટ્રિગર \\
+હીટિંગ કંટ્રોલ & ઊર્જા કાર્યક્ષમ & શૂન્ય-ક્રોસિંગ સ્વિચિંગ \\
+\hline
+\end{tabulary}
+\captionof{table}{સ્ટેટિક સ્વિચ એપ્લિકેશન્સ}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{લેચિંગ એક્શન}: એકવાર ટ્રિગર થયા પછી, પ્રવાહ હોલ્ડિંગ વેલ્યુથી નીચે પડે ત્યાં સુધી વહન ચાલુ રાખે છે
+    \item \keyword{ઉચ્ચ વિશ્વસનીયતા}: હલનચલન ભાગોની ગેરહાજરીને કારણે કોઈ યાંત્રિક ઘસારો નથી
+\end{itemize}
+\end{solutionbox}
+\mnemonicbox{સેમિકન્ડક્ટર સ્વિચિંગ ચાલતા લોડને નિયંત્રિત કરે છે}
+
+\questionmarks{4(c)}{7}{ઇન્ડક્શન હીટિંગ અને ડાઇલેક્ટ્રિક હીટિંગના કાર્ય સિદ્ધાંતનું વર્ણન કરો પણ ઇન્ડક્શન હીટિંગ અને ડાઇલેક્ટ્રિક હીટિંગની તુલના આપો.}
+
+\begin{solutionbox}
+બંને હીટિંગ પદ્ધતિઓ સીધા સંપર્ક વિના ગરમી ઉત્પન્ન કરવા માટે વિદ્યુતચુંબકીય સિદ્ધાંતોનો ઉપયોગ કરે છે.
+
+\begin{center}
+\begin{tikzpicture}
+    % Induction
+    \node at (0,3) {\textbf{Induction Heating}};
+    \draw (0,0) ellipse (1.5 and 0.5);
+    \foreach \y in {0.2, 0.4, 0.6} \draw (0,\y) ellipse (1.5 and 0.5);
+    \node at (0,1.5) {Coil};
+    \fill[gray!30] (-0.5, -0.5) rectangle (0.5, 1);
+    \node at (0,0) {Metal};
+    
+    % Dielectric
+    \node at (5,3) {\textbf{Dielectric Heating}};
+    \draw (4,0) rectangle (6, 2);
+    \fill[yellow!30] (4.2, 0.2) rectangle (5.8, 1.8);
+    \node at (5,1) {Dielectric};
+    \draw (4,2) -- (4,2.5) -- (6,2.5) -- (6,2); % Plate 1
+    \draw (4,0) -- (4,-0.5) -- (6,-0.5) -- (6,0); % Plate 2
+\end{tikzpicture}
+\captionof{figure}{હીટિંગ સિદ્ધાંતો}
+\end{center}
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline \textbf{પેરામીટર} & \textbf{ઇન્ડક્શન હીટિંગ} & \textbf{ડાઇલેક્ટ્રિક હીટિંગ} \\ \hline
+સિદ્ધાંત & એડી કરંટ અને હિસ્ટેરેસિસ & દોલન ક્ષેત્રથી અણુ ઘર્ષણ \\
+સામગ્રી & વાહક ધાતુઓ & અવાહક સામગ્રી (પ્લાસ્ટિક, લાકડું) \\
+આવૃત્તિ & 1-100 kHz & 10-100 MHz \\
+પ્રવેશ & સપાટી અને છીછરી ઊંડાઈ & સામગ્રી દ્વારા એકસરખું \\
+કાર્યક્ષમતા & 80-90\% & 50-70\% \\
+ઉપયોગો & ધાતુ હાર્ડનિંગ, ઓગાળવું, ફોર્જિંગ & પ્લાસ્ટિક વેલ્ડિંગ, ફૂડ પ્રોસેસિંગ, સૂકવવું \\
+\hline
+\end{tabulary}
+\captionof{table}{હીટિંગ પદ્ધતિઓની તુલના}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{ઇન્ડક્શન હીટિંગ}: વાહક સામગ્રીમાં એડી કરંટ બનાવતા વિદ્યુતચુંબકીય પ્રેરણ દ્વારા કાર્ય કરે છે
+    \item \keyword{ડાઇલેક્ટ્રિક હીટિંગ}: પોલર અણુઓના ઝડપી દોલનનું કારણ બને છે જે આંતરિક ઘર્ષણ અને ગરમી પેદા કરે છે
+\end{itemize}
+\end{solutionbox}
+\mnemonicbox{ઇન્ડક્શન ધાતુઓને ગરમ કરે છે, ડાઇલેક્ટ્રિક્સ બિન-ધાતુઓને ગરમ કરે છે}
+
+\questionmarks{4(a) OR}{3}{ફોટો ડાયોડનો ઉપયોગ કરીને ફોટો ઇલેક્ટ્રિક રિલેના સર્કિટ ડાયાગ્રામ દોરો અને સમજાવો.}
+
+\begin{solutionbox}
+ફોટો-ઇલેક્ટ્રિક રિલે આપમેળે સ્વિચિંગ ઓપરેશન નિયંત્રિત કરવા માટે પ્રકાશ શોધનો ઉપયોગ કરે છે.
+
+\begin{center}
+\begin{tikzpicture}
+    % Photo Relay
+    \draw (0,4) -- (4,4) node[right]{Vcc};
+    \draw (0,0) -- (4,0) node[right]{GND};
+    
+    \draw (1,4) to[R, l=$R_1$] (1,2) to[photodiode] (1,0); 
+    \draw (3,2) node[npn] (Q) {};
+    \draw (1,2) -- (Q.B);
+    \draw (Q.E) -- (3,0);
+    \draw (3,4) to[L, l=Relay] (Q.C);
+\end{tikzpicture}
+\captionof{figure}{ફોટો-ઇલેક્ટ્રિક રિલે}
+\end{center}
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline \textbf{પ્રકાશ સ્થિતિ} & \textbf{ફોટોડાયોડ સ્થિતિ} & \textbf{ટ્રાન્ઝિસ્ટર સ્થિતિ} & \textbf{રિલે એક્શન} \\ \hline
+અંધારું & ઉચ્ચ અવરોધ & બંધ & ડી-એનર્જાઇઝ્ડ \\
+પ્રકાશ & ઓછો અવરોધ (વહન કરે છે) & ચાલુ & એનર્જાઇઝ્ડ \\
+\hline
+\end{tabulary}
+\captionof{table}{રિલે ઓપરેશન}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{પ્રકાશ શોધ}: પ્રકાશિત થયેલ ફોટોડાયોડ વહન કરે છે, ટ્રાન્ઝિસ્ટર પર બાયસ બદલે છે
+    \item \keyword{સ્વિચિંગ}: ટ્રાન્ઝિસ્ટર રિલે કોઇલ ચલાવવા માટે નાના ફોટોડાયોડ પ્રવાહને વધારે છે
+\end{itemize}
+\end{solutionbox}
+\mnemonicbox{પ્રકાશ ડાયોડને ચલાવે છે, ડાયોડ ટ્રાન્ઝિસ્ટરને ચલાવે છે, ટ્રાન્ઝિસ્ટર રિલેને ચલાવે છે}
+
+\questionmarks{4(b) OR}{4}{DIAC-TRIAC નો ઉપયોગ કરીને AC પાવર કંટ્રોલનો સર્કિટ ડાયાગ્રામ દોરો અને તેને સમજાવો.}
+
+\begin{solutionbox}
+DIAC-TRIAC સર્કિટ ફેઝ એંગલ એડજસ્ટમેન્ટ દ્વારા AC પાવરને સરળ રીતે નિયંત્રિત કરવા દે છે.
+
+\begin{center}
+\begin{tikzpicture}
+    \draw (0,4) to[sV, l=AC] (0,0);
+    \draw (0,4) to[R, l=Load] (2,4) -- (4,4);
+    \draw (4,4) to[triac] (4,0) -- (0,0);
+    
+    % Trigger
+    \draw (2,4) to[R, l=$R_1$] (2,2) to[C, l=$C$] (2,0);
+    \draw (2,2) to[D] (3,2) -- (3,1.3); \node at (2.5, 2.3) {DIAC};
+\end{tikzpicture}
+\captionof{figure}{DIAC-TRIAC પાવર કંટ્રોલ}
+\end{center}
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline \textbf{ઘટક} & \textbf{કાર્ય} \\ \hline
+$R_1-C$ & ફેઝ વિલંબ માટે વેરિએબલ ટાઇમ કોન્સ્ટન્ટ \\
+DIAC & કેપેસિટર વોલ્ટેજ બ્રેકઓવર પહોંચે ત્યારે TRIAC ટ્રિગર કરે છે \\
+TRIAC & ટ્રિગરિંગ પોઇન્ટ પર આધારિત લોડ કરંટ નિયંત્રિત કરે છે \\
+લોડ & ફેઝ કંટ્રોલ પર આધારિત આંશિક AC વેવફોર્મ પ્રાપ્ત કરે છે \\
+\hline
+\end{tabulary}
+\captionof{table}{સર્કિટ ઘટકો}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{ફેઝ કંટ્રોલ}: RC નેટવર્ક AC સાયકલની અંદર ટ્રિગરિંગ પોઇન્ટમાં વિલંબ બનાવે છે
+    \item \keyword{દ્વિદિશીય ઓપરેશન}: AC સાયકલના બંને અર્ધ પર કામ કરે છે
+\end{itemize}
+\end{solutionbox}
+\mnemonicbox{વિલંબ કેપેસિટર પર શરૂ થાય છે, વિશ્વસનીય સ્વતંત્ર AC કંટ્રોલ ટ્રિગર કરે છે}
+
+\questionmarks{4(c) OR}{7}{વેવફોર્મ સાથે કામ કરતા IC555 ત્રણ તબક્કાના ક્રમિક ટાઈમરને સમજાવો.}
+
+\begin{solutionbox}
+ત્રણ-તબક્કાનો ક્રમિક ટાઇમર પ્રક્રિયા નિયંત્રણ માટે સમયબદ્ધ ક્રમ બનાવવા માટે બહુવિધ 555 ICનો ઉપયોગ કરે છે.
+
+\begin{center}
+\begin{tikzpicture}[gtu block/.style={draw, rectangle, minimum width=1.5cm, minimum height=1cm}, node distance=2cm]
+    \node[gtu block] (T1) {Timer 1};
+    \node[gtu block, right of=T1] (T2) {Timer 2};
+    \node[gtu block, right of=T2] (T3) {Timer 3};
+    
+    \draw[->] (-1,0) node[left]{Trig} -- (T1);
+    \draw[->] (T1) -- (T2);
+    \draw[->] (T2) -- (T3);
+    
+    \draw (T1) -- (0,1) node[above]{Out1};
+    \draw (T2) -- (2,1) node[above]{Out2};
+    \draw (T3) -- (4,1) node[above]{Out3};
+\end{tikzpicture}
+\captionof{figure}{ક્રમિક ટાઈમર લોજિક}
+\end{center}
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline \textbf{તબક્કો} & \textbf{ક્રિયા} & \textbf{અવધિ} & \textbf{આગલા તબક્કા ટ્રિગર} \\ \hline
+પ્રારંભિક & બધા આઉટપુટ્સ LOW & - & બાહ્ય ટ્રિગર \\
+તબક્કો 1 & આઉટપુટ 1 HIGH & T1 ($R_1 C_1$) & આઉટપુટ 1 ફોલિંગ એજ \\
+તબક્કો 2 & આઉટપુટ 2 HIGH & T2 ($R_2 C_2$) & આઉટપુટ 2 ફોલિંગ એજ \\
+તબક્કો 3 & આઉટપુટ 3 HIGH & T3 ($R_3 C_3$) & આઉટપુટ 3 ફોલિંગ એજ \\
+રીસેટ & બધા આઉટપુટ્સ LOW & T4 (રીસેટ સમય) & નવો બાહ્ય ટ્રિગર \\
+\hline
+\end{tabulary}
+\captionof{table}{ક્રમિક ટાઈમિંગ}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{કેસ્કેડિંગ કનેક્શન}: પહેલા ટાઇમરનો આઉટપુટ બીજાને ટ્રિગર કરે છે, અને આ રીતે આગળ વધે છે
+    \item \keyword{ટાઇમિંગ કંટ્રોલ}: RC વેલ્યુ સાથે દરેક તબક્કાનો સમયગાળો સ્વતંત્ર રીતે સમાયોજિત કરી શકાય છે
+\end{itemize}
+\end{solutionbox}
+\mnemonicbox{પ્રથમ તબક્કો સમાપ્ત થાય, બીજો શરૂ થાય, ત્રીજો અનુસરે}
+
+\questionmarks{5(a)}{3}{ડીસી શંટ મોટરના સોલિડ સ્ટેટ કંટ્રોલ દોરો અને સમજાવો.}
+
+\begin{solutionbox}
+સોલિડ-સ્ટેટ DC મોટર કંટ્રોલ મોટરને આપવામાં આવતા વોલ્ટેજને નિયંત્રિત કરવા માટે SCRનો ઉપયોગ કરે છે.
+
+\begin{center}
+\begin{tikzpicture}
+    % Bridge Rectifier feeding Motor
+    \draw (0,0) node[draw, rectangle] (rect) {Bridge Rectifier};
+    \draw (-2, 0) node[left]{AC} -- (rect);
+    \draw (rect) -- (2,0) node[thyristor] (T) {};
+    \draw (T.east) -- (4,0) node[draw, circle] (M) {M};
+    \node at (4, -1) {DC Shunt Motor};
+    
+    % Field
+    \draw (3, 1) to[L, l=Field] (5,1);
+\end{tikzpicture}
+\captionof{figure}{સોલિડ સ્ટેટ DC મોટર કંટ્રોલ}
+\end{center}
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline \textbf{પદ્ધતિ} & \textbf{ઓપરેશન} & \textbf{ફાયદો} \\ \hline
+ફેઝ કંટ્રોલ & SCR ફાયરિંગ એંગલ બદલે છે & સરળ ગતિ નિયંત્રણ \\
+ચોપર કંટ્રોલ & પલ્સ વિડ્થ મોડ્યુલેશન & ઉચ્ચ કાર્યક્ષમતા \\
+ક્લોઝ્ડ-લૂપ & ટેકોમીટરથી ફીડબેક & સચોટ ગતિ નિયમન \\
+\hline
+\end{tabulary}
+\captionof{table}{કંટ્રોલ પદ્ધતિઓ}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{ગતિ નિયમન}: મોટરની ગતિ બદલવા માટે આર્મેચર વોલ્ટેજ નિયંત્રિત કરે છે
+    \item \keyword{ટોર્ક કંટ્રોલ}: કરંટ મર્યાદિત કરીને ઉચ્ચ સ્ટાર્ટિંગ ટોર્ક જાળવે છે
+\end{itemize}
+\end{solutionbox}
+\mnemonicbox{SCR પ્રવાહ નિયંત્રિત કરે છે મોટર પાવર વિતરણ માટે}
+
+\questionmarks{5(b)}{4}{સ્ટેપર મોટરના કામના સિદ્ધાંતને સમજાવો.}
+
+\begin{solutionbox}
+સ્ટેપર મોટર્સ વિદ્યુતચુંબકીય સિદ્ધાંતો દ્વારા ડિજિટલ પલ્સને ચોક્કસ યાંત્રિક ફેરફારમાં રૂપાંતરિત કરે છે.
+
+\begin{center}
+\begin{tikzpicture}
+    \draw (0,0) circle (1.5);
+    \foreach \a in {0, 90, 180, 270} \draw (0,0) -- (\a:1.5);
+    \node at (0,0) {Rotor};
+    \node at (0,2) {Stator Coils};
+\end{tikzpicture}
+\captionof{figure}{સ્ટેપર મોટર કન્સેપ્ટ}
+\end{center}
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline \textbf{સ્ટેપ પ્રકાર} & \textbf{રોટેશન એંગલ} & \textbf{કંટ્રોલ પદ્ધતિ} \\ \hline
+ફુલ સ્ટેપ & સામાન્ય રીતે $1.8^{\circ}$ કે $0.9^{\circ}$ & એક સમયે એક ફેઝ \\
+હાફ સ્ટેપ & ફુલ સ્ટેપનો અર્ધો & બે ફેઝ વૈકલ્પિક \\
+માઇક્રો-સ્ટેપ & ફુલ સ્ટેપનો અંશ & PWM કરંટ કંટ્રોલ \\
+વેવ ડ્રાઇવ & ફુલ સ્ટેપ એંગલ & એક ફેઝ એનર્જાઇઝ્ડ \\
+\hline
+\end{tabulary}
+\captionof{table}{સ્ટેપિંગ મોડ્સ}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{ડિજિટલ પોઝિશનિંગ}: દરેક પલ્સ મોટરને ચોક્કસ ખૂણે ફેરવે છે
+    \item \keyword{હોલ્ડિંગ ટોર્ક}: ફેરફાર વિના સ્થિતિ જાળવે છે જ્યારે એનર્જાઇઝ્ડ હોય
+\end{itemize}
+\end{solutionbox}
+\mnemonicbox{પલ્સ ચોક્કસ સ્થિતિગત સ્ટેપ્સ ઉત્પન્ન કરે છે}
+
+\questionmarks{5(c)}{7}{PLC ના બ્લોક ડાયાગ્રામ દોરો અને દરેક બ્લોકનું કાર્ય સમજાવો.}
+
+\begin{solutionbox}
+પ્રોગ્રામેબલ લોજિક કંટ્રોલર (PLC) એ ઓટોમેશન કંટ્રોલ માટેનું ઔદ્યોગિક ડિજિટલ કમ્પ્યુટર છે.
+
+\begin{center}
+\begin{tikzpicture}[gtu block/.style={draw, rectangle, minimum width=2.5cm, minimum height=1.2cm}, node distance=3cm]
+    \node[gtu block] (cpu) {CPU};
+    \node[gtu block, left of=cpu] (in) {Input Module};
+    \node[gtu block, right of=cpu] (out) {Output Module};
+    \node[gtu block, below of=cpu] (mem) {Memory};
+    \node[gtu block, above of=cpu] (pwr) {Power Supply};
+    
+    \draw[<->] (in) -- (cpu);
+    \draw[<->] (cpu) -- (out);
+    \draw[<->] (cpu) -- (mem);
+    \draw[->] (pwr) -- (cpu);
+\end{tikzpicture}
+\captionof{figure}{PLC આર્કિટેક્ચર}
+\end{center}
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline \textbf{ઘટક} & \textbf{કાર્ય} \\ \hline
+પાવર સપ્લાય & મુખ્ય પાવરને PLC માટે જરૂરી DC માં રૂપાંતરિત કરે છે \\
+CPU & પ્રોગ્રામ ચલાવે છે અને I/O પર આધારિત નિર્ણયો કરે છે \\
+મેમરી & પ્રોગ્રામ અને ડેટા સંગ્રહિત કરે છે (ROM, RAM, EEPROM) \\
+ઇનપુટ મોડ્યુલ & સેન્સર, સ્વિચ, એન્કોડર સાથે ઇન્ટરફેસ કરે છે \\
+આઉટપુટ મોડ્યુલ & એક્ચુએટર, મોટર, વાલ્વ, ઇન્ડિકેટર નિયંત્રિત કરે છે \\
+કમ્યુનિકેશન મોડ્યુલ & અન્ય PLC, કમ્પ્યુટર, નેટવર્ક સાથે જોડાય છે \\
+પ્રોગ્રામિંગ ડિવાઇસ & PLC પ્રોગ્રામ લખવા, એડિટ કરવા, મોનિટર કરવા માટે વપરાય છે \\
+\hline
+\end{tabulary}
+\captionof{table}{PLC મોડ્યુલ્સ}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{સ્કેન સાયકલ}: સતત ઇનપુટ વાંચે છે, પ્રોગ્રામ ચલાવે છે, આઉટપુટ અપડેટ કરે છે
+    \item \keyword{પ્રોગ્રામિંગ ભાષાઓ}: લેડર લોજિક, ફંક્શન બ્લોક, સ્ટ્રક્ચર્ડ ટેક્સ્ટ, વગેરે
+\end{itemize}
+\end{solutionbox}
+\mnemonicbox{પાવર પ્રોસેસિંગને કેન્દ્રિત કરે છે, ઇનપુટ/આઉટપુટ ઓટોમેશન બનાવે છે}
+
+\questionmarks{5(a) OR}{3}{ડીસી સર્વો મોટરનું બાંધકામ દોરો અને સમજાવો.}
+
+\begin{solutionbox}
+DC સર્વો મોટર્સ ઓટોમેશન અને રોબોટિક્સ માટે ફીડબેક સાથે ચોક્કસ પોઝિશન કંટ્રોલ પ્રદાન કરે છે.
+
+\begin{center}
+\begin{tikzpicture}
+    \draw (0,0) rectangle (3,1.5);
+    \node at (1.5, 0.75) {DC Motor};
+    \draw (3, 0.75) -- (4, 0.75); % Shaft
+    \draw (4, 0.5) rectangle (4.5, 1); % Encoder
+    \node[above] at (4.25, 1) {Encoder};
+\end{tikzpicture}
+\captionof{figure}{DC સર્વો મોટર}
+\end{center}
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline \textbf{ઘટક} & \textbf{કાર્ય} \\ \hline
+આર્મેચર & ચુંબકીય ક્ષેત્રની અંદર ફરે છે \\
+ફીલ્ડ મેગ્નેટ્સ & ચુંબકીય ક્ષેત્ર બનાવે છે (ઘણીવાર કાયમી ચુંબક) \\
+કમ્યુટેટર & ફરતા આર્મેચરને પાવર ટ્રાન્સફર કરે છે \\
+ફીડબેક ડિવાઇસ & પોઝિશન/સ્પીડ ફીડબેક માટે એન્કોડર/ટેકોમીટર \\
+બ્રશ & કમ્યુટેટરને પાવર કનેક્ટ કરે છે \\
+\hline
+\end{tabulary}
+\captionof{table}{સર્વો ઘટકો}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{ઓછી જડતા}: ખાસ ડિઝાઇન ઝડપી એક્સેલરેશન/ડિસેલરેશનની મંજૂરી આપે છે
+    \item \keyword{ઉચ્ચ ટોર્ક-ટુ-ઇનર્શિયા રેશિઓ}: કંટ્રોલ સિગ્નલનો ઝડપથી જવાબ આપે છે
+\end{itemize}
+\end{solutionbox}
+\mnemonicbox{ચોક્સાઈભર્યું પોઝિશન ફીડબેક સટીક નિયંત્રણ ચલાવે છે}
+
+\questionmarks{5(b) OR}{4}{BLDC મોટરની કામગીરી સમજાવો.}
+
+\begin{solutionbox}
+બ્રશલેસ DC (BLDC) મોટર્સ યાંત્રિક બ્રશ અને કમ્યુટેટરને બદલે ઇલેક્ટ્રોનિક કમ્યુટેશનનો ઉપયોગ કરે છે.
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline \textbf{ઘટક} & \textbf{કાર્ય} \\ \hline
+સ્ટેટર & ફિક્સ્ડ વાઇન્ડિંગ્સ જે ફરતું ચુંબકીય ક્ષેત્ર ઉત્પન્ન કરે છે \\
+રોટર & કાયમી ચુંબક જે ફરતા ક્ષેત્રને અનુસરે છે \\
+ઇલેક્ટ્રોનિક કંટ્રોલર & યાંત્રિક કમ્યુટેશનનું સ્થાન લે છે \\
+હોલ સેન્સર & સિન્ક્રોનાઇઝ્ડ સ્વિચિંગ માટે રોટર પોઝિશન શોધે છે \\
+ડ્રાઇવર સર્કિટ & સ્ટેટર કોઇલ્સમાં પ્રવાહનો ક્રમ પ્રદાન કરે છે \\
+\hline
+\end{tabulary}
+\captionof{table}{BLDC ઘટકો}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{કમ્યુટેશન}: ઇલેક્ટ્રોનિક સ્વિચિંગ સિક્વન્સ સ્ટેટર વાઇન્ડિંગ્સમાં પાવર આપે છે
+    \item \keyword{કાર્યક્ષમતા}: બ્રશ લોસિસના નિર્મૂલનને કારણે ઉચ્ચ કાર્યક્ષમતા
+    \item \keyword{વિશ્વસનીયતા}: બ્રશનો ઘસારો કે સ્પાર્કિંગ નથી, લાંબુ આયુષ્ય
+\end{itemize}
+\end{solutionbox}
+\mnemonicbox{ઇલેક્ટ્રોનિક સ્વિચિંગ બ્રશ વગર ફેરફાર બનાવે છે}
+
+\questionmarks{5(c) OR}{7}{VFD નું બાંધકામ અને કાર્ય સમજાવો.}
+
+\begin{solutionbox}
+વેરિએબલ ફ્રિક્વન્સી ડ્રાઇવ (VFD) આવૃત્તિ અને વોલ્ટેજમાં ફેરફાર કરીને AC મોટરની ગતિ નિયંત્રિત કરે છે.
+
+\begin{center}
+\begin{tikzpicture}[gtu block/.style={draw, rectangle, minimum width=2cm, minimum height=1cm, align=center}, node distance=2.5cm]
+    \node[gtu block] (rect) {Rectifier};
+    \node[gtu block, right of=rect] (dc) {DC Link};
+    \node[gtu block, right of=dc] (inv) {Inverter};
+    \node[right of=inv] (motor) {AC Motor};
+    
+    \draw[->] (-1.5,0) node[left]{AC} -- (rect);
+    \draw[->] (rect) -- (dc);
+    \draw[->] (dc) -- (inv);
+    \draw[->] (inv) -- (motor);
+\end{tikzpicture}
+\captionof{figure}{VFD બ્લોક ડાયાગ્રામ}
+\end{center}
+
+\begin{center}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline \textbf{વિભાગ} & \textbf{ઘટકો} & \textbf{કાર્ય} \\ \hline
+રેક્ટિફાયર & ડાયોડ/SCRs & AC ને DC માં રૂપાંતરિત કરે છે \\
+DC બસ & કેપેસિટર, ઇન્ડક્ટર & DC ને ફિલ્ટર અને સ્મૂધ કરે છે \\
+ઇન્વર્ટર & IGBTs/ટ્રાન્ઝિસ્ટર & DC ને ચલિત આવૃત્તિ AC માં રૂપાંતરિત કરે છે \\
+કંટ્રોલ સર્કિટ & માઇક્રોપ્રોસેસર & સ્વિચિંગ આવૃત્તિ અને પેટર્નને નિયંત્રિત કરે છે \\
+કૂલિંગ સિસ્ટમ & ફેન, હીટ સિંક & સુરક્ષિત ઓપરેટિંગ તાપમાન જાળવે છે \\
+પ્રોટેક્શન સર્કિટ & સેન્સર, રિલે & ફોલ્ટથી નુકસાન અટકાવે છે \\
+\hline
+\end{tabulary}
+\captionof{table}{VFD માળખું}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{ગતિ નિયંત્રણ}: સતત ટોર્ક પ્રદાન કરવા માટે V/f રેશિઓ જાળવવામાં આવે છે
+    \item \keyword{ઊર્જા બચત}: વાસ્તવિક લોડ જરૂરિયાતો અનુસાર પાવર સમાયોજિત કરે છે
+\end{itemize}
+\end{solutionbox}
+\mnemonicbox{રેક્ટિફાય, ફિલ્ટર, મોટર કંટ્રોલ માટે આવૃત્તિ બદલો}
+
+\end{document}
+
+
