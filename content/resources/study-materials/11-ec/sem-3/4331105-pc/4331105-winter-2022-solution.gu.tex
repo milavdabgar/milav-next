@@ -1,0 +1,1329 @@
+\documentclass{article}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/preamble.tex}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/gujarati-boxes.tex}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/commands.tex}
+
+\title{Programming In C (4331105) - Winter 2022 Solution}
+\date{March 28, 2023}
+
+\begin{document}
+\maketitle
+
+\questionmarks{1}{a}{3}
+\textbf{C ભાષાના મૂળભૂત data types તેમની range સાથે જણાવો}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+    \begin{tabulary}{\linewidth}{|L|L|L|}
+        \hline
+        \textbf{Data Type} & \textbf{Size (bytes)} & \textbf{Range} \\
+        \hline
+        char & 1 & -128 થી 127 \\
+        \hline
+        int & 2 or 4 & -32,768 થી 32,767 (2 bytes) અથવા -2,147,483,648 થી 2,147,483,647 (4 bytes) \\
+        \hline
+        float & 4 & 3.4E-38 થી 3.4E+38 \\
+        \hline
+        double & 8 & 1.7E-308 થી 1.7E+308 \\
+        \hline
+    \end{tabulary}
+
+    \begin{mnemonicbox}"CIFD - Computer Is Fundamentally Digital"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{1}{b}{4}
+\textbf{વેરીએબલના નામ માટેના નિયમો સમજાવો.}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+    \begin{tabulary}{\linewidth}{|L|L|}
+        \hline
+        \textbf{નિયમ} & \textbf{ઉદાહરણ} \\
+        \hline
+        અક્ષર અથવા અંડરસ્કોરથી શરૂ થવું જોઈએ & માન્ય: \code{\_count}, \code{name} / અમાન્ય: \code{1score} \\
+        \hline
+        અક્ષરો, અંકો, અંડરસ્કોર હોઈ શકે છે & માન્ય: \code{user\_1} / અમાન્ય: \code{user-1} \\
+        \hline
+        Keywords નો ઉપયોગ કરી શકાતો નથી & માન્ય: \code{integer} / અમાન્ય: \code{int} \\
+        \hline
+        Case sensitive છે & \code{total} અને \code{TOTAL} અલગ છે \\
+        \hline
+    \end{tabulary}
+
+    \textbf{આકૃતિ:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu block, align=center] (rules) {\textbf{વેરિએબલ નામકરણ નિયમો} \\ \rule{4cm}{0.4pt} \\ \code{[A-Z, a-z, \_]} $\rightarrow$ \code{[A-Z, a-z, 0-9, \_]*}};
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{mnemonicbox}"LUCK - Letters Underscore Case Keywords"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{1}{c}{7}
+\textbf{ફ્લોચાર્ટની વ્યાખ્યા લખો. બે પૂર્ણાંક નંબરો N1 અને N2 માંથી લઘુત્તમ શોધવા માટેનો ફ્લોચાર્ટ દોરો.}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+    ફ્લોચાર્ટ એ અલ્ગોરિધમનું ચિત્રાત્મક નિરૂપણ છે જે પ્રમાણભૂત પ્રતીકોનો ઉપયોગ કરીને પ્રક્રિયાના પગલાં બતાવે છે.
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu start] (start) {શરૂઆત};
+        \node[gtu input, right=of start] (input) {Input N1, N2};
+        \node[gtu decision, right=of input] (dec) {N1 < N2?};
+        \node[gtu process, above right=of dec] (min1) {min = N1};
+        \node[gtu process, below right=of dec] (min2) {min = N2};
+        \node[gtu output, right=of dec, xshift=3cm] (output) {Output min};
+        \node[gtu stop, right=of output] (end) {અંત};
+
+        \draw[gtu arrow] (start) -- (input);
+        \draw[gtu arrow] (input) -- (dec);
+        \draw[gtu arrow] (dec) |- node[near start, above] {હા} (min1);
+        \draw[gtu arrow] (dec) |- node[near start, below] {ના} (min2);
+        \draw[gtu arrow] (min1) -| (output);
+        \draw[gtu arrow] (min2) -| (output);
+        \draw[gtu arrow] (output) -- (end);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{itemize}
+        \item \textbf{ફ્લોચાર્ટ પ્રતીકો}: તાર્કિક પગલાંનું દ્રશ્ય નિરૂપણ
+        \item \textbf{નિર્ણય ડાયમંડ}: પ્રવાહનો માર્ગ નક્કી કરવા શરત તપાસે છે
+        \item \textbf{પ્રક્રિયા બોક્સ}: ગણતરીઓ અથવા કામગીરી સમાવે છે
+    \end{itemize}
+
+    \begin{mnemonicbox}"FAST - Flow Analysis Shown Through-charts"\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{1}{c}{7}
+\textbf{અલગોરિથમની વ્યાખ્યા લખો. વર્તુળનું ક્ષેત્રફળ અને પરિઘ ગણવા માટેનો અલગોરિથમ લખો.}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+    અલ્ગોરિધમ એ કોઈ ચોક્કસ સમસ્યા ઉકેલવા માટેની સુનિશ્ચિત સૂચનાઓની પગલાવાર પ્રક્રિયા છે.
+
+    \textbf{વર્તુળની ગણતરી માટે અલ્ગોરિધમ:}
+
+\begin{lstlisting}
+1. START
+2. Input radius r
+3. Calculate area = PI * r * r
+4. Calculate circumference = 2 * PI * r
+5. Output area, circumference
+6. STOP
+\end{lstlisting}
+
+    \begin{tabulary}{\linewidth}{|L|L|L|}
+        \hline
+        \textbf{પગલું} & \textbf{કામગીરી} & \textbf{સૂત્ર} \\
+        \hline
+        1 & ત્રિજ્યા મેળવો & Input r \\
+        \hline
+        2 & ક્ષેત્રફળ ગણો & $A = \pi \times r^2$ \\
+        \hline
+        3 & પરિઘ ગણો & $C = 2 \times \pi \times r$ \\
+        \hline
+        4 & પરિણામ દર્શાવો & Output A, C \\
+        \hline
+    \end{tabulary}
+
+    \begin{mnemonicbox}"SICS - Steps In Clear Sequence"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2}{a}{3}
+\textbf{printf() અને scanf() વચ્ચેનો તફાવત લખો.}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+    \begin{tabulary}{\linewidth}{|L|L|L|}
+        \hline
+        \textbf{ફીચર} & \textbf{printf()} & \textbf{scanf()} \\
+        \hline
+        ઉદ્દેશ & સ્ક્રીન પર ડેટા આઉટપુટ કરે છે & કીબોર્ડથી ડેટા ઇનપુટ લે છે \\
+        \hline
+        ફોર્મેટ & \code{printf("format", variables)} & \code{scanf("format", \&variables)} \\
+        \hline
+        Returns & પ્રિન્ટ થયેલ અક્ષરોની સંખ્યા & સફળતાપૂર્વક વાંચેલ વસ્તુઓની સંખ્યા \\
+        \hline
+        એડ્રેસિંગ & વેરિએબલ નામોનો ઉપયોગ કરે છે & વેરિએબલ્સના એડ્રેસ (\&var) નો ઉપયોગ કરે છે \\
+        \hline
+    \end{tabulary}
+
+    \begin{mnemonicbox}"IO-AR - Input Output-Address Returns"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2}{b}{4}
+\textbf{Conditional operator નો ઉપયોગ કરીને બે નંબરોમાંથી મહત્તમ શોધવા માટે C પ્રોગ્રામ લખો.}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+int main() {
+    int num1, num2, max;
+    
+    printf("Enter two numbers: ");
+    scanf("%d %d", &num1, &num2);
+    
+    max = (num1 > num2) ? num1 : num2;
+    
+    printf("Maximum number is: %d", max);
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \textbf{આકૃતિ:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu input] (input) {\textbf{Input} \\ num1, num2};
+        \node[gtu decision, right=of input] (cond) {\textbf{Condition} \\ num1 > num2?};
+        \node[gtu output, right=of cond] (output) {\textbf{Output} \\ max};
+
+        \draw[gtu arrow] (input) -- (cond);
+        \draw[gtu arrow] (cond) -- (output);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{mnemonicbox}"CTO - Condition Then Output"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2}{c}{7}
+\textbf{એરિથમેટિક અને રીલેશનલ ઓપરેટર્સ ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+    \begin{tabulary}{\linewidth}{|L|C|L|L|}
+        \hline
+        \textbf{પ્રકાર} & \textbf{Operators} & \textbf{ઉદાહરણ} & \textbf{પરિણામ} \\
+        \hline
+        \multicolumn{4}{|l|}{\textbf{એરિથમેટિક ઓપરેટર્સ}} \\
+        \hline
+        સરવાળો & + & 5 + 3 & 8 \\
+        \hline
+        બાદબાકી & - & 5 - 3 & 2 \\
+        \hline
+        ગુણાકાર & * & 5 * 3 & 15 \\
+        \hline
+        ભાગાકાર & / & 5 / 3 & 1 (પૂર્ણાંક ભાગાકાર) \\
+        \hline
+        મોડ્યુલસ & \% & 5 \% 3 & 2 (શેષ) \\
+        \hline
+        \multicolumn{4}{|l|}{\textbf{રીલેશનલ ઓપરેટર્સ}} \\
+        \hline
+        સમાન & == & 5 == 3 & 0 (ખોટું) \\
+        \hline
+        સમાન નથી & != & 5 != 3 & 1 (સાચું) \\
+        \hline
+        મોટું & > & 5 > 3 & 1 (સાચું) \\
+        \hline
+        નાનું & < & 5 < 3 & 0 (ખોટું) \\
+        \hline
+        મોટું અથવા સમાન & >= & 5 >= 5 & 1 (સાચું) \\
+        \hline
+        નાનું અથવા સમાન & <= & 5 <= 3 & 0 (ખોટું) \\
+        \hline
+    \end{tabulary}
+
+    \begin{mnemonicbox}"ASMDCRO - Add Subtract Multiply Divide Compare Return Output"\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{2}{a}{3}
+\textbf{ઓપરેટરની અગ્રતા (Precedence) ધ્યાનમાં રાખીને, જો expression (25/3) * 4 – 10 \% 3 + 9/2 નું મૂલ્યાંકન કરવામાં આવે તો દરેક સ્ટેપ અને છેલ્લો જવાબ લખો.}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+    \begin{tabulary}{\linewidth}{|L|L|L|L|}
+        \hline
+        \textbf{પગલું} & \textbf{કામગીરી} & \textbf{ગણતરી} & \textbf{પરિણામ} \\
+        \hline
+        1 & કૌંસ (25/3) & 25/3 = 8 (પૂર્ણાંક ભાગાકાર) & 8 \\
+        \hline
+        2 & મોડ્યુલસ 10 \% 3 & 10 \% 3 = 1 & 1 \\
+        \hline
+        3 & ભાગાકાર 9/2 & 9/2 = 4 (પૂર્ણાંક ભાગાકાર) & 4 \\
+        \hline
+        4 & ગુણાકાર 8 * 4 & 8 * 4 = 32 & 32 \\
+        \hline
+        5 & બાદબાકી 32 - 1 & 32 - 1 = 31 & 31 \\
+        \hline
+        6 & સરવાળો 31 + 4 & 31 + 4 = 35 & 35 \\
+        \hline
+    \end{tabulary}
+
+    અંતિમ જવાબ = 35
+
+    \begin{mnemonicbox}"PEMDAS - Parentheses, Exponents, Multiplication/Division, Addition/Subtraction"\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{2}{b}{4}
+\textbf{એલ્જેબ્રીક સમીકરણના ઉકેલ માટેનો C પ્રોગ્રામ લખો.}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+#include <math.h>
+
+int main() {
+    float a, b, c;
+    float discriminant, root1, root2;
+    
+    printf("Enter coefficients a, b, c: ");
+    scanf("%f %f %f", &a, &b, &c);
+    
+    discriminant = b*b - 4*a*c;
+    
+    if (discriminant > 0) {
+        root1 = (-b + sqrt(discriminant)) / (2*a);
+        root2 = (-b - sqrt(discriminant)) / (2*a);
+        printf("Roots: %.2f and %.2f", root1, root2);
+    } else if (discriminant == 0) {
+        root1 = -b / (2*a);
+        printf("Root: %.2f", root1);
+    } else {
+        printf("No real roots");
+    }
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \textbf{આકૃતિ:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu input] (input) {Input a,b,c};
+        \node[gtu process, below=of input] (calc) {Calculate $d = b^2-4ac$};
+        \node[gtu decision, below=of calc] (dec1) {$d > 0$?};
+        \node[gtu process, left=of dec1] (real2) {બે વાસ્તવિક ઉકેલ};
+        \node[gtu decision, right=of dec1] (dec2) {$d = 0$?};
+        \node[gtu process, below=of dec2] (real1) {એક વાસ્તવિક ઉકેલ};
+        \node[gtu process, right=of dec2, xshift=1cm] (imag) {વાસ્તવિક ઉકેલ નથી};
+
+        \draw[gtu arrow] (input) -- (calc);
+        \draw[gtu arrow] (calc) -- (dec1);
+        \draw[gtu arrow] (dec1) -- node[above] {હા} (real2);
+        \draw[gtu arrow] (dec1) -- node[above] {ના} (dec2);
+        \draw[gtu arrow] (dec2) -- node[right] {હા} (real1);
+        \draw[gtu arrow] (dec2) -- node[above] {ના} (imag);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{mnemonicbox}"QDR - Quadratic Discriminant Roots"\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{2}{c}{7}
+\textbf{લોજીકલ અને બિટવાઈઝ ઓપરેટર્સ ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+    \begin{tabulary}{\linewidth}{|L|C|L|L|}
+        \hline
+        \textbf{પ્રકાર} & \textbf{Operators} & \textbf{ઉદાહરણ} & \textbf{પરિણામ} \\
+        \hline
+        \multicolumn{4}{|l|}{\textbf{લોજીકલ ઓપરેટર્સ}} \\
+        \hline
+        લોજીકલ AND & \&\& & (5>3) \&\& (4<7) & 1 (સાચું) \\
+        \hline
+        લોજીકલ OR & || & (5<3) || (4<7) & 1 (સાચું) \\
+        \hline
+        લોજીકલ NOT & ! & !(5>3) & 0 (ખોટું) \\
+        \hline
+        \multicolumn{4}{|l|}{\textbf{બિટવાઈઝ ઓપરેટર્સ}} \\
+        \hline
+        બિટવાઈઝ AND & \& & 5 \& 3 (101 \& 011) & 1 (001) \\
+        \hline
+        બિટવાઈઝ OR & | & 5 | 3 (101 | 011) & 7 (111) \\
+        \hline
+        બિટવાઈઝ XOR & \^{} & 5 \^{} 3 (101 \^{} 011) & 6 (110) \\
+        \hline
+        બિટવાઈઝ NOT & \~{} & \~{}5 (\~{} 00000101) & -6 (11111010) \\
+        \hline
+        Left Shift & << & 5 << 1 (101 << 1) & 10 (1010) \\
+        \hline
+        Right Shift & >> & 5 >> 1 (101 >> 1) & 2 (10) \\
+        \hline
+    \end{tabulary}
+
+    \begin{mnemonicbox}"LAND BORNS - Logical AND OR NOT, Bitwise OR AND NOT Shift"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3}{a}{3}
+\textbf{'go to' statement નો ઉપયોગ ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+    \code{goto} statement પ્રોગ્રામમાં લેબલ થયેલ statement પર સીધો જમ્પ કરવાની મંજૂરી આપે છે.
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+int main() {
+    int i = 0;
+    
+start:
+    printf("%d ", i);
+    i++;
+    if (i < 5)
+        goto start;
+    
+    return 0;
+}
+// આઉટપુટ: 0 1 2 3 4
+\end{lstlisting}
+
+    \textbf{આકૃતિ:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu start] (start) {Start};
+        \node[gtu process, below=of start] (body) {print(i)\\ i++};
+        \node[gtu decision, below=of body] (cond) {i < 5?};
+        \node[gtu stop, below=of cond] (end) {End};
+
+        \draw[gtu arrow] (start) -- (body);
+        \draw[gtu arrow] (body) -- (cond);
+        \draw[gtu arrow] (cond) -- node[right] {ના} (end);
+        \draw[gtu arrow] (cond.east) -- ++(1,0) |- node[near start, right] {હા} (start);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{mnemonicbox}"JUMP - Just Unconditionally Move Program-counter"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3}{b}{4}
+\textbf{આપેલ નંબર બેકી છે કે એકી તે શોધવા માટે C પ્રોગ્રામ લખો.}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+int main() {
+    int num;
+    
+    printf("Enter a number: ");
+    scanf("%d", &num);
+    
+    if (num % 2 == 0)
+        printf("%d is even", num);
+    else
+        printf("%d is odd", num);
+        
+    return 0;
+}
+\end{lstlisting}
+
+    \textbf{આકૃતિ:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu start] (start) {Start};
+        \node[gtu input, right=of start] (input) {Input num};
+        \node[gtu decision, right=of input] (cond) {num \% 2 == 0?};
+        \node[gtu output, above right=of cond] (even) {Print "Even"};
+        \node[gtu output, below right=of cond] (odd) {Print "Odd"};
+        \node[gtu stop, right=of cond, xshift=3cm] (end) {End};
+
+        \draw[gtu arrow] (start) -- (input);
+        \draw[gtu arrow] (input) -- (cond);
+        \draw[gtu arrow] (cond) |- node[near start, above] {હા} (even);
+        \draw[gtu arrow] (cond) |- node[near start, below] {ના} (odd);
+        \draw[gtu arrow] (even) -| (end);
+        \draw[gtu arrow] (odd) -| (end);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{mnemonicbox}"MODE - Modulo Odd-Even Determination"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3}{c}{7}
+\textbf{else if ladder ફ્લોચાર્ટ દોરી ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+    Else-if ladder ક્રમમાં બહુવિધ શરતો તપાસવા માટે વપરાય છે, જેમાં પ્રથમ સાચી શરત સાથે સંકળાયેલ બ્લોક એક્ઝિક્યુટ થાય છે.
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu start] (start) {Start};
+        \node[gtu input, below=of start] (input) {Input marks};
+        \node[gtu decision, below=of input] (cond1) {marks $\ge$ 90?};
+        \node[gtu process, right=of cond1, xshift=1.5cm] (gradeA) {grade = A};
+        
+        \node[gtu decision, below=of cond1, yshift=-1cm] (cond2) {marks $\ge$ 80?};
+        \node[gtu process, right=of cond2, xshift=1.5cm] (gradeB) {grade = B};
+        
+        \node[gtu decision, below=of cond2, yshift=-1cm] (cond3) {marks $\ge$ 70?};
+        \node[gtu process, right=of cond3, xshift=1.5cm] (gradeC) {grade = C};
+
+        \node[gtu decision, below=of cond3, yshift=-1cm] (cond4) {marks $\ge$ 60?};
+        \node[gtu process, right=of cond4, xshift=1.5cm] (gradeD) {grade = D};
+        
+        \node[gtu process, below=of cond4] (gradeF) {grade = F};
+        
+        \node[gtu output, right=of gradeC, xshift=2cm] (output) {Output grade};
+        \node[gtu stop, below=of output] (end) {End};
+
+        \draw[gtu arrow] (start) -- (input);
+        \draw[gtu arrow] (input) -- (cond1);
+        \draw[gtu arrow] (cond1) -- node[above] {હા} (gradeA);
+        \draw[gtu arrow] (cond1) -- node[left] {ના} (cond2);
+        
+        \draw[gtu arrow] (cond2) -- node[above] {હા} (gradeB);
+        \draw[gtu arrow] (cond2) -- node[left] {ના} (cond3);
+        
+        \draw[gtu arrow] (cond3) -- node[above] {હા} (gradeC);
+        \draw[gtu arrow] (cond3) -- node[left] {ના} (cond4);
+
+        \draw[gtu arrow] (cond4) -- node[above] {હા} (gradeD);
+        \draw[gtu arrow] (cond4) -- node[left] {ના} (gradeF);
+        
+        \draw[gtu arrow] (gradeA) -| (output);
+        \draw[gtu arrow] (gradeB) -| (output);
+        \draw[gtu arrow] (gradeC) -- (output);
+        \draw[gtu arrow] (gradeD) -| (output);
+        \draw[gtu arrow] (gradeF) -| (output);
+        \draw[gtu arrow] (output) -- (end);
+    \end{tikzpicture}
+    \end{center}
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+int main() {
+    int marks;
+    char grade;
+    
+    printf("Enter marks: ");
+    scanf("%d", &marks);
+    
+    if (marks >= 90)
+        grade = 'A';
+    else if (marks >= 80)
+        grade = 'B';
+    else if (marks >= 70)
+        grade = 'C';
+    else if (marks >= 60)
+        grade = 'D';
+    else
+        grade = 'F';
+        
+    printf("Grade: %c", grade);
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \begin{itemize}
+        \item \textbf{એકાધિક શરતો}: ક્રમાનુસાર શરતો તપાસે છે
+        \item \textbf{પ્રથમ મેચ}: માત્ર પ્રથમ સાચી શરત માટે કોડ એક્ઝિક્યુટ થાય છે
+        \item \textbf{ડિફોલ્ટ કેસ}: છેલ્લે else બાકીના તમામ કેસો સંભાળે છે
+    \end{itemize}
+
+    \begin{mnemonicbox}"CAFE - Condition Assess First Eligible"\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{3}{a}{3}
+\textbf{continue અને break statement નો ઉપયોગ સમજાવો.}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+    \begin{tabulary}{\linewidth}{|L|L|L|}
+        \hline
+        \textbf{Statement} & \textbf{હેતુ} & \textbf{અસર} \\
+        \hline
+        break & લૂપ અથવા સ્વિચમાંથી બહાર નીકળવા & સમગ્ર લૂપને તરત જ સમાપ્ત કરે છે \\
+        \hline
+        continue & વર્તમાન પુનરાવર્તન છોડવા & લૂપના આગલા પુનરાવર્તન પર જાય છે \\
+        \hline
+    \end{tabulary}
+
+\begin{lstlisting}[language=C]
+// break example
+for(int i=1; i<=10; i++) {
+    if(i == 6)
+        break;      // i=6 થાય ત્યારે લૂપમાંથી બહાર નીકળે છે
+    printf("%d ", i); // આઉટપુટ: 1 2 3 4 5
+}
+
+// continue example
+for(int i=1; i<=10; i++) {
+    if(i % 2 == 0)
+        continue;   // બેકી સંખ્યાઓ છોડે છે
+    printf("%d ", i); // આઉટપુટ: 1 3 5 7 9
+}
+\end{lstlisting}
+
+    \textbf{આકૃતિ:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        % Break Diagram
+        \node[gtu block] (loop1) {\textbf{Loop} \\ \code{1, 2, 3...}};
+        \node[gtu process, right=of loop1] (break) {break};
+        \node[gtu stop, below=of loop1] (exit1) {Exit Loop};
+        \draw[gtu arrow] (loop1) -- (break);
+        \draw[gtu arrow] (break) |- (exit1);
+        \node[above=of loop1] {\textbf{Break}};
+
+        % Continue Diagram
+        \node[gtu block, right=of break, xshift=2cm] (loop2) {\textbf{Loop} \\ \code{1, 2...}};
+        \node[gtu process, right=of loop2] (continue) {continue};
+        \node[above=of loop2] {\textbf{Continue}};
+        \draw[gtu arrow] (loop2) -- (continue);
+        \draw[gtu arrow] (continue.north) -- ++(0,0.5) -| (loop2.north);
+        \node[above of=continue, yshift=0.5cm] {Next Iteration};
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{mnemonicbox}"BEST - Break Exits, Skip with conTinue"\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{3}{b}{4}
+\textbf{For loop નો ઉપયોગ કરીને 1 થી 10 નંબરોનો સરવાળો પ્રિન્ટ કરવા માટે C પ્રોગ્રામ લખો.}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+int main() {
+    int i, sum = 0;
+    
+    for(i = 1; i <= 10; i++) {
+        sum += i;
+    }
+    
+    printf("Sum of numbers from 1 to 10: %d", sum);
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \textbf{આકૃતિ:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu start] (start) {Start};
+        \node[gtu process, right=of start] (init) {sum = 0\\i = 1};
+        \node[gtu decision, right=of init] (cond) {i $\le$ 10?};
+        \node[gtu process, below=of cond] (body) {sum += i\\i++};
+        \node[gtu output, right=of cond] (output) {Print sum};
+        \node[gtu stop, right=of output] (end) {End};
+
+        \draw[gtu arrow] (start) -- (init);
+        \draw[gtu arrow] (init) -- (cond);
+        \draw[gtu arrow] (cond) -- node[right] {હા} (body);
+        \draw[gtu arrow] (body.west) -- ++(-0.5,0) |- (cond.west);
+        \draw[gtu arrow] (cond) -- node[above] {ના} (output);
+        \draw[gtu arrow] (output) -- (end);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{mnemonicbox}"SILA - Sum Increment Loop Add"\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{3}{c}{7}
+\textbf{સ્વિચ સ્ટેટમેન્ટ ફ્લોચાર્ટ દોરી ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+    સ્વિચ સ્ટેટમેન્ટ વેરિએબલની કિંમતના આધારે બહુવિધ વિકલ્પોમાંથી એક કોડ બ્લોક પસંદ કરે છે.
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu start] (start) {Start};
+        \node[gtu input, below=of start] (input) {Input choice};
+        \node[gtu decision, below=of input] (switch) {switch choice};
+        
+        \node[gtu process, below left=of switch, xshift=-2cm] (c1) {case 1: Add};
+        \node[gtu process, below left=of switch] (c2) {case 2: Sub};
+        \node[gtu process, below right=of switch] (c3) {case 3: Mul};
+        \node[gtu process, below right=of switch, xshift=2cm] (c4) {case 4: Div};
+        \node[gtu process, below=of switch, yshift=-3cm] (def) {default: Invalid};
+        
+        \node[gtu stop, below=of def] (end) {End};
+
+        \draw[gtu arrow] (start) -- (input);
+        \draw[gtu arrow] (input) -- (switch);
+        \draw[gtu arrow] (switch) -- (c1);
+        \draw[gtu arrow] (switch) -- (c2);
+        \draw[gtu arrow] (switch) -- (c3);
+        \draw[gtu arrow] (switch) -- (c4);
+        \draw[gtu arrow] (switch) -- (def);
+        
+        \draw[gtu arrow] (c1) |- (end);
+        \draw[gtu arrow] (c2) |- (end);
+        \draw[gtu arrow] (c3) |- (end);
+        \draw[gtu arrow] (c4) |- (end);
+        \draw[gtu arrow] (def) -- (end);
+    \end{tikzpicture}
+    \end{center}
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+int main() {
+    int choice;
+    
+    printf("Enter operation (1-4): ");
+    scanf("%d", &choice);
+    
+    switch(choice) {
+        case 1:
+            printf("Addition selected");
+            break;
+        case 2:
+            printf("Subtraction selected");
+            break;
+        case 3:
+            printf("Multiplication selected");
+            break;
+        case 4:
+            printf("Division selected");
+            break;
+        default:
+            printf("Invalid choice");
+    }
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \begin{itemize}
+        \item \textbf{Expression}: પૂર્ણાંક અથવા અક્ષર expression લે છે
+        \item \textbf{Case labels}: અચળ expressions હોવા જોઈએ
+        \item \textbf{Break statement}: આગલા કેસમાં પડતા અટકાવે છે
+        \item \textbf{Default}: કોઈપણ કેસ સાથે મેચ ન થતી કિંમતો સંભાળે છે
+    \end{itemize}
+
+    \begin{mnemonicbox}"SCBD - Switch Cases Break Default"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4}{a}{3}
+\textbf{Develop a C program to convert uppercase alphabet to lowercase alphabet.}
+
+\begin{solutionbox}
+    \textbf{Answer}:
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+int main() {
+    char upper, lower;
+    
+    printf("Enter uppercase letter: ");
+    scanf("%c", &upper);
+    
+    lower = upper + 32;
+    // Alternatively: lower = tolower(upper);
+    
+    printf("Lowercase letter: %c", lower);
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \textbf{Diagram:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu input] (input) {Input 'A'};
+        \node[gtu block, below=of input] (ascii1) {ASCII code\\65};
+        \node[gtu block, below=of ascii1] (ascii2) {ASCII code\\97};
+        \node[gtu output, below=of ascii2] (output) {Output 'a'};
+
+        \draw[gtu arrow] (input) -- (ascii1);
+        \draw[gtu arrow] (ascii1) -- node[right] {+32} (ascii2);
+        \draw[gtu arrow] (ascii2) -- (output);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{mnemonicbox}"ASCII-32 - Add 32 to Shift Characters Into Lowercase"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4}{b}{4}
+\textbf{What is pointer? Explain with example.}
+
+\begin{solutionbox}
+    \textbf{Answer}:
+
+    પોઇન્ટર એ એક વેરિએબલ છે જે બીજા વેરિએબલનું મેમરી એડ્રેસ સ્ટોર કરે છે.
+
+    \begin{tabulary}{\linewidth}{|L|L|L|}
+        \hline
+        \textbf{Concept} & \textbf{Syntax} & \textbf{Description} \\
+        \hline
+        Declaration & \code{int *p;} & int પોઇન્ટર p ડિક્લેર કરે છે \\
+        \hline
+        Initialization & \code{p = \&var;} & var નું એડ્રેસ p માં સ્ટોર કરે છે \\
+        \hline
+        Dereferencing & \code{*p = 10;} & પોઇન્ટેડ વેલ્યુ ને એક્સેસ/મોડિફાય કરે છે \\
+        \hline
+        Pointer arithmetic & \code{p++} & પછીના મેમરી લોકેશન પર જાય છે \\
+        \hline
+    \end{tabulary}
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+int main() {
+    int num = 10;
+    int *ptr;
+    
+    ptr = &num;  // Store address of num in ptr
+    
+    printf("Value of num: %d\n", num);
+    printf("Address of num: %p\n", &num);
+    printf("Value of ptr: %p\n", ptr);
+    printf("Value pointed by ptr: %d\n", *ptr);
+    
+    *ptr = 20;  // Change value using pointer
+    printf("New value of num: %d\n", num);
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \textbf{Memory Diagram:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu block, minimum width=2.5cm] (num) {\textbf{num}\\Value: 10\\Addr: 1000};
+        \node[gtu block, minimum width=2.5cm, right=of num, xshift=2cm] (ptr) {\textbf{ptr}\\Value: 1000\\Addr: 2000};
+        
+        \draw[gtu arrow] (ptr.west) -- node[above] {Points to} (num.east);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{mnemonicbox}"SAID - Store Address to Indirectly Dereference"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4}{c}{7}
+\textbf{Draw flowchart and explain for loop with example.}
+
+\begin{solutionbox}
+    \textbf{Answer}:
+
+    for loop નો ઉપયોગ કોડ બ્લોકને ચોક્કસ સંખ્યામાં પુનરાવર્તિત કરવા માટે થાય છે.
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu start] (start) {Start};
+        \node[gtu process, right=of start] (init) {Initialization\\i=1};
+        \node[gtu decision, right=of init] (cond) {Condition\\i $\le$ 5?};
+        \node[gtu process, below=of cond] (body) {Body\\Print i};
+        \node[gtu process, left=of body] (update) {Update\\i++};
+        \node[gtu stop, right=of cond, xshift=2cm] (end) {End};
+
+        \draw[gtu arrow] (start) -- (init);
+        \draw[gtu arrow] (init) -- (cond);
+        \draw[gtu arrow] (cond) -- node[right] {True} (body);
+        \draw[gtu arrow] (body) -- (update);
+        \draw[gtu arrow] (update) |- (cond);
+        \draw[gtu arrow] (cond) -- node[above] {False} (end);
+    \end{tikzpicture}
+    \end{center}
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+int main() {
+    int i;
+    
+    // Syntax: for(initialization; condition; update)
+    for(i = 1; i <= 5; i++) {
+        printf("%d ", i);
+    }
+    // Output: 1 2 3 4 5
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \begin{itemize}
+        \item \textbf{Initialization}: લૂપ શરૂ થતા પહેલા એકવાર એક્ઝિક્યુટ થાય છે
+        \item \textbf{Condition}: દરેક પુનરાવર્તન પહેલાં ચેક થાય છે
+        \item \textbf{Update}: દરેક પુનરાવર્તન પછી એક્ઝિક્યુટ થાય છે
+        \item \textbf{Body}: કોડ બ્લોક જે પુનરાવર્તિત થાય છે
+    \end{itemize}
+
+    \begin{mnemonicbox}"ICU-B - Initialize, Check, Update, Body"\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{4}{a}{3}
+\textbf{Develop a C program to find area of a triangle (0.5 * base * height)?}
+
+\begin{solutionbox}
+    \textbf{Answer}:
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+int main() {
+    float base, height, area;
+    
+    printf("Enter base of triangle: ");
+    scanf("%f", &base);
+    
+    printf("Enter height of triangle: ");
+    scanf("%f", &height);
+    
+    area = 0.5 * base * height;
+    
+    printf("Area of triangle: %.2f", area);
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \textbf{Diagram:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu start] (start) {Start};
+        \node[gtu input, right=of start] (input) {Input base, height};
+        \node[gtu process, right=of input] (calc) {area = $0.5 \times base \times height$};
+        \node[gtu output, right=of calc] (output) {Output area};
+        \node[gtu stop, right=of output] (end) {End};
+
+        \draw[gtu arrow] (start) -- (input);
+        \draw[gtu arrow] (input) -- (calc);
+        \draw[gtu arrow] (calc) -- (output);
+        \draw[gtu arrow] (output) -- (end);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{mnemonicbox}"BHA - Base times Height divided by two equals Area"\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{4}{b}{4}
+\textbf{Explain declaration and initialization of pointer.}
+
+\begin{solutionbox}
+    \textbf{Answer}:
+
+    \begin{tabulary}{\linewidth}{|L|L|L|L|}
+        \hline
+        \textbf{Operation} & \textbf{Syntax} & \textbf{Example} & \textbf{Description} \\
+        \hline
+        Declaration & \code{datatype *name;} & \code{int *ptr;} & પોઇન્ટર વેરિએબલ બનાવે છે \\
+        \hline
+        Initialization & \code{name = \&var;} & \code{ptr = \&num;} & પોઇન્ટરને એડ્રેસ અસાઇન કરે છે \\
+        \hline
+        Combined & \code{datatype *name = \&var;} & \code{int *ptr = \&num;} & ઇનિશિયલાઇઝેશન સાથે ડેક્લેરેશન \\
+        \hline
+        NULL pointer & \code{name = NULL;} & \code{ptr = NULL;} & સેફ ઇનિશિયલાઇઝેશન \\
+        \hline
+    \end{tabulary}
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+int main() {
+    int num = 10;           // Regular variable
+    int *ptr1;              // Declaration only
+    int *ptr2 = &num;       // Declaration with initialization
+    
+    ptr1 = &num;            // Initialization of ptr1
+    
+    printf("num value: %d\n", num);
+    printf("num address: %p\n", &num);
+    printf("ptr1 value: %p\n", ptr1);
+    printf("ptr2 value: %p\n", ptr2);
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \textbf{Diagram:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu block] (decl) {\textbf{Declaration} \\ \code{int *ptr;}};
+        \node[gtu block, right=of decl, xshift=2cm] (init) {\textbf{Initialization} \\ \code{ptr = \&num;}};
+        \node[gtu block, right=of init] (var) {\textbf{Variable} \\ \code{num (10)}};
+        
+        \draw[gtu arrow] (decl) -- (init);
+        \draw[gtu arrow] (init) -- node[above] {points to} (var);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{mnemonicbox}"PAIN - Pointer Allocate, Initialize, Navigate"\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{4}{c}{7}
+\textbf{Draw flowchart and explain while loop with example.}
+
+\begin{solutionbox}
+    \textbf{Answer}:
+
+    જો શરત સાચી હોય ત્યાં સુધી while loop કોડ બ્લોકનું પુનરાવર્તન કરે છે.
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu start] (start) {Start};
+        \node[gtu process, right=of start] (init) {i = 1};
+        \node[gtu decision, right=of init] (cond) {i $\le$ 5?};
+        \node[gtu process, below=of cond] (body) {Print i\\i++};
+        \node[gtu stop, right=of cond, xshift=2cm] (end) {End};
+
+        \draw[gtu arrow] (start) -- (init);
+        \draw[gtu arrow] (init) -- (cond);
+        \draw[gtu arrow] (cond) -- node[right] {True} (body);
+        \draw[gtu arrow] (body.west) -- ++(-0.5,0) |- (cond.west);
+        \draw[gtu arrow] (cond) -- node[above] {False} (end);
+    \end{tikzpicture}
+    \end{center}
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+int main() {
+    int i = 1;
+    
+    // Syntax: while(condition)
+    while(i <= 5) {
+        printf("%d ", i);
+        i++;
+    }
+    // Output: 1 2 3 4 5
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \begin{itemize}
+        \item \textbf{Entry controlled}: એક્ઝિક્યુશન પહેલાં કન્ડિશન ચેક થાય છે
+        \item \textbf{Infinite loop}: જો કન્ડિશન ક્યારેય ખોટી ન થાય
+        \item \textbf{Components}: ઇનિશિયલાઇઝેશન, કન્ડિશન, બોડી, અપડેટ
+    \end{itemize}
+
+    \begin{mnemonicbox}"WET - While Entry Test"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5}{a}{3}
+\textbf{બુકની આપેલ માહિતી સ્ટોર કરવાનું સ્ટ્રક્ચર બનાવો: book\_no, book\_title, book\_author, book\_price}
+
+\begin{solutionbox}
+    \textbf{Answer}:
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+#include <string.h>
+
+struct Book {
+    int book_no;
+    char book_title[50];
+    char book_author[50];
+    float book_price;
+};
+
+int main() {
+    struct Book book1;
+    
+    book1.book_no = 101;
+    strcpy(book1.book_title, "Programming in C");
+    strcpy(book1.book_author, "Dennis Ritchie");
+    book1.book_price = 450.50;
+    
+    printf("Book No: %d\n", book1.book_no);
+    printf("Title: %s\n", book1.book_title);
+    printf("Author: %s\n", book1.book_author);
+    printf("Price: %.2f", book1.book_price);
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \textbf{આકૃતિ:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu block, minimum width=4cm] (struct) {
+            \textbf{struct Book} \\
+            \rule{3.8cm}{0.4pt} \\
+            book\_no (int) \\
+            book\_title (char[50]) \\
+            book\_author (char[50]) \\
+            book\_price (float)
+        };
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{mnemonicbox}"SNAP - Structure Needs All Properties"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5}{b}{4}
+\textbf{(1)sqrt() (2)pow() (3)strlen() (4)strcpy() ફંક્શનો ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+    \textbf{Answer}:
+
+    \begin{tabulary}{\linewidth}{|L|L|L|L|}
+        \hline
+        \textbf{ફંક્શન} & \textbf{લાઇબ્રેરી} & \textbf{હેતુ} & \textbf{ઉદાહરણ} \\
+        \hline
+        sqrt() & math.h & વર્ગમૂળ ગણે છે & \code{sqrt(16)} $\to$ \code{4.0} \\
+        \hline
+        pow() & math.h & પાવર ગણે છે & \code{pow(2, 3)} $\to$ \code{8.0} \\
+        \hline
+        strlen() & string.h & સ્ટ્રિંગની લંબાઈ શોધે છે & \code{strlen("Hi")} $\to$ \code{2} \\
+        \hline
+        strcpy() & string.h & સ્ટ્રિંગની કોપી કરે છે & \code{strcpy(d, s)} \\
+        \hline
+    \end{tabulary}
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+#include <math.h>
+#include <string.h>
+
+int main() {
+    double sqrtResult = sqrt(25);
+    double powResult = pow(2, 4);
+    char str[] = "Programming";
+    char dest[20];
+    int length = strlen(str);
+    
+    strcpy(dest, str);
+    
+    printf("sqrt(25) = %.2f\n", sqrtResult);
+    printf("pow(2, 4) = %.2f\n", powResult);
+    printf("Length of '%s' = %d\n", str, length);
+    printf("Copied string: %s\n", dest);
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \begin{mnemonicbox}"SPSS - Square-root Power String-length String-copy"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5}{c}{7}
+\textbf{એરે અને એરેનું ઈનીશ્યલાઈઝેશન ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+    \textbf{Answer}:
+
+    એરે એ સમાન ડેટા એલિમેન્ટ્સનો સમૂહ છે જે સતત મેમરી લોકેશન પર સ્ટોર થાય છે.
+
+    \begin{tabulary}{\linewidth}{|L|L|L|}
+        \hline
+        \textbf{પદ્ધતિ} & \textbf{સિન્ટેક્સ} & \textbf{ઉદાહરણ} \\
+        \hline
+        ડેક્લેરેશન & \code{type name[size];} & \code{int marks[5];} \\
+        \hline
+        ઇનિશિયલાઇઝેશન & \code{type name[] = \{v1,..\};} & \code{int a[]=\{1,2\};} \\
+        \hline
+        એલિમેન્ટ એક્સેસ & \code{name[index] = val;} & \code{marks[0]=90;} \\
+        \hline
+    \end{tabulary}
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+int main() {
+    // એરે ડેક્લેરેશન અને ઇનિશિયલાઇઝેશન
+    int numbers[5] = {10, 20, 30, 40, 50};
+    
+    // એરે એલિમેન્ટ્સ એક્સેસ કરવા
+    printf("First element: %d\n", numbers[0]);
+    
+    numbers[1] = 25; // એરે એલિમેન્ટ બદલવી
+    
+    printf("Array elements: ");
+    for(int i = 0; i < 5; i++) {
+        printf("%d ", numbers[i]);
+    }
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \textbf{આકૃતિ:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \matrix[nodes={draw, minimum size=8mm}, column sep=-\pgflinewidth] {
+            \node {10}; & \node {20}; & \node {30}; & \node {40}; & \node {50}; \\
+        };
+        \foreach \i in {0,1,2,3,4}
+            \node at (-1.7+\i*0.8, -0.6) {\scriptsize \i};
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{mnemonicbox}"CASED - Contiguous Arrangement of Similar Elements with Direct-access"\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{5}{a}{3}
+\textbf{એરે અને સ્ટ્રક્ચર નો તફાવત લખો.}
+
+\begin{solutionbox}
+    \textbf{Answer}:
+
+    \begin{tabulary}{\linewidth}{|L|L|L|}
+        \hline
+        \textbf{ફીચર} & \textbf{એરે} & \textbf{સ્ટ્રક્ચર} \\
+        \hline
+        ડેટા ટાઈપ્સ & માત્ર એક જ ડેટા ટાઈપ (સમાન) & અલગ અલગ ડેટા ટાઈપ્સ મંજૂર \\
+        \hline
+        એક્સેસ & ઇન્ડેક્સ દ્વારા: \code{arr[0]} & ડોટ ઓપરેટર દ્વારા: \code{emp.id} \\
+        \hline
+        મેમરી & સતત ફાળવણી & સતત ન પણ હોઈ શકે \\
+        \hline
+        હેતુ & સમાન આઇટમ્સનો સંગ્રહ & સંબંધિત આઇટમ્સનો સંગ્રહ \\
+        \hline
+    \end{tabulary}
+
+    \textbf{આકૃતિ:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu block] (array) {Array [1, 2, 3]};
+        \node[gtu block, right=of array] (struct) {Struct \{id:1, name:'A'\}};
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{mnemonicbox}"HASDIP - Homogeneous vs. Assorted, Same vs. Different, Index vs. Point"\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{5}{b}{4}
+\textbf{યુઝર ડીફાઈન ફંક્શન એટલે શું? ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+    \textbf{Answer}:
+
+    યુઝર-ડિફાઇન્ડ ફંક્શન એ એક કોડ બ્લોક છે જે ચોક્કસ કાર્ય કરે છે.
+
+    \begin{tabulary}{\linewidth}{|L|L|}
+        \hline
+        \textbf{કોમ્પોનન્ટ} & \textbf{વિગત} \\
+        \hline
+        રિટર્ન ટાઇપ & પરત કરવામાં આવતા ડેટાનો પ્રકાર (e.g., int) \\
+        \hline
+        ફંક્શન નામ & ઓળખકર્તા (e.g., sum) \\
+        \hline
+        પેરામીટર્સ & ઇનપુટ વેલ્યુઝ (e.g., int a, int b) \\
+        \hline
+        બોડી & એક્ઝિક્યુટ થતો કોડ \\
+        \hline
+    \end{tabulary}
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+// ફંક્શન ડેક્લેરેશન
+int sum(int a, int b);
+
+int main() {
+    int res = sum(5, 10); // ફંક્શન કોલ
+    printf("Sum = %d", res);
+    return 0;
+}
+
+// ફંક્શન ડેફિનિશન
+int sum(int a, int b) {
+    return a + b;
+}
+\end{lstlisting}
+
+    \textbf{આકૃતિ:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu block] (main) {Main Function\\Call sum(5, 10)};
+        \node[gtu block, right=of main, xshift=2cm] (func) {Function sum(a, b)\\return a+b};
+
+        \draw[gtu arrow] (main.north east) to[bend left] node[above] {Arguments} (func.north west);
+        \draw[gtu arrow] (func.south west) to[bend left] node[below] {Return} (main.south east);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{mnemonicbox}"CRPB - Create, Return, Pass, Body"\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{5}{c}{7}
+\textbf{એરેના ઘટકોનો સરવાળો અને સરેરાશ શોધવા માટેનો C પ્રોગ્રામ લખો.}
+
+\begin{solutionbox}
+    \textbf{Answer}:
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+int main() {
+    int arr[100], n, i;
+    int sum = 0;
+    float avg;
+    
+    printf("Enter number of elements: ");
+    scanf("%d", &n);
+    
+    printf("Enter %d elements:\n", n);
+    for(i = 0; i < n; i++) {
+        scanf("%d", &arr[i]);
+        sum += arr[i];  // દરેક એલિમેન્ટ ઉમેરો
+    }
+    
+    avg = (float)sum / n;  // સરેરાશ ગણતરી
+    
+    printf("Sum: %d\n", sum);
+    printf("Avg: %.2f", avg);
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \textbf{આકૃતિ:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu start] (start) {Start};
+        \node[gtu input, right=of start] (inputn) {Input n};
+        \node[gtu input, right=of inputn] (inputarr) {Input elements};
+        \node[gtu process, below=of start] (init) {sum = 0, i = 0};
+        \node[gtu decision, below=of inputn] (cond) {i < n?};
+        \node[gtu process, below=of inputarr] (sum) {sum += arr[i]\\i++};
+        \node[gtu process, below=of cond] (calc) {avg = sum / n};
+        \node[gtu output, below=of sum] (output) {Output sum, avg};
+        \node[gtu stop, below=of calc] (end) {End};
+
+        \draw[gtu arrow] (start) -- (inputn);
+        \draw[gtu arrow] (inputn) -- (inputarr);
+        \draw[gtu arrow] (inputarr) |- (init);
+        \draw[gtu arrow] (init) -- (cond);
+        \draw[gtu arrow] (cond) -- node[above] {Yes} (sum);
+        \draw[gtu arrow] (sum) |- (0,-5) -| (cond);
+        \draw[gtu arrow] (cond) -- node[left] {No} (calc);
+        \draw[gtu arrow] (calc) -- (output);
+        \draw[gtu arrow] (output) -- (end);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{mnemonicbox}"LISA - Loop, Increment, Sum, Average"\end{mnemonicbox}
+\end{solutionbox}
+
+\end{document}

@@ -1,0 +1,1589 @@
+\documentclass{article}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/preamble.tex}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/english-boxes.tex}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/commands.tex}
+
+\title{Programming in C (4331105) - Winter 2023 Solution}
+\date{May 21, 2024}
+
+\begin{document}
+\maketitle
+
+\questionmarks{1}{a}{3}
+\textbf{Define algorithm and write an algorithm to find area of circle.}
+
+\begin{solutionbox}
+    \textbf{Answer}:
+    An algorithm is a step-by-step procedure or set of rules for solving a specific problem or accomplishing a particular task.
+
+    \textbf{Algorithm to find area of circle:}
+
+    \begin{enumerate}
+        \item Start
+        \item Input radius (r) of the circle
+        \item Calculate area = $\pi \times r^2$
+        \item Display the area
+        \item Stop
+    \end{enumerate}
+
+    \begin{mnemonicbox}"Start, Read, Calculate, Display, Stop"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{1}{b}{4}
+\textbf{Define flowchart and draw a flowchart to find minimum of three numbers.}
+
+\begin{solutionbox}
+    \textbf{Answer}:
+    A flowchart is a visual representation of an algorithm using standardized symbols and shapes connected by arrows to show the sequence of steps.
+
+    \textbf{Flowchart to find minimum of three numbers:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu start] (start) {Start};
+        \node[gtu input, below=of start] (input) {Input A, B, C};
+        \node[gtu decision, below=of input] (cond1) {A $<$ B?};
+        
+        \node[gtu decision, below left=of cond1, xshift=-1cm] (cond2) {A $<$ C?};
+        \node[gtu decision, below right=of cond1, xshift=1cm] (cond3) {B $<$ C?};
+        
+        \node[gtu process, below left=of cond2] (minA) {min = A};
+        \node[gtu process, below right=of cond2] (minC1) {min = C};
+        
+        \node[gtu process, below left=of cond3] (minB) {min = B};
+        \node[gtu process, below right=of cond3] (minC2) {min = C};
+        
+        \node[gtu output, below=of cond2, yshift=-3cm] (print) {Display min};
+        \node[gtu stop, below=of print] (stop) {Stop};
+
+        \draw[gtu arrow] (start) -- (input);
+        \draw[gtu arrow] (input) -- (cond1);
+        \draw[gtu arrow] (cond1) -| node[above] {Yes} (cond2);
+        \draw[gtu arrow] (cond1) -| node[above] {No} (cond3);
+        
+        \draw[gtu arrow] (cond2) -| node[above] {Yes} (minA);
+        \draw[gtu arrow] (cond2) -| node[above] {No} (minC1);
+        
+        \draw[gtu arrow] (cond3) -| node[above] {Yes} (minB);
+        \draw[gtu arrow] (cond3) -| node[above] {No} (minC2);
+        
+        \draw[gtu arrow] (minA) |- (print);
+        \draw[gtu arrow] (minC1) |- (print);
+        \draw[gtu arrow] (minB) |- (print);
+        \draw[gtu arrow] (minC2) |- (print);
+        \draw[gtu arrow] (print) -- (stop);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{itemize}
+        \item \textbf{Comparison Strategy}: First compare A and B, then compare with C
+        \item \textbf{Branching Logic}: Use if-else structure to find smallest value
+    \end{itemize}
+
+    \begin{mnemonicbox}"Compare pairs, find the rare small value everywhere"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{1}{c}{7}
+\textbf{Write a program to calculate simple interest using below equation. I=PRN/100 Where P=Principle amount, R=Rate of interest and N=Period.}
+
+\begin{solutionbox}
+    \textbf{Answer}:
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+int main() {
+    float P, R, N, I;
+    
+    // Input principal amount, rate of interest and time period
+    printf("Enter Principal amount: ");
+    scanf("%f", &P);
+    
+    printf("Enter Rate of interest: ");
+    scanf("%f", &R);
+    
+    printf("Enter Time period (in years): ");
+    scanf("%f", &N);
+    
+    // Calculate Simple Interest
+    I = (P * R * N) / 100;
+    
+    // Display the result
+    printf("Simple Interest = %.2f\n", I);
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \textbf{Diagram:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu block] (formula) {Formula: $I = \frac{P \times R \times N}{100}$};
+        \node[gtu input, left=of formula, yshift=1cm] (P) {P};
+        \node[gtu input, left=of formula] (R) {R};
+        \node[gtu input, left=of formula, yshift=-1cm] (N) {N};
+        \node[gtu output, right=of formula] (I) {I};
+
+        \draw[gtu arrow] (P) -- (formula);
+        \draw[gtu arrow] (R) -- (formula);
+        \draw[gtu arrow] (N) -- (formula);
+        \draw[gtu arrow] (formula) -- (I);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{itemize}
+        \item \textbf{Floating-point variables}: Store decimal values for precision
+        \item \textbf{User interaction}: Clear prompts for input
+        \item \textbf{Result formatting}: \%.2f displays two decimal places
+    \end{itemize}
+
+    \begin{mnemonicbox}"Principal, Rate and Number, divided by Hundred gives Interest"\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{1}{c}{7}
+\textbf{Write a program to read radius(R) and height(H) from keyboard and print calculated the volume(V) of cylinder using V=$\pi$R$^2$H}
+
+\begin{solutionbox}
+    \textbf{Answer}:
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+int main() {
+    float radius, height, volume;
+    const float PI = 3.14159;
+    
+    // Input radius and height
+    printf("Enter radius of cylinder: ");
+    scanf("%f", &radius);
+    
+    printf("Enter height of cylinder: ");
+    scanf("%f", &height);
+    
+    // Calculate volume of cylinder
+    volume = PI * radius * radius * height;
+    
+    // Display the result
+    printf("Volume of cylinder = %.2f\n", volume);
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \textbf{Diagram:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu input] (input) {Input radius, height};
+        \node[gtu process, right=of input] (calc) {Volume = $\pi \times r^2 \times h$};
+        \node[gtu output, right=of calc] (output) {Display volume};
+
+        \draw[gtu arrow] (input) -- (calc);
+        \draw[gtu arrow] (calc) -- (output);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{itemize}
+        \item \textbf{Constants}: PI defined as constant for clarity
+        \item \textbf{Formula}: Use R$^2$ by multiplying radius twice
+        \item \textbf{Input validation}: Assumes positive values for radius and height
+    \end{itemize}
+
+    \begin{mnemonicbox}"Radius squared times height times Pi, gives cylinder volume, don't ask why"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2}{a}{3}
+\textbf{List out different operators supported in C programming language.}
+
+\begin{solutionbox}
+    \textbf{Answer}:
+
+    \begin{tabulary}{\linewidth}{|L|L|}
+        \hline
+        \textbf{Category} & \textbf{Operators} \\
+        \hline
+        Arithmetic & +, -, *, /, \% (addition, subtraction, multiplication, division, modulus) \\
+        \hline
+        Relational & ==, !=, $>$, $<$, $>=$, $<=$ (equal, not equal, greater than, less than, greater than or equal to, less than or equal to) \\
+        \hline
+        Logical & \&\&, $||$, ! (AND, OR, NOT) \\
+        \hline
+        Assignment & =, +=, -=, *=, /=, \%= (assign, plus-assign, minus-assign, etc.) \\
+        \hline
+        Increment/Decrement & ++, -- (increment, decrement) \\
+        \hline
+        Bitwise & \&, $|$, \^{}, \~{}, $<<$, $>>$ (AND, OR, XOR, complement, left shift, right shift) \\
+        \hline
+        Conditional & ? : (ternary operator) \\
+        \hline
+        Special & sizeof(), \&, *, -$>$, . (size, address, pointer, structure) \\
+        \hline
+    \end{tabulary}
+
+    \begin{mnemonicbox}"ARABIA CS" (Arithmetic, Relational, Assignment, Bitwise, Increment, Assignment, Conditional, Special)\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2}{b}{4}
+\textbf{Explain Relational operator and Increment/Decrement operator with example.}
+
+\begin{solutionbox}
+    \textbf{Answer}:
+
+    \begin{tabulary}{\linewidth}{|L|L|L|L|}
+        \hline
+        \textbf{Operator Type} & \textbf{Description} & \textbf{Example} & \textbf{Output} \\
+        \hline
+        Relational & Compare two values to test the relationship between them & \code{int a = 5, b = 10;} \code{printf("\%d", a < b);} & \code{1} (true) \\
+        \hline
+         & Equal to (==) & \code{printf("\%d", 5 == 5);} & \code{1} (true) \\
+        \hline
+         & Not equal to (!=) & \code{printf("\%d", 5 != 10);} & \code{1} (true) \\
+        \hline
+         & Greater/Less than & \code{printf("\%d \%d", 5 > 3, 5 < 3);} & \code{1 0} \\
+        \hline
+        Increment & Increases value by 1. Pre-increment (++x): increment then use. Post-increment (x++): use then increment & \code{int x = 5;} \code{printf("\%d ", ++x);} \code{printf("\%d", x);} & \code{6 6} \\
+        \hline
+        Decrement & Decreases value by 1. Pre-decrement (--x): decrement then use. Post-decrement (x--): use then decrement & \code{int y = 5;} \code{printf("\%d ", y--);} \code{printf("\%d", y);} & \code{5 4} \\
+        \hline
+    \end{tabulary}
+
+    \begin{itemize}
+        \item \textbf{Relational operators}: Return 1 (true) or 0 (false)
+        \item \textbf{Increment/Decrement}: Changes variable value and returns a value
+    \end{itemize}
+
+    \begin{mnemonicbox}"Relational tells if TRUE or LIE, Increment/Decrement makes values rise or DIE"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2}{c}{7}
+\textbf{Write a program to print sum and average of 1 to 100.}
+
+\begin{solutionbox}
+    \textbf{Answer}:
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+int main() {
+    int i, sum = 0;
+    float average;
+    
+    // Calculate sum of numbers from 1 to 100
+    for(i = 1; i <= 100; i++) {
+        sum += i;
+    }
+    
+    // Calculate average
+    average = (float)sum / 100;
+    
+    // Display the results
+    printf("Sum of numbers from 1 to 100 = %d\n", sum);
+    printf("Average of numbers from 1 to 100 = %.2f\n", average);
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \textbf{Diagram:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu start] (start) {Start};
+        \node[gtu process, below=of start] (init) {sum = 0, i = 1};
+        \node[gtu decision, below=of init] (cond) {i $\le$ 100?};
+        \node[gtu process, below=of cond] (body) {sum += i\\i++};
+        \node[gtu process, right=of cond] (avg) {avg = sum / 100};
+        \node[gtu output, right=of avg] (output) {Print sum, avg};
+        \node[gtu stop, below=of output] (stop) {Stop};
+
+        \draw[gtu arrow] (start) -- (init);
+        \draw[gtu arrow] (init) -- (cond);
+        \draw[gtu arrow] (cond) -- node[left] {Yes} (body);
+        \draw[gtu arrow] (body.west) -- ++(-0.5,0) |- (cond.west);
+        \draw[gtu arrow] (cond) -- node[above] {No} (avg);
+        \draw[gtu arrow] (avg) -- (output);
+        \draw[gtu arrow] (output) -- (stop);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{itemize}
+        \item \textbf{Loop counter}: Variable i tracks numbers 1 to 100
+        \item \textbf{Sum calculation}: Accumulates values in sum variable
+        \item \textbf{Type casting}: (float) converts sum to floating-point for accurate division
+    \end{itemize}
+
+    \begin{mnemonicbox}"Sum One to Hundred, then Divide for Average"\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{2}{a}{3}
+\textbf{State the difference between gets(S) and scanf("\%s",S) where S is string.}
+
+\begin{solutionbox}
+    \textbf{Answer}:
+
+    \begin{tabulary}{\linewidth}{|L|L|L|}
+        \hline
+        \textbf{Feature} & \textbf{gets(S)} & \textbf{scanf("\%s",S)} \\
+        \hline
+        Input termination & Reads until newline character (\textbackslash n) & Reads until whitespace (space, tab, newline) \\
+        \hline
+        Whitespace handling & Can read string with spaces & Stops reading at first whitespace \\
+        \hline
+        Buffer overflow & No bounds checking (unsafe) & No bounds checking (unsafe) \\
+        \hline
+        Return value & Returns S on success, NULL on error & Returns number of items successfully read \\
+        \hline
+        Replacement & fgets() is safer alternative & scanf("\%ns",S) with width limit is safer \\
+        \hline
+    \end{tabulary}
+
+    \begin{itemize}
+        \item \textbf{Safety concern}: Both functions can cause buffer overflow
+        \item \textbf{Practical usage}: gets() for full lines, scanf() for single words
+    \end{itemize}
+
+    \begin{mnemonicbox}"gets Gets Everything Till newline, scanf Stops Catching After Finding whitespace"\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{2}{b}{4}
+\textbf{Explain Logical operator and Assignment operator with example.}
+
+\begin{solutionbox}
+    \textbf{Answer}:
+
+    \begin{tabulary}{\linewidth}{|L|L|L|L|}
+        \hline
+        \textbf{Operator Type} & \textbf{Description} & \textbf{Example} & \textbf{Output} \\
+        \hline
+        Logical & Perform logical operations on conditions & \code{int a = 5, b = 10;} & \\
+        \hline
+         & Logical AND (\&\&) & \code{printf("\%d", (a > 0) \&\& (b > 0));} & \code{1} (true) \\
+        \hline
+         & Logical OR ($||$) & \code{printf("\%d", (a > 10) || (b > 5));} & \code{1} (true) \\
+        \hline
+         & Logical NOT (!) & \code{printf("\%d", !(a == b));} & \code{1} (true) \\
+        \hline
+        Assignment & Assign values to variables & \code{int x = 10;} & \code{x = 10} \\
+        \hline
+         & Simple assignment (=) & \code{x = 20;} & \code{x = 20} \\
+        \hline
+         & Add and assign (+=) & \code{x += 5;} & \code{x = 25} \\
+        \hline
+         & Subtract and assign (-=) & \code{x -= 10;} & \code{x = 15} \\
+        \hline
+         & Multiply and assign (*=) & \code{x *= 2;} & \code{x = 30} \\
+        \hline
+         & Divide and assign (/=) & \code{x /= 3;} & \code{x = 10} \\
+        \hline
+    \end{tabulary}
+
+    \begin{itemize}
+        \item \textbf{Logical operators}: Used in decision making
+        \item \textbf{Short-circuit evaluation}: \&\& and $||$ evaluate only what's necessary
+        \item \textbf{Compound assignment}: Combines operation and assignment
+    \end{itemize}
+
+    \begin{mnemonicbox}"AND needs all TRUE, OR needs just one; Assignment takes right, puts it on the left throne"\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{2}{c}{7}
+\textbf{Write a program to print all the integers between given two floating point numbers.}
+
+\begin{solutionbox}
+    \textbf{Answer}:
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+#include <math.h>
+
+int main() {
+    float num1, num2;
+    int start, end, i;
+    
+    // Input two floating point numbers
+    printf("Enter first floating point number: ");
+    scanf("%f", &num1);
+    
+    printf("Enter second floating point number: ");
+    scanf("%f", &num2);
+    
+    // Find the ceil of smaller number and floor of larger number
+    if(num1 < num2) {
+        start = ceil(num1);
+        end = floor(num2);
+    } else {
+        start = ceil(num2);
+        end = floor(num1);
+    }
+    
+    // Print all integers between the two numbers
+    printf("Integers between %.2f and %.2f are:\n", num1, num2);
+    for(i = start; i <= end; i++) {
+        printf("%d ", i);
+    }
+    printf("\n");
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \textbf{Diagram:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu input] (input) {Input num1, num2};
+        \node[gtu decision, below=of input] (cond) {num1 $<$ num2?};
+        \node[gtu process, below left=of cond] (case1) {start = ceil(num1)\\end = floor(num2)};
+        \node[gtu process, below right=of cond] (case2) {start = ceil(num2)\\end = floor(num1)};
+        \node[gtu process, below=of cond, yshift=-3.5cm] (print) {Print integers start to end};
+
+        \draw[gtu arrow] (input) -- (cond);
+        \draw[gtu arrow] (cond) -| node[above] {Yes} (case1);
+        \draw[gtu arrow] (cond) -| node[above] {No} (case2);
+        \draw[gtu arrow] (case1) -- (case1 |- print.north);
+        \draw[gtu arrow] (case2) -- (case2 |- print.north);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{itemize}
+        \item \textbf{Math functions}: ceil() rounds up, floor() rounds down
+        \item \textbf{Range determination}: Works regardless of input order
+        \item \textbf{Integer extraction}: Only prints whole numbers between floats
+    \end{itemize}
+
+    \begin{mnemonicbox}"Ceiling the small, flooring the big, then print every Integer in between"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3}{a}{3}
+\textbf{Explain multiple if-else statement with example.}
+
+\begin{solutionbox}
+    \textbf{Answer}:
+    Multiple if-else statements allow testing several conditions in sequence, where each condition is checked only if the previous conditions are false.
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+int main() {
+    int marks;
+    
+    printf("Enter marks (0-100): ");
+    scanf("%d", &marks);
+    
+    if(marks >= 80) {
+        printf("Grade: A\n");
+    } else if(marks >= 70) {
+        printf("Grade: B\n");
+    } else if(marks >= 60) {
+        printf("Grade: C\n");
+    } else if(marks >= 50) {
+        printf("Grade: D\n");
+    } else {
+        printf("Grade: F\n");
+    }
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \textbf{Diagram:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu input] (input) {Input marks};
+        \node[gtu decision, below=of input] (cond1) {marks $\ge$ 80?};
+        \node[gtu process, right=of cond1] (gradeA) {Grade: A};
+        \node[gtu decision, below=of cond1] (cond2) {marks $\ge$ 70?};
+        \node[gtu process, right=of cond2] (gradeB) {Grade: B};
+        \node[gtu decision, below=of cond2] (cond3) {marks $\ge$ 60?};
+        \node[gtu process, right=of cond3] (gradeC) {Grade: C};
+        \node[gtu decision, below=of cond3] (cond4) {marks $\ge$ 50?};
+        \node[gtu process, right=of cond4] (gradeD) {Grade: D};
+        \node[gtu process, below=of cond4] (gradeF) {Grade: F};
+        
+        \draw[gtu arrow] (input) -- (cond1);
+        \draw[gtu arrow] (cond1) -- node[above] {Yes} (gradeA);
+        \draw[gtu arrow] (cond1) -- node[right] {No} (cond2);
+        \draw[gtu arrow] (cond2) -- node[above] {Yes} (gradeB);
+        \draw[gtu arrow] (cond2) -- node[right] {No} (cond3);
+        \draw[gtu arrow] (cond3) -- node[above] {Yes} (gradeC);
+        \draw[gtu arrow] (cond3) -- node[right] {No} (cond4);
+        \draw[gtu arrow] (cond4) -- node[above] {Yes} (gradeD);
+        \draw[gtu arrow] (cond4) -- node[right] {No} (gradeF);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{itemize}
+        \item \textbf{Sequential testing}: Only one block executes
+        \item \textbf{Efficiency}: Stops checking after finding true condition
+    \end{itemize}
+
+    \begin{mnemonicbox}"If this THEN that, ELSE IF another THEN something else"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3}{b}{4}
+\textbf{State the working of while loop and for loop.}
+
+\begin{solutionbox}
+    \textbf{Answer}:
+
+    \begin{tabulary}{\linewidth}{|L|L|L|L|}
+        \hline
+        \textbf{Loop Type} & \textbf{Working} & \textbf{Syntax} & \textbf{Use Cases} \\
+        \hline
+        while loop & 1. Test condition \newline 2. If true, execute body \newline 3. Repeat steps 1-2 until condition is false & \code{while(condition) \{}\newline \code{    // statements}\newline \code{\}} & When number of iterations is unknown beforehand \\
+        \hline
+        for loop & 1. Execute initialization once \newline 2. Test condition \newline 3. If true, execute body \newline 4. Execute update statement \newline 5. Repeat steps 2-4 until condition is false & \code{for(init; cond; update) \{}\newline \code{    // statements}\newline \code{\}} & When number of iterations is known beforehand \\
+        \hline
+    \end{tabulary}
+
+    \textbf{Comparison:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        % While Loop
+        \node[gtu start] (w_start) {Start While};
+        \node[gtu decision, below=of w_start] (w_cond) {Condition?};
+        \node[gtu process, below=of w_cond] (w_body) {Body};
+        \node[gtu stop, right=of w_cond] (w_end) {End};
+
+        \draw[gtu arrow] (w_start) -- (w_cond);
+        \draw[gtu arrow] (w_cond) -- node[left] {Yes} (w_body);
+        \draw[gtu arrow] (w_body.west) -- ++(-0.5,0) |- (w_cond.west);
+        \draw[gtu arrow] (w_cond) -- node[above] {No} (w_end);
+
+        % For Loop - Shifted right
+        \node[gtu start, right=of w_end, xshift=1cm] (f_start) {Start For};
+        \node[gtu process, below=of f_start] (f_init) {Init};
+        \node[gtu decision, below=of f_init] (f_cond) {Condition?};
+        \node[gtu process, below=of f_cond] (f_body) {Body};
+        \node[gtu process, left=of f_body] (f_update) {Update};
+        \node[gtu stop, right=of f_cond] (f_end) {End};
+
+        \draw[gtu arrow] (f_start) -- (f_init);
+        \draw[gtu arrow] (f_init) -- (f_cond);
+        \draw[gtu arrow] (f_cond) -- node[left] {Yes} (f_body);
+        \draw[gtu arrow] (f_body) -- (f_update);
+        \draw[gtu arrow] (f_update) |- (f_cond);
+        \draw[gtu arrow] (f_cond) -- node[above] {No} (f_end);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{itemize}
+        \item \textbf{Entry control}: Both check condition before execution
+        \item \textbf{Components}: for loop combines initialization, condition, and update
+    \end{itemize}
+
+    \begin{mnemonicbox}"WHILE checks THEN acts, FOR initializes CHECKS acts UPDATES"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3}{c}{7}
+\textbf{Write a program to find factorial of a given number.}
+
+\begin{solutionbox}
+    \textbf{Answer}:
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+int main() {
+    int num, i;
+    unsigned long long factorial = 1;
+    
+    // Input a number
+    printf("Enter a positive integer: ");
+    scanf("%d", &num);
+    
+    // Check if the number is negative
+    if(num < 0) {
+        printf("Error: Factorial is not defined for negative numbers.\n");
+    } else {
+        // Calculate factorial
+        for(i = 1; i <= num; i++) {
+            factorial *= i;
+        }
+        
+        printf("Factorial of %d = %llu\n", num, factorial);
+    }
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \textbf{Diagram:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu start] (start) {Start};
+        \node[gtu input, below=of start] (input) {Input n};
+        \node[gtu decision, below=of input] (check) {n $<$ 0?};
+        \node[gtu output, right=of check] (error) {Error};
+        \node[gtu process, below=of check] (init) {fact = 1, i = 1};
+        \node[gtu decision, below=of init] (loop) {i $\le$ n?};
+        \node[gtu process, right=of loop] (calc) {fact *= i\\i++};
+        \node[gtu output, below=of loop] (output) {Print fact};
+        \node[gtu stop, below=of output] (stop) {Stop};
+
+        \draw[gtu arrow] (start) -- (input);
+        \draw[gtu arrow] (input) -- (check);
+        \draw[gtu arrow] (check) -- node[above] {Yes} (error);
+        \draw[gtu arrow] (error) |- (stop);
+        \draw[gtu arrow] (check) -- node[left] {No} (init);
+        \draw[gtu arrow] (init) -- (loop);
+        \draw[gtu arrow] (loop) -- node[above] {Yes} (calc);
+        \draw[gtu arrow] (calc) |- (init.south east); 
+        \draw[gtu arrow] (loop) -- node[left] {No} (output);
+        \draw[gtu arrow] (output) -- (stop);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{itemize}
+        \item \textbf{Data type}: unsigned long long for large factorials
+        \item \textbf{Error handling}: Checks for negative input
+        \item \textbf{Loop implementation}: Multiply successive integers
+    \end{itemize}
+
+    \begin{mnemonicbox}"Factorial Formula: Multiply From One to Number"\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{3}{a}{3}
+\textbf{Explain the working of switch-case statement with example.}
+
+\begin{solutionbox}
+    \textbf{Answer}:
+    The switch-case statement is a multi-way decision maker that tests the value of an expression against various case values and executes the matching case block.
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+int main() {
+    int day;
+    
+    printf("Enter day number (1-7): ");
+    scanf("%d", &day);
+    
+    switch(day) {
+        case 1: printf("Monday\n"); break;
+        case 2: printf("Tuesday\n"); break;
+        case 3: printf("Wednesday\n"); break;
+        case 4: printf("Thursday\n"); break;
+        case 5: printf("Friday\n"); break;
+        case 6: printf("Saturday\n"); break;
+        case 7: printf("Sunday\n"); break;
+        default: printf("Invalid day number\n");
+    }
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \textbf{Diagram:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu input] (input) {Input day};
+        \node[gtu decision, below=of input] (switch) {switch(day)};
+        
+        \node[gtu process, below left=of switch] (c1) {case 1};
+        \node[gtu process, below=of switch] (c2) {case ...};
+        \node[gtu process, below right=of switch] (def) {default};
+        
+        \node[gtu output, below=of c1] (o1) {Mon};
+        \node[gtu output, below=of c2] (o2) {...};
+        \node[gtu output, below=of def] (odef) {Invalid};
+        
+        \node[gtu stop, below=of o2] (end) {End};
+
+        \draw[gtu arrow] (input) -- (switch);
+        \draw[gtu arrow] (switch) -- (c1);
+        \draw[gtu arrow] (switch) -- (c2);
+        \draw[gtu arrow] (switch) -- (def);
+        
+        \draw[gtu arrow] (c1) -- (o1);
+        \draw[gtu arrow] (c2) -- (o2);
+        \draw[gtu arrow] (def) -- (odef);
+        
+        \draw[gtu arrow] (o1) -- (end);
+        \draw[gtu arrow] (o2) -- (end);
+        \draw[gtu arrow] (odef) -- (end);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{itemize}
+        \item \textbf{Expression evaluation}: Only integer or character types
+        \item \textbf{Case matching}: Executes matching case until break
+        \item \textbf{Default case}: Executes when no case matches
+    \end{itemize}
+
+    \begin{mnemonicbox}"SWITCH value, CASE match, BREAK out, DEFAULT rescue"\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{3}{b}{4}
+\textbf{Define break and continue keyword.}
+
+\begin{solutionbox}
+    \textbf{Answer}:
+
+    \begin{tabulary}{\linewidth}{|L|L|L|L|}
+        \hline
+        \textbf{Keyword} & \textbf{Definition} & \textbf{Purpose} & \textbf{Example} \\
+        \hline
+        break & Terminates the innermost loop or switch statement immediately & To exit a loop prematurely when a certain condition is met & \code{for(i=1; i<=10; i++) \{} \newline \code{    if(i == 5) break;} \newline \code{    printf("\%d ", i);} \newline \code{\} // Output: 1 2 3 4} \\
+        \hline
+        continue & Skips the rest of the current iteration and jumps to the next iteration of the loop & To skip specific iterations without terminating the loop & \code{for(i=1; i<=10; i++) \{} \newline \code{    if(i == 5) continue;} \newline \code{    printf("\%d ", i);} \newline \code{\} // Output: 1 2 3 4 6 7 8 9 10} \\
+        \hline
+    \end{tabulary}
+
+    \textbf{Behavioral Comparison:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        % Break
+        \node[gtu start] (b_check) {Condition};
+        \node[gtu decision, below=of b_check] (b_dec) {break?};
+        \node[gtu stop, left=of b_dec] (b_exit) {Exit Loop};
+        \node[gtu process, right=of b_dec] (b_cont) {Continue};
+        
+        \draw[gtu arrow] (b_check) -- (b_dec);
+        \draw[gtu arrow] (b_dec) -- node[above] {Yes} (b_exit);
+        \draw[gtu arrow] (b_dec) -- node[above] {No} (b_cont);
+
+        % Continue
+        \node[gtu start, right=of b_cont, xshift=1cm] (c_check) {Condition};
+        \node[gtu decision, below=of c_check] (c_dec) {continue?};
+        \node[gtu process, left=of c_dec] (c_skip) {Skip Body};
+        \node[gtu process, right=of c_dec] (c_exec) {Execute Body};
+        \node[gtu process, below=of c_skip] (c_next) {Next Iteration};
+        
+        \draw[gtu arrow] (c_check) -- (c_dec);
+        \draw[gtu arrow] (c_dec) -- node[above] {Yes} (c_skip);
+        \draw[gtu arrow] (c_dec) -- node[above] {No} (c_exec);
+        \draw[gtu arrow] (c_skip) -- (c_next);
+        \draw[gtu arrow] (c_exec) |- (c_next);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{itemize}
+        \item \textbf{Scope}: Both affect only the innermost loop
+        \item \textbf{Control transfer}: break exits loop, continue jumps to next iteration
+    \end{itemize}
+
+    \begin{mnemonicbox}"BREAK leaves the room, CONTINUE skips to the next dance move"\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{3}{c}{7}
+\textbf{Write a program to read number of lines (n) from keyboard and print the triangle shown below.}
+
+\begin{verbatim}
+1
+1 2
+1 2 3
+1 2 3 4
+1 2 3 4 5
+\end{verbatim}
+
+\begin{solutionbox}
+    \textbf{Answer}:
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+int main() {
+    int n, i, j;
+    
+    // Input number of lines
+    printf("Enter number of lines: ");
+    scanf("%d", &n);
+    
+    // Print the triangle pattern
+    for(i = 1; i <= n; i++) {
+        // Print numbers from 1 to i in each row
+        for(j = 1; j <= i; j++) {
+            printf("%d ", j);
+        }
+        printf("\n");
+    }
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \textbf{Program Flow:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu input] (input) {Input n};
+        \node[gtu process, below=of input] (outer) {i = 1};
+        \node[gtu decision, below=of outer] (check_i) {i $\le$ n?};
+        
+        \node[gtu process, right=of check_i] (inner) {j = 1};
+        \node[gtu decision, right=of inner] (check_j) {j $\le$ i?};
+        \node[gtu output, below=of check_j] (print_j) {Print j};
+        \node[gtu process, left=of print_j] (inc_j) {j++};
+        
+        \node[gtu output, below=of check_i, yshift=-2cm] (newline) {Print \\n};
+        \node[gtu process, left=of newline] (inc_i) {i++};
+        \node[gtu stop, left=of check_i] (stop) {Stop};
+
+        \draw[gtu arrow] (input) -- (outer);
+        \draw[gtu arrow] (outer) -- (check_i);
+        \draw[gtu arrow] (check_i) -- node[above] {Yes} (inner);
+        \draw[gtu arrow] (inner) -- (check_j);
+        \draw[gtu arrow] (check_j) -- node[right] {Yes} (print_j);
+        \draw[gtu arrow] (print_j) -- (inc_j);
+        \draw[gtu arrow] (inc_j) |- (check_j);
+        
+        \draw[gtu arrow] (check_j) -- node[right] {No} (newline); % simplified path
+        \draw[gtu arrow] (newline) -- (inc_i);
+        \draw[gtu arrow] (inc_i) |- (check_i);
+        \draw[gtu arrow] (check_i) -- node[above] {No} (stop);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{itemize}
+        \item \textbf{Nested loops}: Outer loop for rows, inner loop for columns
+        \item \textbf{Pattern logic}: Row number determines how many numbers to print
+        \item \textbf{Number sequence}: Each row prints 1 to row number
+    \end{itemize}
+
+    \begin{mnemonicbox}"Rows decide COUNTer limit, COLumns print ONE to ROW"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4}{a}{3}
+\textbf{Explain nested if-else statement with example.}
+
+\begin{solutionbox}
+    \textbf{Answer}:
+    Nested if-else statements are if-else constructs placed inside another if or else block, allowing more complex conditional logic and multiple levels of decision making.
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+int main() {
+    int age;
+    char hasID;
+    
+    printf("Enter age: ");
+    scanf("%d", &age);
+    
+    printf("Do you have ID? (Y/N): ");
+    scanf(" %c", &hasID);
+    
+    if(age >= 18) {
+        if(hasID == 'Y' || hasID == 'y') {
+            printf("You can vote!\n");
+        } else {
+            printf("You need ID to vote.\n");
+        }
+    } else {
+        printf("You must be 18 or older to vote.\n");
+    }
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \textbf{Decision Tree:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu input] (input) {Input age, hasID};
+        \node[gtu decision, below=of input] (age_check) {age $\ge$ 18?};
+        \node[gtu decision, left=of age_check, xshift=-2cm] (id_check) {hasID == 'Y' or 'y'?};
+        \node[gtu process, below left=of id_check] (vote) {You can vote!};
+        \node[gtu process, below right=of id_check] (need_id) {Need ID to vote};
+        \node[gtu process, right=of age_check] (underage) {Must be 18+ to vote};
+
+        \draw[gtu arrow] (input) -- (age_check);
+        \draw[gtu arrow] (age_check) -- node[above] {Yes} (id_check);
+        \draw[gtu arrow] (age_check) -- node[above] {No} (underage);
+        \draw[gtu arrow] (id_check) -- node[left] {Yes} (vote);
+        \draw[gtu arrow] (id_check) -- node[right] {No} (need_id);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{itemize}
+        \item \textbf{Hierarchical conditions}: Evaluates conditions in layers
+        \item \textbf{Indentation}: Improves readability of nested structures
+        \item \textbf{Multi-factor decisions}: Combines multiple criteria
+    \end{itemize}
+
+    \begin{mnemonicbox}"If INSIDE if, check DEEPER conditions"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4}{b}{4}
+\textbf{Describe initialization of one-dimensional array.}
+
+\begin{solutionbox}
+    \textbf{Answer}:
+
+    \begin{tabulary}{\linewidth}{|L|L|L|L|}
+        \hline
+        \textbf{Initialization Method} & \textbf{Syntax} & \textbf{Example} & \textbf{Description} \\
+        \hline
+        Declaration with size & \code{type name[size];} & \code{int marks[5];} & Creates array with specified size, elements have garbage values \\
+        \hline
+        Declaration with initialization & \code{type name[size] = \{values\};} & \code{int ages[4] = \{21, 19, 25, 32\};} & Creates and initializes array with specific values \\
+        \hline
+        Partial initialization & \code{type name[size] = \{values\};} & \code{int nums[5] = \{1, 2\};} & Initializes first elements, rest become zero \\
+        \hline
+        Size inference & \code{type name[] = \{values\};} & \code{int scores[] = \{95, 88, 72\};} & Size determined by number of initializers \\
+        \hline
+        Individual element & \code{name[index] = value;} & \code{marks[0] = 85;} & Assigns value to specific element \\
+        \hline
+    \end{tabulary}
+
+    \textbf{Array Visualization:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu block]
+        \matrix[nodes={draw, minimum size=1cm, anchor=center}, column sep=0cm, row sep=0cm] (arr) {
+            \node (n0) {10}; & \node (n1) {20}; & \node (n2) {30}; & \node (n3) {40}; & \node (n4) {50}; \\
+        };
+        \node[below=0.2cm of n0] {[0]};
+        \node[below=0.2cm of n1] {[1]};
+        \node[below=0.2cm of n2] {[2]};
+        \node[below=0.2cm of n3] {[3]};
+        \node[below=0.2cm of n4] {[4]};
+        \node[left=0.5cm of n0] {int numbers[5] =};
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{itemize}
+        \item \textbf{Zero-indexing}: First element at index 0
+        \item \textbf{Contiguous memory}: Elements stored sequentially
+        \item \textbf{Size limitation}: Size must be known at compile time
+    \end{itemize}
+
+    \begin{mnemonicbox}"Declare SIZE first, then FILL with values or let COMPILER COUNT"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4}{c}{7}
+\textbf{Define Array and write a program to reverse a string.}
+
+\begin{solutionbox}
+    \textbf{Answer}:
+    An array is a collection of similar data items stored at contiguous memory locations and accessed using a common name.
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+    char str[100], reversed[100];
+    int i, j, length;
+    
+    // Input a string
+    printf("Enter a string: ");
+    gets(str);
+    
+    // Find the length of string
+    length = strlen(str);
+    
+    // Reverse the string
+    for(i = length - 1, j = 0; i >= 0; i--, j++) {
+        reversed[j] = str[i];
+    }
+    
+    // Add null terminator
+    reversed[j] = '\0';
+    
+    // Display the reversed string
+    printf("Reversed string: %s\n", reversed);
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \textbf{Algorithm Visualization:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu start] (orig) {Original: "HELLO"};
+        \node[gtu process, right=of orig] (h) {H};
+        \node[gtu process, right=of h] (e) {E};
+        \node[gtu process, right=of e] (l1) {L};
+        \node[gtu process, right=of l1] (l2) {L};
+        \node[gtu process, right=of l2] (o) {O};
+        
+        \node[gtu process, below=of h] (r4) {rev[4]};
+        \node[gtu process, below=of e] (r3) {rev[3]};
+        \node[gtu process, below=of l1] (r2) {rev[2]};
+        \node[gtu process, below=of l2] (r1) {rev[1]};
+        \node[gtu process, below=of o] (r0) {rev[0]};
+        
+        \node[gtu output, below=of r2] (final) {Reversed: "OLLEH"};
+
+        \draw[gtu arrow] (orig) -- (h);
+        \draw[gtu arrow] (h) -- (e);
+        \draw[gtu arrow] (e) -- (l1);
+        \draw[gtu arrow] (l1) -- (l2);
+        \draw[gtu arrow] (l2) -- (o);
+        
+        \draw[gtu arrow] (h) -- (r4);
+        \draw[gtu arrow] (e) -- (r3);
+        \draw[gtu arrow] (l1) -- (r2);
+        \draw[gtu arrow] (l2) -- (r1);
+        \draw[gtu arrow] (o) -- (r0);
+        
+        \draw[gtu arrow] (r0) -- (final);
+        \draw[gtu arrow] (r1) -- (final);
+        \draw[gtu arrow] (r2) -- (final);
+        \draw[gtu arrow] (r3) -- (final);
+        \draw[gtu arrow] (r4) -- (final);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{itemize}
+        \item \textbf{Character array}: Stores string with null terminator
+        \item \textbf{Two-pointer technique}: One for original, one for reversed
+        \item \textbf{Zero-based indexing}: Arrays start at index 0
+    \end{itemize}
+
+    \begin{mnemonicbox}"Start from END, place at BEGIN, stop at ZERO"\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{4}{a}{3}
+\textbf{Explain do while loop with example}
+
+\begin{solutionbox}
+    \textbf{Answer}:
+    The do-while loop is an exit-controlled loop that executes the loop body at least once before checking the condition.
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+int main() {
+    int num, sum = 0;
+    
+    do {
+        printf("Enter a number (0 to stop): ");
+        scanf("%d", &num);
+        sum += num;
+    } while(num != 0);
+    
+    printf("Sum of all entered numbers: %d\n", sum);
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \textbf{Loop Execution Flow:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu start] (start) {Start};
+        \node[gtu process, below=of start] (init) {sum = 0};
+        \node[gtu input, below=of init] (input) {Input num};
+        \node[gtu process, below=of input] (add) {sum += num};
+        \node[gtu decision, below=of add] (cond) {num != 0?};
+        \node[gtu output, right=of cond] (print) {Display sum};
+        \node[gtu stop, below=of print] (stop) {Stop};
+
+        \draw[gtu arrow] (start) -- (init);
+        \draw[gtu arrow] (init) -- (input);
+        \draw[gtu arrow] (input) -- (add);
+        \draw[gtu arrow] (add) -- (cond);
+        \draw[gtu arrow] (cond) -- node[left] {Yes} ++(-2,0) |- (input);
+        \draw[gtu arrow] (cond) -- node[above] {No} (print);
+        \draw[gtu arrow] (print) -- (stop);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{itemize}
+        \item \textbf{Execution order}: Body first, condition check later
+        \item \textbf{Guaranteed execution}: Loop body always executes at least once
+        \item \textbf{Termination}: Condition evaluated at bottom of loop
+    \end{itemize}
+
+    \begin{mnemonicbox}"DO first, ask questions WHILE later"\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{4}{b}{4}
+\textbf{Define pointer and describe pointer with example.}
+
+\begin{solutionbox}
+    \textbf{Answer}:
+    A pointer is a variable that stores the memory address of another variable.
+
+    \begin{tabulary}{\linewidth}{|L|L|L|}
+        \hline
+        \textbf{Pointer Concept} & \textbf{Description} & \textbf{Example} \\
+        \hline
+        Declaration & Data\_type *pointer\_name; & \code{int *ptr;} \\
+        \hline
+        Initialization & Assign address of a variable & \code{int num = 10; int *ptr = \&num;} \\
+        \hline
+        Dereference & Access the value at the address & \code{printf("\%d", *ptr);} // Prints 10 \\
+        \hline
+        Address operator & Gets address of a variable & \code{printf("\%p", \&num);} // Prints address \\
+        \hline
+        Null pointer & Pointer that points to nothing & \code{int *ptr = NULL;} \\
+        \hline
+    \end{tabulary}
+
+    \textbf{Pointer Visualization:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu block]
+        \node[draw, rectangle split, rectangle split parts=2] (num) {Address: 1000 \nodepart{second} Value: 10};
+        \node[above=0.1cm of num] {Variable 'num'};
+        
+        \node[draw, rectangle split, rectangle split parts=2, right=3cm of num] (ptr) {Address: 2000 \nodepart{second} Value: 1000};
+        \node[above=0.1cm of ptr] {Pointer 'ptr'};
+        
+        \draw[gtu arrow] (ptr.south) -- ++(0,-0.5) -| (num.south);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{itemize}
+        \item \textbf{Indirect access}: Access variables through their addresses
+        \item \textbf{Memory manipulation}: Direct memory access for efficiency
+        \item \textbf{Dynamic memory}: Enables allocation/deallocation during runtime
+    \end{itemize}
+
+    \begin{mnemonicbox}"Pointers POINT to ADDRESS, STARS dereference to VALUES"\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{4}{c}{7}
+\textbf{Define pointer and write a program to exchange two integers using pointer arguments.}
+
+\begin{solutionbox}
+    \textbf{Answer}:
+    A pointer is a variable that contains the memory address of another variable, allowing indirect access and manipulation of data.
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+// Function to swap two integers using pointers
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+int main() {
+    int num1, num2;
+    
+    // Input two integers
+    printf("Enter first number: ");
+    scanf("%d", &num1);
+    
+    printf("Enter second number: ");
+    scanf("%d", &num2);
+    
+    printf("Before swapping: num1 = %d, num2 = %d\n", num1, num2);
+    
+    // Call swap function with addresses of num1 and num2
+    swap(&num1, &num2);
+    
+    printf("After swapping: num1 = %d, num2 = %d\n", num1, num2);
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \textbf{Swap Process Visualization:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu block] (init) {a points to num1\\b points to num2};
+        \node[gtu process, right=of init] (step1) {temp = *a};
+        \node[gtu process, right=of step1] (step2) {*a = *b};
+        \node[gtu process, below=of step2] (step3) {*b = temp};
+        \node[gtu output, left=of step3] (final) {Values exchanged};
+
+        \draw[gtu arrow] (init) -- (step1);
+        \draw[gtu arrow] (step1) -- (step2);
+        \draw[gtu arrow] (step2) -- (step3);
+        \draw[gtu arrow] (step3) -- (final);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{itemize}
+        \item \textbf{Pass by reference}: Pointers allow functions to modify original variables
+        \item \textbf{Temporary variable}: Required for swapping without data loss
+        \item \textbf{Function parameter}: Pointer arguments pass addresses
+    \end{itemize}
+
+    \begin{mnemonicbox}"Grab by ADDRESS, change the CONTENT, without being PRESENT"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5}{a}{3}
+\textbf{Write a program to find the numbers which are divisible by 7 in between the numbers 50 and 500.}
+
+\begin{solutionbox}
+    \textbf{Answer}:
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+int main() {
+    int i, count = 0;
+    
+    printf("Numbers divisible by 7 between 50 and 500:\n");
+    
+    // Find and print numbers divisible by 7
+    for(i = 50; i <= 500; i++) {
+        if(i % 7 == 0) {
+            printf("%d ", i);
+            count++;
+            
+            // Print 10 numbers per line for better readability
+            if(count % 10 == 0)
+                printf("\n");
+        }
+    }
+    
+    printf("\nTotal count: %d\n", count);
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \textbf{Algorithm Visualization:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu start] (start) {Start};
+        \node[gtu process, below=of start] (init) {i = 50, count = 0};
+        \node[gtu decision, below=of init] (loop) {i $\le$ 500?};
+        \node[gtu decision, right=of loop] (div) {i \% 7 == 0?};
+        \node[gtu process, right=of div] (print) {Print i\\count++};
+        \node[gtu process, below=of div] (inc) {i++};
+        \node[gtu output, below=of loop] (total) {Print total count};
+        \node[gtu stop, below=of total] (stop) {Stop};
+
+        \draw[gtu arrow] (start) -- (init);
+        \draw[gtu arrow] (init) -- (loop);
+        \draw[gtu arrow] (loop) -- node[above] {Yes} (div);
+        \draw[gtu arrow] (div) -- node[above] {Yes} (print);
+        \draw[gtu arrow] (div) -- node[left] {No} (inc);
+        \draw[gtu arrow] (print) |- (inc);
+        \draw[gtu arrow] (inc) -| (loop.south);
+        \draw[gtu arrow] (loop) -- node[left] {No} (total);
+        \draw[gtu arrow] (total) -- (stop);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{itemize}
+        \item \textbf{Modulo operator}: i \% 7 == 0 checks divisibility
+        \item \textbf{Formatting output}: Line breaks for readability
+        \item \textbf{Counter variable}: Tracks how many numbers found
+    \end{itemize}
+
+    \begin{mnemonicbox}"DIVide by SEVEN, ZERO remainder wins"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5}{b}{4}
+\textbf{Write a program which reads an integer from keyboard and prints whether given number is odd or even.}
+
+\begin{solutionbox}
+    \textbf{Answer}:
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+int main() {
+    int number;
+    
+    // Input an integer
+    printf("Enter an integer: ");
+    scanf("%d", &number);
+    
+    // Check if the number is even or odd
+    if(number % 2 == 0) {
+        printf("%d is an even number.\n", number);
+    } else {
+        printf("%d is an odd number.\n", number);
+    }
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \textbf{Decision Logic:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu input] (input) {Input number};
+        \node[gtu decision, below=of input] (check) {num \% 2 == 0?};
+        \node[gtu output, below left=of check] (even) {Even};
+        \node[gtu output, below right=of check] (odd) {Odd};
+        \node[gtu stop, below=of check, yshift=-2cm] (stop) {End};
+
+        \draw[gtu arrow] (input) -- (check);
+        \draw[gtu arrow] (check) -- node[left] {Yes} (even);
+        \draw[gtu arrow] (check) -- node[right] {No} (odd);
+        \draw[gtu arrow] (even) -- (stop);
+        \draw[gtu arrow] (odd) -- (stop);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{itemize}
+        \item \textbf{Modulo test}: Even numbers have remainder 0 when divided by 2
+        \item \textbf{Binary representation}: Last bit is 0 for even, 1 for odd
+    \end{itemize}
+
+    \begin{mnemonicbox}"EVEN with ZERO end, ODD with ONE bend"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5}{c}{7}
+\textbf{Define structure? Explain how it differs from array? Develop a structure named book to save following information about books. Book title, Name of author, Price and Number of pages.}
+
+\begin{solutionbox}
+    \textbf{Answer}:
+    A structure is a user-defined data type that allows grouping of variables of different data types under a single name.
+
+    \textbf{Difference between Structure and Array:}
+
+    \begin{tabulary}{\linewidth}{|L|L|L|}
+        \hline
+        \textbf{Feature} & \textbf{Structure} & \textbf{Array} \\
+        \hline
+        Data type & Can store different data types & Stores elements of same data type \\
+        \hline
+        Access & Members accessed using dot (.) operator & Elements accessed using index [] \\
+        \hline
+        Memory allocation & Memory may not be contiguous & Memory is always contiguous \\
+        \hline
+        Size & Size can vary for each member & Size is same for all elements \\
+        \hline
+        Declaration & Uses struct keyword & Uses square brackets [] \\
+        \hline
+        Purpose & Organizes related heterogeneous data & Organizes homogeneous data \\
+        \hline
+    \end{tabulary}
+
+    \textbf{Book Structure Program:}
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+#include <string.h>
+
+// Define the structure
+struct Book {
+    char title[100];
+    char author[50];
+    float price;
+    int pages;
+};
+
+int main() {
+    // Declare a variable of type struct Book
+    struct Book myBook;
+    
+    // Assign values to the structure members
+    strcpy(myBook.title, "C Programming");
+    strcpy(myBook.author, "Dennis Ritchie");
+    myBook.price = 350.50;
+    myBook.pages = 285;
+    
+    // Display book information
+    printf("Book Details:\n");
+    printf("Title: %s\n", myBook.title);
+    printf("Author: %s\n", myBook.author);
+    printf("Price: %.2f\n", myBook.price);
+    printf("Pages: %d\n", myBook.pages);
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \textbf{Structure Visualization:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu block]
+        \node[draw, rectangle split, rectangle split parts=4] (struct) {
+            title: "C Programming" \nodepart{second}
+            author: "Dennis Ritchie" \nodepart{third}
+            price: 350.50 \nodepart{fourth}
+            pages: 285
+        };
+        \node[above=0.1cm of struct] {struct Book myBook};
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{itemize}
+        \item \textbf{Structure definition}: Creates template for data
+        \item \textbf{Member access}: Use dot operator (structure.member)
+        \item \textbf{String handling}: Uses string functions for character arrays
+    \end{itemize}
+
+    \begin{mnemonicbox}"STRUCTURE groups DIFFERENT, ARRAY repeats SAME"\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{5}{a}{3}
+\textbf{Write a program which reads a real number from keyboard and prints a smallest integer greater than it.}
+
+\begin{solutionbox}
+    \textbf{Answer}:
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+#include <math.h>
+
+int main() {
+    float number;
+    int result;
+    
+    // Input a real number
+    printf("Enter a real number: ");
+    scanf("%f", &number);
+    
+    // Find smallest integer greater than the input
+    result = ceil(number);
+    
+    // Display the result
+    printf("Smallest integer greater than %.2f is %d\n", number, result);
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \textbf{Function Behavior:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu input] (input) {Input real number};
+        \node[gtu process, right=of input] (ceil) {Apply ceil function};
+        \node[gtu output, right=of ceil] (result) {Display result};
+
+        \draw[gtu arrow] (input) -- (ceil);
+        \draw[gtu arrow] (ceil) -- (result);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{itemize}
+        \item \textbf{Math function}: ceil() rounds up to next integer
+        \item \textbf{Result type}: Returns smallest integer greater than input
+        \item \textbf{Handling edge cases}: Works with negative numbers
+    \end{itemize}
+
+    \begin{mnemonicbox}"CEILING function, UP we go, NEXT integer we show"\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{5}{b}{4}
+\textbf{Write a program which reads character from keyboard and prints its ASCII value.}
+
+\begin{solutionbox}
+    \textbf{Answer}:
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+int main() {
+    char ch;
+    
+    // Input a character
+    printf("Enter a character: ");
+    scanf("%c", &ch);
+    
+    // Display ASCII value of the character
+    printf("ASCII value of '%c' is %d\n", ch, ch);
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \textbf{Program Visualization:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu input] (input) {Input character 'A'};
+        \node[gtu process, right=of input] (conv) {Internal: 65};
+        \node[gtu output, right=of conv] (output) {Print 65};
+
+        \draw[gtu arrow] (input) -- (conv);
+        \draw[gtu arrow] (conv) -- (output);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{itemize}
+        \item \textbf{Character storage}: Characters stored as integers in memory
+        \item \textbf{Type conversion}: Automatic conversion from char to int
+        \item \textbf{Extended ASCII}: Values from 0 to 255 for 8-bit characters
+    \end{itemize}
+
+    \begin{mnemonicbox}"CHARS have NUMBERS underneath, PRINT shows BOTH sides"\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{5}{c}{7}
+\textbf{Define function? Explain its advantage. Write function to calculate the square of a given integer number.}
+
+\begin{solutionbox}
+    \textbf{Answer}:
+    A function is a self-contained block of code designed to perform a specific task. It takes input, processes it, and returns an output.
+
+    \textbf{Advantages of Functions:}
+
+    \begin{tabulary}{\linewidth}{|L|L|}
+        \hline
+        \textbf{Advantage} & \textbf{Description} \\
+        \hline
+        Code reusability & Write once, use many times \\
+        \hline
+        Modularity & Break complex problems into manageable parts \\
+        \hline
+        Maintainability & Easier to debug and modify isolated code \\
+        \hline
+        Abstraction & Hide implementation details \\
+        \hline
+        Readability & Makes code more organized and understandable \\
+        \hline
+        Scope control & Variables local to functions reduce naming conflicts \\
+        \hline
+    \end{tabulary}
+
+    \textbf{Program with Square Function:}
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+// Function to calculate square of an integer
+int square(int num) {
+    return num * num;
+}
+
+int main() {
+    int number, result;
+    
+    // Input an integer
+    printf("Enter an integer: ");
+    scanf("%d", &number);
+    
+    // Call the square function
+    result = square(number);
+    
+    // Display the result
+    printf("Square of %d is %d\n", number, result);
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \textbf{Function Flow:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu process] (main) {main function};
+        \node[gtu process, right=of main] (sq) {square function};
+        \node[gtu stop, right=of sq] (end) {End};
+
+        \draw[gtu arrow, bend left] (main) to node[above] {call(num)} (sq);
+        \draw[gtu arrow, bend left] (sq) to node[below] {return result} (main);
+        \draw[gtu arrow] (main) -- (end);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{itemize}
+        \item \textbf{Function prototype}: Declares function signature
+        \item \textbf{Parameters}: Input values passed to function
+        \item \textbf{Return value}: Output or result from function
+    \end{itemize}
+
+    \begin{mnemonicbox}"Functions ENCAPSULATE tasks, take INPUTS, give OUTPUTS"\end{mnemonicbox}
+\end{solutionbox}
+
+\end{document}

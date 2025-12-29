@@ -1,0 +1,1536 @@
+\documentclass{article}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/preamble.tex}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/gujarati-boxes.tex}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/commands.tex}
+
+\title{Programming in C (4331105) - Summer 2025 Solution}
+\date{May 20, 2025}
+
+\begin{document}
+\maketitle
+
+\questionmarks{1}{a}{3}
+\textbf{C માં કેટલા keywords છે? કોઈપણ ચાર keywords લખો}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+    \begin{tabulary}{\linewidth}{|L|L|}
+        \hline
+        \textbf{કુલ Keywords} & \textbf{ઉદાહરણો} \\
+        \hline
+        32 keywords & int, float, char, if \\
+        \hline
+    \end{tabulary}
+
+    \textbf{આકૃતિ:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu block] (keywords) {C Keywords - 32 કુલ};
+        \node[gtu block, below left=of keywords, xshift=-1cm] (types) {Data Types: int, float, char, double};
+        \node[gtu block, below=of keywords] (control) {Control: if, else, for, while};
+        \node[gtu block, below right=of keywords, xshift=1cm] (storage) {Storage: static, extern, auto, register};
+
+        \draw[gtu arrow] (keywords) -- (types);
+        \draw[gtu arrow] (keywords) -- (control);
+        \draw[gtu arrow] (keywords) -- (storage);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{itemize}
+        \item \textbf{32 keywords}: C ભાષામાં કુલ આરક્ષિત શબ્દો
+        \item \textbf{Data type keywords}: int, float, char, double વેરિએબલ જાહેર કરવા માટે
+        \item \textbf{Control keywords}: if, else, for, while પ્રોગ્રામ ફ્લો માટે
+    \end{itemize}
+
+    \begin{mnemonicbox}"બિલાડી ચાર રંગમાં" (char, int, float, const)\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{1}{b}{4}
+\textbf{વેરિએબલ શું છે? ઉદાહરણ સાથે વેરિએબલને નામ આપવાના નિયમો સમજાવો}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+    \textbf{વેરિએબલ વ્યાખ્યા:}
+
+    \begin{tabulary}{\linewidth}{|L|L|}
+        \hline
+        \textbf{પાસાં} & \textbf{વર્ણન} \\
+        \hline
+        વ્યાખ્યા & ડેટા સ્ટોર કરવા માટે નામવાળી મેમરી લોકેશન \\
+        \hline
+        હેતુ & પ્રોગ્રામ દરમિયાન બદલાતા મૂલ્યો રાખવા \\
+        \hline
+        જાહેરાત & \code{datatype variable\_name;} \\
+        \hline
+    \end{tabulary}
+
+    \textbf{નામકરણના નિયમો:}
+
+    \begin{itemize}
+        \item \textbf{પ્રથમ અક્ષર}: અક્ષર અથવા underscore (\_) હોવો જોઈએ
+        \item \textbf{પછીના અક્ષરો}: અક્ષરો, અંકો, underscore માત્ર
+        \item \textbf{Case sensitive}: 'Age' અને 'age' અલગ છે
+        \item \textbf{Keywords નહીં}: 'int', 'float' જેવા આરક્ષિત શબ્દો વાપરી શકાતા નથી
+    \end{itemize}
+
+    \textbf{ઉદાહરણો:}
+
+\begin{lstlisting}[language=C]
+int age;        // યોગ્ય
+float _salary;  // યોગ્ય
+char name123;   // યોગ્ય
+int 2number;    // ખોટું - અંકથી શરૂ
+float for;      // ખોટું - keyword વપરાયું
+\end{lstlisting}
+
+    \begin{mnemonicbox}"અક્ષર પહેલાં, keywords નહીં"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{1}{c}{7}
+\textbf{નીચેના statements માં errors શોધો}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+    \begin{tabulary}{\linewidth}{|L|L|L|}
+        \hline
+        \textbf{Statement} & \textbf{Error} & \textbf{કારણ} \\
+        \hline
+        (1) \code{fLoat x;} & ખોટો keyword & સાચું: \code{float x;} \\
+        \hline
+        (2) \code{int min, max = 20;} & અર્ધ initialization & માત્ર max initialize, min નહીં \\
+        \hline
+        (3) \code{long char c;} & ખોટું combination & long ને char સાથે વાપરી શકાતું નથી \\
+        \hline
+        (4) \code{iNt a;} & ખોટો keyword & સાચું: \code{int a;} \\
+        \hline
+        (5) \code{FLOAT f=2;} & ખોટો keyword & સાચું: \code{float f=2;} \\
+        \hline
+        (6) \code{double m ; n;} & Missing datatype & સાચું: \code{double m, n;} \\
+        \hline
+        (7) \code{Int score (100)0;} & અનેક errors & ખોટું syntax, સાચું: \code{int score = 100;} \\
+        \hline
+    \end{tabulary}
+
+    \textbf{મુખ્ય મુદ્દાઓ:}
+
+    \begin{itemize}
+        \item \textbf{Case sensitivity}: Keywords નાના અક્ષરમાં હોવા જોઈએ
+        \item \textbf{Multiple declaration}: Comma separator વાપરો
+        \item \textbf{Initialization syntax}: = operator વાપરો
+    \end{itemize}
+
+    \begin{mnemonicbox}"Keywords હંમેશા નાના અક્ષરે"\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{1}{c}{7}
+\textbf{અલ્ગોરિધમ શું છે? ફ્લોચાર્ટ શું છે? વર્તુળનો વિસ્તાર અને પરિમિતિ શોધવા માટે ફ્લોચાર્ટ દોરો.}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+    \textbf{વ્યાખ્યાઓ:}
+
+    \begin{tabulary}{\linewidth}{|L|L|}
+        \hline
+        \textbf{શબ્દ} & \textbf{વ્યાખ્યા} \\
+        \hline
+        Algorithm & સમસ્યા હલ કરવાની પગલાબદ્ધ પ્રક્રિયા \\
+        \hline
+        Flowchart & Algorithm નું પ્રતીકો વડે દ્રશ્ય પ્રતિનિધિત્વ \\
+        \hline
+    \end{tabulary}
+
+    \textbf{વર્તુળ માટે ફ્લોચાર્ટ:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu start] (start) {શરૂઆત};
+        \node[gtu input, below=of start] (input) {radius r input કરો};
+        \node[gtu process, below=of input] (calc_area) {area = $\pi \times r^2$ ગણતરી કરો};
+        \node[gtu process, below=of calc_area] (calc_perim) {perimeter = $2 \times \pi \times r$ ગણતરી કરો};
+        \node[gtu output, below=of calc_perim] (display) {area અને perimeter દર્શાવો};
+        \node[gtu stop, below=of display] (end) {અંત};
+
+        \draw[gtu arrow] (start) -- (input);
+        \draw[gtu arrow] (input) -- (calc_area);
+        \draw[gtu arrow] (calc_area) -- (calc_perim);
+        \draw[gtu arrow] (calc_perim) -- (display);
+        \draw[gtu arrow] (display) -- (end);
+    \end{tikzpicture}
+    \end{center}
+
+    \textbf{Algorithm ના પગલાં:}
+
+    \begin{itemize}
+        \item \textbf{પગલું 1}: શરૂઆત કરો
+        \item \textbf{પગલું 2}: Radius નું મૂલ્ય input કરો
+        \item \textbf{પગલું 3}: $\pi \times r^2$ સૂત્ર વડે area ગણો
+        \item \textbf{પગલું 4}: $2 \times \pi \times r$ સૂત્ર વડે perimeter ગણો
+    \end{itemize}
+
+    \begin{mnemonicbox}"શરૂ Input ગણતરી દર્શાવો અંત"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2}{a}{3}
+\textbf{ઓપરેટર શું છે? C ના બધા operators ની યાદી બનાવો.}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+    \textbf{ઓપરેટર વ્યાખ્યા:}
+
+    \begin{tabulary}{\linewidth}{|L|L|}
+        \hline
+        \textbf{પાસાં} & \textbf{વર્ણન} \\
+        \hline
+        વ્યાખ્યા & Operands પર operations કરતા ખાસ પ્રતીકો \\
+        \hline
+        હેતુ & ડેટા અને વેરિએબલ્સ સાથે કામ કરવા \\
+        \hline
+    \end{tabulary}
+
+    \textbf{C ઓપરેટર્સ યાદી:}
+
+    \begin{tabulary}{\linewidth}{|L|L|}
+        \hline
+        \textbf{વર્ગ} & \textbf{Operators} \\
+        \hline
+        Arithmetic & +, -, *, /, \% \\
+        \hline
+        Relational & <, >, <=, >=, ==, != \\
+        \hline
+        Logical & \&\&, ||, ! \\
+        \hline
+        Assignment & =, +=, -=, *=, /= \\
+        \hline
+        Increment/Decrement & ++, -- \\
+        \hline
+        Conditional & ?: \\
+        \hline
+    \end{tabulary}
+
+    \begin{mnemonicbox}"ગણતરી, સંબંધ, તર્ક, અસાઇન, વધારો, શરત"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2}{b}{4}
+\textbf{while અને do while loop વચ્ચે તફાવત લખો.}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+    \begin{tabulary}{\linewidth}{|L|L|L|}
+        \hline
+        \textbf{પાસાં} & \textbf{while loop} & \textbf{do-while loop} \\
+        \hline
+        \textbf{Entry condition} & Pre-tested & Post-tested \\
+        \hline
+        \textbf{ન્યૂનતમ execution} & 0 વખત & ઓછામાં ઓછું 1 વખત \\
+        \hline
+        \textbf{Syntax} & \code{while(condition) \{ \}} & \code{do \{ \} while(condition);} \\
+        \hline
+        \textbf{Semicolon} & while પછી જરૂરી નથી & while પછી જરૂરી છે \\
+        \hline
+    \end{tabulary}
+
+    \textbf{ઉદાહરણ:}
+
+\begin{lstlisting}[language=C]
+// while loop
+while(i < 5) {
+    printf("%d", i);
+    i++;
+}
+
+// do-while loop  
+do {
+    printf("%d", i);
+    i++;
+} while(i < 5);
+\end{lstlisting}
+
+    \textbf{મુખ્ય મુદ્દાઓ:}
+
+    \begin{itemize}
+        \item \textbf{Pre-tested}: Execution પહેલાં condition ચકાસાય
+        \item \textbf{Post-tested}: Execution પછી condition ચકાસાય
+    \end{itemize}
+
+    \begin{mnemonicbox}"While પહેલાં, Do પછી"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2}{c}{7}
+\textbf{scanf() function નો formatted input માટે કેવી રીતે ઉપયોગ થાય છે? ઉદાહરણ સાથે સમજાવો}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+    \textbf{scanf() Function:}
+
+    \begin{tabulary}{\linewidth}{|L|L|}
+        \hline
+        \textbf{લક્ષણ} & \textbf{વર્ણન} \\
+        \hline
+        હેતુ & Keyboard થી formatted input વાંચવા \\
+        \hline
+        Syntax & \code{scanf("format\_string", \&variable);} \\
+        \hline
+        Return & સફળતાપૂર્વક વંચાયેલા inputs ની સંખ્યા \\
+        \hline
+    \end{tabulary}
+
+    \textbf{Format Specifiers:}
+
+    \begin{tabulary}{\linewidth}{|L|L|}
+        \hline
+        \textbf{Specifier} & \textbf{Data Type} \\
+        \hline
+        \%d & int \\
+        \hline
+        \%f & float \\
+        \hline
+        \%c & char \\
+        \hline
+        \%s & string \\
+        \hline
+    \end{tabulary}
+
+    \textbf{ઉદાહરણો:}
+
+\begin{lstlisting}[language=C]
+int age;
+float salary;
+char grade;
+
+scanf("%d", &age);           // Integer વાંચો
+scanf("%f", &salary);        // Float વાંચો
+scanf("%c", &grade);         // Character વાંચો
+scanf("%d %f", &age, &salary); // બહુવિધ inputs
+\end{lstlisting}
+
+    \textbf{મહત્વના મુદ્દાઓ:}
+
+    \begin{itemize}
+        \item \textbf{Address operator (\&)}: Variables માટે જરૂરી
+        \item \textbf{Format string}: Data types સાથે match થવું જોઈએ
+        \item \textbf{Buffer issues}: જરૂર પડે તો \code{fflush(stdin)} વાપરો
+    \end{itemize}
+
+    \begin{mnemonicbox}"Address Format Match"\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{2}{a}{3}
+\textbf{C ભાષાના arithmetic અને relational operators ની યાદી બનાવો}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+    \begin{tabulary}{\linewidth}{|L|L|L|}
+        \hline
+        \textbf{Operator Type} & \textbf{Operators} & \textbf{હેતુ} \\
+        \hline
+        \textbf{Arithmetic} & +, -, *, /, \% & ગાણિતિક operations \\
+        \hline
+        \textbf{Relational} & <, >, <=, >=, ==, != & Comparison operations \\
+        \hline
+    \end{tabulary}
+
+    \textbf{ઉદાહરણો:}
+
+\begin{lstlisting}[language=C]
+// Arithmetic
+int a = 10 + 5;    // Addition
+int b = 10 % 3;    // Modulus (remainder)
+
+// Relational
+if(a > b)          // મોટું
+if(a == b)         // બરાબર
+\end{lstlisting}
+
+    \begin{mnemonicbox}"ગણતરી સરખામણી"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2}{b}{4}
+\textbf{else if ladder નો flow chart દોરો.}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu start] (start) {શરૂઆત};
+        \node[gtu decision, alias=cond1, below=of start] {શરત 1?};
+        \node[gtu process, alias=stmt1, right=of cond1, xshift=2cm] {Statement 1};
+        
+        \node[gtu decision, alias=cond2, below=of cond1, yshift=-1cm] {શરત 2?};
+        \node[gtu process, alias=stmt2, right=of cond2, xshift=2cm] {Statement 2};
+        
+        \node[gtu decision, alias=cond3, below=of cond2, yshift=-1cm] {શરત 3?};
+        \node[gtu process, alias=stmt3, right=of cond3, xshift=2cm] {Statement 3};
+        
+        \node[gtu process, alias=else, below=of cond3] {Else Statement};
+        \node[gtu stop, below=of else] (end) {અંત};
+
+        \draw[gtu arrow] (start) -- (cond1);
+        \draw[gtu arrow] (cond1) -- node[above] {સાચું} (stmt1);
+        \draw[gtu arrow] (cond1) -- node[right] {ખોટું} (cond2);
+        
+        \draw[gtu arrow] (cond2) -- node[above] {સાચું} (stmt2);
+        \draw[gtu arrow] (cond2) -- node[right] {ખોટું} (cond3);
+        
+        \draw[gtu arrow] (cond3) -- node[above] {સાચું} (stmt3);
+        \draw[gtu arrow] (cond3) -- node[right] {ખોટું} (else);
+        
+        % Connect all statements to End
+        \draw[gtu arrow] (stmt1) -| (end);
+        \draw[gtu arrow] (stmt2) -| (end);
+        \draw[gtu arrow] (stmt3) -| (end);
+        \draw[gtu arrow] (else) -- (end);
+    \end{tikzpicture}
+    \end{center}
+
+    \textbf{માળખું:}
+
+    \begin{itemize}
+        \item \textbf{બહુવિધ શરતો}: ક્રમમાં ચકાસાય છે
+        \item \textbf{પ્રથમ સાચી}: તેનો block execute થાય
+        \item \textbf{Default case}: કોઈ match ન મળે તો else block
+    \end{itemize}
+
+    \begin{mnemonicbox}"પ્રથમ સાચી શોધો execute કરો"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2}{c}{7}
+\textbf{printf() function નો formatted output માટે કેવી રીતે ઉપયોગ થાય છે? ઉદાહરણ સાથે સમજાવો}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+    \textbf{printf() Function:}
+
+    \begin{tabulary}{\linewidth}{|L|L|}
+        \hline
+        \textbf{લક્ષણ} & \textbf{વર્ણન} \\
+        \hline
+        હેતુ & Screen પર formatted output દર્શાવવા \\
+        \hline
+        Syntax & \code{printf("format\_string", variables);} \\
+        \hline
+        Return & Print કરાયેલા characters ની સંખ્યા \\
+        \hline
+    \end{tabulary}
+
+    \textbf{Format Specifiers:}
+
+    \begin{tabulary}{\linewidth}{|L|L|L|}
+        \hline
+        \textbf{Specifier} & \textbf{વપરાશ} & \textbf{ઉદાહરણ} \\
+        \hline
+        \%d & Integer & \code{printf("\%d", 25);} \\
+        \hline
+        \%f & Float & \code{printf("\%.2f", 3.14);} \\
+        \hline
+        \%c & Character & \code{printf("\%c", 'A');} \\
+        \hline
+        \%s & String & \code{printf("\%s", "Hello");} \\
+        \hline
+    \end{tabulary}
+
+    \textbf{Advanced Formatting:}
+
+\begin{lstlisting}[language=C]
+int num = 123;
+float pi = 3.14159;
+
+printf("Number: %5d\n", num);      // Width specification
+printf("Pi: %.2f\n", pi);          // Precision specification
+printf("Hex: %x\n", num);          // Hexadecimal
+printf("Left aligned: %-10d\n", num); // Left alignment
+\end{lstlisting}
+
+    \textbf{Escape Sequences:}
+
+    \begin{itemize}
+        \item \textbf{\textbackslash n}: નવી લીટી
+        \item \textbf{\textbackslash t}: Tab space
+        \item \textbf{\textbackslash\textbackslash}: Backslash
+    \end{itemize}
+
+    \begin{mnemonicbox}"Format Width Precision Align"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3}{a}{3}
+\textbf{Logical operators ની યાદી બનાવો અને તેને સમજાવો}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+    \begin{tabulary}{\linewidth}{|L|C|L|L|}
+        \hline
+        \textbf{Operator} & \textbf{Symbol} & \textbf{વર્ણન} & \textbf{Truth Table} \\
+        \hline
+        \textbf{AND} & \&\& & બંને operands સાચા હોય તો સાચું & T\&\&T = T, બાકી = F \\
+        \hline
+        \textbf{OR} & || & કોઈપણ operand સાચો હોય તો સાચું & F||F = F, બાકી = T \\
+        \hline
+        \textbf{NOT} & ! & Condition ઉલટાવે છે & !T = F, !F = T \\
+        \hline
+    \end{tabulary}
+
+    \textbf{ઉદાહરણો:}
+
+\begin{lstlisting}[language=C]
+int a = 5, b = 10;
+
+if(a > 0 && b > 0)    // બંને શરતો સાચી હોવી જોઈએ
+if(a > 15 || b > 5)   // ઓછામાં ઓછી એક શરત સાચી
+if(!(a > 10))         // શરતનું નકારણ
+\end{lstlisting}
+
+    \begin{mnemonicbox}"અને અથવા નહીં"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3}{b}{4}
+\textbf{for loop ને ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+    \textbf{For Loop માળખું:}
+
+    \begin{tabulary}{\linewidth}{|L|L|}
+        \hline
+        \textbf{ઘટક} & \textbf{હેતુ} \\
+        \hline
+        Initialization & શરુઆતી મૂલ્ય સેટ કરવું \\
+        \hline
+        Condition & ચાલુ રાખવા માટે ટેસ્ટ \\
+        \hline
+        Update & Loop variable ને બદલવું \\
+        \hline
+    \end{tabulary}
+
+    \textbf{Syntax:}
+
+\begin{lstlisting}[language=C]
+for(initialization; condition; update) {
+    statements;
+}
+\end{lstlisting}
+
+    \textbf{ઉદાહરણ:}
+
+\begin{lstlisting}[language=C]
+// 1 થી 5 સુધીના નંબર print કરો
+for(int i = 1; i <= 5; i++) {
+    printf("%d ", i);
+}
+// Output: 1 2 3 4 5
+\end{lstlisting}
+
+    \textbf{Execution Flow:}
+
+    \begin{itemize}
+        \item \textbf{પગલું 1}: i = 1 initialize કરો
+        \item \textbf{પગલું 2}: i <= 5 condition ચકાસો
+        \item \textbf{પગલું 3}: Statements execute કરો
+        \item \textbf{પગલું 4}: i++ update કરો, પગલું 2 પર પાછા
+    \end{itemize}
+
+    \begin{mnemonicbox}"Initialize ચકાસો Execute Update"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3}{c}{7}
+\textbf{ત્રણ પૂર્ણાંક સંખ્યાઓ x અને y માંથી મહત્તમ શોધવા માટે પ્રોગ્રામ લખો.}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+int main() {
+    int x, y, z, max;
+    
+    printf("ત્રણ સંખ્યાઓ દાખલ કરો: ");
+    scanf("%d %d %d", &x, &y, &z);
+    
+    max = x;  // પ્રથમ સંખ્યાને મહત્તમ માનો
+    
+    if(y > max) {
+        max = y;
+    }
+    if(z > max) {
+        max = z;
+    }
+    
+    printf("મહત્તમ સંખ્યા છે: %d", max);
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \textbf{Algorithm ના પગલાં:}
+
+    \begin{tabulary}{\linewidth}{|C|L|}
+        \hline
+        \textbf{પગલું} & \textbf{કાર્ય} \\
+        \hline
+        1 & ત્રણ સંખ્યાઓ input કરો \\
+        \hline
+        2 & પ્રથમને મહત્તમ માનો \\
+        \hline
+        3 & બીજી સાથે સરખામણી, મોટી હોય તો update \\
+        \hline
+        4 & ત્રીજી સાથે સરખામણી, મોટી હોય તો update \\
+        \hline
+        5 & મહત્તમ દર્શાવો \\
+        \hline
+    \end{tabulary}
+
+    \textbf{વૈકલ્પિક પદ્ધતિ:}
+
+\begin{lstlisting}[language=C]
+max = (x > y) ? ((x > z) ? x : z) : ((y > z) ? y : z);
+\end{lstlisting}
+
+    \begin{mnemonicbox}"માનો સરખાવો Update દર્શાવો"\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{3}{a}{3}
+\textbf{conditional operator ને ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+    \textbf{Conditional Operator (Ternary):}
+
+    \begin{tabulary}{\linewidth}{|L|L|}
+        \hline
+        \textbf{લક્ષણ} & \textbf{વર્ણન} \\
+        \hline
+        Symbol & ?: \\
+        \hline
+        Syntax & \code{condition ? value1 : value2} \\
+        \hline
+        હેતુ & if-else નો ટૂંકો રસ્તો \\
+        \hline
+    \end{tabulary}
+
+    \textbf{ઉદાહરણો:}
+
+\begin{lstlisting}[language=C]
+int a = 10, b = 20;
+int max = (a > b) ? a : b;        // max = 20
+
+char grade = (marks >= 60) ? 'P' : 'F';
+printf("Status: %s", (age >= 18) ? "Adult" : "Minor");
+\end{lstlisting}
+
+    \textbf{સમાન if-else:}
+
+\begin{lstlisting}[language=C]
+if(a > b)
+    max = a;
+else
+    max = b;
+\end{lstlisting}
+
+    \textbf{ફાયદાઓ:}
+
+    \begin{itemize}
+        \item \textbf{સંક્ષિપ્ત}: એક લીટીમાં expression
+        \item \textbf{કાર્યક્ષમ}: ઝડપી execution
+    \end{itemize}
+
+    \begin{mnemonicbox}"પ્રશ્નચિહ્ન કોલન પસંદગી"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3}{b}{4}
+\textbf{while loop ને ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+    \textbf{While Loop:}
+
+    \begin{tabulary}{\linewidth}{|L|L|}
+        \hline
+        \textbf{લક્ષણ} & \textbf{વર્ણન} \\
+        \hline
+        પ્રકાર & Entry-controlled loop \\
+        \hline
+        Syntax & \code{while(condition) \{ statements; \}} \\
+        \hline
+        Execution & શરત સાચી હોય ત્યાં સુધી repeat \\
+        \hline
+    \end{tabulary}
+
+    \textbf{ઉદાહરણ:}
+
+\begin{lstlisting}[language=C]
+int i = 1;
+while(i <= 5) {
+    printf("%d ", i);
+    i++;
+}
+// Output: 1 2 3 4 5
+\end{lstlisting}
+
+    \textbf{મહત્વના મુદ્દાઓ:}
+
+    \begin{itemize}
+        \item \textbf{Initialization}: Loop પહેલાં
+        \item \textbf{Condition}: શરૂઆતમાં ચકાસાય
+        \item \textbf{Update}: Loop body અંદર
+        \item \textbf{Infinite loop}: જો condition ક્યારેય false ન બને
+    \end{itemize}
+
+    \textbf{Flowchart માળખું:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu start] (start) {Initialize};
+        \node[gtu decision, alias=cond, below=of start] {Condition?};
+        \node[gtu process, below=of cond] (body) {Statements Execute કરો};
+        \node[gtu process, below=of body] (update) {Variable Update કરો};
+        \node[gtu stop, right=of cond, xshift=2cm] (end) {Loop બહાર નીકળો};
+
+        \draw[gtu arrow] (start) -- (cond);
+        \draw[gtu arrow] (cond) -- node[left] {સાચું} (body);
+        \draw[gtu arrow] (body) -- (update);
+        \draw[gtu arrow] (update.west) -- ++(-1,0) |- (cond.west);
+        \draw[gtu arrow] (cond) -- node[above] {ખોટું} (end);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{mnemonicbox}"Initialize ચકાસો Execute Update"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{3}{c}{7}
+\textbf{કીબોર્ડમાંથી પૂર્ણાંક વાંચવા માટે અને આપેલ સંખ્યા odd હોય કે even હોય તે શોધવા માટેનો પ્રોગ્રામ લખો.}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+int main() {
+    int number;
+    
+    printf("એક પૂર્ણાંક દાખલ કરો: ");
+    scanf("%d", &number);
+    
+    if(number % 2 == 0) {
+        printf("%d એ સમ સંખ્યા છે", number);
+    }
+    else {
+        printf("%d એ વિષમ સંખ્યા છે", number);
+    }
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \textbf{તર્ક સમજૂતી:}
+
+    \begin{tabulary}{\linewidth}{|L|L|}
+        \hline
+        \textbf{ખ્યાલ} & \textbf{વર્ણન} \\
+        \hline
+        \textbf{Modulus operator (\%)} & ભાગાકાર પછી બાકી આપે છે \\
+        \hline
+        \textbf{સમ શરત} & \code{number \% 2 == 0} \\
+        \hline
+        \textbf{વિષમ શરત} & \code{number \% 2 != 0} \\
+        \hline
+    \end{tabulary}
+
+    \textbf{વૈકલ્પિક પદ્ધતિઓ:}
+
+\begin{lstlisting}[language=C]
+// પદ્ધતિ 2: Conditional operator વાપરીને
+printf("%d એ %s છે", number, (number % 2 == 0) ? "સમ" : "વિષમ");
+
+// પદ્ધતિ 3: Bitwise AND વાપરીને
+if(number & 1)
+    printf("વિષમ");
+else
+    printf("સમ");
+\end{lstlisting}
+
+    \textbf{Sample Output:}
+
+\begin{lstlisting}
+એક પૂર્ણાંક દાખલ કરો: 7
+7 એ વિષમ સંખ્યા છે
+\end{lstlisting}
+
+    \begin{mnemonicbox}"Modulus બે શૂન્ય સમ"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4}{a}{3}
+\textbf{નીચેના arithmetic expressions નું મૂલ્યાંકન કરો: 30/4*4 – 20\%6 + 17/2}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+    \textbf{પગલાબદ્ધ મૂલ્યાંકન:}
+
+    \begin{tabulary}{\linewidth}{|C|L|L|C|}
+        \hline
+        \textbf{પગલું} & \textbf{Expression} & \textbf{ગણતરી} & \textbf{પરિણામ} \\
+        \hline
+        1 & 30/4*4 & (30/4)*4 = 7*4 & 28 \\
+        \hline
+        2 & 20\%6 & 20 mod 6 & 2 \\
+        \hline
+        3 & 17/2 & Integer division & 8 \\
+        \hline
+        4 & અંતિમ & 28 - 2 + 8 & 34 \\
+        \hline
+    \end{tabulary}
+
+    \textbf{Operator પ્રાધાન્યતા:}
+
+    \begin{tabulary}{\linewidth}{|L|L|}
+        \hline
+        \textbf{પ્રાધાન્યતા} & \textbf{Operators} \\
+        \hline
+        ઉચ્ચ & *, /, \% (ડાબેથી જમણે) \\
+        \hline
+        નીચી & +, - (ડાબેથી જમણે) \\
+        \hline
+    \end{tabulary}
+
+    \textbf{સંપૂર્ણ ગણતરી:}
+
+\begin{lstlisting}
+30/4*4 - 20%6 + 17/2
+= 7*4 - 2 + 8      // પહેલાં division અને modulus
+= 28 - 2 + 8       // Multiplication
+= 26 + 8           // +,- માટે ડાબેથી જમણે
+= 34               // અંતિમ જવાબ
+\end{lstlisting}
+
+    \begin{mnemonicbox}"ગુણા ભાગ પહેલાં બાદબાકી પછી"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4}{b}{4}
+\textbf{5 પૂર્ણાંક સંખ્યાઓની array નો સરવાળો અને સરેરાશ શોધવા માટેનો પ્રોગ્રામ લખો.}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+int main() {
+    int numbers[5];
+    int sum = 0;
+    float average;
+    
+    printf("5 પૂર્ણાંકો દાખલ કરો:\n");
+    for(int i = 0; i < 5; i++) {
+        scanf("%d", &numbers[i]);
+        sum += numbers[i];
+    }
+    
+    average = (float)sum / 5;
+    
+    printf("સરવાળો = %d\n", sum);
+    printf("સરેરાશ = %.2f", average);
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \textbf{Algorithm:}
+
+    \begin{enumerate}
+        \item 5 integers ની array જાહેર કરો
+        \item Sum ને 0 થી initialize કરો
+        \item Loop વાપરીને 5 numbers input કરો
+        \item દરેક number ને sum માં ઉમેરો
+        \item Average = sum/5 ગણો
+        \item પરિણામો દર્શાવો
+    \end{enumerate}
+
+    \textbf{મુખ્ય મુદ્દાઓ:}
+
+    \begin{itemize}
+        \item \textbf{Type casting}: \code{(float)sum} ચોક્કસ division માટે
+        \item \textbf{Loop વપરાશ}: Repetitive input માટે કાર્યક્ષમ
+    \end{itemize}
+
+    \begin{mnemonicbox}"જાહેર Input ઉમેરો ગણો દર્શાવો"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4}{c}{7}
+\textbf{Pointer વ્યાખ્યાયિત કરો. Pointers કેવી રીતે declared અને initialized કરવામાં આવે છે તે ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+    \textbf{Pointer વ્યાખ્યા:}
+
+    \begin{tabulary}{\linewidth}{|L|L|}
+        \hline
+        \textbf{પાસાં} & \textbf{વર્ણન} \\
+        \hline
+        વ્યાખ્યા & બીજા variable નું memory address સ્ટોર કરતું variable \\
+        \hline
+        હેતુ & સીધી memory access અને dynamic memory allocation \\
+        \hline
+        Symbol & * (asterisk) declaration અને dereferencing માટે \\
+        \hline
+    \end{tabulary}
+
+    \textbf{Declaration અને Initialization:}
+
+\begin{lstlisting}[language=C]
+// Declaration
+int *ptr;           // Integer નો pointer
+float *fptr;        // Float નો pointer
+char *cptr;         // Character નો pointer
+
+// Initialization
+int num = 10;
+int *ptr = &num;    // num ના address સાથે initialize
+
+// વૈકલ્પિક
+int *ptr;
+ptr = &num;         // પછીથી address assign
+\end{lstlisting}
+
+    \textbf{ઉદાહરણ પ્રોગ્રામ:}
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+int main() {
+    int num = 25;
+    int *ptr = &num;
+    
+    printf("num નું મૂલ્ય: %d\n", num);
+    printf("num નું address: %p\n", &num);
+    printf("ptr નું મૂલ્ય: %p\n", ptr);
+    printf("ptr દ્વારા pointed મૂલ્ય: %d\n", *ptr);
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \textbf{Memory Diagram:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu block, minimum width=2.5cm] (num) {\textbf{num} \\ Value: 25 \\ Addr: 1000};
+        \node[gtu block, minimum width=2.5cm, right=of num, xshift=2cm] (ptr) {\textbf{ptr} \\ Value: 1000 \\ Addr: 2000};
+        
+        \draw[gtu arrow] (ptr.west) -- node[above] {point કરે છે} (num.east);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{mnemonicbox}"Address Star Dereference"\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{4}{a}{3}
+\textbf{નીચેના arithmetic expressions નું મૂલ્યાંકન કરો: 50 / 3 \% 3 + 5 * 7}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+    \textbf{પગલાબદ્ધ મૂલ્યાંકન:}
+
+    \begin{tabulary}{\linewidth}{|C|L|L|C|}
+        \hline
+        \textbf{પગલું} & \textbf{Expression} & \textbf{ગણતરી} & \textbf{પરિણામ} \\
+        \hline
+        1 & 50/3 & Integer division & 16 \\
+        \hline
+        2 & 16\%3 & 16 mod 3 & 1 \\
+        \hline
+        3 & 5*7 & Multiplication & 35 \\
+        \hline
+        4 & અંતિમ & 1 + 35 & 36 \\
+        \hline
+    \end{tabulary}
+
+    \textbf{સંપૂર્ણ ગણતરી:}
+
+\begin{lstlisting}
+50 / 3 % 3 + 5 * 7
+= 16 % 3 + 35      // પહેલાં division અને multiplication
+= 1 + 35           // Modulus operation
+= 36               // અંતિમ જવાબ
+\end{lstlisting}
+
+    \textbf{Operator પ્રાધાન્યતા લાગુ:}
+
+    \begin{itemize}
+        \item \textbf{ઉચ્ચ પ્રાધાન્યતા}: /, \%, * (ડાબેથી જમણે)
+        \item \textbf{નીચી પ્રાધાન્યતા}: + (ડાબેથી જમણે)
+    \end{itemize}
+
+    \begin{mnemonicbox}"ભાગ Mod ગુણા ઉમેરો"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4}{b}{4}
+\textbf{N પૂર્ણાંકોની array માં સૌથી મોટી સંખ્યા શોધવા માટેનો પ્રોગ્રામ લખો.}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+int main() {
+    int n, i;
+    int largest;
+    
+    printf("elements ની સંખ્યા દાખલ કરો: ");
+    scanf("%d", &n);
+    
+    int arr[n];
+    
+    printf("%d સંખ્યાઓ દાખલ કરો:\n", n);
+    for(i = 0; i < n; i++) {
+        scanf("%d", &arr[i]);
+    }
+    
+    largest = arr[0];  // પ્રથમ element ને largest માનો
+    
+    for(i = 1; i < n; i++) {
+        if(arr[i] > largest) {
+            largest = arr[i];
+        }
+    }
+    
+    printf("સૌથી મોટી સંખ્યા છે: %d", largest);
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \textbf{Algorithm:}
+
+    \begin{enumerate}
+        \item Array નું size input કરો
+        \item Array elements input કરો
+        \item પ્રથમ element ને largest માનો
+        \item બાકીના elements સાથે સરખામણી કરો
+        \item જો મોટું મળે તો largest update કરો
+        \item પરિણામ દર્શાવો
+    \end{enumerate}
+
+    \begin{mnemonicbox}"Input માનો સરખાવો Update દર્શાવો"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{4}{c}{7}
+\textbf{Array વ્યાખ્યાયિત કરો. Array variable ની જરૂરિયાત સમજાવો. 1-D array ને ઉદાહરણ સાથે સમજાવો}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+    \textbf{Array વ્યાખ્યા:}
+
+    \begin{tabulary}{\linewidth}{|L|L|}
+        \hline
+        \textbf{પાસાં} & \textbf{વર્ણન} \\
+        \hline
+        વ્યાખ્યા & સમાન data type ના elements નો સંગ્રહ \\
+        \hline
+        Storage & સતત memory locations માં \\
+        \hline
+        Access & Index/subscript વાપરીને \\
+        \hline
+    \end{tabulary}
+
+    \textbf{Arrays ની જરૂરિયાત:}
+
+    \begin{tabulary}{\linewidth}{|L|L|}
+        \hline
+        \textbf{સમસ્યા} & \textbf{Array સાથે ઉકેલ} \\
+        \hline
+        બહુવિધ values સ્ટોર કરવા & એક જ array variable \\
+        \hline
+        ઘણા variables ટાળવા & \code{arr[100]} બદલે a1, a2, ..., a100 \\
+        \hline
+        કાર્યક્ષમ processing & Loop-based operations \\
+        \hline
+        Memory organization & Contiguous allocation \\
+        \hline
+    \end{tabulary}
+
+    \textbf{1-D Array Declaration:}
+
+\begin{lstlisting}[language=C]
+datatype arrayname[size];
+
+// ઉદાહરણો
+int marks[5];           // 5 integers ની Array
+float prices[10];       // 10 floats ની Array
+char name[20];         // 20 characters ની Array
+\end{lstlisting}
+
+    \textbf{Array Initialization:}
+
+\begin{lstlisting}[language=C]
+// પદ્ધતિ 1: Declaration વખતે
+int numbers[5] = {10, 20, 30, 40, 50};
+
+// પદ્ધતિ 2: વ્યક્તિગત assignment
+int arr[3];
+arr[0] = 5;
+arr[1] = 15;
+arr[2] = 25;
+\end{lstlisting}
+
+    \textbf{ઉદાહરણ પ્રોગ્રામ:}
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+int main() {
+    int marks[5] = {85, 90, 78, 92, 88};
+    int i, sum = 0;
+    
+    printf("વિદ્યાર્થીના ગુણ:\n");
+    for(i = 0; i < 5; i++) {
+        printf("વિષય %d: %d\n", i+1, marks[i]);
+        sum += marks[i];
+    }
+    
+    printf("કુલ ગુણ: %d", sum);
+    return 0;
+}
+\end{lstlisting}
+
+    \textbf{Memory Layout:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \foreach \x/\val/\addr in {0/85/1000, 1/90/1004, 2/78/1008, 3/92/1012, 4/88/1016} {
+            \node[draw, rectangle, minimum size=1cm] (n\x) at (\x*1.5, 0) {\val};
+            \node[below=0.1cm of n\x] {\footnotesize marks[\x]};
+            \node[above=0.1cm of n\x] {\footnotesize \addr};
+        }
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{mnemonicbox}"સમાન ડેટા સતત Index"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5}{a}{3}
+\textbf{if … else statement નું ઉદાહરણ આપો.}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+int main() {
+    int age;
+    
+    printf("તમારી ઉંમર દાખલ કરો: ");
+    scanf("%d", &age);
+    
+    if(age >= 18) {
+        printf("તમે મતદાન માટે લાયક છો");
+    }
+    else {
+        printf("તમે મતદાન માટે લાયક નથી");
+    }
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \textbf{માળખું:}
+
+    \begin{tabulary}{\linewidth}{|L|L|}
+        \hline
+        \textbf{ઘટક} & \textbf{હેતુ} \\
+        \hline
+        \textbf{if} & શરત ટેસ્ટ કરે છે \\
+        \hline
+        \textbf{condition} & Boolean expression \\
+        \hline
+        \textbf{if-block} & શરત સાચી હોય ત્યારે execute \\
+        \hline
+        \textbf{else-block} & શરત ખોટી હોય ત્યારે execute \\
+        \hline
+    \end{tabulary}
+
+    \textbf{Sample Outputs:}
+
+\begin{lstlisting}
+Input: 20    Output: તમે મતદાન માટે લાયક છો
+Input: 16    Output: તમે મતદાન માટે લાયક નથી
+\end{lstlisting}
+
+    \begin{mnemonicbox}"જો સાચું નહીંતર ખોટું"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5}{b}{4}
+\textbf{આપેલ character ની category ચકાસવા માટેનો પ્રોગ્રામ લખો.}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+#include <ctype.h>
+
+int main() {
+    char ch;
+    
+    printf("એક character દાખલ કરો: ");
+    scanf("%c", &ch);
+    
+    if(isdigit(ch)) {
+        printf("'%c' એ અંક છે", ch);
+    }
+    else if(isupper(ch)) {
+        printf("'%c' એ મોટા અક્ષર છે", ch);
+    }
+    else if(islower(ch)) {
+        printf("'%c' એ નાના અક્ષર છે", ch);
+    }
+    else {
+        printf("'%c' એ વિશેષ પ્રતીક છે", ch);
+    }
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \textbf{Character Categories:}
+
+    \begin{tabulary}{\linewidth}{|L|L|L|}
+        \hline
+        \textbf{Function} & \textbf{વર્ગ} & \textbf{Range} \\
+        \hline
+        isdigit() & અંક & 0-9 \\
+        \hline
+        isupper() & મોટા અક્ષર & A-Z \\
+        \hline
+        islower() & નાના અક્ષર & a-z \\
+        \hline
+        Others & વિશેષ પ્રતીકો & !@\#\$\%\^{}\&* etc. \\
+        \hline
+    \end{tabulary}
+
+    \textbf{વૈકલ્પિક પદ્ધતિ:}
+
+\begin{lstlisting}[language=C]
+if(ch >= '0' && ch <= '9')
+    printf("અંક");
+else if(ch >= 'A' && ch <= 'Z')
+    printf("મોટા અક્ષર");
+else if(ch >= 'a' && ch <= 'z')
+    printf("નાના અક્ષર");
+else
+    printf("વિશેષ પ્રતીક");
+\end{lstlisting}
+
+    \begin{mnemonicbox}"અંક મોટા નાના વિશેષ"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5}{c}{7}
+\textbf{Structure શું છે? તેની syntax યોગ્ય ઉદાહરણ સાથે સમજાવો}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+    \textbf{Structure વ્યાખ્યા:}
+
+    \begin{tabulary}{\linewidth}{|L|L|}
+        \hline
+        \textbf{પાસાં} & \textbf{વર્ણન} \\
+        \hline
+        વ્યાખ્યા & વિવિધ data types ને જોડીને બનાવેલ user-defined data type \\
+        \hline
+        હેતુ & સંબંધિત data ને એક જ નામ હેઠળ જૂથ બનાવવા \\
+        \hline
+        Keyword & \code{struct} \\
+        \hline
+    \end{tabulary}
+
+    \textbf{Syntax:}
+
+\begin{lstlisting}[language=C]
+struct structure_name {
+    datatype member1;
+    datatype member2;
+    ...
+};
+\end{lstlisting}
+
+    \textbf{ઉદાહરણ - Student Structure:}
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+struct Student {
+    int roll_no;
+    char name[50];
+    float marks;
+    char grade;
+};
+
+int main() {
+    struct Student s1;
+    
+    // Data input
+    printf("રોલ નંબર દાખલ કરો: ");
+    scanf("%d", &s1.roll_no);
+    
+    printf("નામ દાખલ કરો: ");
+    scanf("%s", s1.name);
+    
+    printf("ગુણ દાખલ કરો: ");
+    scanf("%f", &s1.marks);
+    
+    printf("ગ્રેડ દાખલ કરો: ");
+    scanf(" %c", &s1.grade);
+    
+    // Data display
+    printf("\nવિદ્યાર્થીની વિગતો:\n");
+    printf("રોલ નં: %d\n", s1.roll_no);
+    printf("નામ: %s\n", s1.name);
+    printf("ગુણ: %.2f\n", s1.marks);
+    printf("ગ્રેડ: %c\n", s1.grade);
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \textbf{Structure લક્ષણો:}
+
+    \begin{itemize}
+        \item \textbf{Dot operator (.)}: Structure members ને access કરવા
+        \item \textbf{Memory allocation}: કુલ size = બધા members નો સરવાળો
+        \item \textbf{Initialization}: Declaration વખતે initialize કરી શકાય
+    \end{itemize}
+
+    \textbf{Structure Initialization:}
+
+\begin{lstlisting}[language=C]
+struct Student s1 = {101, "John", 85.5, 'A'};
+\end{lstlisting}
+
+    \textbf{Memory Layout:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu block, minimum width=4cm] (struct) {
+            \textbf{s1 Structure} \\
+            \rule{3.8cm}{0.4pt} \\
+            roll\_no (4 bytes) \\
+            name (50 bytes) \\
+            marks (4 bytes) \\
+            grade (1 byte)
+        };
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{mnemonicbox}"સંબંધિત ડેટાને એકસાથે જૂથ બનાવો"\end{mnemonicbox}
+\end{solutionbox}
+
+\orquestionmarks{5}{a}{3}
+\textbf{-5 અને +5 વચ્ચેના બધા numbers print કરવા માટેનો પ્રોગ્રામ લખો.}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+
+int main() {
+    int i;
+    
+    printf("-5 અને +5 વચ્ચેના નંબરો:\n");
+    
+    for(i = -5; i <= 5; i++) {
+        printf("%d ", i);
+    }
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \textbf{Output:}
+
+\begin{lstlisting}
+-5 અને +5 વચ્ચેના નંબરો:
+-5 -4 -3 -2 -1 0 1 2 3 4 5
+\end{lstlisting}
+
+    \textbf{વૈકલ્પિક પદ્ધતિઓ:}
+
+\begin{lstlisting}[language=C]
+// પદ્ધતિ 2: while loop વાપરીને
+int i = -5;
+while(i <= 5) {
+    printf("%d ", i);
+    i++;
+}
+
+// પદ્ધતિ 3: બે અલગ loops
+for(i = -5; i < 0; i++)
+    printf("%d ", i);
+printf("0 ");
+for(i = 1; i <= 5; i++)
+    printf("%d ", i);
+\end{lstlisting}
+
+    \begin{mnemonicbox}"નકારાત્મકથી શરૂ સકારાત્મકે અંત"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5}{b}{4}
+\textbf{Quadratic equation ના roots શોધવા માટેનો પ્રોગ્રામ લખો.}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+#include <math.h>
+
+int main() {
+    float a, b, c;
+    float discriminant, root1, root2;
+    
+    printf("coefficients (a, b, c) દાખલ કરો: ");
+    scanf("%f %f %f", &a, &b, &c);
+    
+    discriminant = b*b - 4*a*c;
+    
+    if(discriminant > 0) {
+        root1 = (-b + sqrt(discriminant)) / (2*a);
+        root2 = (-b - sqrt(discriminant)) / (2*a);
+        printf("Roots વાસ્તવિક અને અલગ છે\n");
+        printf("Root1 = %.2f\n", root1);
+        printf("Root2 = %.2f\n", root2);
+    }
+    else if(discriminant == 0) {
+        root1 = -b / (2*a);
+        printf("Roots વાસ્તવિક અને સમાન છે\n");
+        printf("Root = %.2f\n", root1);
+    }
+    else {
+        float realPart = -b / (2*a);
+        float imagPart = sqrt(-discriminant) / (2*a);
+        printf("Roots સંકુલ છે\n");
+        printf("Root1 = %.2f + %.2fi\n", realPart, imagPart);
+        printf("Root2 = %.2f - %.2fi\n", realPart, imagPart);
+    }
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \textbf{Quadratic Formula વિશ્લેષણ:}
+
+    \begin{tabulary}{\linewidth}{|L|L|}
+        \hline
+        \textbf{Discriminant} & \textbf{Roots નો પ્રકાર} \\
+        \hline
+        $b^2-4ac > 0$ & વાસ્તવિક અને અલગ \\
+        \hline
+        $b^2-4ac = 0$ & વાસ્તવિક અને સમાન \\
+        \hline
+        $b^2-4ac < 0$ & સંકુલ (કાલ્પનિક) \\
+        \hline
+    \end{tabulary}
+
+    \textbf{સૂત્ર:} $x = \frac{-b \pm \sqrt{b^2-4ac}}{2a}$
+
+    \begin{mnemonicbox}"Discriminant Roots નો પ્રકાર નક્કી કરે છે"\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{5}{c}{7}
+\textbf{નીચેના built-in functions ને ઉદાહરણો સાથે સમજાવો}
+
+\begin{solutionbox}
+    \textbf{જવાબ}:
+
+    \textbf{Function સમજૂતીઓ:}
+
+    \begin{tabulary}{\linewidth}{|L|L|L|L|}
+        \hline
+        \textbf{Function} & \textbf{હેતુ} & \textbf{Header File} & \textbf{ઉદાહરણ} \\
+        \hline
+        \code{clrscr()} & Screen સાફ કરવા & conio.h & \code{clrscr();} \\
+        \hline
+        \code{sqrt()} & વર્ગમૂળ & math.h & \code{sqrt(16) = 4.0} \\
+        \hline
+        \code{strlen()} & String ની લંબાઈ & string.h & \code{strlen("Hello") = 5} \\
+        \hline
+        \code{isdigit()} & અંક છે કે કેમ ચકાસવા & ctype.h & \code{isdigit('5') = true} \\
+        \hline
+        \code{isalpha()} & અક્ષર છે કે કેમ ચકાસવા & ctype.h & \code{isalpha('A') = true} \\
+        \hline
+        \code{toupper()} & મોટા અક્ષરમાં બદલવા & ctype.h & \code{toupper('a') = 'A'} \\
+        \hline
+        \code{tolower()} & નાના અક્ષરમાં બદલવા & ctype.h & \code{tolower('B') = 'b'} \\
+        \hline
+    \end{tabulary}
+
+    \textbf{ઉદાહરણ પ્રોગ્રામ:}
+
+\begin{lstlisting}[language=C]
+#include <stdio.h>
+#include <math.h>
+#include <string.h>
+#include <ctype.h>
+
+int main() {
+    // clrscr(); // Not standard in modern compilers
+    
+    // sqrt() ઉદાહરણ
+    float num = 25.0;
+    printf("%.1f નું વર્ગમૂળ = %.2f\n", num, sqrt(num));
+    
+    // strlen() ઉદાહરણ
+    char str[] = "Programming";
+    printf("'%s' ની લંબાઈ = %d\n", str, strlen(str));
+    
+    // Character functions
+    char ch = 'a';
+    printf("'%c' અંક છે: %s\n", ch, isdigit(ch) ? "હા" : "ના");
+    printf("'%c' અક્ષર છે: %s\n", ch, isalpha(ch) ? "હા" : "ના");
+    printf("toupper('%c') = '%c'\n", ch, toupper(ch));
+    
+    return 0;
+}
+\end{lstlisting}
+
+    \textbf{Function વર્ગીકરણ:}
+
+    \begin{center}
+    \begin{tikzpicture}[gtu flow]
+        \node[gtu block] (builtin) {Built-in Functions};
+        \node[gtu block, below left=of builtin, xshift=-2cm] (screen) {Screen Control: clrscr()};
+        \node[gtu block, below left=of builtin, xshift=1cm] (math) {Mathematical: sqrt()};
+        \node[gtu block, below right=of builtin, xshift=-1cm] (string) {String: strlen()};
+        \node[gtu block, below right=of builtin, xshift=2cm] (char) {Character: isdigit, isalpha, toupper, tolower};
+
+        \draw[gtu arrow] (builtin) -- (screen);
+        \draw[gtu arrow] (builtin) -- (math);
+        \draw[gtu arrow] (builtin) -- (string);
+        \draw[gtu arrow] (builtin) -- (char);
+    \end{tikzpicture}
+    \end{center}
+
+    \begin{mnemonicbox}"સાફ ગણિત String Character"\end{mnemonicbox}
+\end{solutionbox}
+
+\end{document}
