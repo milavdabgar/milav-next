@@ -1,0 +1,1094 @@
+\documentclass{article}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/preamble.tex}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/gujarati-boxes.tex}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/commands.tex}
+
+\title{Embedded System \& Microcontroller Application (4351102) - Winter 2023 Solution Gujarati}
+\date{December 4, 2023}
+
+\begin{document}
+\maketitle
+
+\questionmarks{1(અ)}{3}{TIFR register દોરો અને તેનું પૂરું નામ લખો.}
+
+\begin{solutionbox}
+\textbf{પૂરું નામ}: Timer/Counter Interrupt Flag Register
+
+\textbf{TIFR Register Diagram:}
+
+\begin{answertable}{TIFR Register}
+\begin{tabulary}{\linewidth}{|C|C|C|C|C|C|C|C|}
+\hline
+\textbf{7} & \textbf{6} & \textbf{5} & \textbf{4} & \textbf{3} & \textbf{2} & \textbf{1} & \textbf{0} \\ \hline
+OCF2 & TOV2 & ICF1 & OCF1A & OCF1B & TOV1 & OCF0 & TOV0 \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\keyword{Bit Descriptions:}
+\begin{itemize}
+    \item \keyword{TOV0}: Timer0 Overflow Flag
+    \item \keyword{OCF0}: Timer0 Output Compare Flag
+    \item \keyword{TOV1}: Timer1 Overflow Flag
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Timer Interrupts Flag Register}
+\end{mnemonicbox}
+
+\questionmarks{1(બ)}{4}{ATmega32 ની ડેટા મેમરીની ચર્ચા કરો.}
+
+\begin{solutionbox}
+\textbf{Data Memory Organization:}
+
+\begin{answertable}{Data Memory Map}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{મેમરી પ્રકાર} & \textbf{કદ} & \textbf{Address Range} & \textbf{હેતુ} \\ \hline
+\keyword{General Purpose Registers} & 32 bytes & 0x00-0x1F & R0-R31 registers \\ \hline
+\keyword{I/O Memory} & 64 bytes & 0x20-0x5F & Control registers \\ \hline
+\keyword{Internal SRAM} & 2048 bytes & 0x60-0x85F & Variable storage \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\begin{itemize}
+    \item \keyword{General Purpose Registers}: અંકગણિત કામગીરી અને અસ્થાયી સંગ્રહ માટે વપરાય છે.
+    \item \keyword{I/O Memory}: પેરિફેરલ કંટ્રોલ અને સ્ટેટસ રજિસ્ટર્સ ધરાવે છે.
+    \item \keyword{Internal SRAM}: સ્ટેક, વેરિયેબલ્સ અને ડાયનેમિક મેમરી માટે વપરાય છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{General I/O SRAM Memory}
+\end{mnemonicbox}
+
+\questionmarks{1(ક)}{7}{એમ્બેડેડ સિસ્ટમનો જનરલ બ્લોક ડાયાગ્રામ દોરી સમજાવો.}
+
+\begin{solutionbox}
+\textbf{General Block Diagram:}
+
+\begin{answerdiagram}{Embedded System Block Diagram}
+\begin{tikzpicture}[auto, node distance=2cm]
+    \node [gtu block] (proc) {Processor/\\Microcontroller};
+    \node [gtu block, left=of proc] (input) {Input Devices};
+    \node [gtu block, right=of proc] (output) {Output Devices};
+    \node [gtu block, above=of proc] (mem) {Memory};
+    \node [gtu block, below=of proc] (comm) {Communication\\Interface};
+    \node [gtu block, below left=1.5cm of proc] (power) {Power Supply};
+    \node [gtu block, below right=1.5cm of proc] (clock) {Clock Circuit};
+
+    \path [gtu arrow] (input) -- (proc);
+    \path [gtu arrow] (proc) -- (output);
+    \path [gtu arrow] (proc) edge[bend right] (mem);
+    \path [gtu arrow] (mem) edge[bend right] (proc);
+    \path [gtu arrow] (proc) -- (comm);
+    \path [gtu arrow] (power) -- (proc);
+    \path [gtu arrow] (clock) -- (proc);
+\end{tikzpicture}
+\end{answerdiagram}
+
+\textbf{ઘટક કાર્યો:}
+
+\begin{answertable}{ઘટક કાર્યો}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{ઘટક} & \textbf{કાર્ય} \\ \hline
+\keyword{Processor} & સમગ્ર સિસ્ટમ ઓપરેશન કંટ્રોલ કરે છે \\ \hline
+\keyword{Memory} & પ્રોગ્રામ અને ડેટા સ્ટોર કરે છે \\ \hline
+\keyword{Input Devices} & સેન્સર, સ્વિચ, કીબોર્ડ \\ \hline
+\keyword{Output Devices} & LEDs, ડિસ્પ્લે, મોટર \\ \hline
+\keyword{Communication} & UART, SPI, I2C ઇન્ટરફેસ \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\keyword{લાક્ષણિકતાઓ:}
+\begin{itemize}
+    \item \keyword{Real-time Operation}: સિસ્ટમ નિર્ધારિત સમય મર્યાદામાં ઇનપુટ્સને પ્રતિસાદ આપે છે.
+    \item \keyword{Dedicated Function}: ચોક્કસ એપ્લિકેશન માટે ડિઝાઇન કરવામાં આવે છે.
+    \item \keyword{Resource Constraints}: મર્યાદિત મેમરી, પાવર અને પ્રોસેસિંગ ક્ષમતા.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Processor Memory Input Output Communication}
+\end{mnemonicbox}
+
+\orquestionmarks{1(ક)}{7}{રીયલ ટાઇમ ઓપરેટિંગ સિસ્ટમને વ્યાખ્યાયિત કરો અને તેની લાક્ષણિકતાઓ સમજાવો.}
+
+\begin{solutionbox}
+\textbf{વ્યાખ્યા}: \keyword{Real Time Operating System (RTOS)} એ એવી ઓપરેટિંગ સિસ્ટમ છે જે મહત્વપૂર્ણ કાર્યો માટે નિર્દિષ્ટ સમય મર્યાદામાં પ્રતિસાદની ગેરેંટી આપે છે.
+
+\textbf{લાક્ષણિકતાઓ:}
+
+\begin{answertable}{RTOS લાક્ષણિકતાઓ}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{લાક્ષણિકતા} & \textbf{વર્ણન} \\ \hline
+\keyword{Deterministic} & અનુમાનિત પ્રતિસાદ સમય \\ \hline
+\keyword{Multitasking} & બહુવિધ કાર્યોનું અમલીકરણ \\ \hline
+\keyword{Priority-based} & ઉચ્ચ પ્રાથમિકતા કાર્યો પહેલા \\ \hline
+\keyword{Minimal Latency} & ઝડપી ઇન્ટરપ્ટ પ્રતિસાદ \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\keyword{મુખ્ય વિભાવનાઓ:}
+\begin{itemize}
+    \item \keyword{Hard Real-time}: ડેડલાઇન ચૂકવાથી સિસ્ટમ નિષ્ફળતા થાય છે.
+    \item \keyword{Soft Real-time}: ડેડલાઇન ચૂકવાથી પ્રદર્શન ઘટે છે.
+    \item \keyword{Task Scheduling}: Preemptive priority-based scheduling મહત્વપૂર્ણ કાર્યો પહેલા ચલાવવાની ખાતરી કરે છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Deterministic Multitasking Priority Minimal}
+\end{mnemonicbox}
+
+\questionmarks{2(અ)}{3}{એમ્બેડેડ સિસ્ટમ માટે માઇક્રોકન્ટ્રોલર પસંદ કરવા માટેના માપદંડો લખો.}
+
+\begin{solutionbox}
+\textbf{પસંદગી માપદંડ:}
+
+\begin{answertable}{પસંદગી માપદંડ}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{માપદંડ} & \textbf{મહત્વ} \\ \hline
+\keyword{Processing Speed} & એપ્લિકેશન જરૂરિયાતો સાથે મેળ \\ \hline
+\keyword{Memory Size} & પૂરતી ROM/RAM \\ \hline
+\keyword{I/O Pins} & પર્યાપ્ત પેરિફેરલ ઇન્ટરફેસ \\ \hline
+\keyword{Power Consumption} & બેટરી લાઇફ વિચારણા \\ \hline
+\keyword{Cost} & બજેટ મર્યાદા \\ \hline
+\keyword{Development Tools} & કમ્પાઇલર, ડીબગર ઉપલબ્ધતા \\ \hline
+\end{tabulary}
+\end{answertable}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Speed Memory I/O Power Cost Tools}
+\end{mnemonicbox}
+
+\questionmarks{2(બ)}{4}{AVR માં હાર્વર્ડ આર્કિટેક્ચરની ચર્ચા કરો.}
+
+\begin{solutionbox}
+\textbf{હાર્વર્ડ આર્કિટેક્ચર લક્ષણો:}
+
+\begin{answertable}{Harvard Architecture}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{લક્ષણ} & \textbf{વર્ણન} \\ \hline
+\keyword{Separate Buses} & પ્રોગ્રામ અને ડેટાને સ્વતંત્ર બસ \\ \hline
+\keyword{Simultaneous Access} & એકસાથે instruction fetch અને data access \\ \hline
+\keyword{Different Memory Types} & પ્રોગ્રામ માટે Flash, ડેટા માટે SRAM \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\begin{answerdiagram}{Harvard Architecture}
+\begin{tikzpicture}[auto, node distance=2cm]
+    \node [gtu block] (cpu) {CPU};
+    \node [gtu block, right=of cpu, yshift=1cm] (prog) {Program Bus};
+    \node [gtu block, right=of cpu, yshift=-1cm] (data) {Data Bus};
+    \node [gtu block, right=of prog] (flash) {Flash Memory};
+    \node [gtu block, right=of data] (sram) {SRAM};
+
+    \path [gtu arrow] (cpu) -- (prog);
+    \path [gtu arrow] (cpu) -- (data);
+    \path [gtu arrow] (prog) -- (flash);
+    \path [gtu arrow] (data) -- (sram);
+\end{tikzpicture}
+\end{answerdiagram}
+
+\begin{itemize}
+    \item \keyword{ફાયદો}: સમાંતર એક્સેસને કારણે ઉચ્ચ પ્રદર્શન.
+    \item \keyword{16-bit Instructions}: મોટાભાગની instructions એક clock cycle માં execute થાય છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Separate Simultaneous Different Performance}
+\end{mnemonicbox}
+
+\questionmarks{2(ક)}{7}{ક્લોક સોર્સને AVR સાથે જોડવાની વિવિધ રીતોની ચર્ચા કરો.}
+
+\begin{solutionbox}
+\textbf{Clock Sources:}
+
+\begin{answertable}{Clock Source Types}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Clock Source} & \textbf{Frequency Range} & \textbf{Application} \\ \hline
+\keyword{External Crystal} & 1-16 MHz & ઉચ્ચ ચોકસાઈ એપ્લિકેશન \\ \hline
+\keyword{External RC} & 1-8 MHz & કિફાયતી સોલ્યુશન \\ \hline
+\keyword{Internal RC} & 1-8 MHz & ડિફોલ્ટ, બાહ્ય components નથી \\ \hline
+\keyword{External Clock} & Up to 16 MHz & સિંક્રોનાઇઝ્ડ સિસ્ટમ્સ \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\keyword{Clock Selection via Fuse Bits:}
+\begin{itemize}
+    \item \keyword{CKSEL3:0}: Bits determine clock source.
+    \item \keyword{CKDIV8}: Bit divides clock by 8.
+    \item \keyword{SUT1:0}: Bits set startup time.
+\end{itemize}
+
+\keyword{વર્ણન:}
+\begin{itemize}
+    \item \keyword{Crystal Oscillator}: સૌથી સ્થિર, બાહ્ય crystal અને capacitors જરૂરી.
+    \item \keyword{RC Oscillator}: ઓછી ચોકસાઈ પરંતુ સસ્તી.
+    \item \keyword{Internal Oscillator}: ફેક્ટરી કેલિબ્રેટેડ, તાપમાન આધારિત.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Crystal RC Internal External}
+\end{mnemonicbox}
+
+\orquestionmarks{2(અ)}{3}{ATmega32 માટે code ROM, SRAM અને EEPROM નું કદ તેમજ I/O pins, ADC અને Timers ની સંખ્યા લખો.}
+
+\begin{solutionbox}
+\textbf{ATmega32 Specifications:}
+
+\begin{answertable}{Device Specifications}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{સ્પેશિફિકેશન} & \textbf{ATmega32} \\ \hline
+\keyword{Flash ROM} & 32 KB \\ \hline
+\keyword{SRAM} & 2 KB \\ \hline
+\keyword{EEPROM} & 1 KB \\ \hline
+\keyword{I/O Pins} & 32 pins \\ \hline
+\keyword{ADC Channels} & 8 channels \\ \hline
+\keyword{Timers} & 3 timers \\ \hline
+\end{tabulary}
+\end{answertable}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{32K Flash 2K SRAM 1K EEPROM 32 I/O 8 ADC 3 Timers}
+\end{mnemonicbox}
+
+\orquestionmarks{2(બ)}{4}{ATmega32 પિન ડાયાગ્રામ દોરો અને Vcc, AVcc અને Aref પિનનું કાર્ય લખો.}
+
+\begin{solutionbox}
+\textbf{ATmega32 પિન કાર્યો:}
+
+\begin{answertable}{Pin Functions}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{પિન} & \textbf{કાર્ય} \\ \hline
+\keyword{Vcc} & મુખ્ય પાવર સપ્લાય (+5V) \\ \hline
+\keyword{AVcc} & ADC માટે એનાલોગ પાવર સપ્લાય \\ \hline
+\keyword{Aref} & ADC રેફરન્સ વોલ્ટેજ \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\begin{center}
+\begin{tikzpicture}[
+    pin/.style={draw, rectangle, minimum width=2.5cm, minimum height=0.5cm, font=\small},
+    ic/.style={draw, rectangle, minimum width=4cm, minimum height=8cm, fill=gray!10}
+]
+    \node [ic] (body) {};
+    \node [anchor=north, font=\large\bfseries] at (body.north) {ATmega32};
+
+    % Selected Pins for Diagram
+    \node [anchor=west, font=\tiny] at ([yshift=-1cm]body.north west) {1 VCC};
+    \draw ([yshift=-1cm]body.north west) -- +(-0.2,0);
+    
+    \node [anchor=east, font=\tiny] at ([yshift=-1cm]body.north east) {AVCC 30};
+    \draw ([yshift=-1cm]body.north east) -- +(0.2,0);
+
+    \node [anchor=east, font=\tiny] at ([yshift=-2cm]body.north east) {AREF 32};
+    \draw ([yshift=-2cm]body.north east) -- +(0.2,0);
+
+     \node [anchor=east, font=\tiny] at ([yshift=-6cm]body.north east) {GND 31};
+    \draw ([yshift=-6cm]body.north east) -- +(0.2,0);
+    
+    \node [align=center] at (body.center) { (Simplified\\Pin View)};
+
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{Vcc}: ડિજિટલ સર્કિટ્સને પાવર સપ્લાય કરે છે.
+    \item \keyword{AVcc}: નોઇઝ ઘટાડવા માટે ADC માટે અલગ સપ્લાય.
+    \item \keyword{Aref}: ADC કન્વર્ઝન માટે બાહ્ય રેફરન્સ.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Vcc Digital AVcc Analog Aref Reference}
+\end{mnemonicbox}
+
+\orquestionmarks{2(ક)}{7}{AVR સ્ટેટસ રજિસ્ટર વિગતવાર સમજાવો.}
+
+\begin{solutionbox}
+\textbf{SREG (Status Register) બિટ્સ:}
+
+\begin{answertable}{SREG Bits}
+\begin{tabulary}{\linewidth}{|C|C|L|}
+\hline
+\textbf{બિટ} & \textbf{નામ} & \textbf{કાર્ય} \\ \hline
+7 & I & Global Interrupt Enable \\ \hline
+6 & T & Bit Copy Storage \\ \hline
+5 & H & Half Carry Flag \\ \hline
+4 & S & Sign Flag \\ \hline
+3 & V & Overflow Flag \\ \hline
+2 & N & Negative Flag \\ \hline
+1 & Z & Zero Flag \\ \hline
+0 & C & Carry Flag \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\begin{answertable}{SREG Layout}
+\begin{tabulary}{\linewidth}{|C|C|C|C|C|C|C|C|}
+\hline
+\textbf{I} & \textbf{T} & \textbf{H} & \textbf{S} & \textbf{V} & \textbf{N} & \textbf{Z} & \textbf{C} \\ \hline
+7 & 6 & 5 & 4 & 3 & 2 & 1 & 0 \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\keyword{બિટ વિગતો:}
+\begin{itemize}
+    \item \keyword{I Flag}: ગ્લોબલ ઇન્ટરપ્ટ \code{enable/disable} કંટ્રોલ કરે છે.
+    \item \keyword{Arithmetic Flags}: ALU ઓપરેશન પછી C, Z, N, V, S, H અપડેટ થાય છે.
+    \item \keyword{T Flag}: બિટ મેનિપ્યુલેશન માટે \code{BLD} અને \code{BST} instructions દ્વારા વપરાય છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{I Transfer Half Sign oVerflow Negative Zero Carry}
+\end{mnemonicbox}
+
+\questionmarks{3(અ)}{3}{AVR માઇક્રોકન્ટ્રોલર માટે RESET સર્કિટ સમજાવો.}
+
+\begin{solutionbox}
+\textbf{રીસેટ સોર્સ:}
+
+\begin{answertable}{Reset Sources}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{રીસેટ સોર્સ} & \textbf{વર્ણન} \\ \hline
+\keyword{Power-on Reset} & પાવર લાગુ કરવામાં આવે ત્યારે \\ \hline
+\keyword{External Reset} & RESET pin દ્વારા \\ \hline
+\keyword{Brown-out Reset} & વોલ્ટેજ ઘટે ત્યારે \\ \hline
+\keyword{Watchdog Reset} & Watchdog timer overflow \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\textbf{Reset Circuit:}
+
+\begin{center}
+\begin{tikzpicture}[auto, node distance=1.5cm]
+    \node (vcc) {Vcc};
+    \node [below=of vcc] (node1) {};
+    \node [below=of node1] (gnd) {GND};
+    \node [right=of node1] (reset) {RESET Pin};
+
+    \draw (vcc) -- node[left] {R} (node1);
+    \draw (node1) -- node[left] {C} (gnd);
+    \draw (node1) -- (reset);
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{રીસેટ અવધિ}: ઓછામાં ઓછા 2 clock cycles.
+    \item \keyword{રીસેટ વેક્ટર}: પ્રોગ્રામ address 0x0000 થી શરૂ થાય છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Power External Brown-out Watchdog}
+\end{mnemonicbox}
+
+\questionmarks{3(બ)}{4}{EEPROM સાથે સંકળાયેલ I/O રજિસ્ટરની યાદી બનાવો. EEPROM પર data write કરવા માટેના પ્રોગ્રામિંગ સ્ટેપ્સ લખો.}
+
+\begin{solutionbox}
+\textbf{EEPROM રજિસ્ટર્સ:}
+
+\begin{answertable}{EEPROM Registers}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{રજિસ્ટર} & \textbf{કાર્ય} \\ \hline
+\keyword{EEAR} & EEPROM Address Register \\ \hline
+\keyword{EEDR} & EEPROM Data Register \\ \hline
+\keyword{EECR} & EEPROM Control Register \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\textbf{પ્રોગ્રામિંગ સ્ટેપ્સ:}
+\begin{enumerate}
+    \item પાછલી write પૂર્ણ થવાની રાહ જુઓ (\keyword{EEWE} bit ચેક કરો).
+    \item \keyword{EEAR} રજિસ્ટરમાં address સેટ કરો.
+    \item \keyword{EEDR} રજિસ્ટરમાં data સેટ કરો.
+    \item \keyword{EECR} માં \keyword{EEMWE} bit સેટ કરો.
+    \item 4 clock cycles અંદર \keyword{EEWE} bit સેટ કરો.
+\end{enumerate}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Wait Address Data Master-Write Enable-Write}
+\end{mnemonicbox}
+
+\questionmarks{3(ક)}{7}{TCCR0 રજિસ્ટર દોરી વિગતવાર સમજાવો.}
+
+\begin{solutionbox}
+\textbf{TCCR0 (Timer/Counter0 Control Register):}
+
+\begin{answertable}{TCCR0 Bits}
+\begin{tabulary}{\linewidth}{|C|C|L|}
+\hline
+\textbf{બિટ} & \textbf{નામ} & \textbf{કાર્ય} \\ \hline
+7 & FOC0 & Force Output Compare \\ \hline
+6,3 & WGM01/00 & Waveform Generation Mode \\ \hline
+5,4 & COM01/00 & Compare Output Mode \\ \hline
+2,1,0 & CS02/01/00 & Clock Select \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\begin{answertable}{TCCR0 Layout}
+\begin{tabulary}{\linewidth}{|C|C|C|C|C|C|C|C|}
+\hline
+\textbf{FOC0} & \textbf{WGM01} & \textbf{COM01} & \textbf{COM00} & \textbf{WGM00} & \textbf{CS02} & \textbf{CS01} & \textbf{CS00} \\ \hline
+7 & 6 & 5 & 4 & 3 & 2 & 1 & 0 \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\keyword{ક્લોક સિલેક્ટ વિકલ્પો:}
+\begin{itemize}
+    \item \keyword{000}: કોઈ ક્લોક નહીં (Timer બંધ).
+    \item \keyword{001}: clk/1 (પ્રેસ્કેલિંગ નહીં).
+    \item \keyword{010}: clk/8, \keyword{011}: clk/64.
+    \item \keyword{100}: clk/256, \keyword{101}: clk/1024.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Force Waveform Compare Clock Select}
+\end{mnemonicbox}
+
+\orquestionmarks{3(અ)}{3}{Timer 1 સાથે સંકળાયેલા રજિસ્ટરોની યાદી બનાવો.}
+
+\begin{solutionbox}
+\textbf{Timer1 રજિસ્ટર્સ:}
+
+\begin{answertable}{Timer1 Registers}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{રજિસ્ટર} & \textbf{કાર્ય} \\ \hline
+\keyword{TCCR1A} & Timer1 Control Register A \\ \hline
+\keyword{TCCR1B} & Timer1 Control Register B \\ \hline
+\keyword{TCNT1H/L} & Timer1 Counter Register \\ \hline
+\keyword{OCR1AH/L} & Output Compare Register A \\ \hline
+\keyword{OCR1BH/L} & Output Compare Register B \\ \hline
+\keyword{ICR1H/L} & Input Capture Register \\ \hline
+\end{tabulary}
+\end{answertable}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Control Counter Output-Compare Input-Capture}
+\end{mnemonicbox}
+
+\orquestionmarks{3(બ)}{4}{EEPROM ના 0x005F લોકેશન પર 'G' સ્ટોર કરવા માટે AVR C પ્રોગ્રામ લખો.}
+
+\begin{solutionbox}
+\textbf{પ્રોગ્રામ:}
+
+\begin{lstlisting}[language=C]
+#include <avr/io.h>
+#include <avr/eeprom.h>
+
+void eeprom_write_byte_custom(uint16_t addr, uint8_t data)
+{
+    while(EECR & (1<<EEWE));  // Wait for previous write
+    EEAR = addr;              // Set address
+    EEDR = data;              // Set data
+    EECR |= (1<<EEMWE);       // Master write enable
+    EECR |= (1<<EEWE);        // Write enable
+}
+
+int main()
+{
+    eeprom_write_byte_custom(0x005F, 'G');
+    return 0;
+}
+\end{lstlisting}
+
+\keyword{પ્રોગ્રામ સ્ટેપ્સ:}
+\begin{itemize}
+    \item પૂર્ણતા માટે \keyword{EEWE} bit ચેક કરો.
+    \item \keyword{EEAR} માં address \code{0x005F} લોડ કરો.
+    \item \keyword{EEDR} માં 'G' (ASCII 71) લોડ કરો.
+    \item Master write સક્ષમ કરો, પછી write enable કરો.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Wait Address Data Master Write}
+\end{mnemonicbox}
+
+\orquestionmarks{3(ક)}{7}{દર 70 $\mu$s પર માત્ર PORTB.4 બિટને ટૉગલ કરવા માટે C પ્રોગ્રામ લખો. Delay બનાવવા માટે Timer0નો 1:8 પ્રેસ્કેલર સાથે નોર્મલ મોડનો ઉપયોગ કરો. XTAL = 8 MHz.}
+
+\begin{solutionbox}
+\textbf{ગણતરી:}
+\begin{itemize}
+    \item \keyword{ક્લોક} = 8MHz/8 = 1MHz ($1\mu s$ period).
+    \item 70$\mu s$ માટે: \keyword{Count} = 70 cycles.
+    \item \keyword{પ્રારંભિક મૂલ્ય} = $256 - 70 = 186$.
+\end{itemize}
+
+\textbf{પ્રોગ્રામ:}
+
+\begin{lstlisting}[language=C]
+#include <avr/io.h>
+
+int main()
+{
+    DDRB |= (1<<4);           // Set PB4 as output
+    TCCR0 = 0x02;             // Prescaler 1:8
+    
+    while(1)
+    {
+        TCNT0 = 186;          // Load initial value
+        while(!(TIFR & (1<<TOV0))); // Wait for overflow
+        TIFR |= (1<<TOV0);    // Clear flag
+        PORTB ^= (1<<4);      // Toggle PB4
+    }
+    return 0;
+}
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Direction Control Count Wait Clear Toggle}
+\end{mnemonicbox}
+
+\questionmarks{4(અ)}{3}{Port C ના બિટ 5 ને મોનિટર કરવા માટેનો AVR C પ્રોગ્રામ લખો. જો તે HIGH હોય, તો Port B પર 55H મોકલો; અન્યથા, AAH Port B પર મોકલો.}
+
+\begin{solutionbox}
+\textbf{પ્રોગ્રામ:}
+
+\begin{lstlisting}[language=C]
+#include <avr/io.h>
+
+int main()
+{
+    DDRC &= ~(1<<5);          // PC5 as input
+    DDRB = 0xFF;              // Port B as output
+    
+    while(1)
+    {
+        if(PINC & (1<<5))     // Check PC5
+            PORTB = 0x55;     // Send 55H if HIGH
+        else
+            PORTB = 0xAA;     // Send AAH if LOW
+    }
+    return 0;
+}
+\end{lstlisting}
+
+\keyword{પ્રોગ્રામ લૉજિક:}
+\begin{itemize}
+    \item PC5 ને input તરીકે, Port B ને output તરીકે કૉન્ફિગર કરો.
+    \item સતત PC5 સ્થિતિ ચેક કરો using bitwise AND.
+    \item ઇનપુટના આધારે \code{0x55} અથવા \code{0xAA} આઉટપુટ કરો.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Direction Check Output}
+\end{mnemonicbox}
+
+\questionmarks{4(બ)}{4}{LM35 ને ATmega32 સાથે ઇન્ટરફેસિંગ દોરો અને સમજાવો.}
+
+\begin{solutionbox}
+\textbf{LM35 Interface:}
+
+\begin{answerdiagram}{LM35 Connection}
+\begin{tikzpicture}[auto, node distance=2cm]
+    \node [gtu block] (lm35) {LM35\\Sensor};
+    \node [gtu block, right=of lm35] (mcu) {ATmega32\\(ADC)};
+    
+    \draw [gtu arrow] (lm35) -- node[midway, above] {Vout} node[midway, below] {(10mV/$^\circ$C)} (mcu);
+    
+    \node [above=0.5cm of lm35] (vcc) {+5V};
+    \node [below=0.5cm of lm35] (gnd) {GND};
+    \draw [gtu arrow] (vcc) -- (lm35);
+    \draw [gtu arrow] (lm35) -- (gnd);
+    
+    \node [right=0.1cm of mcu] (adc) {PA0 (ADC0)};
+\end{tikzpicture}
+\end{answerdiagram}
+
+\begin{answertable}{Connection Details}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{LM35 પિન} & \textbf{ATmega32 પિન} & \textbf{કાર્ય} \\ \hline
+Vcc & +5V & પાવર સપ્લાય \\ \hline
+Output & PA0 (ADC0) & એનાલોગ વોલ્ટેજ \\ \hline
+GND & GND & ગ્રાઉન્ડ \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\keyword{સ્પેસિફિકેશન્સ:}
+\begin{itemize}
+    \item \keyword{તાપમાન કન્વર્ઝન}: 10mV/$^\circ$C આઉટપુટ.
+    \item \keyword{ADC રિઝોલ્યુશન}: 10-bit (0-1023).
+    \item \keyword{વોલ્ટેજ રેન્જ}: 0V થી 5V (0$^\circ$C થી 500$^\circ$C).
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Power Output Ground Temperature}
+\end{mnemonicbox}
+
+\questionmarks{4(ક)}{7}{MAX7221 ને ATmega32 સાથે ઇન્ટરફેસિંગ દોરો અને સમજાવો.}
+
+\begin{solutionbox}
+\textbf{MAX7221 Interface:}
+
+\begin{answerdiagram}{MAX7221 Connection}
+\begin{tikzpicture}[auto, node distance=2cm]
+    \node [gtu block] (mcu) {ATmega32};
+    \node [gtu block, right=of mcu] (max) {MAX7221};
+    \node [gtu block, right=of max] (disp) {7-Segment\\Display};
+
+    \draw [gtu arrow] (mcu.20) -- node[above, font=\tiny] {MOSI (PB5)} (max.160);
+    \draw [gtu arrow] (mcu.0) -- node[above, font=\tiny] {SCK (PB7)} (max.180);
+    \draw [gtu arrow] (mcu.-20) -- node[above, font=\tiny] {SS (PB4)} (max.200);
+    \draw [gtu arrow] (max) -- (disp);
+\end{tikzpicture}
+\end{answerdiagram}
+
+\begin{answertable}{Pin Connections}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{MAX7221 પિન} & \textbf{ATmega32 પિન} & \textbf{કાર્ય} \\ \hline
+DIN & MOSI (PB5) & સીરિયલ ડેટા ઇનપુટ \\ \hline
+CLK & SCK (PB7) & સીરિયલ ક્લોક \\ \hline
+LOAD & SS (PB4) & ચિપ સિલેક્ટ \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\keyword{લક્ષણો:}
+\begin{itemize}
+    \item \keyword{SPI ઇન્ટરફેસ}: સીરિયલ કમ્યુનિકેશન પ્રોટોકોલ.
+    \item \keyword{8-ડિજિટ ડિસ્પ્લે}: 8 સેવન-સેગમેન્ટ ડિસ્પ્લે સુધી કંટ્રોલ કરે છે.
+    \item \keyword{બિલ્ટ-ઇન ડીકોડર}: BCD થી સેવન-સેગમેન્ટ કન્વર્ઝન.
+    \item \keyword{બ્રાઇટનેસ કંટ્રોલ}: 16 ઇન્ટેન્સિટી લેવલ રજિસ્ટર દ્વારા.
+\end{itemize}
+
+\keyword{પ્રોગ્રામિંગ સ્ટેપ્સ:}
+\begin{enumerate}
+    \item SPI ને master મોડમાં પ્રારંભ કરો.
+    \item Address અને data bytes મોકલો.
+    \item ડેટા latch કરવા માટે LOAD સિગ્નલ pulse કરો.
+\end{enumerate}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Serial Clock Load Display}
+\end{mnemonicbox}
+
+\orquestionmarks{4(અ)}{3}{Port B માંથી ડેટા બાઇટ મેળવી તેને Port C પર મોકલવા માટે AVR C પ્રોગ્રામ લખો.}
+
+\begin{solutionbox}
+\textbf{પ્રોગ્રામ:}
+
+\begin{lstlisting}[language=C]
+#include <avr/io.h>
+
+int main()
+{
+    DDRB = 0x00;              // Port B as input
+    DDRC = 0xFF;              // Port C as output
+    
+    unsigned char data;
+    
+    while(1)
+    {
+        data = PINB;          // Read from Port B
+        PORTC = data;         // Send to Port C
+    }
+    return 0;
+}
+\end{lstlisting}
+
+\keyword{પ્રોગ્રામ કાર્ય:}
+\begin{itemize}
+    \item Port B ને input તરીકે, Port C ને output તરીકે કૉન્ફિગર કરો.
+    \item સતત \keyword{PINB} માંથી વાંચો અને \keyword{PORTC} માં લખો.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Input Output Read Write}
+\end{mnemonicbox}
+
+\orquestionmarks{4(બ)}{4}{ULN2803 ને ATmega32 સાથે ઇન્ટરફેસિંગ દોરો અને સમજાવો.}
+
+\begin{solutionbox}
+\textbf{ULN2803 Interface:}
+
+\begin{answerdiagram}{ULN2803 Connection}
+\begin{tikzpicture}[auto, node distance=2cm]
+    \node [gtu block] (mcu) {ATmega32\\Port};
+    \node [gtu block, right=of mcu] (uln) {ULN2803};
+    \node [gtu block, right=of uln] (load) {Load/Relay};
+    \node [above=0.5cm of load] (vcc) {Vcc};
+
+    \draw [gtu arrow] (mcu) -- node[midway, above, font=\tiny] {Input} (uln);
+    \draw [gtu arrow] (uln) -- node[midway, above, font=\tiny] {Output} (load);
+    \draw [gtu arrow] (vcc) -- (load);
+\end{tikzpicture}
+\end{answerdiagram}
+
+\keyword{ULN2803 લક્ષણો:}
+\begin{itemize}
+    \item \keyword{8 Darlington Arrays}: હાઇ કરન્ટ સ્વિચિંગ.
+    \item \keyword{Input Current}: 500$\mu$A સામાન્ય.
+    \item \keyword{Output Current}: 500mA પ્રતિ ચેનલ.
+    \item \keyword{Built-in Flyback Diodes}: ઇન્ડક્ટિવ લોડ પ્રોટેક્શન.
+\end{itemize}
+
+\keyword{ઓપરેશન}:
+\begin{itemize}
+    \item \keyword{એપ્લિકેશન}: રિલે, મોટર, સોલેનોઇડ ચલાવવા માટે.
+    \item \keyword{એક્ટિવ લો આઉટપુટ}: ઇનપુટ high હોય ત્યારે આઉટપુટ low જાય છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Darlington Current Protection Drive}
+\end{mnemonicbox}
+
+\orquestionmarks{4(ક)}{7}{AVR માં SPI ને પ્રોગ્રામ કરવા માટે વપરાતા રજિસ્ટરોની ચર્ચા કરો.}
+
+\begin{solutionbox}
+\textbf{SPI Registers:}
+
+\begin{answertable}{SPI Register Summary}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{રજિસ્ટર} & \textbf{બિટ્સ} & \textbf{કાર્ય} \\ \hline
+\keyword{SPCR} & SPE, DORD, MSTR, CPOL & SPI Control Register \\ \hline
+\keyword{SPSR} & SPIF, WCOL, SPI2X & SPI Status Register \\ \hline
+\keyword{SPDR} & - & SPI Data Register \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\keyword{SPCR રજિસ્ટર બિટ્સ:}
+\begin{itemize}
+    \item \keyword{SPE}: SPI Enable.
+    \item \keyword{DORD}: Data Order (MSB/LSB first).
+    \item \keyword{MSTR}: Master/Slave Select.
+    \item \keyword{CPOL}: Clock Polarity.
+    \item \keyword{CPHA}: Clock Phase.
+\end{itemize}
+
+\keyword{SPSR રજિસ્ટર બિટ્સ:}
+\begin{itemize}
+    \item \keyword{SPIF}: SPI Interrupt Flag.
+    \item \keyword{WCOL}: Write Collision Flag.
+    \item \keyword{SPI2X}: Double Speed Mode.
+\end{itemize}
+
+\keyword{પ્રોગ્રામિંગ સિક્વન્સ:}
+\begin{enumerate}
+    \item SPI pins ને input/output તરીકે કૉન્ફિગર કરો.
+    \item ઇચ્છિત મોડ માટે SPCR રજિસ્ટર સેટ કરો.
+    \item SPDR માં ડેટા લખો.
+    \item SPIF flag ની રાહ જુઓ.
+    \item SPDR માંથી પ્રાપ્ત ડેટા વાંચો.
+\end{enumerate}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Control Status Data Enable Order Master}
+\end{mnemonicbox}
+
+\questionmarks{5(અ)}{3}{L293D મોટર ડ્રાઇવર IC નો પિન ડાયાગ્રામ દોરો અને સમજાવો.}
+
+\begin{solutionbox}
+\textbf{L293D Pinout:}
+
+\begin{center}
+\begin{tikzpicture}[
+    pin/.style={draw, rectangle, minimum width=2cm, minimum height=0.5cm, font=\tiny},
+    ic/.style={draw, rectangle, minimum width=3cm, minimum height=5cm, fill=gray!10}
+]
+    \node [ic] (body) {};
+    \node [anchor=north, font=\bfseries] at (body.north) {L293D};
+
+    % Pins Left
+    \foreach \i/\label in {1/Enable1, 2/Input1, 3/Output1, 4/GND, 5/GND, 6/Output2, 7/Input2, 8/Vcc2} {
+        \node [anchor=west, font=\tiny] at ([yshift=-0.5cm-\i*0.5cm]body.north west) {\i\ \label};
+        \draw ([yshift=-0.5cm-\i*0.5cm]body.north west) -- +(-0.2,0);
+    }
+
+    % Pins Right
+    \foreach \i/\label in {16/Vcc1, 15/Input4, 14/Output4, 13/GND, 12/GND, 11/Output3, 10/Input3, 9/Enable2} {
+        \pgfmathsetmacro{\ypos}{17-\i}
+        \node [anchor=east, font=\tiny] at ([yshift=-0.5cm-\ypos*0.5cm]body.north east) {\label\ \i};
+        \draw ([yshift=-0.5cm-\ypos*0.5cm]body.north east) -- +(0.2,0);
+    }
+\end{tikzpicture}
+\end{center}
+
+\keyword{પિન કાર્યો:}
+\begin{itemize}
+    \item \keyword{1A, 2A}: મોટર 1 માટે ઇનપુટ સિગ્નલ.
+    \item \keyword{1Y, 2Y}: મોટર 1 માટે આઉટપુટ.
+    \item \keyword{1EN, 2EN}: મોટર માટે enable pins.
+    \item \keyword{Vcc1}: લૉજિક સપ્લાય (+5V).
+    \item \keyword{Vcc2}: મોટર સપ્લાય (+12V).
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Input Output Enable Logic Motor Supply}
+\end{mnemonicbox}
+
+\questionmarks{5(બ)}{4}{ADMUX રજિસ્ટર દોરો અને સમજાવો.}
+
+\begin{solutionbox}
+\textbf{ADMUX (ADC Multiplexer Selection Register):}
+
+\begin{answertable}{ADMUX Register}
+\begin{tabulary}{\linewidth}{|C|C|L|}
+\hline
+\textbf{બિટ} & \textbf{નામ} & \textbf{કાર્ય} \\ \hline
+7,6 & REFS1/0 & Reference Selection \\ \hline
+5 & ADLAR & ADC Left Adjust Result \\ \hline
+4-0 & MUX4-0 & Analog Channel Selection \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\begin{answertable}{ADMUX Bits}
+\begin{tabulary}{\linewidth}{|C|C|C|C|C|C|C|C|}
+\hline
+\textbf{REFS1} & \textbf{REFS0} & \textbf{ADLAR} & \textbf{MUX4} & \textbf{MUX3} & \textbf{MUX2} & \textbf{MUX1} & \textbf{MUX0} \\ \hline
+7 & 6 & 5 & 4 & 3 & 2 & 1 & 0 \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\keyword{રેફરન્સ પસંદગી (REFS1:0):}
+\begin{itemize}
+    \item \keyword{00}: AREF pin.
+    \item \keyword{01}: AVcc with external capacitor.
+    \item \keyword{11}: Internal 2.56V reference.
+\end{itemize}
+
+\keyword{ચેનલ પસંદગી}: MUX bits ADC0-ADC7 ચેનલ પસંદ કરે છે.
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Reference Adjust Multiplexer Channel}
+\end{mnemonicbox}
+
+\questionmarks{5(ક)}{7}{GSM આધારિત સિક્યોરિટી સિસ્ટમ સમજાવો.}
+
+\begin{solutionbox}
+\textbf{GSM Security System:}
+
+\begin{answerdiagram}{GSM Security Block Diagram}
+\begin{tikzpicture}[auto, node distance=2cm]
+    \node [gtu block] (mcu) {Microcontroller};
+    \node [gtu block, left=of mcu] (sensor) {Sensors};
+    \node [gtu block, right=of mcu] (gsm) {GSM Module};
+    \node [gtu block, right=of gsm] (network) {Network};
+    \node [gtu block, below=of network] (mobile) {User Mobile};
+    \node [gtu block, above=of mcu] (lcd) {Display};
+    \node [gtu block, below=of mcu] (keypad) {Keypad};
+
+    \draw [gtu arrow] (sensor) -- (mcu);
+    \draw [gtu arrow] (mcu) -- (gsm);
+    \draw [gtu arrow] (gsm) -- (network);
+    \draw [gtu arrow] (network) -- (mobile);
+    \draw [gtu arrow] (keypad) -- (mcu);
+    \draw [gtu arrow] (mcu) -- (lcd);
+\end{tikzpicture}
+\end{answerdiagram}
+
+\textbf{સિસ્ટમ ઘટકો:}
+\begin{itemize}
+    \item \keyword{Sensors}: PIR (ગતિ શોધ), Door (પ્રવેશ) શોધ.
+    \item \keyword{GSM Module}: SMS/Call કમ્યુનિકેશન.
+    \item \keyword{Microcontroller}: સિસ્ટમ કંટ્રોલ.
+    \item \keyword{Keypad/Display}: યુઝર ઇન્ટરફેસ.
+\end{itemize}
+
+\textbf{કાર્યશીલ સિદ્ધાંત:}
+\begin{enumerate}
+    \item સેન્સર્સ આક્રમણ શોધે છે.
+    \item માઇક્રોકન્ટ્રોલર સિગ્નલ પ્રોસેસ કરે છે.
+    \item GSM મોડ્યુલ SMS alert મોકલે છે ("Intruder Detected").
+    \item યુઝર નોટિફિકેશન મેળવે છે અને સિસ્ટમ રિમોટલી arm/disarm કરી શકે છે.
+\end{enumerate}
+
+\textbf{લક્ષણો}: રિમોટ મોનિટરિંગ, બહુવિધ સેન્સર્સ, ઓટોમેટિક એલર્ટ.
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Sensors Process Communicate Alert Control}
+\end{mnemonicbox}
+
+\orquestionmarks{5(અ)}{3}{L293D મોટર ડ્રાઇવરનો ઉપયોગ કરી DC મોટરને ATmega32 સાથે ઇન્ટરફેસ કરવા માટે સર્કિટ ડાયાગ્રામ દોરો.}
+
+\begin{solutionbox}
+\textbf{DC Motor Interface:}
+
+\begin{answerdiagram}{L293D DC Motor Interface}
+\begin{tikzpicture}[auto, node distance=2cm]
+    \node [gtu block] (mcu) {ATmega32};
+    \node [gtu block, right=of mcu] (l293) {L293D};
+    \node [gtu block, right=of l293] (motor) {DC Motor};
+
+    \draw [gtu arrow] (mcu.20) -- node[above, font=\tiny] {PA0 (1A)} (l293.160);
+    \draw [gtu arrow] (mcu.0) -- node[above, font=\tiny] {PA1 (2A)} (l293.180);
+    \draw [gtu arrow] (mcu.-20) -- node[above, font=\tiny] {PA2 (1EN)} (l293.200);
+
+    \draw [gtu arrow] (l293.20) -- node[above, font=\tiny] {1Y} (motor.160);
+    \draw [gtu arrow] (l293.-20) -- node[above, font=\tiny] {2Y} (motor.200);
+
+    \node [above=0.5cm of l293] (vcc) {Vcc};
+    \draw [gtu arrow] (vcc) -- (l293);
+\end{tikzpicture}
+\end{answerdiagram}
+
+\keyword{કનેક્શન ટેબલ:}
+\begin{itemize}
+    \item \keyword{PA0} to Input 1A.
+    \item \keyword{PA1} to Input 2A.
+    \item \keyword{PA2} to Enable 1EN.
+\end{itemize}
+
+\keyword{કંટ્રોલ લૉજિક:}
+\begin{itemize}
+    \item \keyword{Clockwise}: PA0=1, PA1=0.
+    \item \keyword{Counter-Clockwise}: PA0=0, PA1=1.
+    \item \keyword{Stop}: PA2=0.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Direction Enable Control Stop}
+\end{mnemonicbox}
+
+\orquestionmarks{5(બ)}{4}{ADCSRA રજિસ્ટર દોરો અને સમજાવો.}
+
+\begin{solutionbox}
+\textbf{ADCSRA (ADC Control and Status Register A):}
+
+\begin{answertable}{ADCSRA Register}
+\begin{tabulary}{\linewidth}{|C|C|L|}
+\hline
+\textbf{બિટ} & \textbf{નામ} & \textbf{કાર્ય} \\ \hline
+7 & ADEN & ADC Enable \\ \hline
+6 & ADSC & ADC Start Conversion \\ \hline
+5 & ADATE & ADC Auto Trigger Enable \\ \hline
+4 & ADIF & ADC Interrupt Flag \\ \hline
+3 & ADIE & ADC Interrupt Enable \\ \hline
+2-0 & ADPS2-0 & ADC Prescaler Select \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\begin{answertable}{ADCSRA Layout}
+\begin{tabulary}{\linewidth}{|C|C|C|C|C|C|C|C|}
+\hline
+\textbf{ADEN} & \textbf{ADSC} & \textbf{ADATE} & \textbf{ADIF} & \textbf{ADIE} & \textbf{ADPS2} & \textbf{ADPS1} & \textbf{ADPS0} \\ \hline
+7 & 6 & 5 & 4 & 3 & 2 & 1 & 0 \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\keyword{પ્રેસ્કેલર પસંદગી:}
+\begin{itemize}
+    \item \keyword{000, 001}: ડિવિઝન ફેક્ટર 2.
+    \item \keyword{010}: ડિવિઝન ફેક્ટર 4.
+    \item \keyword{011}: ડિવિઝન ફેક્ટર 8.
+\end{itemize}
+
+\keyword{ADC ઓપરેશન:}
+\begin{enumerate}
+    \item ADC સક્ષમ કરવા માટે \keyword{ADEN} સેટ કરો.
+    \item કન્વર્ઝન શરૂ કરવા માટે \keyword{ADSC} સેટ કરો.
+    \item \keyword{ADIF} flag ની રાહ જુઓ.
+    \item \keyword{ADCH:ADCL} માંથી પરિણામ વાંચો.
+\end{enumerate}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Enable Start Auto Interrupt Prescaler}
+\end{mnemonicbox}
+
+
+\orquestionmarks{5(ક)}{7}{વેધર મોનિટરિંગ સિસ્ટમ સમજાવો.}
+
+\begin{solutionbox}
+\textbf{Weather Monitoring System:}
+
+\begin{answerdiagram}{Weather Monitoring Block Diagram}
+\begin{tikzpicture}[auto, node distance=2cm]
+    \node [gtu block] (mcu) {Microcontroller};
+    \node [gtu block, left=of mcu, yshift=1.5cm] (temp) {Temperature\\Sensor};
+    \node [gtu block, left=of mcu, yshift=0.5cm] (hum) {Humidity\\Sensor};
+    \node [gtu block, left=of mcu, yshift=-0.5cm] (pres) {Pressure\\Sensor};
+    \node [gtu block, left=of mcu, yshift=-1.5cm] (rain) {Rain\\Sensor};
+    
+    \node [gtu block, right=of mcu, yshift=1cm] (disp) {Display};
+    \node [gtu block, right=of mcu, yshift=0cm] (log) {Data Logger};
+    \node [gtu block, right=of mcu, yshift=-1cm] (wireless) {Wireless\\Module};
+    \node [gtu block, right=of wireless] (remote) {Remote\\Monitor};
+
+    \draw [gtu arrow] (temp) -- (mcu);
+    \draw [gtu arrow] (hum) -- (mcu);
+    \draw [gtu arrow] (pres) -- (mcu);
+    \draw [gtu arrow] (rain) -- (mcu);
+    
+    \draw [gtu arrow] (mcu) -- (disp);
+    \draw [gtu arrow] (mcu) -- (log);
+    \draw [gtu arrow] (mcu) -- (wireless);
+    \draw [gtu arrow] (wireless) -- (remote);
+\end{tikzpicture}
+\end{answerdiagram}
+
+\textbf{સિસ્ટમ ઘટકો:}
+\begin{answertable}{Sensor Components}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{સેન્સર} & \textbf{પેરામીટર} & \textbf{ઇન્ટરફેસ} \\ \hline
+\keyword{LM35} & તાપમાન & Analog (ADC) \\ \hline
+\keyword{DHT11} & ભેજ & Digital \\ \hline
+\keyword{BMP180} & દબાણ & I2C \\ \hline
+\keyword{Rain Sensor} & વરસાદ & Digital \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\keyword{લક્ષણો:}
+\begin{itemize}
+    \item \keyword{Multi-parameter Monitoring}: તાપમાન, ભેજ, દબાણ, વરસાદ.
+    \item \keyword{Data Logging}: EEPROM/SD કાર્ડમાં રીડિંગ્સ સ્ટોર કરો.
+    \item \keyword{Real-time Display}: LCD વર્તમાન રીડિંગ્સ દર્શાવે છે.
+    \item \keyword{Wireless Communication}: રિમોટ મોનિટરિંગ માટે WiFi/GSM.
+    \item \keyword{Alert System}: થ્રેશોલ્ડ-આધારિત ચેતવણીઓ.
+\end{itemize}
+
+\keyword{એપ્લિકેશન્સ:}
+\begin{itemize}
+    \item કૃષિ મોનિટરિંગ
+    \item હવામાન આગાહી
+    \item પર્યાવરણીય સંશોધન
+    \item સ્માર્ટ હોમ ઓટોમેશન
+\end{itemize}
+
+\keyword{સિસ્ટમ ફાયદા:}
+\begin{itemize}
+    \item \keyword{Automated Data Collection}: સતત મોનિટરિંગ.
+    \item \keyword{Remote Access}: ગમે ત્યાંથી ડેટા જુઓ.
+    \item \keyword{Historical Analysis}: ટ્રેન્ડ ઓળખ.
+    \item \keyword{Early Warning}: આત્યંતિક હવામાન એલર્ટ્સ.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Temperature Humidity Pressure Rain Display Log Wireless}
+\end{mnemonicbox}
+
+\end{document}

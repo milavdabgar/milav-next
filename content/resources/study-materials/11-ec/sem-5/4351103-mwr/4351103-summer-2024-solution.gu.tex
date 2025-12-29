@@ -1,0 +1,990 @@
+\documentclass{article}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/preamble.tex}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/gujarati-boxes.tex}
+\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/commands.tex}
+
+\title{માઇક્રોવેવ અને રડાર કમ્યુનિકેશન (4351103) - ઉનાળુ 2024 સોલ્યુશન}
+\date{May 21, 2024}
+
+\begin{document}
+\maketitle
+
+\questionmarks{1(a)}{3}{વિવિધ માઇક્રોવેવ બેન્ડની તેમની આવૃત્તિ શ્રેણી સાથેની યાદી કરો.}
+
+\begin{solutionbox}
+\textbf{માઇક્રોવેવ આવૃત્તિ બેન્ડ કોષ્ટક:}
+
+\begin{answertable}{માઇક્રોવેવ બેન્ડ}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{બેન્ડ} & \textbf{આવૃત્તિ શ્રેણી} & \textbf{તરંગલંબાઇ} \\ \hline
+\keyword{L Band} & 1-2 GHz & 30-15 cm \\ \hline
+\keyword{S Band} & 2-4 GHz & 15-7.5 cm \\ \hline
+\keyword{C Band} & 4-8 GHz & 7.5-3.75 cm \\ \hline
+\keyword{X Band} & 8-12 GHz & 3.75-2.5 cm \\ \hline
+\keyword{Ku Band} & 12-18 GHz & 2.5-1.67 cm \\ \hline
+\keyword{K Band} & 18-27 GHz & 1.67-1.11 cm \\ \hline
+\keyword{Ka Band} & 27-40 GHz & 1.11-0.75 cm \\ \hline
+\end{tabulary}
+\end{answertable}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Large Ships Can eXamine Kindly Using Knowledge Always}
+\end{mnemonicbox}
+
+\questionmarks{1(b)}{4}{ટ્રાન્સમિશન લાઇનનું સામાન્ય સમકક્ષ સર્કિટ દોરો. લોસલેસ લાઇન માટે લાક્ષણિક અવબાધ માટેનું સમીકરણ લખો.}
+
+\begin{solutionbox}
+\textbf{ટ્રાન્સમિશન લાઇન સમકક્ષ સર્કિટ:}
+
+\begin{answerdiagram}{ટ્રાન્સમિશન લાઇન મોડલ}
+\begin{center}
+\begin{circuitikz}[american voltages]
+    \draw (0,2) to[R, l=$R$, -*] (2,2) to[L, l=$L$, -*] (4,2) -- (5,2);
+    \draw (4,2) to[C, l=$C$, *-*] (4,0);
+    \draw (3,2) -- (3,1.5) to[R, l=$G$] (3,0.5) -- (3,0);
+    \draw (0,0) to[short, -*] (5,0);
+    
+    \node at (2.5, -0.5) {$\Delta x$};
+    \node [anchor=east] at (0,2) {ઇનપુટ};
+    \node [anchor=west] at (5,2) {આઉટપુટ};
+\end{circuitikz}
+\end{center}
+\end{answerdiagram}
+
+\textbf{સર્કિટ એલિમેન્ટ્સ:}
+\begin{itemize}
+    \item \keyword{R}: યુનિટ લંબાઇ દીઠ શ્રેણી પ્રતિકાર
+    \item \keyword{L}: યુનિટ લંબાઇ દીઠ શ્રેણી ઇન્ડક્ટન્સ
+    \item \keyword{C}: યુનિટ લંબાઇ દીઠ શન્ટ કેપેસિટન્સ
+    \item \keyword{G}: યુનિટ લંબાઇ દીઠ શન્ટ કન્ડક્ટન્સ
+\end{itemize}
+
+\textbf{લોસલેસ લાઇન માટે ($R=0, G=0$):}
+\[ Z_0 = \sqrt{\frac{L}{C}} \]
+
+\textbf{મુખ્ય મુદ્દાઓ:}
+\begin{itemize}
+    \item \keyword{લોસલેસ સ્થિતિ}: ટ્રાન્સમિશન દરમિયાન કોઈ પાવર લોસ નથી.
+    \item \keyword{અવબાધ મેચિંગ}: $Z_0$ રિફ્લેક્શન વર્તન નક્કી કરે છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Lossless Lines Love Constant Impedance}
+\end{mnemonicbox}
+
+\questionmarks{1(c)}{7}{એક જ સ્ટબનો ઉપયોગ કરીને ઇમ્પિડન્સ મેચિંગ પ્રક્રિયા સમજાવો.}
+
+\begin{solutionbox}
+\textbf{સિંગલ સ્ટબ મેચિંગ પ્રક્રિયા:}
+
+\begin{answerdiagram}{સિંગલ સ્ટબ મેચિંગ}
+\begin{tikzpicture}[auto, node distance=2cm]
+    \node [gtu block] (source) {સોર્સ};
+    \node [gtu block, right=of source] (stub_point) {સ્ટબ કનેક્શન};
+    \node [gtu block, right=of stub_point] (load) {લોડ ($Z_L$)};
+    \node [gtu block, below=of stub_point] (stub) {શોર્ટ સ્ટબ};
+
+    \draw [gtu arrow] (source) -- node[above] {મેઇન લાઇન} (stub_point);
+    \draw [gtu arrow] (stub_point) -- node[above] {અંતર $d$} (load);
+    \draw [gtu arrow] (stub) -- node[right] {લંબાઇ $l$} (stub_point);
+\end{tikzpicture}
+\end{answerdiagram}
+
+\textbf{મેચિંગ પગલાં:}
+\begin{answertable}{મેચિંગ પ્રક્રિયા}
+\begin{tabulary}{\linewidth}{|C|L|L|}
+\hline
+\textbf{પગલું} & \textbf{પ્રક્રિયા} & \textbf{હેતુ} \\ \hline
+1 & લોડ એડમિટન્સ ગણો & $Y_L = 1/Z_L$ શોધો \\ \hline
+2 & જનરેટર તરફ ખસો & પોઇન્ટ શોધો જ્યાં $G = G_0$ \\ \hline
+3 & સ્ટબ સસેપ્ટન્સ ઉમેરો & રિએક્ટિવ ભાગ કેન્સલ કરો \\ \hline
+4 & મેચિંગ પ્રાપ્ત કરો & $Y_{total} = Y_0$ \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\textbf{ડિઝાઇન સમીકરણો:}
+\begin{itemize}
+    \item \keyword{સ્ટબ સુધી અંતર}: $d = (\lambda/2\pi) \times \tan^{-1}(\sqrt{R_L/R_0})$
+    \item \keyword{સ્ટબ લંબાઇ}: $l = (\lambda/2\pi) \times \tan^{-1}(B_{stub}/Y_0)$
+\end{itemize}
+
+\textbf{એપ્લિકેશન્સ:} એન્ટીના મેચિંગ, એમ્પ્લિફાયર ઇનપુટ/આઉટપુટ.
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Single Stubs Stop Standing Waves Successfully}
+\end{mnemonicbox}
+
+\orquestionmarks{1(c)}{7}{લંબચોરસ અને ગોળાકાર વેવગાઇડ્સની તુલના કરો.}
+
+\begin{solutionbox}
+\textbf{તુલના કોષ્ટક:}
+
+\begin{answertable}{લંબચોરસ vs ગોળાકાર વેવગાઇડ}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પેરામીટર} & \textbf{લંબચોરસ વેવગાઇડ} & \textbf{ગોળાકાર વેવગાઇડ} \\ \hline
+\keyword{આકાર} & લંબચોરસ ક્રોસ-સેક્શન & ગોળાકાર ક્રોસ-સેક્શન \\ \hline
+\keyword{ડોમિનન્ટ મોડ} & $TE_{10}$ & $TE_{11}$ \\ \hline
+\keyword{કટઓફ ફ્રિક્વન્સી} & $f_c = c/(2a)$ for $TE_{10}$ & $f_c = 1.841c/(2\pi a)$ for $TE_{11}$ \\ \hline
+\keyword{પાવર હેન્ડલિંગ} & ઓછું & વધારે \\ \hline
+\keyword{મેન્યુફેક્ચરિંગ} & સરળ & મુશ્કેલ \\ \hline
+\keyword{મોડ સેપરેશન} & સારું & નબળું \\ \hline
+\keyword{એપ્લિકેશન્સ} & રડાર, ઓવન & સેટેલાઇટ કમ્યુનિકેશન \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\textbf{મુખ્ય ફાયદાઓ:}
+\begin{itemize}
+    \item \keyword{લંબચોરસ}: બહેતર મોડ નિયંત્રણ, સરળ ફેબ્રિકેશન.
+    \item \keyword{ગોળાકાર}: વધારે પાવર ક્ષમતા, રોટેટિંગ પોલરાઇઝેશન.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Rectangular is Regular, Circular Carries Current}
+\end{mnemonicbox}
+
+\questionmarks{2(a)}{3}{ગ્રુપ વેલોસિટી અને ફેઝ વેલોસિટીની વ્યાખ્યા કરો અને વચ્ચેનો સંબંધ લખો.}
+
+\begin{solutionbox}
+\textbf{વેગની વ્યાખ્યાઓ:}
+
+\begin{answertable}{વેગના પ્રકારો}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{વેગનો પ્રકાર} & \textbf{ફોર્મ્યુલા} & \textbf{ભૌતિક અર્થ} \\ \hline
+\keyword{ફેઝ વેલોસિટી} & $v_p = \omega/\beta = c/\sqrt{1-(f_c/f)^2}$ & સ્થિર ફેઝની ઝડપ \\ \hline
+\keyword{ગ્રુપ વેલોસિટી} & $v_g = d\omega/d\beta = c\sqrt{1-(f_c/f)^2}$ & સિગ્નલ એનર્જીની ઝડપ \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\textbf{સંબંધ:} $v_p \times v_g = c^2$
+
+\textbf{મુખ્ય મુદ્દાઓ:}
+\begin{itemize}
+    \item \keyword{ફેઝ વેલોસિટી}: હંમેશા $> c$.
+    \item \keyword{ગ્રુપ વેલોસિટી}: હંમેશા $< c$.
+    \item \keyword{સિગ્નલ પ્રવાસ}: ગ્રુપ વેલોસિટી પર.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Phase is Fast, Group Carries Message}
+\end{mnemonicbox}
+
+\questionmarks{2(b)}{4}{ડાયરેક્શનલ કપ્લરના સિદ્ધાંતો અને કાર્યનું વર્ણન કરો.}
+
+\begin{solutionbox}
+\textbf{ડાયરેક્શનલ કપ્લર સિદ્ધાંત:}
+
+\begin{answerdiagram}{ડાયરેક્શનલ કપ્લર}
+\begin{tikzpicture}[auto, node distance=2cm]
+    \node [gtu block, minimum width=3cm] (main) {મેઇન લાઇન};
+    \node [gtu block, minimum width=3cm, below=1cm of main] (aux) {ઓક્ઝિલરી લાઇન};
+    
+    \node [left=of main] (p1) {પોર્ટ 1 (ઇનપુટ)};
+    \node [right=of main] (p2) {પોર્ટ 2 (થ્રૂ)};
+    \node [left=of aux] (p3) {પોર્ટ 3 (કપલ્ડ)};
+    \node [right=of aux] (p4) {પોર્ટ 4 (આઇસોલેટેડ)};
+    
+    \draw [gtu arrow] (p1) -- (main);
+    \draw [gtu arrow] (main) -- (p2);
+    \draw [gtu dotted arrow] (main) -- node[midway, right] {કપલિંગ} (aux);
+    \draw [gtu arrow] (aux) -- (p3);
+    \draw [gtu arrow] (aux) -- (p4);
+\end{tikzpicture}
+\end{answerdiagram}
+
+\textbf{મુખ્ય પેરામીટર્સ:}
+\begin{itemize}
+    \item \keyword{કપલિંગ ફેક્ટર}: $C = 10 \log(P_1/P_3)$ dB
+    \item \keyword{ડાયરેક્ટિવિટી}: $D = 10 \log(P_3/P_4)$ dB
+    \item \keyword{ઇન્સર્શન લોસ}: $IL = 10 \log(P_1/P_2)$ dB
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Directional Couplers Divide Power Precisely}
+\end{mnemonicbox}
+
+\questionmarks{2(c)}{7}{બાંધકામ, ઓપરેશન અને એપ્લિકેશન સાથે મેજિક TEE સમજાવો.}
+
+\begin{solutionbox}
+\textbf{મેજિક TEE બાંધકામ:}
+
+\begin{answerdiagram}{મેજિક TEE સ્ટ્રક્ચર}
+\begin{tikzpicture}[scale=0.8]
+    \draw[thick] (-3,0) -- (3,0); % Main arm
+    \draw[thick] (0,0) -- (0,2);  % E-arm
+    \draw[thick] (0,0) circle (0.2); % H-arm
+    
+    \node at (-3.5,0) {પોર્ટ 1};
+    \node at (3.5,0) {પોર્ટ 2};
+    \node at (0,2.3) {પોર્ટ 3 (E-આર્મ)};
+    \node at (0,-0.5) {પોર્ટ 4 (H-આર્મ)};
+    
+    \draw[->] (-2,0.3) -- node[above] {કોલિનિયર} (2,0.3);
+\end{tikzpicture}
+\end{answerdiagram}
+
+\textbf{ઓપરેટિંગ સિદ્ધાંતો:}
+\begin{answertable}{પોર્ટ કાર્યો}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પોર્ટ} & \textbf{કાર્ય} & \textbf{ફીલ્ડ પેટર્ન} \\ \hline
+\keyword{પોર્ટ 1 અને 2} & કોલિનિયર પોર્ટ્સ & સિમેટ્રિક \\ \hline
+\keyword{પોર્ટ 3 (E-આર્મ)} & E-પ્લેન પોર્ટ & ડિફરન્સ પોર્ટ ($P_1 - P_2$) \\ \hline
+\keyword{પોર્ટ 4 (H-આર્મ)} & H-પ્લેન પોર્ટ & સમ પોર્ટ ($P_1 + P_2$) \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\textbf{સ્કેટરિંગ ગુણધર્મો:}
+\begin{itemize}
+    \item \keyword{આઇસોલેશન}: પોર્ટ 3 અને પોર્ટ 4 વચ્ચે.
+    \item \keyword{પાવર વિભાજન}: મેચ થયું હોય ત્યારે સમાન વિભાજન.
+\end{itemize}
+
+\textbf{એપ્લિકેશન્સ:} મિક્સર્સ, પાવર કમ્બાઇનર્સ, ઇમ્પિડન્સ બ્રિજ.
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Magic TEE Creates Perfect Isolation}
+\end{mnemonicbox}
+
+\orquestionmarks{2(a)}{3}{લંબચોરસ વેવગાઇડ માટે TE$_{10}$, TE$_{20}$ મોડ્સ દોરો.}
+
+\begin{solutionbox}
+\textbf{TE$_{10}$ મોડ (ડોમિનન્ટ મોડ):}
+
+\begin{answerdiagram}{TE મોડ્સ}
+\begin{tikzpicture}
+    % TE10
+    \draw[thick] (0,0) rectangle (4,2);
+    \node at (2, -0.5) {TE$_{10}$: એક હાફ-વેવ};
+    \foreach \x in {1, 2, 3} {
+        \draw[->, red] (\x, 0.2) -- (\x, 1.8);
+    }
+    \node[red] at (2,1) {E-ફીલ્ડ};
+
+    % TE20
+    \begin{scope}[xshift=5cm]
+    \draw[thick] (0,0) rectangle (4,2);
+    \node at (2, -0.5) {TE$_{20}$: બે હાફ-વેવ્સ};
+    \draw[->, red] (1, 0.2) -- (1, 1.8);
+    \draw[->, red] (3, 1.8) -- (3, 0.2);
+    \end{scope}
+\end{tikzpicture}
+\end{answerdiagram}
+
+\textbf{મોડ લાક્ષણિકતાઓ:}
+\begin{itemize}
+    \item \keyword{TE10}: પહોળાઈ $a$ માં એક હાફ-વેવ વેરિએશન.
+    \item \keyword{TE20}: પહોળાઈ $a$ માં બે હાફ-વેવ વેરિએશન.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{TE modes have Electric Transverse}
+\end{mnemonicbox}
+
+\orquestionmarks{2(b)}{4}{જરૂરી સ્કેચ સાથે હાઇબ્રિડ રિંગનું વર્ણન કરો.}
+
+\begin{solutionbox}
+\textbf{હાઇબ્રિડ રિંગ સ્ટ્રક્ચર:}
+
+\begin{answerdiagram}{રેટ-રેસ કપ્લર}
+\begin{tikzpicture}
+    \draw[thick] (0,0) circle (1.5);
+    \node at (0,0) {રિંગ $1.5\lambda$};
+    
+    \node[draw, circle, fill=white] (p1) at (90:1.5) {1};
+    \node[draw, circle, fill=white] (p2) at (0:1.5) {2};
+    \node[draw, circle, fill=white] (p3) at (-90:1.5) {3};
+    \node[draw, circle, fill=white] (p4) at (180:1.5) {4};
+    
+    \node[right] at (2,0) {$\lambda/4$};
+\end{tikzpicture}
+\end{answerdiagram}
+
+\textbf{ઓપરેટિંગ સિદ્ધાંત:}
+\begin{itemize}
+    \item \keyword{રિંગ સર્કમફરન્સ}: $3\lambda/2$ ($1.5\lambda$).
+    \item \keyword{પોર્ટ સ્પેસિંગ}: પોર્ટ્સ $\lambda/4$ અંતરે છે, સિવાય કે એક ગેપ $3\lambda/4$ છે.
+    \item \keyword{આઇસોલેશન}: વિરુદ્ધ પોર્ટ્સ વચ્ચે આઇસોલેશન.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Hybrid Rings Handle Half-wavelengths}
+\end{mnemonicbox}
+
+\orquestionmarks{2(c)}{7}{સિદ્ધાંતો, બાંધકામ અને ઓપરેશન સાથે આઇસોલેટર સમજાવો.}
+
+\begin{solutionbox}
+\textbf{આઇસોલેટર સિદ્ધાંત:}
+
+\begin{answerdiagram}{આઇસોલેટર}
+\begin{tikzpicture}[auto, node distance=2cm]
+    \node [gtu state] (input) {ઇનપુટ};
+    \node [gtu block, right=of input, fill=gray!20] (ferrite) {ફેરાઇટ\\મટીરિયલ};
+    \node [gtu state, right=of ferrite] (output) {આઉટપુટ};
+    
+    \draw [gtu arrow] (input) -- (ferrite);
+    \draw [gtu arrow] (ferrite) -- (output);
+    
+    \draw [->, red, dashed] (output) to[bend right] node[above] {બ્લોક} (ferrite);
+    
+    \node [above=of ferrite] (magnet) {કાયમી ચુંબક ($B$)};
+    \draw [->] (magnet) -- (ferrite);
+\end{tikzpicture}
+\end{answerdiagram}
+
+\textbf{બાંધકામ એલિમેન્ટ્સ:}
+\begin{itemize}
+    \item \keyword{ફેરાઇટ}: નોન-રેસિપ્રોકલ મીડિયમ (જેમ કે YIG).
+    \item \keyword{મેગ્નેટ}: બાયાસ ફીલ્ડ આપે છે.
+    \item \keyword{કાર્ડ}: રિવર્સ પાવર એબસોર્બ કરવા માટે.
+\end{itemize}
+
+\textbf{ઓપરેટિંગ સિદ્ધાંત:} \keyword{ફેરાડે રોટેશન} પર આધારિત. ફોરવર્ડ વેવ ઓછા લોસ સાથે પસાર થાય છે, રિવર્સ વેવ બ્લોક થાય છે.
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Isolators Ignore Reverse Reflections}
+\end{mnemonicbox}
+
+\questionmarks{3(a)}{3}{ટ્રાવેલિંગ વેવ ટ્યુબ એમ્પ્લિફાયર દોરો.}
+
+\begin{solutionbox}
+\textbf{TWT એમ્પ્લિફાયર સ્ટ્રક્ચર:}
+
+\begin{answerdiagram}{TWT સ્ટ્રક્ચર}
+\begin{tikzpicture}[auto, node distance=1.5cm]
+    \node [gtu start] (gun) {ઇલેક્ટ્રોન\\ગન};
+    \node [gtu block, right=of gun, shape=cylinder, shape border rotate=0, aspect=0.2, minimum width=4cm] (helix) {હેલિક્સ સ્લો-વેવ સ્ટ્રક્ચર};
+    \node [gtu stop, right=of helix] (collector) {કલેક્ટર};
+    
+    \draw [gtu arrow] (gun) -- (helix);
+    \draw [gtu arrow] (helix) -- (collector);
+    
+    \node [above=0.5cm of helix] (in) {RF ઇનપુટ};
+    \node [above=0.5cm of collector] (out) {RF આઉટપુટ};
+    
+    \draw [->] (in) -- (helix.north west);
+    \draw [<-] (out) -- (helix.north east);
+    
+    \node [below=0.5cm of helix] {એટેન્યુએટર};
+\end{tikzpicture}
+\end{answerdiagram}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{TWT Transfers Wave Through Helix}
+\end{mnemonicbox}
+
+\questionmarks{3(b)}{4}{માઇક્રોવેવ રેડિયેશનને કારણે વિવિધ પ્રકારના જોખમોનું વર્ણન કરો.}
+
+\begin{solutionbox}
+\textbf{માઇક્રોવેવ રેડિયેશન જોખમો:}
+
+\begin{answertable}{રેડિયેશન જોખમો}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{જોખમનો પ્રકાર} & \textbf{અસરો} & \textbf{મર્યાદા} \\ \hline
+\keyword{HERP} (વ્યક્તિગત) & ટિશ્યુ હીટિંગ, બર્ન્સ & 10 mW/cm$^2$ \\ \hline
+\keyword{HERO} (વિસ્ફોટકો) & વિસ્ફોટકોનું આકસ્મિક ડિટોનેશન & વેરિયેબલ \\ \hline
+\keyword{HERF} (ફ્યુઅલ) & ફ્યુઅલ ઇગ્નિશન & 5 mW/cm$^2$ \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\textbf{જૈવિક અસરો:}
+\begin{itemize}
+    \item \keyword{થર્મલ અસરો}: ટિશ્યુ હીટિંગ (આંખો, મગજ).
+    \item \keyword{નોન-થર્મલ અસરો}: કોશિકા નુકસાન (ચર્ચાસ્પદ).
+\end{itemize}
+
+\textbf{સુરક્ષા:} શીલ્ડિંગ, અંતર ($1/r^2$), સમય મર્યાદા.
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Heat Energy Requires Proper Protection}
+\end{mnemonicbox}
+
+\questionmarks{3(c)}{7}{એપલગેટ ડાયાગ્રામ સાથે બે કેવિટી ક્લાયસ્ટ્રોન બાંધકામ અને ઓપરેશન સમજાવો.}
+
+\begin{solutionbox}
+\textbf{બે-કેવિટી ક્લાયસ્ટ્રોન સ્ટ્રક્ચર:}
+
+\begin{answerdiagram}{ક્લાયસ્ટ્રોન બ્લોક ડાયાગ્રામ}
+\begin{tikzpicture}[auto, node distance=1.5cm]
+    \node [gtu start] (cathode) {કેથોડ};
+    \node [gtu block, right=of cathode] (buncher) {બંચર\\કેવિટી};
+    \node [gtu block, right=of buncher, minimum width=2cm] (drift) {ડ્રિફ્ટ સ્પેસ};
+    \node [gtu block, right=of drift] (catcher) {કેચર\\કેવિટી};
+    \node [gtu stop, right=of catcher] (collector) {કલેક્ટર};
+    
+    \draw [gtu arrow] (cathode) -- (buncher);
+    \draw [gtu arrow] (buncher) -- (drift);
+    \draw [gtu arrow] (drift) -- (catcher);
+    \draw [gtu arrow] (catcher) -- (collector);
+    
+    \node [above=of buncher] {RF ઇનપુટ};
+    \node [above=of catcher] {RF આઉટપુટ};
+\end{tikzpicture}
+\end{answerdiagram}
+
+\textbf{એપલગેટ ડાયાગ્રામ (બંચિંગ પ્રક્રિયા):}
+
+\begin{answerdiagram}{એપલગેટ ડાયાગ્રામ}
+\begin{tikzpicture}
+    \draw[->] (0,0) -- (6,0) node[right] {અંતર};
+    \draw[->] (0,0) -- (0,4) node[above] {સમય};
+    
+    \draw[blue] (0,1) -- (5,3) node[right] {ધીમા $e^-$};
+    \draw[red] (0,3) -- (5,3) node[right] {ઝડપી $e^-$};
+    \draw[black] (0,2) -- (5,3) node[right] {Ref $e^-$};
+    
+    \node at (5,3.5) {બંચિંગ પોઇન્ટ};
+    \draw[dashed] (5,0) -- (5,3);
+\end{tikzpicture}
+\end{answerdiagram}
+
+\textbf{ઓપરેશન સિદ્ધાંત:}
+\begin{itemize}
+    \item \keyword{વેલોસિટી મોડ્યુલેશન}: RF ઇનપુટ ઇલેક્ટ્રોન સ્પીડ બદલે છે.
+    \item \keyword{ડ્રિફ્ટ સ્પેસ}: ઝડપી ઇલેક્ટ્રોન્સ ધીમાને પકડે છે, બંચ બનાવે છે.
+    \item \keyword{એનર્જી એક્સટ્રેક્શન}: બંચ આઉટપુટ કેવિટીમાં ઊર્જા આપે છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Klystrons Create Bunches Through Velocity Variation}
+\end{mnemonicbox}
+
+\orquestionmarks{3(a)}{3}{માઇક્રોવેવ આવૃત્તિ માટે એટેન્યુએશન માપન પદ્ધતિનો બ્લોક ડાયાગ્રામ દોરો.}
+
+\begin{solutionbox}
+\textbf{એટેન્યુએશન માપન સેટઅપ:}
+
+\begin{answerdiagram}{એટેન્યુએશન સેટઅપ}
+\begin{tikzpicture}[auto, node distance=1.5cm]
+    \node [gtu input] (gen) {સિગ્નલ\\જનરેટર};
+    \node [gtu block, right=of gen] (iso) {આઇસોલેટર};
+    \node [gtu block, right=of iso] (dut) {DUT};
+    \node [gtu block, right=of dut] (det) {ડિટેક્ટર};
+    \node [gtu output, right=of det] (meter) {પાવર\\મીટર};
+    
+    \draw [gtu arrow] (gen) -- (iso);
+    \draw [gtu arrow] (iso) -- (dut);
+    \draw [gtu arrow] (dut) -- (det);
+    \draw [gtu arrow] (det) -- (meter);
+\end{tikzpicture}
+\end{answerdiagram}
+
+\textbf{પદ્ધતિ:} DUT વિના પાવર $P_1$ અને DUT સાથે પાવર $P_2$ માપો. એટેન્યુએશન (dB) $= 10 \log(P_1/P_2)$.
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Attenuation Appears After Accurate Assessment}
+\end{mnemonicbox}
+
+\orquestionmarks{3(b)}{4}{માઇક્રોવેવ રેન્જ પર વેક્યુમ ટ્યુબની મર્યાદાનું વર્ણન કરો.}
+
+\begin{solutionbox}
+\textbf{વેક્યુમ ટ્યુબ મર્યાદાઓ:}
+
+\begin{answertable}{વેક્યુમ ટ્યુબ મર્યાદાઓ}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{મર્યાદા} & \textbf{કારણ} & \textbf{અસર} \\ \hline
+\keyword{ટ્રાન્ઝિટ ટાઇમ} & ઇલેક્ટ્રોન મુસાફરીનો સમય & ઘટતો ગેઇન \\ \hline
+\keyword{લીડ ઇન્ડક્ટન્સ} & કનેક્ટિંગ વાયર ઇન્ડક્ટન્સ & નબળી ઇમ્પિડન્સ મેચિંગ \\ \hline
+\keyword{ઇન્ટર-ઇલેક્ટ્રોડ કેપેસિટન્સ} & પેરાસિટિક્સ & ફીડબેક અને અસ્થિરતા \\ \hline
+\keyword{સ્કિન ઇફેક્ટ} & સરફેસ કંડક્શન & વધતો પ્રતિકાર \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\textbf{પરિણામ:} ઊંચી આવૃત્તિ પર ટ્યુબ્સ કામ કરવાનું બંધ કરે છે.
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Vacuum Tubes Fail Fast at High Frequencies}
+\end{mnemonicbox}
+
+\orquestionmarks{3(c)}{7}{મેગ્નેટ્રોનના સિદ્ધાંત, બાંધકામ, ઇલેક્ટ્રિક અને મેગ્નેટિક ફીલ્ડની અસર અને ઓપરેશન વિગતવાર સમજાવો.}
+
+\begin{solutionbox}
+\textbf{મેગ્નેટ્રોન બાંધકામ:}
+
+\begin{answerdiagram}{મેગ્નેટ્રોન ક્રોસ સેક્શન}
+\begin{tikzpicture}
+    % Anode block
+    \draw[thick, fill=gray!10] (0,0) circle (2);
+    \draw[thick, fill=white] (0,0) circle (1);
+    
+    % Vanes
+    \foreach \angle in {0, 45, ..., 315} {
+        \draw[thick] (0,0) -- (\angle:1);
+    }
+    
+    % Cathode
+    \draw[thick, fill=red] (0,0) circle (0.3);
+    \node at (0,0) [right] { કેથોડ (-)};
+    
+    \node at (0, 1.5) {એનોડ બ્લોક (+)};
+    \node at (2.5, 0) {ઇન્ટરેક્શન સ્પેસ};
+\end{tikzpicture}
+\end{answerdiagram}
+
+\textbf{ઓપરેટિંગ સિદ્ધાંત:}
+\begin{itemize}
+    \item \keyword{ક્રોસ્ડ ફીલ્ડ્સ}: ઇલેક્ટ્રિક અને મેગ્નેટિક ફીલ્ડ એકબીજાને લંબ છે.
+    \item \keyword{ઇલેક્ટ્રોન ગતિ}: સાયક્લોઇડ ગતિ કરે છે.
+    \item \keyword{ઇન્ટરેક્શન}: ઇલેક્ટ્રોન્સ RF ફીલ્ડને ઊર્જા આપે છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Magnetrons Make Microwaves Through Magnetic Motion}
+\end{mnemonicbox}
+
+\questionmarks{4(a)}{3}{ગ્રાફનો ઉપયોગ કરીને વેરેક્ટર ડાયોડના કાર્ય સિદ્ધાંતને સમજાવો.}
+
+\begin{solutionbox}
+\textbf{વેરેક્ટર ડાયોડ લાક્ષણિકતાઓ:}
+
+\begin{answerdiagram}{વેરેક્ટર C-V વક્ર}
+\begin{tikzpicture}
+    \begin{axis}[
+        axis lines = left,
+        xlabel = {રિવર્સ વોલ્ટેજ ($V_R$)},
+        ylabel = {કેપેસિટન્સ ($C_j$)},
+        ymin=0, ymax=120,
+        xmin=0, xmax=15,
+        grid=major,
+        width=8cm,
+        height=6cm
+    ]
+    \addplot [
+        domain=0.5:15, 
+        samples=100, 
+        color=blue, 
+        thick,
+    ] {100/sqrt(x)};
+    \end{axis}
+\end{tikzpicture}
+\end{answerdiagram}
+
+\textbf{કાર્ય સિદ્ધાંત:}
+\begin{itemize}
+    \item \keyword{રિવર્સ બાયાસ}: રિવર્સ બાયાસ મોડમાં ઓપરેટ થાય છે.
+    \item \keyword{વેરિયેબલ કેપેસિટર}: રિવર્સ વોલ્ટેજ સાથે ડિપ્લેશન લેયરની પહોળાઈ વધે છે.
+    \item \keyword{સંબંધ}: $C_j \propto 1/\sqrt{V_R + V_\phi}$. વધારે વોલ્ટેજ $\rightarrow$ ઓછું કેપેસિટન્સ.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Varactors Vary Capacitance Via Voltage}
+\end{mnemonicbox}
+
+\questionmarks{4(b)}{4}{ગન ડાયોડ માટે ગન અસર અને નકારાત્મક અવરોધકતા સમજાવો.}
+
+\begin{solutionbox}
+\textbf{ગન અસર (Transferred Electron Effect):}
+
+\begin{answerdiagram}{ગન ડાયોડ I-V લાક્ષણિકતા}
+\begin{tikzpicture}
+    \draw[->] (0,0) -- (6,0) node[right] {વોલ્ટેજ ($V$)};
+    \draw[->] (0,0) -- (0,4) node[above] {કરન્ટ ($I$)};
+    
+    \draw[thick, blue] (0,0) -- (1,3) -- (3,1.5) -- (5,2);
+    
+    \draw[dashed] (1,0) node[below] {$V_{th}$} -- (1,3);
+    \draw[dashed] (3,0) node[below] {$V_{valley}$} -- (3,1.5);
+    
+    \node at (2, 2.5) {નકારાત્મક};
+    \node at (2, 2) {અવરોધકતા};
+    \node at (2, 1) {વિસ્તાર};
+\end{tikzpicture}
+\end{answerdiagram}
+
+\textbf{મિકેનિઝમ:}
+\begin{itemize}
+    \item \keyword{બે વેલી}: કન્ડક્શન બેન્ડમાં લોઅર વેલી (હાઇ મોબિલિટી) અને અપર વેલી (લો મોબિલિટી) હોય છે.
+    \item \keyword{થ્રેશોલ્ડ}: $V_{th}$ ઉપર, ઇલેક્ટ્રોન્સ અપર સ્લો વેલીમાં ટ્રાન્સફર થાય છે.
+    \item \keyword{નકારાત્મક અવરોધકતા}: વોલ્ટેજ વધતા કરન્ટ ઘટે છે ($dI/dV < 0$), જે ઓસિલેશન પેદા કરે છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Gunn diodes Generate oscillations through Negative resistance}
+\end{mnemonicbox}
+
+\questionmarks{4(c)}{7}{માઇક્રોવેવ આવૃત્તિ માટે આવૃત્તિ માપન પદ્ધતિ સમજાવો.}
+
+\begin{solutionbox}
+\textbf{આવૃત્તિ માપન પદ્ધતિઓ:}
+
+\begin{answerdiagram}{ડાયરેક્ટ ફ્રીક્વન્સી કાઉન્ટર}
+\begin{tikzpicture}[auto, node distance=1.5cm]
+    \node [gtu input] (sig) {અજ્ઞાત\\સિગ્નલ};
+    \node [gtu block, right=of sig] (counter) {માઇક્રોવેવ\\ફ્રીક્વન્સી કાઉન્ટર};
+    \node [gtu output, right=of counter] (disp) {ડિજિટલ\\ડિસ્પ્લે};
+    \node [gtu block, below=of counter] (ref) {ક્રિસ્ટલ\\રેફરન્સ};
+    
+    \draw [gtu arrow] (sig) -- (counter);
+    \draw [gtu arrow] (counter) -- (disp);
+    \draw [gtu arrow] (ref) -- (counter);
+\end{tikzpicture}
+\end{answerdiagram}
+
+\textbf{કેવિટી વેવમીટર (અપ્રત્યક્ષ પદ્ધતિ):}
+
+\begin{answerdiagram}{કેવિટી વેવમીટર}
+\begin{tikzpicture}
+    \draw[thick] (0,0) rectangle (4,1);
+    \node at (2,0.5) {વેવગાઇડ};
+    
+    \draw[thick, fill=gray!20] (1.5,1) rectangle (2.5,2.5);
+    \node at (2,1.75) {રેઝોનન્ટ\\કેવિટી};
+    
+    \draw[thick, ->] (2,2.5) -- (2,3) node[above] {ટ્યુનિંગ માઇક્રોમીટર};
+    
+    \draw[thick, ->] (4,0.5) -- (5,0.5) node[right] {ડિટેક્ટર};
+\end{tikzpicture}
+\end{answerdiagram}
+
+\textbf{પ્રક્રિયા:}
+\begin{enumerate}
+    \item વેવમીટરને ટ્રાન્સમિશન લાઇન સાથે કપલ કરો.
+    \item રેઝોનન્સ જોવા મળે ત્યાં સુધી કેવિટી પ્લંગરને ટ્યુન કરો (પાવરમાં ડીપ).
+    \item માઇક્રોમીટર સ્કેલ પરથી આવૃત્તિ વાંચો.
+\end{enumerate}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Frequency Found through Careful Cavity Calibration}
+\end{mnemonicbox}
+
+\orquestionmarks{4(a)}{3}{સ્વિચ તરીકે PIN ડાયોડનું કાર્ય સમજાવો.}
+
+\begin{solutionbox}
+\textbf{PIN ડાયોડ સ્ટ્રક્ચર:}
+
+\begin{answerdiagram}{PIN ડાયોડ}
+\begin{tikzpicture}
+    \draw[thick] (0,0) rectangle (4,1);
+    \draw[thick] (1.33,0) -- (1.33,1);
+    \draw[thick] (2.66,0) -- (2.66,1);
+    
+    \node at (0.66, 0.5) {P+};
+    \node at (2, 0.5) {I};
+    \node at (3.33, 0.5) {N+};
+    
+    \draw (0,0.5) -- (-0.5,0.5);
+    \draw (4,0.5) -- (4.5,0.5);
+\end{tikzpicture}
+\end{answerdiagram}
+
+\textbf{સ્વિચિંગ ઓપરેશન:}
+\begin{answertable}{PIN સ્વિચ સ્થિતિઓ}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{બાયાસ} & \textbf{ઇન્ટ્રિન્સિક રીજન} & \textbf{સ્થિતિ} \\ \hline
+\keyword{ફોરવર્ડ બાયાસ} & કેરિયર્સથી ભરેલું (Low $R$) & \keyword{ON} (સિગ્નલ પસાર) \\ \hline
+\keyword{રિવર્સ બાયાસ} & ડિપ્લીટેડ (High $R$) & \keyword{OFF} (સિગ્નલ બ્લોક) \\ \hline
+\end{tabulary}
+\end{answertable}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{PIN diodes Perform Perfect switching}
+\end{mnemonicbox}
+
+\orquestionmarks{4(b)}{4}{સ્ટ્રિપલાઇન અને માઇક્રોસ્ટ્રિપ સર્કિટ સમજાવો.}
+
+\begin{solutionbox}
+\textbf{પ્લેનર ટ્રાન્સમિશન લાઇન્સની તુલના:}
+
+\begin{answerdiagram}{સ્ટ્રિપલાઇન vs માઇક્રોસ્ટ્રિપ}
+\begin{tikzpicture}
+    % Stripline
+    \begin{scope}
+        \node at (1.5, 2.5) {\textbf{સ્ટ્રિપલાઇન}};
+        \draw[thick, fill=gray!30] (0,0) rectangle (3,2);
+        \draw[thick] (0,0) -- (3,0) node[right] {GND};
+        \draw[thick] (0,2) -- (3,2) node[right] {GND};
+        \draw[thick, fill=black] (1,1) rectangle (2,1.2);
+        \node at (1.5,1.1) [right=0.6cm] {કંડક્ટર};
+    \end{scope}
+    
+    % Microstrip
+    \begin{scope}[xshift=5cm]
+        \node at (1.5, 2.5) {\textbf{માઇક્રોસ્ટ્રિપ}};
+        \draw[thick, fill=gray!30] (0,0) rectangle (3,1.5);
+        \draw[thick] (0,0) -- (3,0) node[right] {GND};
+        \draw[thick, fill=black] (1,1.5) rectangle (2,1.7);
+        \node at (1.5,1.6) [right=0.6cm] {કંડક્ટર};
+        \node at (1.5, 0.75) {ડાયલેક્ટ્રિક};
+    \end{scope}
+\end{tikzpicture}
+\end{answerdiagram}
+
+\begin{answertable}{તુલના}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પેરામીટર} & \textbf{સ્ટ્રિપલાઇન} & \textbf{માઇક્રોસ્ટ્રિપ} \\ \hline
+\keyword{સ્ટ્રક્ચર} & બે GND વચ્ચે સેન્ડવિચ & GND ની ઉપર કંડક્ટર \\ \hline
+\keyword{રેડિયેશન} & નથી (શીલ્ડેડ) & રેડિયેટ કરે છે (ઓપન ટોપ) \\ \hline
+\keyword{મોડ} & Pure TEM & Quasi-TEM \\ \hline
+\end{tabulary}
+\end{answertable}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Striplines are Sandwiched, Microstrips are Mounted}
+\end{mnemonicbox}
+
+\orquestionmarks{4(c)}{7}{પેરામેટ્રિક એમ્પ્લિફાયર માટે એમ્પ્લિફિકેશનના સિદ્ધાંતો અને પ્રક્રિયા સમજાવો.}
+
+\begin{solutionbox}
+\textbf{પેરામેટ્રિક એમ્પ્લિફાયર સિદ્ધાંત:}
+
+\begin{answerdiagram}{પેરામેટ્રિક એમ્પ્લિફાયર}
+\begin{tikzpicture}[auto, node distance=2cm]
+    \node [gtu decision] (nonlin) {નોનલિનિયર\\રિએક્ટન્સ\\(વેરેક્ટર)};
+    \node [gtu input, left=of nonlin] (sig) {સિગ્નલ ($f_s$)};
+    \node [gtu input, below=of nonlin] (pump) {પંપ ($f_p$)};
+    \node [gtu block, right=of nonlin] (idler) {આઇડલર સર્કિટ ($f_i$)};
+    \node [gtu output, above=of nonlin] (out) {આઉટપુટ ($f_s$)};
+    
+    \draw [gtu arrow] (sig) -- (nonlin);
+    \draw [gtu arrow] (pump) -- (nonlin);
+    \draw [gtu arrow] (nonlin) -- (idler);
+    \draw [gtu arrow] (nonlin) -- (out);
+\end{tikzpicture}
+\end{answerdiagram}
+
+\textbf{પ્રક્રિયા:}
+\begin{itemize}
+    \item રેઝિસ્ટન્સને બદલે નોનલિનિયર રિએક્ટન્સ (વેરેક્ટર) વાપરે છે (લો નોઇઝ).
+    \item \keyword{પંપ એનર્જી}: હાઇ ફ્રીક્વન્સી પંપ ($f_p$) સિસ્ટમને ઊર્જા આપે છે.
+    \item \keyword{મિક્સિંગ}: ઇન્ટરેક્શન આઇડલર ફ્રીક્વન્સી $f_i = f_p - f_s$ બનાવે છે.
+    \item \keyword{એમ્પ્લિફિકેશન}: પંપમાંથી સિગ્નલ ફ્રીક્વન્સીમાં ઊર્જા ટ્રાન્સફર થાય છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Parametric amplifiers Pump Power into signal Perfectly}
+\end{mnemonicbox}
+
+\questionmarks{5(a)}{3}{RADAR અને SONAR ની સરખામણી કરો.}
+
+\begin{solutionbox}
+\textbf{તુલના:}
+
+\begin{answertable}{RADAR vs SONAR}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પેરામીટર} & \textbf{RADAR} & \textbf{SONAR} \\ \hline
+\keyword{તરંગ પ્રકાર} & ઇલેક્ટ્રોમેગ્નેટિક (રેડિયો) & અકૌસ્ટિક (ધ્વનિ) \\ \hline
+\keyword{માધ્યમ} & હવા / વેક્યુમ & પાણી \\ \hline
+\keyword{ઝડપ} & $3 \times 10^8$ m/s & ~1500 m/s \\ \hline
+\keyword{રેન્જ} & લાંબી (1000s km) & ટૂંકી (< 100 km) \\ \hline
+\keyword{એપ્લિકેશન} & એવિએશન, હવામાન & સબમરીન, ફિશિંગ \\ \hline
+\end{tabulary}
+\end{answertable}
+
+\textbf{સિદ્ધાંત:} બંને \keyword{ઇકો રેન્જિંગ} ($R = vt/2$) વાપરે છે.
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{RADAR sees Radio waves, SONAR hears Sound waves}
+\end{mnemonicbox}
+
+\questionmarks{5(b)}{4}{RADAR પ્રદર્શન પદ્ધતિનું નામ લખો અને કોઈપણ એકને સમજાવો.}
+
+\begin{solutionbox}
+\textbf{RADAR ડિસ્પ્લે:} A-Scope, B-Scope, C-Scope, PPI, RHI.
+
+\textbf{પ્લેન પોઝિશન ઇન્ડિકેટર (PPI):}
+
+\begin{answerdiagram}{PPI ડિસ્પ્લે}
+\begin{tikzpicture}
+    % PPI Screen
+    \draw[thick, fill=black] (0,0) circle (2);
+    \draw[green, thin] (0,0) circle (0.5);
+    \draw[green, thin] (0,0) circle (1);
+    \draw[green, thin] (0,0) circle (1.5);
+    
+    % Sweep
+    \draw[green, thick, ->] (0,0) -- (60:2);
+    \fill[green, opacity=0.3] (0,0) -- (60:2) arc (60:40:2) -- cycle;
+    
+    % Targets
+    \fill[green] (45:1.2) circle (0.05);
+    \node[green, font=\tiny] at (45:1.4) {ટાર્ગેટ};
+    
+    \node[green, below] at (0,-2.1) {360 ડિગ્રી કવરેજ};
+\end{tikzpicture}
+\end{answerdiagram}
+
+\textbf{લક્ષણો:}
+\begin{itemize}
+    \item પોલર કોઓર્ડિનેટ્સમાં મેપ જેવું ડિસ્પ્લે (રેન્જ અને બેરિંગ).
+    \item સ્ક્રીનનું કેન્દ્ર = રડાર લોકેશન.
+    \item સ્વીપ એન્ટીના સાથે સિંક્રોનાઇઝેશનમાં ફરે છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{PPI Provides Perfect Position Information}
+\end{mnemonicbox}
+
+\questionmarks{5(c)}{7}{બ્લોક ડાયાગ્રામ સાથે મૂળભૂત પલ્સ રડાર સિસ્ટમ સમજાવો.}
+
+\begin{solutionbox}
+\textbf{પલ્સ રડાર સિસ્ટમ:}
+
+\begin{answerdiagram}{પલ્સ રડાર}
+\begin{tikzpicture}[auto, node distance=1.5cm]
+    \node [gtu block] (sync) {સિંક્રોનાઇઝર\\(ટાઇમર)};
+    \node [gtu block, right=of sync] (mod) {મોડ્યુલેટર};
+    \node [gtu block, right=of mod] (tx) {ટ્રાન્સમિટર};
+    \node [gtu block, right=of tx] (dup) {ડુપ્લેક્સર};
+    \node [gtu input, right=of dup] (ant) {એન્ટીના};
+    
+    \node [gtu block, below=of dup] (rx) {રિસીવર};
+    \node [gtu block, left=of rx] (disp) {ડિસ્પ્લે\\(ઇન્ડિકેટર)};
+    
+    \draw [gtu arrow] (sync) -- (mod);
+    \draw [gtu arrow] (mod) -- (tx);
+    \draw [gtu arrow] (tx) -- (dup);
+    \draw [gtu arrow] (dup) -- (ant);
+    \draw [gtu arrow] (ant) -- node[right] {ઇકો} (dup);
+    \draw [gtu arrow] (dup) -- (rx);
+    \draw [gtu arrow] (rx) -- (disp);
+    \draw [gtu arrow] (sync) -| (disp);
+    
+    \node [right=0.5cm of ant] (target) {ટાર્ગેટ};
+    \draw [gtu dashed arrow] (ant) -- (target);
+    \draw [gtu dashed arrow] (target) to[bend left] (ant);
+\end{tikzpicture}
+\end{answerdiagram}
+
+\textbf{કાર્યો:}
+\begin{itemize}
+    \item \keyword{સિંક્રોનાઇઝર}: પલ્સનું ટાઈમિંગ નિયંત્રિત કરે છે.
+    \item \keyword{મોડ્યુલેટર}: ટ્રાન્સમિટરને ટ્રિગર કરે છે.
+    \item \keyword{ટ્રાન્સમિટર}: હાઇ પાવર RF પલ્સ જનરેટ કરે છે.
+    \item \keyword{ડુપ્લેક્સર}: એન્ટીનાને Tx અને Rx વચ્ચે સ્વિચ કરે છે.
+    \item \keyword{રિસીવર}: નબળા ઇકોને એમ્પ્લિફાય કરે છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Pulse Radar Properly Processes Reflected signals}
+\end{mnemonicbox}
+
+\orquestionmarks{5(a)}{3}{માઇક્રોવેવ આવૃત્તિની એપ્લિકેશનની સૂચિ બનાવો.}
+
+\begin{solutionbox}
+\textbf{એપ્લિકેશન્સ:}
+
+\begin{answertable}{માઇક્રોવેવ ઉપયોગો}
+\begin{tabulary}{\linewidth}{|L|L|}
+\hline
+\textbf{ક્ષેત્ર} & \textbf{એપ્લિકેશન્સ} \\ \hline
+\keyword{કમ્યુનિકેશન} & સેટેલાઇટ, મોબાઈલ, WiFi \\ \hline
+\keyword{રડાર} & નેવિગેશન, હવામાન આગાહી, ડિફેન્સ \\ \hline
+\keyword{ઇન્ડસ્ટ્રિયલ} & હીટિંગ, ડ્રાયિંગ, મટીરિયલ ટેસ્ટિંગ \\ \hline
+\keyword{મેડિકલ} & ડાયાથર્મી, કેન્સર સારવાર \\ \hline
+\keyword{ઘરેલું} & માઇક્રોવેવ ઓવન્સ \\ \hline
+\end{tabulary}
+\end{answertable}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Microwaves Serve Many Applications Perfectly}
+\end{mnemonicbox}
+
+\orquestionmarks{5(b)}{4}{PULSED RADAR અને CW RADAR ની સરખામણી કરો.}
+
+\begin{solutionbox}
+\textbf{તુલના:}
+
+\begin{answertable}{Pulsed vs CW Radar}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પેરામીટર} & \textbf{Pulsed RADAR} & \textbf{CW RADAR} \\ \hline
+\keyword{સિગ્નલ} & ટૂંકા પલ્સ & કન્ટિન્યુઅસ વેવ \\ \hline
+\keyword{રેન્જ} & રેન્જ માપે છે ($ct/2$) & રેન્જ માપી શકતું નથી (FM જરૂરી) \\ \hline
+\keyword{વેલોસિટી} & નબળું વેલોસિટી માપન & ઉત્કૃષ્ટ (ડોપ્લર ઇફેક્ટ) \\ \hline
+\keyword{પાવર} & હાઇ પીક પાવર & લો એવરેજ પાવર \\ \hline
+\keyword{જટિલતા} & વધારે (ડુપ્લેક્સર જરૂરી) & સરળ (અલગ એન્ટીના) \\ \hline
+\end{tabulary}
+\end{answertable}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Pulsed measures Range, CW measures Velocity}
+\end{mnemonicbox}
+
+\orquestionmarks{5(c)}{7}{બ્લોક ડાયાગ્રામ સાથે MTI રડાર સમજાવો.}
+
+\begin{solutionbox}
+\textbf{MTI રડાર:}
+
+\begin{answerdiagram}{MTI બ્લોક ડાયાગ્રામ}
+\begin{tikzpicture}[auto, node distance=1.5cm]
+    \node [gtu block] (tx) {Tx};
+    \node [gtu block, below=of tx] (rx) {Mixer};
+    \node [gtu block, right=of tx] (dup) {Duplexer};
+    \node [gtu input, right=of dup] (ant) {Ant};
+    
+    \node [gtu block, left=of tx] (pa) {Power Amp};
+    \node [gtu block, left=of pa] (mod) {Modulator};
+    
+    \node [gtu block, below=of mod] (stalo) {STALO};
+    \node [gtu block, below=of stalo] (coho) {COHO};
+    
+    \node [gtu block, below=of rx] (phasedet) {ફેઝ\\ડિટેક્ટર};
+    \node [gtu block, right=of phasedet] (delay) {ડિલે લાઇન};
+    \node [gtu block, right=of delay] (sub) {સબટ્રેક્ટર};
+    \node [gtu output, right=of sub] (ind) {ઇન્ડિકેટર};
+    
+    \draw [gtu arrow] (stalo) -- (rx);
+    \draw [gtu arrow] (stalo) -- (pa);
+    \draw [gtu arrow] (dup) -- (rx);
+    \draw [gtu arrow] (rx) -- (phasedet);
+    \draw [gtu arrow] (coho) -- (phasedet);
+    
+    \draw [gtu arrow] (phasedet) -- (delay);
+    \draw [gtu arrow] (phasedet) -- (sub);
+    \draw [gtu arrow] (delay) -- (sub);
+    \draw [gtu arrow] (sub) -- (ind);
+\end{tikzpicture}
+\end{answerdiagram}
+
+\textbf{સિદ્ધાંત (ડોપ્લર ઇફેક્ટ):}
+\begin{itemize}
+    \item \keyword{સ્થિર ટાર્ગેટ}: કોન્સ્ટન્ટ ફેઝ રિટર્ન આપે છે.
+    \item \keyword{મૂવિંગ ટાર્ગેટ}: ડોપ્લર શિફ્ટને કારણે બદલાતો ફેઝ.
+\end{itemize}
+
+\textbf{ઓપરેશન:}
+\begin{itemize}
+    \item \keyword{ડિલે લાઇન કેન્સેલર}: વર્તમાન ઇકોને પાછલા ઇકો સાથે સરખાવે છે.
+    \item સ્થિર ટાર્ગેટ્સ કેન્સલ થાય છે. મૂવિંગ ટાર્ગેટ્સ રહે છે.
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{MTI Makes Targets Identifiable by Movement}
+\end{mnemonicbox}
+
+\end{document}
