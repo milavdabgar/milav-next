@@ -1,0 +1,930 @@
+\documentclass{article}
+\input{../../../../../../latex-templates/gtu-solutions/preamble.tex}
+\input{../../../../../../latex-templates/gtu-solutions/gujarati-boxes.tex}
+\input{../../../../../../latex-templates/gtu-solutions/commands.tex}
+\usetikzlibrary{mindmap,trees}
+
+\title{માઇક્રોપ્રોસેસર અને માઇક્રોકન્ટ્રોલર (4341101) - વિન્ટર 2023 સોલ્યુશન}
+\date{December 15, 2023}
+
+\begin{document}
+\maketitle
+
+\questionmarks{1}{a}{3}
+\textbf{RISC અને CISC ની સરખામણી કરો.}
+
+\begin{solutionbox}
+\textbf{જવાબ:}
+
+\begin{center}
+\captionof{table}{RISC vs CISC}
+\begin{tabulary}{\linewidth}{|l|J|J|}
+\hline
+\textbf{લક્ષણ} & \textbf{RISC} & \textbf{CISC} \\ \hline
+\textbf{સૂચનાઓ} & સરળ, નિશ્ચિત લંબાઈ & જટિલ, અલગ-અલગ લંબાઈ \\ \hline
+\textbf{અમલીકરણ} & સિંગલ સાયકલ & મલ્ટીપલ સાયકલ \\ \hline
+\textbf{એડ્રેસિંગ મોડ} & ઓછા & ઘણા \\ \hline
+\textbf{રજિસ્ટર્સ} & વધારે & ઓછા \\ \hline
+\textbf{ડિઝાઇન ફોકસ} & હાર્ડવેર સરળતા & કોડ ડેન્સિટી \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+\begin{mnemonicbox}
+``RISC સરળતાથી સૂચનાઓ પૂર્ણ કરે છે''
+\end{mnemonicbox}
+
+\questionmarks{1}{b}{4}
+\textbf{વોન-ન્યુમેન અને હાર્વર્ડ આર્કિટેક્ચરની તુલના કરો.}
+
+\begin{solutionbox}
+\textbf{જવાબ:}
+
+\begin{center}
+\captionof{table}{વોન-ન્યુમેન vs હાર્વર્ડ}
+\begin{tabulary}{\linewidth}{|l|J|J|}
+\hline
+\textbf{લક્ષણ} & \textbf{વોન-ન્યુમેન} & \textbf{હાર્વર્ડ} \\ \hline
+\textbf{મેમરી} & એક શેર્ડ મેમરી & અલગ પ્રોગ્રામ અને ડેટા મેમરી \\ \hline
+\textbf{બસ} & ડેટા અને સૂચનાઓ માટે એક બસ & અલગ બસ \\ \hline
+\textbf{સ્પીડ} & ધીમી (મેમરી બોટલનેક) & ઝડપી (પેરેલલ એક્સેસ) \\ \hline
+\textbf{જટિલતા} & સરળ ડિઝાઇન & વધુ જટિલ \\ \hline
+\textbf{ઉપયોગ} & જનરલ કમ્પ્યુટિંગ & રીયલ-ટાઇમ સિસ્ટમ \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{ડાયાગ્રામ:}
+
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto]
+    % Von Neumann
+    \node (vn) {\textbf{Von-Neumann}};
+    \node [gtu block, below of=vn, node distance=1cm] (cpu1) {CPU};
+    \node [gtu block, right of=cpu1, node distance=3.5cm] (mem1) {Memory\\(Data + Inst)};
+    \draw [gtu arrow, <->] (cpu1) -- (mem1);
+    
+    % Harvard
+    \node [right of=vn, node distance=7cm] (hv) {\textbf{Harvard}};
+    \node [gtu block, below of=hv, node distance=1cm] (cpu2) {CPU};
+    \node [gtu block, above right of=cpu2, node distance=3cm] (pmem) {Program\\Memory};
+    \node [gtu block, below right of=cpu2, node distance=3cm] (dmem) {Data\\Memory};
+    
+    \draw [gtu arrow, ->] (pmem) -| (cpu2);
+    \draw [gtu arrow, <->] (cpu2) |- (dmem);
+\end{tikzpicture}
+\end{center}
+\end{solutionbox}
+\begin{mnemonicbox}
+``હાર્વર્ડ પાસે અલગ જગ્યાઓ છે''
+\end{mnemonicbox}
+
+\questionmarks{1}{c}{7}
+\textbf{સમજાવો: 8085 ઈન્સ્ટ્રક્શન ફોર્મેટ, કંટ્રોલ યુનિટ, મશીન સાયકલ, ALU}
+
+\begin{solutionbox}
+\textbf{જવાબ:}
+
+\textbf{1. ઈન્સ્ટ્રક્શન ફોર્મેટ:}
+\begin{center}
+\begin{tikzpicture}
+    \draw (0,0) rectangle (2,1) node[pos=0.5] {Opcode};
+    \draw (2,0) rectangle (4,1) node[pos=0.5] {Operand 1};
+    \draw (4,0) rectangle (6,1) node[pos=0.5] {Operand 2};
+    \node at (3, -0.5) {1-3 Bytes Total Length};
+\end{tikzpicture}
+\end{center}
+ઓપકોડ (3-8 બિટ્સ) અને 0-2 ઓપરેન્ડ્સ ધરાવે છે.
+
+\textbf{2. સમજૂતી:}
+\begin{center}
+\captionof{table}{કમ્પોનન્ટ્સ}
+\begin{tabulary}{\linewidth}{|l|J|}
+\hline
+\textbf{કમ્પોનન્ટ} & \textbf{કાર્ય} \\ \hline
+\textbf{ઈન્સ્ટ્રક્શન ફોર્મેટ} & 1-3 બાઇટ સ્ટ્રક્ચર ઓપકોડ અને ઓપરેન્ડ સાથે \\ \hline
+\textbf{કંટ્રોલ યુનિટ} & સૂચનાઓ ફેચ અને ડિકોડ કરે; સિગ્નલ પેદા કરે \\ \hline
+\textbf{મશીન સાયકલ} & મૂળભૂત ઓપરેશન સાયકલ (T-સ્ટેટ્સ) \\ \hline
+\textbf{ALU} & ગાણિતિક અને લોજિકલ ઓપરેશન કરે \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{3. ડાયાગ્રામ:}
+\begin{center}
+\begin{tikzpicture}[node distance=2.5cm, auto]
+    \node [gtu block] (cu) {Control Unit\\(Sequencer)};
+    \node [gtu block, right of=cu, node distance=3.5cm] (ir) {Instruction\\Register};
+    \node [gtu block, below of=cu] (alu) {ALU};
+    \node [gtu block, right of=alu, node distance=3.5cm] (reg) {Registers};
+    
+    \draw [gtu arrow, <-] (cu) -- (ir);
+    \draw [gtu arrow, <-] (alu) -- (reg);
+    \draw [gtu arrow, ->] (alu) -- (reg);
+    
+    \node [draw, dashed, fit=(cu) (ir) (alu) (reg), label=above:CPU Core] {};
+\end{tikzpicture}
+\end{center}
+\end{solutionbox}
+\begin{mnemonicbox}
+``CIMA: કંટ્રોલ સમજે, મશીન ક્રિયા કરે''
+\end{mnemonicbox}
+
+\orquestionmarks{1}{c}{7}
+\textbf{માઇક્રોપ્રોસેસર અને માઇક્રોકંટ્રોલરની સરખામણી કરો.}
+
+\begin{solutionbox}
+\textbf{જવાબ:}
+
+\begin{center}
+\captionof{table}{માઇક્રોપ્રોસેસર vs માઇક્રોકંટ્રોલર}
+\begin{tabulary}{\linewidth}{|l|J|J|}
+\hline
+\textbf{લક્ષણ} & \textbf{માઇક્રોપ્રોસેસર} & \textbf{માઇક્રોકંટ્રોલર} \\ \hline
+\textbf{ડિઝાઇન} & માત્ર CPU & CPU + પેરિફેરલ્સ \\ \hline
+\textbf{મેમરી} & બાહ્ય & આંતરિક (RAM/ROM) \\ \hline
+\textbf{I/O પોર્ટ્સ} & મર્યાદિત & બિલ્ટ-ઇન ઘણા \\ \hline
+\textbf{કિંમત} & વધારે & ઓછી \\ \hline
+\textbf{ઉપયોગ} & જનરલ કમ્પ્યુટિંગ & એમ્બેડેડ સિસ્ટમ \\ \hline
+\textbf{પાવર ખપત} & વધારે & ઓછો \\ \hline
+\textbf{ઉદાહરણ} & Intel 8085/8086 & Intel 8051 \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{ડાયાગ્રામ:}
+
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto, scale=0.8, transform shape]
+    % Microprocessor
+    \node (mp) {\textbf{Microprocessor System}};
+    \node [gtu block, below of=mp, node distance=1.5cm] (cpu) {CPU};
+    \node [gtu block, left of=cpu, node distance=3cm] (mem) {Memory};
+    \node [gtu block, right of=cpu, node distance=3cm] (io) {I/O};
+    \draw [gtu arrow, <->] (cpu) -- (mem);
+    \draw [gtu arrow, <->] (cpu) -- (io);
+    \node [below of=cpu, node distance=1.5cm] {Separate Chips};
+    
+    % Microcontroller
+    \node [right of=mp, node distance=8cm] (mc) {\textbf{Microcontroller}};
+    \node [gtu block, below of=mc, node distance=2.5cm, minimum width=6cm, minimum height=4cm] (chip) {};
+    \node [at=(chip.north), anchor=north] {Single Chip};
+    
+    \node [gtu block, below of=mc, node distance=1.5cm] (mcpu) {CPU};
+    \node [gtu block, left of=mcpu, node distance=2cm] (mmem) {Memory};
+    \node [gtu block, right of=mcpu, node distance=2cm] (mio) {I/O};
+    
+    \draw [gtu arrow, <->] (mcpu) -- (mmem);
+    \draw [gtu arrow, <->] (mcpu) -- (mio);
+\end{tikzpicture}
+\end{center}
+\end{solutionbox}
+\begin{mnemonicbox}
+``માઇક્રો-P પ્રોસેસ કરે, માઇક્રો-C કંટ્રોલ કરે''
+\end{mnemonicbox}
+
+\questionmarks{2}{a}{3}
+\textbf{માઇક્રોપ્રોસેસરમાં ઇન્સ્ટ્રક્શન ફેચિંગ, ડીકોડિંગ અને એક્ઝેક્યુશન ઓપરેશન સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ:}
+
+\begin{center}
+\captionof{table}{ફેઝ ઓપરેશન}
+\begin{tabulary}{\linewidth}{|l|J|}
+\hline
+\textbf{ફેઝ} & \textbf{ઓપરેશન} \\ \hline
+\textbf{ફેચિંગ} & CPU PC નો ઉપયોગ કરી મેમરીમાંથી સૂચના મેળવે \\ \hline
+\textbf{ડીકોડિંગ} & ઓપરેશન પ્રકાર અને ઓપરેન્ડ નક્કી કરે \\ \hline
+\textbf{એક્ઝેક્યુશન} & ખરેખર ઓપરેશન કરે \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{ડાયાગ્રામ:}
+\begin{center}
+\begin{tikzpicture}[node distance=3cm, auto]
+    \node [gtu block] (fetch) {Fetch};
+    \node [gtu block, right of=fetch] (decode) {Decode};
+    \node [gtu block, right of=decode] (exec) {Execute};
+    
+    \draw [gtu arrow] (fetch) -- (decode);
+    \draw [gtu arrow] (decode) -- (exec);
+    \draw [gtu arrow, ->] (exec.south) -- ++(0,-0.5) -| (fetch.south);
+\end{tikzpicture}
+\end{center}
+\end{solutionbox}
+\begin{mnemonicbox}
+``FDE: પહેલા લે, પછી સમજે, અંતે કરે''
+\end{mnemonicbox}
+
+\questionmarks{2}{b}{4}
+\textbf{8085 માઇક્રોપ્રોસેસરનું બસ ઓર્ગેનાઇઝેશન સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ:}
+
+\begin{center}
+\captionof{table}{8085 બસ}
+\begin{tabulary}{\linewidth}{|l|l|J|}
+\hline
+\textbf{બસ પ્રકાર} & \textbf{પહોળાઈ} & \textbf{કાર્ય} \\ \hline
+\textbf{એડ્રેસ બસ} & 16-બિટ & મેમરી એડ્રેસ ટ્રાન્સફર કરે (A0-A15) \\ \hline
+\textbf{ડેટા બસ} & 8-બિટ & ડેટા ટ્રાન્સફર કરે (D0-D7) \\ \hline
+\textbf{કંટ્રોલ બસ} & વિવિધ લાઇન્સ & ડેટા ફ્લો મેનેજ કરે (RD, WR, IO/M) \\ \hline
+\textbf{મલ્ટિપ્લેક્સ્ડ} & AD0-AD7 & લોઅર એડ્રેસ બિટ્સ + ડેટા બિટ્સ \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{ડાયાગ્રામ:}
+\begin{center}
+\begin{tikzpicture}[node distance=3cm, auto]
+    \node [gtu block] (8085) {8085\\Microprocessor};
+    \node [gtu block, right of=8085, node distance=5cm] (mem) {Memory / I/O};
+    
+    \draw [->, thick] (8085.60) -- (mem.120) node[midway, above] {Address Bus (16-bit)};
+    \draw [<->, thick] (8085.0) -- (mem.180) node[midway, above] {Data Bus (8-bit)};
+    \draw [->, dashed] (8085.-60) -- (mem.-120) node[midway, below] {Control Bus};
+\end{tikzpicture}
+\end{center}
+\end{solutionbox}
+\begin{mnemonicbox}
+``ADC: એડ્રેસ બતાવે, ડેટા વહે, કંટ્રોલ દિશા આપે''
+\end{mnemonicbox}
+
+\questionmarks{2}{c}{7}
+\textbf{આકૃતિની મદદથી 8085 માઇક્રોપ્રોસેસરના આર્કિટેક્ચરનું વર્ણન કરો.}
+
+\begin{solutionbox}
+\textbf{જવાબ:}
+
+\textbf{ડાયાગ્રામ:}
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto, scale=0.8, transform shape]
+    % Registers
+    \node [gtu block, minimum width=2.5cm] (acc) {Accumulator (8)};
+    \node [gtu block, below of=acc] (tmp) {Temp Reg};
+    \node [gtu block, below of=tmp] (flag) {Flags (5)};
+    \node [gtu block, right of=tmp, node distance=3.5cm] (alu) {ALU (8)};
+    
+    \draw [gtu arrow, <->] (acc) -- (tmp);
+    \draw [gtu arrow] (tmp) -- (alu);
+    \draw [gtu arrow] (alu) -- (flag);
+    
+    % General Registers
+    \node [gtu block, right of=alu, node distance=4cm, minimum width=3cm] (regs) {
+        B (8) | C (8) \\
+        D (8) | E (8) \\
+        H (8) | L (8)
+    };
+    \node [gtu block, below of=regs, node distance=2cm, minimum width=3cm] (sp) {SP (16)};
+    \node [gtu block, below of=sp, node distance=1.5cm, minimum width=3cm] (pc) {PC (16)};
+    
+    % Control
+    \node [gtu block, left of=flag, node distance=3.5cm] (ir) {Instruction\\Register};
+    \node [gtu block, below of=ir] (dec) {Decoder};
+    \node [gtu block, below of=dec] (timing) {Timing \&\\Control};
+    
+    \draw [gtu arrow] (ir) -- (dec);
+    \draw [gtu arrow] (dec) -- (timing);
+    
+    % Buffers
+    \node [gtu block, below of=pc, node distance=2cm] (addr) {Address Buffer};
+    \node [gtu block, left of=addr, node distance=3.5cm] (data) {Data/Address Buffer};
+    
+    % Connections
+    \node [draw, dashed, above of=regs, node distance=2cm] (bus) {Internal 8-bit Bus};
+    \draw [gtu arrow, <->] (bus) -- (acc);
+    \draw [gtu arrow, <->] (bus) -- (regs);
+    \draw [gtu arrow, <->] (bus) -- (ir);
+    
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{ALU}: ગાણિતિક અને લોજિકલ ઓપરેશન્સ કરે છે.
+    \item \textbf{રજિસ્ટર્સ}: પ્રોસેસિંગ દરમિયાન ડેટા અસ્થાયી રૂપે સ્ટોર કરે છે (A, B, C, D, E, H, L).
+    \item \textbf{કંટ્રોલ યુનિટ}: સૂચનાઓને ફેચ અને ડિકોડ કરે છે.
+    \item \textbf{PC}: આગામી સૂચનાના એડ્રેસને પોઇન્ટ કરે છે.
+    \item \textbf{SP}: સ્ટેકની ટોચ પર પોઇન્ટ કરે છે.
+\end{itemize}
+\end{solutionbox}
+\begin{mnemonicbox}
+``ARCBD: આર્કિટેક્ચર રજિસ્ટર કંટ્રોલ બસ ડેટા''
+\end{mnemonicbox}
+
+\orquestionmarks{2}{a}{3}
+\textbf{8085 માઇક્રોપ્રોસેસર માટે એડ્રેસ અને ડેટા બસોનું ડી-મલ્ટીપ્લેક્સીંગ સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ:}
+
+\begin{enumerate}
+    \item \textbf{ALE હાઈ}: AD0-AD7 પર લોઅર એડ્રેસ (A0-A7) દેખાય છે. લેચ તેને પકડે છે.
+    \item \textbf{ALE લો}: AD0-AD7 હવે ડેટા (D0-D7) તરીકે વર્તે છે.
+\end{enumerate}
+
+\textbf{ડાયાગ્રામ:}
+\begin{center}
+\begin{tikzpicture}[node distance=2.5cm, auto]
+    \node (bus) {AD0-AD7};
+    \node [gtu block, right of=bus, node distance=3cm] (latch) {Latch\\(74LS373)};
+    \node [right of=latch, node distance=3cm] (addr) {A0-A7};
+    \node [below of=latch, node distance=2cm] (data) {Data Bus (D0-D7)};
+    
+    \draw [->, thick] (bus) -- (latch);
+    \draw [->, thick] (latch) -- (addr);
+    
+    \draw [->, thick] (2.5, 0) |- (data);
+    
+    \node [above of=latch, node distance=1.5cm] (ale) {ALE};
+    \draw [->, dashed] (ale) -- (latch);
+\end{tikzpicture}
+\end{center}
+\end{solutionbox}
+\begin{mnemonicbox}
+``ALAD: ALE ડેટા પહેલા એડ્રેસ લેચ કરે''
+\end{mnemonicbox}
+
+\orquestionmarks{2}{b}{4}
+\textbf{8085 માઇક્રોપ્રોસેસરનું ફ્લેગ રજિસ્ટર દોરો અને તેને સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ:}
+
+\textbf{ફ્લેગ રજિસ્ટર (8-બિટ):}
+\begin{center}
+\begin{tikzpicture}
+    \foreach \x/\label/\bit in {0/S/D7, 1/Z/D6, 2/X/D5, 3/AC/D4, 4/X/D3, 5/P/D2, 6/1/D1, 7/CY/D0} {
+        \draw (\x,0) rectangle (\x+1,1);
+        \node at (\x+0.5, 0.5) {\label};
+        \node at (\x+0.5, 1.3) {\tiny \bit};
+    }
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{S (સાઇન)}: જો D7 1 હોય તો સેટ (નેગેટિવ).
+    \item \textbf{Z (ઝીરો)}: જો પરિણામ શૂન્ય હોય તો સેટ.
+    \item \textbf{AC (ઓક્ઝિલરી કેરી)}: D3 થી D4 માં કેરી આવે ત્યારે.
+    \item \textbf{P (પેરિટી)}: જો પરિણામમાં '1' ની સંખ્યા બેકી હોય તો સેટ.
+    \item \textbf{CY (કેરી)}: જ્યારે D7 માંથી કેરી જનરેટ થાય.
+\end{itemize}
+\end{solutionbox}
+\begin{mnemonicbox}
+``સુઝી ACની પરફેક્ટ કેરી''
+\end{mnemonicbox}
+
+\orquestionmarks{2}{c}{7}
+\textbf{આકૃતિની મદદથી 8085 માઇક્રોપ્રોસેસરના પિન ડાયાગ્રામનું વર્ણન કરો.}
+
+\begin{solutionbox}
+\textbf{જવાબ:}
+
+\textbf{પિન ડાયાગ્રામ:}
+\begin{center}
+\begin{tikzpicture}[scale=0.75, transform shape]
+    \draw [thick] (0,0) rectangle (6,10);
+    \node at (3,5) {\huge \textbf{8085}};
+    
+    % Left Side
+    \foreach \y/\lab in {9/X1, 8.5/X2, 8/RESET OUT, 7.5/SOD, 7/SID, 6.5/TRAP, 6/RST7.5, 5.5/RST6.5, 5/RST5.5, 4.5/INTR, 4/INTA, 3.5/AD0, 3/AD1, 2.5/AD2, 2/AD3, 1.5/AD4, 1/AD5, 0.5/AD6} {
+        \draw (-0.5, \y) -- (0, \y); \node [left] at (-0.5, \y) {\tiny \lab};
+    }
+    
+    % Right Side
+    \foreach \y/\lab in {9/VCC, 8.5/HOLD, 8/HLDA, 7.5/CLK OUT, 7/RESET IN, 6.5/READY, 6/IO/M, 5.5/S1, 5/RD, 4.5/WR, 4/ALE, 3.5/S0, 3/A15, 2.5/A14, 2/A13, 1.5/A12, 1/A11, 0.5/A10} {
+        \draw (6, \y) -- (6.5, \y); \node [right] at (6.5, \y) {\tiny \lab};
+    }
+    
+    \node at (3, 0.2) {AD7 (19) \hspace{1cm} VSS (20) \hspace{1cm} A9 (22) \hspace{1cm} A8 (21)};
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{એડ્રેસ/ડેટા}: મલ્ટિપ્લેક્સ્ડ AD0-AD7, A8-A15
+    \item \textbf{કંટ્રોલ}: RD, WR, IO/M, ALE
+    \item \textbf{ઇન્ટરપ્ટ}: TRAP, RST 7.5/6.5/5.5, INTR
+    \item \textbf{પાવર}: VCC (+5V), VSS (GND)
+\end{itemize}
+\end{solutionbox}
+\begin{mnemonicbox}
+``ACID-PS: એડ્રેસ-કંટ્રોલ-ઇન્ટરપ્ટ-DMA-પાવર-સીરિયલ''
+\end{mnemonicbox}
+
+\questionmarks{3}{a}{3}
+\textbf{સ્ટેક, સ્ટેક પોઇન્ટર અને સ્ટેક ઓપરેશન સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ:}
+
+\begin{itemize}
+    \item \textbf{સ્ટેક}: LIFO મેમરી એરિયા અસ્થાયી ડેટા સ્ટોરેજ માટે.
+    \item \textbf{સ્ટેક પોઇન્ટર (SP)}: 16-બિટ રજિસ્ટર જે સ્ટેક ટોપને પોઇન્ટ કરે છે.
+    \item \textbf{PUSH}: SP ઘટાડો, ડેટા સ્ટોર કરો.
+    \item \textbf{POP}: ડેટા મેળવો, SP વધારો.
+\end{itemize}
+
+\textbf{ડાયાગ્રામ:}
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm, auto]
+    \node [draw, minimum width=2cm, minimum height=3cm] (stack) {Memory};
+    \node [right of=stack, node distance=2.5cm] (sp) {SP};
+    \draw [->] (sp) -- (stack.center) node [midway, above] {Points to Top};
+    
+    \node [below of=stack, node distance=2cm] {LIFO: Last In First Out};
+\end{tikzpicture}
+\end{center}
+\end{solutionbox}
+\begin{mnemonicbox}
+``SP LIFO લેનને પોઇન્ટ કરે છે''
+\end{mnemonicbox}
+
+\questionmarks{3}{b}{4}
+\textbf{8051 માઇક્રોકંટ્રોલરનો પિન ડાયાગ્રામ દોરો.}
+
+\begin{solutionbox}
+\textbf{જવાબ:}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.75, transform shape]
+    \draw [thick] (0,0) rectangle (6,10);
+    \node at (3,5) {\huge \textbf{8051}};
+    
+    % Left Side (1-20)
+    \foreach \y/\lab in {9/P1.0, 8.5/P1.1, 8/P1.2, 7.5/P1.3, 7/P1.4, 6.5/P1.5, 6/P1.6, 5.5/P1.7, 5/RST, 4.5/P3.0, 4/P3.1, 3.5/P3.2, 3/P3.3, 2.5/P3.4, 2/P3.5, 1.5/P3.6, 1/P3.7, 0.5/XTAL2} {
+        \draw (-0.5, \y) -- (0, \y); \node [left] at (-0.5, \y) {\tiny \lab};
+    }
+    
+    % Right Side (40-21)
+    \foreach \y/\lab in {9/VCC, 8.5/P0.0, 8/P0.1, 7.5/P0.2, 7/P0.3, 6.5/P0.4, 6/P0.5, 5.5/P0.6, 5/P0.7, 4.5/EA, 4/ALE, 3.5/PSEN, 3/P2.7, 2.5/P2.6, 2/P2.5, 1.5/P2.4, 1/P2.3, 0.5/P2.2} {
+        \draw (6, \y) -- (6.5, \y); \node [right] at (6.5, \y) {\tiny \lab};
+    }
+    
+    \node at (3, 0.2) {XTAL1 (19) \hspace{1cm} VSS (20) \hspace{1cm} P2.1 (22) \hspace{1cm} P2.0 (21)};
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{P0}: મલ્ટિપ્લેક્સ્ડ એડ્રેસ/ડેટા
+    \item \textbf{P1}: જનરલ I/O
+    \item \textbf{P2}: અપર એડ્રેસ
+    \item \textbf{P3}: સ્પેશિયલ ફંક્શન્સ (સીરિયલ, ઇન્ટર, ટાઇમર)
+\end{itemize}
+\end{solutionbox}
+\begin{mnemonicbox}
+``PORT 0123: ડેટા-જનરલ-એડ્રેસ-સ્પેશિયલ''
+\end{mnemonicbox}
+
+\questionmarks{3}{c}{7}
+\textbf{8051 માઇક્રોકંટ્રોલરનો ટાઇમર્સ/કાઉન્ટર્સ લોજિક ડાયાગ્રામ દોરો અને વિવિધ મોડમાં તેની કામગીરી સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ:}
+
+\textbf{લોજિક ડાયાગ્રામ:}
+\begin{center}
+\begin{tikzpicture}[node distance=2.5cm, auto]
+    \node [gtu block] (osc) {Oscillator\\$\div$ 12};
+    \node [gtu block, right of=osc, node distance=3cm] (control) {Control\\(C/T, GATE)};
+    \node [gtu block, right of=control, node distance=3cm] (tl) {TLx\\(8-bit)};
+    \node [gtu block, right of=tl] (th) {THx\\(8-bit)};
+    
+    \draw [gtu arrow] (osc) -- (control);
+    \draw [gtu arrow] (control) -- (tl);
+    \draw [gtu arrow] (tl) -- (th);
+    \draw [gtu arrow, ->] (th) -- ++(1,0) node[right] {Interrupt};
+    
+    \node [below of=control] (pin) {Pin (Tn)};
+    \draw [gtu arrow] (pin) -- (control);
+\end{tikzpicture}
+\end{center}
+
+\textbf{મોડ્સ:}
+\begin{itemize}
+    \item \textbf{મોડ 0}: 13-બિટ ટાઇમર મોડ.
+    \item \textbf{મોડ 1}: 16-બિટ ટાઇમર મોડ.
+    \item \textbf{મોડ 2}: 8-બિટ ઓટો-રિલોડ મોડ.
+    \item \textbf{મોડ 3}: સ્પ્લિટ ટાઇમર મોડ.
+\end{itemize}
+\end{solutionbox}
+\begin{mnemonicbox}
+``MARC: મોડ ઓટો-રિલોડ કાઉન્ટ''
+\end{mnemonicbox}
+
+\orquestionmarks{3}{a}{3}
+\textbf{માઇક્રોકંટ્રોલર્સનાં કોમન ફીચર્સની સૂચિ બનાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ:}
+
+\begin{center}
+\captionof{table}{MCU ફીચર્સ}
+\begin{tabulary}{\linewidth}{|l|J|}
+\hline
+\textbf{ફીચર} & \textbf{હેતુ} \\ \hline
+\textbf{CPU કોર} & સૂચનાઓ પ્રોસેસ કરવા \\ \hline
+\textbf{મેમરી} & પ્રોગ્રામ (ROM) અને ડેટા (RAM) સ્ટોર કરવા \\ \hline
+\textbf{I/O પોર્ટ્સ} & બાહ્ય ડિવાઇસ ઇન્ટરફેસ કરવા \\ \hline
+\textbf{ટાઇમર/કાઉન્ટર} & સમય અંતરાલ માપવા \\ \hline
+\textbf{ઇન્ટરપ્ટ} & અસિંક્રોનસ ઘટનાઓ સંભાળવા \\ \hline
+\textbf{સીરિયલ કમ્યુનિકેશન} & અન્ય ડિવાઇસ સાથે ડેટા ટ્રાન્સફર \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+\begin{mnemonicbox}
+``CPU-TIS: CPU-RAM-I/O-ટાઇમર-ઇન્ટરપ્ટ-સીરિયલ''
+\end{mnemonicbox}
+
+\orquestionmarks{3}{b}{4}
+\textbf{8051 માઇક્રોકંટ્રોલરનું ઈન્ટરનલ રેમ ઓર્ગેનાઇઝેશન સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ:}
+
+\begin{center}
+\begin{tikzpicture}
+    % RAM Map
+    \draw (0,0) rectangle (4,6);
+    
+    \draw (0,1.5) -- (4,1.5);
+    \node at (2, 0.75) {Scratch Pad (30H-7FH)};
+    
+    \draw (0,2.5) -- (4,2.5);
+    \node at (2, 2) {Bit Addressable (20H-2FH)};
+    
+    \draw (0,3.5) -- (4,3.5);
+    \node at (2, 3) {Bank 3 (18H-1FH)};
+    \draw (0,4) -- (4,4);
+    \node at (2, 3.75) {Bank 2 (10H-17H)};
+    \draw (0,4.5) -- (4,4.5);
+    \node at (2, 4.25) {Bank 1 (08H-0FH)};
+    \draw (0,5) -- (4,5);
+    \node at (2, 4.75) {Bank 0 (00H-07H)};
+    
+    \node [right] at (4, 5.5) {Lower 128 Bytes};
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{રજિસ્ટર બેન્ક્સ (00H-1FH)}: 8 રજિસ્ટર્સની 4 બેન્ક્સ (R0-R7).
+    \item \textbf{બિટ-એડ્રેસેબલ (20H-2FH)}: 16 બાઇટ્સ જ્યાં દરેક બિટ એક્સેસ થઈ શકે.
+    \item \textbf{સ્ક્રેચ પેડ (30H-7FH)}: જનરલ પર્પઝ રેમ.
+    \item \textbf{SFRs (80H-FFH)}: કંટ્રોલ રજિસ્ટર્સ.
+\end{itemize}
+\end{solutionbox}
+\begin{mnemonicbox}
+``RBBS: રજિસ્ટર્સ-બિટ્સ-બફર-સ્ક્રેચ''
+\end{mnemonicbox}
+
+\orquestionmarks{3}{c}{7}
+\textbf{આકૃતિની મદદથી 8051 માઇક્રોકંટ્રોલરનું આર્કિટેક્ચર સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ:}
+
+\textbf{ડાયાગ્રામ:}
+\begin{center}
+\begin{tikzpicture}[node distance=2.5cm, auto, scale=0.8, transform shape]
+    \node [gtu block] (cpu) {CPU};
+    \node [gtu block, left of=cpu, node distance=3.5cm] (rom) {4KB ROM};
+    \node [gtu block, below of=rom] (ram) {128B RAM};
+    \node [gtu block, right of=cpu, node distance=3.5cm] (int) {Interrupt\\Control};
+    \node [gtu block, below of=int] (serial) {Serial Port};
+    \node [gtu block, below of=cpu] (timer) {Timers\\T0, T1};
+    \node [gtu block, below of=timer, node distance=2cm, minimum width=6cm] (ports) {I/O Ports P0-P3};
+    
+    \node [gtu block, above of=cpu] (osc) {Oscillator};
+    \draw [gtu arrow] (osc) -- (cpu);
+    
+    \draw [gtu arrow, <->] (cpu) -- (rom);
+    \draw [gtu arrow, <->] (cpu) -- (ram);
+    \draw [gtu arrow, <->] (cpu) -- (ports);
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{CPU}: 8-બિટ પ્રોસેસર.
+    \item \textbf{મેમરી}: 4KB ROM (પ્રોગ્રામ), 128B RAM (ડેટા).
+    \item \textbf{I/O}: 4 પોર્ટ્સ (P0-P3).
+    \item \textbf{ટાઇમર્સ}: બે 16-બિટ ટાઇમર.
+    \item \textbf{સીરિયલ}: 1 UART ચેનલ.
+    \item \textbf{ઇન્ટરપ્ટ}: 5 સોર્સ.
+\end{itemize}
+\end{solutionbox}
+\begin{mnemonicbox}
+``CAPITALS: CPU આર્કિટેક્ચર પોર્ટ્સ I/O ટાઇમર ALU ઇન્ટરફેસ સીરિયલ''
+\end{mnemonicbox}
+
+\questionmarks{4}{a}{3}
+\textbf{બાહ્ય RAM સ્થાન 0123h થી TL0 અને બાહ્ય RAM સ્થાન 0234h થી TH0 ડેટાને કોપી કરવા માટે 8051 એસેમ્બલી લેંગ્વેજ પ્રોગ્રામ લખો.}
+
+\begin{solutionbox}
+\textbf{જવાબ:}
+
+\begin{lstlisting}[language=8051]
+MOV  DPTR, #0123H   ; DPTR મા સોર્સ એડ્રેસ 0123H લોડ કરો
+MOVX A, @DPTR       ; બાહ્ય RAM માંથી ડેટા વાંચો
+MOV  TL0, A         ; ટાઇમર 0 લો બાઇટમાં કોપી કરો
+
+MOV  DPTR, #0234H   ; DPTR મા સોર્સ એડ્રેસ 0234H લોડ કરો
+MOVX A, @DPTR       ; બાહ્ય RAM માંથી ડેટા વાંચો
+MOV  TH0, A         ; ટાઇમર 0 હાઈ બાઇટમાં કોપી કરો
+\end{lstlisting}
+\end{solutionbox}
+\begin{mnemonicbox}
+``DRAM: DPTR વાંચો એડ્રેસ હલાવો''
+\end{mnemonicbox}
+
+\questionmarks{4}{b}{4}
+\textbf{પોર્ટ P1.3 પર ઇન્ટરફેસ કરેલ LED ને 1ms ના સમય અંતરાલ પર બ્લિંક કરવા માટે 8051 એસેમ્બલી લેંગ્વેજ પ્રોગ્રામ લખો.}
+
+\begin{solutionbox}
+\textbf{જવાબ:}
+
+\begin{lstlisting}[language=8051]
+AGAIN:  SETB P1.3         ; P1.3 પર LED ચાલુ કરો
+        ACALL DELAY       ; ડિલે સબરૂટીન કોલ કરો
+        CLR  P1.3         ; P1.3 પર LED બંધ કરો
+        ACALL DELAY       ; ડિલે સબરૂટીન કોલ કરો
+        SJMP AGAIN        ; હંમેશા રિપીટ કરો
+
+DELAY:  MOV  R7, #250     ; આઉટર લૂપ માટે R7 લોડ કરો
+OUTER:  MOV  R6, #1       ; ઇનર લૂપ માટે R6 લોડ કરો
+INNER:  DJNZ R6, INNER    ; R6 ઝીરો થાય ત્યાં સુધી ઘટાડો
+        DJNZ R7, OUTER    ; R7 ઝીરો થાય ત્યાં સુધી ઘટાડો
+        RET               ; સબરૂટીનમાંથી પાછા ફરો
+\end{lstlisting}
+\end{solutionbox}
+\begin{mnemonicbox}
+``STACI: સેટ-ટાઇમર-એન્ડ-ક્લિયર-ઇન્ફિનિટલી''
+\end{mnemonicbox}
+
+\questionmarks{4}{c}{7}
+\textbf{8051 માઇક્રોકંટ્રોલરના એડ્રેસિંગ મોડ્સની યાદી બનાવો અને ઉદાહરણની મદદથી તે બધાને સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ:}
+
+\begin{center}
+\captionof{table}{એડ્રેસિંગ મોડ્સ}
+\begin{tabulary}{\linewidth}{|l|l|J|}
+\hline
+\textbf{એડ્રેસિંગ મોડ} & \textbf{ઉદાહરણ} & \textbf{વર્ણન} \\ \hline
+\textbf{ઇમીડિયેટ} & \code{MOV A, \#25H} & ડેટા સૂચનામાં છે \\ \hline
+\textbf{રજિસ્ટર} & \code{MOV A, R0} & ડેટા રજિસ્ટરમાં છે \\ \hline
+\textbf{ડાયરેક્ટ} & \code{MOV A, 30H} & ડેટા RAM એડ્રેસ પર છે \\ \hline
+\textbf{ઇનડાયરેક્ટ} & \code{MOV A, @R0} & R0/R1 એડ્રેસ ધરાવે છે \\ \hline
+\textbf{ઇન્ડેક્સ્ડ} & \code{MOVC A, @A+DPTR} & પ્રોગ્રામ મેમરી એક્સેસ \\ \hline
+\textbf{બિટ} & \code{SETB P1.3} & વ્યક્તિગત બિટ્સ એક્સેસ \\ \hline
+\textbf{રિલેટિવ} & \code{SJMP LABEL} & 8-બિટ ઑફસેટ સાથે જમ્પ \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+\begin{mnemonicbox}
+``I'M DIRBI: ઇમીડિયેટ રજિસ્ટર ડાયરેક્ટ બિટ ઇન્ડેક્સ્ડ''
+\end{mnemonicbox}
+
+\orquestionmarks{4}{a}{3}
+\textbf{RAM સ્થાન 14h માંથી RAM સ્થાન 11h નાં ડેટાને બાદ કરવા માટે 8051 એસેમ્બલી લેંગ્વેજ પ્રોગ્રામ લખો; RAM સ્થાન 3Ch માં પરિણામ મૂકો.}
+
+\begin{solutionbox}
+\textbf{જવાબ:}
+
+\begin{lstlisting}[language=8051]
+MOV  A, 14H       ; RAM લોકેશન 14H નો કન્ટેન્ટ A માં લોડ કરો
+CLR  C            ; કેરી ફ્લેગ સાફ કરો
+SUBB A, 11H       ; બોરો સાથે 11H ના કન્ટેન્ટ બાદ કરો
+MOV  3CH, A       ; પરિણામને RAM લોકેશન 3CH માં સ્ટોર કરો
+\end{lstlisting}
+\end{solutionbox}
+\begin{mnemonicbox}
+``LCSS: લોડ-ક્લિયર-સબટ્રેક્ટ-સ્ટોર''
+\end{mnemonicbox}
+
+\orquestionmarks{4}{b}{4}
+\textbf{મોડ 1 માં ટાઈમર 0 નો ઉપયોગ કરીને પોર્ટ 1 ના બીટ 3 પર 50\% ડ્યુટી સાયકલની સ્ક્વેર વેવ જનરેટ કરવા માટે 8051 એસેમ્બલી લેંગ્વેજ પ્રોગ્રામ લખો.}
+
+\begin{solutionbox}
+\textbf{જવાબ:}
+
+\begin{lstlisting}[language=8051]
+      MOV  TMOD, #01H   ; ટાઇમર 0, મોડ 1 (16-બિટ)
+AGAIN: MOV  TH0, #0FCH   ; હાઈ બાઇટ લોડ કરો
+      MOV  TL0, #18H    ; લો બાઇટ લોડ કરો (-1000 16-બિટમાં)
+      SETB TR0          ; ટાઇમર ચાલુ કરો
+      JNB  TF0, $       ; ઓવરફ્લો માટે રાહ જુઓ
+      CLR  TR0          ; ટાઇમર બંધ કરો
+      CLR  TF0          ; ટાઇમર ફ્લેગ સાફ કરો
+      CPL  P1.3         ; P1.3 ટોગલ કરો
+      SJMP AGAIN        ; રિપીટ કરો
+\end{lstlisting}
+\end{solutionbox}
+\begin{mnemonicbox}
+``MSTCCS: મોડ-સેટ-ટાઇમર-ચેક-ક્લિયર-સ્વિચ''
+\end{mnemonicbox}
+
+\orquestionmarks{4}{c}{7}
+\textbf{8051 માઇક્રોકંટ્રોલર માટે કોઈપણ સાત લોજીકલ ઈન્સ્ટ્રક્શન ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ:}
+
+\begin{center}
+\captionof{table}{લોજીકલ ઈન્સ્ટ્રક્શન}
+\begin{tabulary}{\linewidth}{|l|l|J|}
+\hline
+\textbf{ઈન્સ્ટ્રક્શન} & \textbf{ઉદાહરણ} & \textbf{ઓપરેશન} \\ \hline
+\textbf{ANL} & \code{ANL A, \#3FH} & લોજિકલ AND \\ \hline
+\textbf{ORL} & \code{ORL P1, \#80H} & લોજિકલ OR \\ \hline
+\textbf{XRL} & \code{XRL A, R0} & લોજિકલ XOR \\ \hline
+\textbf{CLR} & \code{CLR A} & ક્લિયર (0 સેટ) \\ \hline
+\textbf{CPL} & \code{CPL P1.0} & કોમ્પ્લિમેન્ટ (ઇન્વર્ટ) \\ \hline
+\textbf{RL} & \code{RL A} & રોટેટ લેફ્ટ \\ \hline
+\textbf{RR} & \code{RR A} & રોટેટ રાઇટ \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+\begin{mnemonicbox}
+``A-OX-CCR: AND OR XOR ક્લિયર કોમ્પ્લિમેન્ટ રોટેટ''
+\end{mnemonicbox}
+
+\questionmarks{5}{a}{3}
+\textbf{8051 માઇક્રોકંટ્રોલર સાથે Push button Switch નું ઇન્ટરફેસિંગ દોરો.}
+
+\begin{solutionbox}
+\textbf{જવાબ:}
+
+\textbf{ડાયાગ્રામ:}
+\begin{center}
+\begin{tikzpicture}[node distance=2cm, auto]
+    \node (vcc) {Vcc};
+    \node [resistor, below of=vcc] (res) {10K};
+    \node [below of=res] (junc) {};
+    \node [left of=junc] (pin) {P1.0 (8051)};
+    \node [push button, below of=junc] (btn) {Load};
+    \node [ground, below of=btn] (gnd) {};
+    
+    \draw (vcc) -- (res) -- (junc);
+    \draw (junc) -- (pin);
+    \draw (junc) -- (btn) -- (gnd);
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{પુલ-અપ રેસિસ્ટર}: બટન ઓપન હોય ત્યારે પિન HIGH રાખે છે.
+    \item \textbf{બટન પ્રેસ}: પિનને LOW કરે છે.
+\end{itemize}
+\end{solutionbox}
+\begin{mnemonicbox}
+``PIP: પુલ-અપ-ઇનપુટ-પ્રેસ''
+\end{mnemonicbox}
+
+\questionmarks{5}{b}{4}
+\textbf{8051 માઇક્રોકંટ્રોલર સાથે રિલે ઇન્ટરફેસ કરો.}
+
+\begin{solutionbox}
+\textbf{જવાબ:}
+
+\textbf{ડાયાગ્રામ:}
+\begin{center}
+\begin{tikzpicture}[node distance=2.5cm, auto]
+    \node (pin) {P1.0};
+    \node [resistor, right of=pin] (base_res) {330$\Omega$};
+    \node [npn, right of=base_res, anchor=B] (trans) {BC547};
+    \node [ground, below of=trans] (gnd) {};
+    
+    \draw (pin) -- (base_res) -- (trans.B);
+    \draw (trans.E) -- (gnd);
+    
+    % Relay Coil
+    \node [coordinate, above of=trans, node distance=2cm] (coil_bottom) {};
+    \draw (trans.C) -- (coil_bottom);
+    \draw [inductor] (coil_bottom) -- ++(0,2) node[above] (vcc) {+5V};
+    
+    % Diode
+    \draw (coil_bottom) -- ++(1,0) coordinate (d_bot);
+    \draw (vcc|-d_bot) -- ++(1,0) coordinate (d_top);
+    \draw [diode] (d_bot) -- (d_top);
+    
+    % Relay Switch
+    \draw (d_top) -- ++(1.5,0) node[right] {Relay Common};
+    \draw (d_top) ++(1.5,-1) node[right] {NO Contact} -- ++(0.5,0) node[right] {Load};
+    
+\end{tikzpicture}
+\end{center}
+\end{solutionbox}
+\begin{mnemonicbox}
+``TRIP: ટ્રાન્ઝિસ્ટર-રિલે-ઇન્ટરફેસ-પ્રોટેક્શન''
+\end{mnemonicbox}
+
+\questionmarks{5}{c}{7}
+\textbf{8051 માઇક્રોકંટ્રોલર સાથે ADC0804 ઇન્ટરફેસ કરો.}
+
+\begin{solutionbox}
+\textbf{જવાબ:}
+
+\textbf{ડાયાગ્રામ:}
+\begin{center}
+\begin{tikzpicture}[node distance=3cm, auto]
+    \node [gtu block, minimum width=3cm, minimum height=4cm] (adc) {ADC0804};
+    \node [gtu block, right of=adc, node distance=5cm, minimum width=3cm, minimum height=4cm] (mcu) {8051};
+    
+    \draw [gtu arrow, <->] (adc.10) -- (mcu.170) node[midway, above] {Data Bus (D0-D7)};
+    
+    \draw [gtu arrow, <-] (adc.-10) -- (mcu.-170) node[midway, below] {CS (P3.0)};
+    \draw [gtu arrow, <-] (adc.-30) -- (mcu.-150) node[midway, below] {RD (P3.1)};
+    \draw [gtu arrow, <-] (adc.-50) -- (mcu.-130) node[midway, below] {WR (P3.2)};
+    \draw [gtu arrow, ->] (adc.-70) -- (mcu.-110) node[midway, below] {INTR (P3.3)};
+    
+    \node [left of=adc] (vin) {Analog In};
+    \draw [gtu arrow] (vin) -- (adc);
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{Data Bus}: P1.0-P1.7 connected to D0-D7.
+    \item \textbf{Control}: RD, WR, INTR for handshaking.
+\end{itemize}
+\end{solutionbox}
+\begin{mnemonicbox}
+``CRIW: કંટ્રોલ-રીડ-ઇન્ટરપ્ટ-રાઇટ''
+\end{mnemonicbox}
+
+\orquestionmarks{5}{a}{3}
+\textbf{વિવિધ ક્ષેત્રોમાં માઇક્રોકંટ્રોલરની એપ્લિકેશનોની સૂચિ બનાવો.}
+
+\begin{solutionbox}
+\textbf{જવાબ:}
+
+\begin{center}
+\captionof{table}{એપ્લિકેશન્સ}
+\begin{tabulary}{\linewidth}{|l|J|}
+\hline
+\textbf{ક્ષેત્ર} & \textbf{એપ્લિકેશન્સ} \\ \hline
+\textbf{ઔદ્યોગિક} & મોટર કંટ્રોલ, ઓટોમેશન, PLCs \\ \hline
+\textbf{મેડિકલ} & પેશન્ટ મોનિટરિંગ, ડાયગ્નોસ્ટિક ઉપકરણો \\ \hline
+\textbf{કન્ઝ્યુમર} & વોશિંગ મશીન, માઇક્રોવેવ, રમકડાં \\ \hline
+\textbf{ઓટોમોટિવ} & એન્જિન કંટ્રોલ, ABS, એરબેગ સિસ્ટમ \\ \hline
+\textbf{કમ્યુનિકેશન} & મોબાઇલ ફોન, મોડેમ, રાઉટર \\ \hline
+\textbf{સિક્યુરિટી} & એક્સેસ કંટ્રોલ, અલાર્મ સિસ્ટમ \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+\begin{mnemonicbox}
+``I-MACS: ઇન્ડસ્ટ્રિયલ-મેડિકલ-ઓટોમોટિવ-કન્ઝ્યુમર-સિક્યુરિટી''
+\end{mnemonicbox}
+
+\orquestionmarks{5}{b}{4}
+\textbf{8051 માઇક્રોકંટ્રોલર સાથે સ્ટેપર મોટર ઇન્ટરફેસ કરો.}
+
+\begin{solutionbox}
+\textbf{જવાબ:}
+
+\textbf{ડાયાગ્રામ:}
+\begin{center}
+\begin{tikzpicture}[node distance=2.5cm, auto]
+    \node [gtu block] (mcu) {8051\\(P1.0-P1.3)};
+    \node [gtu block, right of=mcu, node distance=3.5cm] (driver) {ULN2003\\Driver};
+    \node [gtu block, right of=driver, node distance=3.5cm] (motor) {Stepper\\Motor};
+    
+    \draw [gtu arrow, ->] (mcu) -- (driver) node[midway, above] {Control};
+    \draw [gtu arrow, ->] (driver) -- (motor) node[midway, above] {High Current};
+    
+    \node [above of=driver, node distance=1.5cm] (vcc) {+12V};
+    \draw [->] (vcc) -- (driver);
+\end{tikzpicture}
+\end{center}
+
+\textbf{સિક્વન્સ (ક્લોકવાઇઝ):} 0x08, 0x0C, 0x04, 0x06.
+\end{solutionbox}
+\begin{mnemonicbox}
+``PDCS: પોર્ટ-ડ્રાઇવર-કરંટ-સિક્વન્સ''
+\end{mnemonicbox}
+
+\orquestionmarks{5}{c}{7}
+\textbf{8051 માઇક્રોકંટ્રોલર સાથે LCD ઇન્ટરફેસ કરો.}
+
+\begin{solutionbox}
+\textbf{જવાબ:}
+
+\textbf{ડાયાગ્રામ:}
+\begin{center}
+\begin{tikzpicture}[node distance=3cm, auto]
+    \node [gtu block, minimum width=3cm, minimum height=4cm] (mcu) {8051};
+    \node [gtu block, right of=mcu, node distance=5cm, minimum width=3cm, minimum height=3cm] (lcd) {16x2 LCD};
+    
+    \draw [gtu arrow, ->] (mcu.10) -- (lcd.170) node[midway, above] {Data (P2)};
+    
+    \draw [gtu arrow, ->] (mcu.-10) -- (lcd.-170) node[midway, below] {RS (P3.0)};
+    \draw [gtu arrow, ->] (mcu.-30) -- (lcd.-150) node[midway, below] {RW (P3.1)};
+    \draw [gtu arrow, ->] (mcu.-50) -- (lcd.-130) node[midway, below] {E (P3.2)};
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{Data}: પોર્ટ 2 ASCII ડેટા/કમાન્ડ મોકલે છે.
+    \item \textbf{RS}: 0 કમાન્ડ માટે, 1 ડેટા માટે.
+    \item \textbf{E}: ડેટા લેચ કરવા માટે એનેબલ પલ્સ.
+\end{itemize}
+\end{solutionbox}
+\begin{mnemonicbox}
+``DICE: ડેટા-ઇન્સ્ટ્રક્શન-કંટ્રોલ-એનેબલ''
+\end{mnemonicbox}
+
+\end{document}
