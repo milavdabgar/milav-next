@@ -1,0 +1,937 @@
+\documentclass{article}
+% Adjust the relative path to point to the latex-templates directory
+\input{../../../../../../latex-templates/gtu-solutions/preamble.tex}
+\input{../../../../../../latex-templates/gtu-solutions/english-boxes.tex}
+\input{../../../../../../latex-templates/gtu-solutions/commands.tex}
+
+\title{OOPS \& Python Programming (4351108) - Summer 2025 Solution}
+\date{May 14, 2025}
+
+\begin{document}
+\maketitle
+
+\questionmarks{1(a)}{3}{What is the purpose of a for loop in Python? Write an example.}
+
+\begin{solutionbox}
+A for loop is used to iterate over a sequence (like list, tuple, string) or other iterable objects and execute a block of code for each item in the sequence.
+
+\textbf{Code Example:}
+\begin{lstlisting}[language=Python]
+# Print each fruit in a list
+fruits = ["apple", "banana", "cherry"]
+for fruit in fruits:
+    print(fruit)
+\end{lstlisting}
+
+\begin{itemize}
+    \item \keyword{Iteration}: Automatically repeats code for each item
+    \item \keyword{Simplicity}: Cleaner than using while loops with counters
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{For Each Item Do}
+\end{mnemonicbox}
+
+\questionmarks{1(b)}{4}{List out rules for defining variables in python and list out data types in python.}
+
+\begin{solutionbox}
+\textbf{Rules for defining variables:}
+\begin{center}
+\captionof{table}{Variable Rules}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Rule} & \textbf{Example} & \textbf{Invalid Example} \\ \hline
+Must start with letter or underscore & \code{name = "John"} & \code{1name = "John"} \\ \hline
+Can contain letters, numbers, underscores & \code{user\_1 = "Alice"} & \code{user-1 = "Alice"} \\ \hline
+Case-sensitive & \code{age} $\neq$ \code{Age} & - \\ \hline
+Cannot use reserved keywords & \code{count = 5} & \code{if = 5} \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{Python Data Types:}
+\begin{center}
+\captionof{table}{Data Types}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Data Type} & \textbf{Description} & \textbf{Example} \\ \hline
+int & Integer numbers & \code{x = 10} \\ \hline
+float & Decimal numbers & \code{y = 10.5} \\ \hline
+str & Text strings & \code{name = "John"} \\ \hline
+bool & Boolean values & \code{is\_active = True} \\ \hline
+list & Ordered, changeable & \code{["apple", "banana"]} \\ \hline
+tuple & Ordered, unchangeable & \code{(10, 20)} \\ \hline
+dict & Key-value pairs & \code{\{"name": "John"\}} \\ \hline
+set & Unordered, unique & \code{\{1, 2, 3\}} \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{SILB-DTS: String, Integer, List, Boolean, Dictionary, Tuple, Set}
+\end{mnemonicbox}
+
+\questionmarks{1(c)}{7}{Create a program to print prime numbers between 1 to N.}
+
+\begin{solutionbox}
+\begin{lstlisting}[language=Python]
+def print_primes(n):
+    print("Prime numbers between 1 and", n, "are:")
+    
+    for num in range(2, n + 1):
+        is_prime = True
+        
+        # Check if num is divisible by any number from 2 to sqrt(num)
+        for i in range(2, int(num**0.5) + 1):
+            if num % i == 0:
+                is_prime = False
+                break
+                
+        if is_prime:
+            print(num, end=" ")
+
+# Get input from user
+N = int(input("Enter a number N: "))
+print_primes(N)
+\end{lstlisting}
+
+\textbf{Algorithm Diagram:}
+\begin{center}
+\begin{tikzpicture}[gtu flow]
+    \node [gtu start] (start) {Start};
+    \node [gtu input, below=0.5cm of start] (input) {Input N};
+    \node [gtu process, below=0.5cm of input] (init) {num = 2};
+    \node [gtu decision, below=0.5cm of init] (checkN) {num $\le$ N?};
+    \node [gtu process, below left=0.5cm and 0cm of checkN, xshift=-2cm] (assume) {Assume Prime};
+    \node [gtu stop, right=2cm of checkN] (end) {End};
+    
+    \node [gtu decision, below=0.5cm of assume] (checkI) {i $\le \sqrt{num}$?};
+    \node [gtu decision, below=0.5cm of checkI] (div) {num \% i == 0?};
+    \node [gtu output, right=2cm of checkI] (print) {Print num};
+    
+    \path [gtu arrow] (start) -- (input);
+    \path [gtu arrow] (input) -- (init);
+    \path [gtu arrow] (init) -- (checkN);
+    \path [gtu arrow] (checkN) -- node[left] {Yes} (assume);
+    \path [gtu arrow] (checkN) -- node[above] {No} (end);
+    \path [gtu arrow] (assume) -- (checkI);
+    \path [gtu arrow] (checkI) -- node[above] {No} (print);
+    \path [gtu arrow] (checkI) -- node[right] {Yes} (div);
+    \path [gtu arrow] (div) -| node[right] {No} ([xshift=0.5cm]checkI.east) -- (checkI);
+    \path [gtu arrow] (div.west) -- node[above] {Yes} ++(-0.5,0) |- (checkN);
+    \path [gtu arrow] (print) |- (checkN);
+\end{tikzpicture}
+\captionof{figure}{Prime Number Algorithm}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{Time complexity}: $O(N\sqrt{N})$
+    \item \keyword{Space complexity}: $O(1)$
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Divide To Decide Prime}
+\end{mnemonicbox}
+
+\questionmarks{1(c OR)}{7}{Explain working of break, continue and pass statement in Python with examples.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{Control Statements}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Statement} & \textbf{Purpose} & \textbf{Example} \\ \hline
+break & Terminates loop completely & Stop search \\ \hline
+continue & Skips to next iteration & Skip even nums \\ \hline
+pass & Does nothing (placeholder) & Empty function \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{Flow Control Diagram:}
+\begin{center}
+\begin{tikzpicture}[gtu flow]
+    \node [gtu start] (start) {Loop Start};
+    \node [gtu decision, below=0.5cm of start] (cond) {Condition};
+    \node [gtu decision, below=0.5cm of cond] (break) {break?};
+    \node [gtu decision, below=0.5cm of break] (cont) {continue?};
+    \node [gtu decision, below=0.5cm of cont] (pass) {pass?};
+    \node [gtu process, below=0.5cm of pass] (exec) {Execute Code};
+    \node [gtu stop, right=2cm of break] (exit) {Exit Loop};
+    
+    \path [gtu arrow] (start) -- (cond);
+    \path [gtu arrow] (cond) -- node[right] {True} (break);
+    \path [gtu arrow] (break) -- node[above] {Yes} (exit);
+    \path [gtu arrow] (break) -- node[right] {No} (cont);
+    \path [gtu arrow] (cont) -- node[right] {No} (pass);
+    \path [gtu arrow] (cont.west) -- node[above] {Yes} ++(-0.5,0) |- (cond);
+    \path [gtu arrow] (pass) -- (exec);
+    \path [gtu arrow] (exec.west) -- ++(-0.5,0) |- (cond);
+\end{tikzpicture}
+\captionof{figure}{Loop Control Logic}
+\end{center}
+
+\textbf{Example Code:}
+\begin{lstlisting}[language=Python]
+for i in range(5):
+    if i == 2: continue  # Skip 2
+    if i == 4: break     # Stop at 4
+    if i == 0: pass      # Do nothing
+    print(i)
+# Output: 0, 1, 3
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{BCP: Break Completely, Continue Partially, Pass silently}
+\end{mnemonicbox}
+
+\questionmarks{2(a)}{3}{Create a program that asks the user for a year and prints out whether it is a leap year or not.}
+
+\begin{solutionbox}
+\begin{lstlisting}[language=Python]
+year = int(input("Enter a year: "))
+
+if (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0):
+    print(f"{year} is a leap year")
+else:
+    print(f"{year} is not a leap year")
+\end{lstlisting}
+
+\textbf{Decision Tree:}
+\begin{center}
+\begin{tikzpicture}[gtu flow]
+    \node [gtu start] (start) {Start};
+    \node [gtu input, below=0.5cm of start] (input) {Input Year};
+    \node [gtu decision, below=0.5cm of input] (div4) {Target \% 4 == 0?};
+    \node [gtu decision, below left=1cm and -1cm of div4] (div100) {\% 100 == 0?};
+    \node [gtu decision, below=1cm of div100] (div400) {\% 400 == 0?};
+    \node [gtu block, below=1cm of div400] (leap) {Leap Year};
+    \node [gtu block, right=2cm of div100] (notleap) {Not Leap};
+
+    \path [gtu arrow] (start) -- (input);
+    \path [gtu arrow] (input) -- (div4);
+    \path [gtu arrow] (div4) -- node[left] {Yes} (div100);
+    \path [gtu arrow] (div4) -| node[above] {No} (notleap);
+    \path [gtu arrow] (div100) -- node[left] {Yes} (div400);
+    \path [gtu arrow] (div100) -- node[right] {No} (leap); 
+    \path [gtu arrow] (div400) -- node[left] {Yes} (leap);
+    \path [gtu arrow] (div400) -| node[above] {No} (notleap);
+\end{tikzpicture}
+\captionof{figure}{Leap Year Logic}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{4 Yes, 100 No, 400 Yes}
+\end{mnemonicbox}
+
+\questionmarks{2(b)}{4}{What are the key differences between a list and a tuple in Python?}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{List vs Tuple}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Feature} & \textbf{List} & \textbf{Tuple} \\ \hline
+Syntax & \code{[]} & \code{()} \\ \hline
+Mutability & Mutable (Changeable) & Immutable (Fixed) \\ \hline
+Performance & Slower & Faster \\ \hline
+Use Case & Dynamic collections & Fixed data \\ \hline
+Memory & More memory & Less memory \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{Comparison Diagram:}
+\begin{center}
+\begin{tikzpicture}[gtu flow]
+    \node [gtu block] (list) {\textbf{List}\\ \code{["a", "b"]}\\ \code{.append("c")}};
+    \node [gtu block, right=2cm of list] (tuple) {\textbf{Tuple}\\ \code{("a", "b")}\\ Read Only};
+    
+    \draw [gtu arrow] (list) -- node[above] {Mutable} (tuple); 
+    \node [below=0.2cm of list] {Can Change};
+    \node [below=0.2cm of tuple] {Cannot Change};
+\end{tikzpicture}
+\captionof{figure}{List vs Tuple}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{LIST: Transformable, TUPLE: Unchangeable}
+\end{mnemonicbox}
+
+\questionmarks{2(c)}{7}{Create a program to find the sum of all the positive numbers entered by the user. As soon as the user enters a negative number, stop taking in any further input from the user and display the sum.}
+
+\begin{solutionbox}
+\begin{lstlisting}[language=Python]
+def sum_positives():
+    total_sum = 0
+    while True:
+        num = float(input("Enter number (negative to stop): "))
+        if num < 0:
+            break
+        total_sum += num
+    print(f"Sum of positive numbers: {total_sum}")
+
+sum_positives()
+\end{lstlisting}
+
+\textbf{Process Flow:}
+\begin{center}
+\begin{tikzpicture}[gtu flow]
+    \node [gtu start] (start) {Start};
+    \node [gtu process, below=0.5cm of start] (init) {total = 0};
+    \node [gtu input, below=0.5cm of init] (input) {Input Num};
+    \node [gtu decision, below=0.5cm of input] (check) {Num < 0?};
+    \node [gtu process, right=1.5cm of check] (add) {total += Num};
+    \node [gtu output, below=0.5cm of check] (print) {Print total};
+    \node [gtu stop, below=0.5cm of print] (end) {End};
+
+    \path [gtu arrow] (start) -- (init);
+    \path [gtu arrow] (init) -- (input);
+    \path [gtu arrow] (input) -- (check);
+    \path [gtu arrow] (check) -- node[right] {No} (add);
+    \path [gtu arrow] (add) |- (input);
+    \path [gtu arrow] (check) -- node[right] {Yes} (print);
+    \path [gtu arrow] (print) -- (end);
+\end{tikzpicture}
+\captionof{figure}{Summation Logic}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Sum Till Negative}
+\end{mnemonicbox}
+
+\questionmarks{2(a OR)}{3}{Create a program to find a maximum number among the given three numbers.}
+
+\begin{solutionbox}
+\begin{lstlisting}[language=Python]
+n1 = float(input("Num 1: "))
+n2 = float(input("Num 2: "))
+n3 = float(input("Num 3: "))
+
+if n1 >= n2 and n1 >= n3:
+    mx = n1
+elif n2 >= n1 and n2 >= n3:
+    mx = n2
+else:
+    mx = n3
+
+print(f"Max: {mx}")
+\end{lstlisting}
+
+\textbf{Logic Flow:}
+\begin{center}
+\begin{tikzpicture}[gtu flow]
+    \node [gtu input] (in) {Input 3 nums};
+    \node [gtu decision, below=0.5cm of in] (c1) {n1 max?};
+    \node [gtu decision, right=1cm of c1] (c2) {n2 max?};
+    \node [gtu process, below=0.5cm of c1] (r1) {max=n1};
+    \node [gtu process, below=0.5cm of c2] (r2) {max=n2};
+    \node [gtu process, right=1cm of r2] (r3) {max=n3};
+    
+    \path [gtu arrow] (in) -- (c1);
+    \path [gtu arrow] (c1) -- node[right] {Yes} (r1);
+    \path [gtu arrow] (c1) -- node[above] {No} (c2);
+    \path [gtu arrow] (c2) -- node[right] {Yes} (r2);
+    \path [gtu arrow] (c2) -- node[above] {No} (r3);
+\end{tikzpicture}
+\captionof{figure}{Maximum Finder Logic}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Compare Each, Take Largest}
+\end{mnemonicbox}
+
+\questionmarks{2(b OR)}{4}{Given the str="abcdefghijklmnopqrstuvwxyz". Write a python program to extract every second character from above string.}
+
+\begin{solutionbox}
+\begin{lstlisting}[language=Python]
+s = "abcdefghijklmnopqrstuvwxyz"
+# Slice syntax: [start:end:step]
+result = s[0::2]
+print("Result:", result)
+# Output: acegikmoqsuwy
+\end{lstlisting}
+
+\textbf{Slicing Visualization:}
+\begin{center}
+\begin{tikzpicture}[gtu flow]
+    \foreach \x/\l in {0/a, 1/b, 2/c, 3/d, 4/e, 5/f} {
+        \node[draw, minimum size=0.6cm] (n\x) at (\x*0.8, 0) {\l};
+        \node[font=\footnotesize, below=0.1cm of n\x] {\x};
+    }
+    \node[right=0.2cm of n5] {...};
+    
+    \draw[->, thick, red] (n0.north) -- ++(0, 0.3) node[above] {Start};
+    \draw[->, thick, blue] (n0) to[bend left] (n2);
+    \draw[->, thick, blue] (n2) to[bend left] (n4);
+    
+    \node[above=0.8cm of n2] {Step=2};
+\end{tikzpicture}
+\captionof{figure}{String Slicing Step 2}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Slice Step Selector}
+\end{mnemonicbox}
+
+\questionmarks{2(c OR)}{7}{Write a Python program to create a dictionary that stores student names and their marks. Display the names of students who have scored more than 75 marks.}
+
+\begin{solutionbox}
+\begin{lstlisting}[language=Python]
+students = {}
+n = int(input("Enter count: "))
+
+# Input Loop
+for i in range(n):
+    name = input("Name: ")
+    marks = float(input("Marks: "))
+    students[name] = marks
+
+print("\nHigh Scorers (>75):")
+for name, marks in students.items():
+    if marks > 75:
+        print(f"{name}: {marks}")
+\end{lstlisting}
+
+\textbf{Process Diagram:}
+\begin{center}
+\begin{tikzpicture}[gtu flow]
+    \node [gtu start] (start) {Start};
+    \node [gtu block, below=0.5cm of start] (dict) {Empty Dict};
+    \node [gtu process, below=0.5cm of dict] (loop) {Input Loop};
+    \node [gtu block, below=0.5cm of loop] (data) {Data Stored};
+    \node [gtu decision, below=0.5cm of data] (check) {Marks > 75?};
+    \node [gtu output, right=1cm of check] (disp) {Display Name};
+    
+    \path [gtu arrow] (start) -- (dict);
+    \path [gtu arrow] (dict) -- (loop);
+    \path [gtu arrow] (loop) -- (data);
+    \path [gtu arrow] (data) -- (check);
+    \path [gtu arrow] (check) -- node[above] {Yes} (disp);
+    \path [gtu arrow] (check) -- node[left] {No} ++(0,-1);
+    \path [gtu arrow] (disp) |- ++(0,-1);
+\end{tikzpicture}
+\captionof{figure}{Dictionary Filtering}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Store All, Filter Some}
+\end{mnemonicbox}
+
+\questionmarks{3(a)}{3}{Write a program to find the length of a string excluding spaces.}
+
+\begin{solutionbox}
+\begin{lstlisting}[language=Python]
+s = input("Enter string: ")
+no_spaces = s.replace(" ", "")
+length = len(no_spaces)
+print(f"Length excluding spaces: {length}")
+\end{lstlisting}
+
+\textbf{Visualization:}
+\begin{center}
+\begin{tikzpicture}[gtu flow]
+    \node [gtu block] (orig) {"Hello World"};
+    \node [gtu process, right=1cm of orig] (rep) {replace(" ","")};
+    \node [gtu block, right=1cm of rep] (new) {"HelloWorld"};
+    \node [gtu output, below=0.5cm of new] (len) {Length: 10};
+    
+    \path [gtu arrow] (orig) -- (rep);
+    \path [gtu arrow] (rep) -- (new);
+    \path [gtu arrow] (new) -- (len);
+\end{tikzpicture}
+\captionof{figure}{Space Removal}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Count Characters, Skip Spaces}
+\end{mnemonicbox}
+
+\questionmarks{3(b)}{4}{List the dictionary methods in python and explain each with suitable examples.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{Dictionary Methods}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Method} & \textbf{Description} & \textbf{Example} \\ \hline
+\code{get(k)} & Returns value for key & \code{d.get('a')} \\ \hline
+\code{keys()} & Returns all keys & \code{list(d.keys())} \\ \hline
+\code{values()} & Returns all values & \code{list(d.values())} \\ \hline
+\code{items()} & Returns (key, value) pairs & \code{d.items()} \\ \hline
+\code{pop(k)} & Removes item & \code{d.pop('a')} \\ \hline
+\code{update()} & Merges dicts & \code{d.update(d2)} \\ \hline
+\code{clear()} & Empties dict & \code{d.clear()} \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{GCUP-KPIV}
+\end{mnemonicbox}
+
+\questionmarks{3(c)}{7}{Explain Python's List data type in detail.}
+
+\begin{solutionbox}
+List is an ordered, mutable collection that allows duplicate elements and mixed types.
+
+\textbf{Key Features:}
+\begin{itemize}
+    \item \textbf{Ordered}: Items maintain order.
+    \item \textbf{Mutable}: Can add, remove, change items.
+    \item \textbf{Heterogeneous}: Can store int, str, float together.
+\end{itemize}
+
+\textbf{List Operations Diagram:}
+\begin{center}
+\begin{tikzpicture}[gtu flow]
+    \node [gtu block] (init) {\code{[1, 2]}};
+    \node [gtu process, right=1cm of init] (append) {\code{.append(3)}};
+    \node [gtu block, right=1cm of append] (res1) {\code{[1, 2, 3]}};
+    \node [gtu process, below=1cm of init] (pop) {\code{.pop(0)}};
+    \node [gtu block, below=1cm of res1] (res2) {\code{[2, 3]}};
+    
+    \path [gtu arrow] (init) -- (append);
+    \path [gtu arrow] (append) -- (res1);
+    \path [gtu arrow] (res1) -- (pop);
+    \path [gtu arrow] (pop) -- (res2);
+\end{tikzpicture}
+\captionof{figure}{List Operations}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{CAMP-IS: Create, Access, Modify, Process}
+\end{mnemonicbox}
+
+\questionmarks{3(a OR)}{3}{Write a program to input a string from the user and print it in the reverse order without creating a new string.}
+
+\begin{solutionbox}
+\begin{lstlisting}[language=Python]
+s = input("Enter string: ")
+print(f"Reversed: {s[::-1]}")
+\end{lstlisting}
+
+\textbf{Reversing Logic:}
+\begin{center}
+\begin{tikzpicture}[gtu flow]
+    \foreach \x/\l in {0/H, 1/e, 2/l, 3/l, 4/o} {
+        \node[draw, minimum size=0.6cm] (n\x) at (\x*0.8, 0) {\l};
+        \node[font=\footnotesize, below=0.1cm of n\x] {\x};
+    }
+    
+    \draw[<-, thick, blue] (0,-0.6) -- (3.2,-0.6);
+    \node[below=0.7cm of n2] {Step = -1 (Backwards)};
+\end{tikzpicture}
+\captionof{figure}{String Reversal}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Slice Backwards}
+\end{mnemonicbox}
+
+\questionmarks{3(b OR)}{4}{List the dictionary operations in python and explain each with suitable examples.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{Dictionary Operations}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Operation} & \textbf{Syntax} & \textbf{Description} \\ \hline
+Access & \code{d['key']} & Get value \\ \hline
+Add/Mod & \code{d['k'] = v} & Insert/Update \\ \hline
+Delete & \code{del d['k']} & Remove pair \\ \hline
+Check & \code{'k' in d} & Membership \\ \hline
+Length & \code{len(d)} & Count items \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{CADMIL: Create Access Delete Modify Iterate Length}
+\end{mnemonicbox}
+
+\questionmarks{3(c OR)}{7}{Explain Python's set data type in detail.}
+
+\begin{solutionbox}
+Set is an unordered collection of unique elements.
+
+\textbf{Set Characteristics:}
+\begin{itemize}
+    \item \textbf{Unique}: No duplicates.
+    \item \textbf{Unordered}: No index access.
+    \item \textbf{Math Ops}: Supports union, intersection.
+\end{itemize}
+
+\textbf{Set Operations Diagram:}
+\begin{center}
+\begin{tikzpicture}[gtu flow]
+    \node [gtu start] (A) {A: \{1,2\}};
+    \node [gtu start, right=1cm of A] (B) {B: \{2,3\}};
+    
+    \node [gtu block, below=1cm of A, xshift=1cm] (union) {A | B\\\{1,2,3\}};
+    \node [gtu block, below=0.5cm of union] (inter) {A \& B\\\{2\}};
+    
+    \path [gtu arrow] (A) -- (union);
+    \path [gtu arrow] (B) -- (union);
+\end{tikzpicture}
+\captionof{figure}{Set Union \& Intersection}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{SUMO: Set Unique Mutable Ordered-less}
+\end{mnemonicbox}
+
+\questionmarks{4(a)}{3}{Explain statistics module with any three methods.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{Statistics Methods}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Method} & \textbf{Description} & \textbf{Example} \\ \hline
+\code{mean()} & Average & \code{mean([1,2,3])} $\to$ 2 \\ \hline
+\code{median()} & Middle value & \code{median([1,5,9])} $\to$ 5 \\ \hline
+\code{mode()} & Most Frequent & \code{mode([1,1,2])} $\to$ 1 \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{MMM Stats}
+\end{mnemonicbox}
+
+\questionmarks{4(b)}{4}{Explain function of user define function and user defined module in Python.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{Function vs Module}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Feature} & \textbf{Function} & \textbf{Module} \\ \hline
+Unit & Code Block & File (.py) \\ \hline
+Creation & \code{def name():} & Save as .py \\ \hline
+Usage & Call \code{name()} & \code{import name} \\ \hline
+Scope & Local & Global/Imported \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{Module Structure:}
+\begin{center}
+\begin{tikzpicture}[gtu flow]
+    \node [gtu block] (main) {Main Program};
+    \node [gtu block, right=2cm of main] (mod) {Module.py};
+    \draw [gtu arrow] (main) -- node[above] {import} (mod);
+    \draw [gtu arrow] (mod) -- node[below] {functions} (main);
+\end{tikzpicture}
+\captionof{figure}{Import Relationship}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{FIR-MID}
+\end{mnemonicbox}
+
+\questionmarks{4(c)}{7}{Write a Python code using user defined function to find the factorial of a given number using recursion.}
+
+\begin{solutionbox}
+\begin{lstlisting}[language=Python]
+def factorial(n):
+    # Base case
+    if n == 0 or n == 1:
+        return 1
+    # Recursive case
+    else:
+        return n * factorial(n-1)
+
+num = int(input("Enter num: "))
+print(f"Factorial: {factorial(num)}")
+\end{lstlisting}
+
+\textbf{Recursion Visualization:}
+\begin{center}
+\begin{tikzpicture}[gtu flow]
+    \node [gtu process] (call4) {fact(4)};
+    \node [gtu process, right=0.5cm of call4] (call3) {fact(3)};
+    \node [gtu process, right=0.5cm of call3] (call2) {fact(2)};
+    \node [gtu process, right=0.5cm of call2] (call1) {fact(1)};
+    \node [gtu output, below=0.5cm of call1] (ret1) {return 1};
+    
+    \path [gtu arrow] (call4) -- (call3);
+    \path [gtu arrow] (call3) -- (call2);
+    \path [gtu arrow] (call2) -- (call1);
+    \path [gtu arrow] (call1) -- (ret1);
+    \path [gtu arrow, dashed] (ret1) -- node[below] {result} (call4.south);
+\end{tikzpicture}
+\captionof{figure}{Recursion Chain}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Number times (Number minus one)!}
+\end{mnemonicbox}
+
+\questionmarks{4(a OR)}{3}{Explain math module with any three methods.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{Math Methods}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Method} & \textbf{Description} & \textbf{Example} \\ \hline
+\code{sqrt()} & Square Root & \code{sqrt(16)} $\to$ 4.0 \\ \hline
+\code{pow()} & Power & \code{pow(2,3)} $\to$ 8.0 \\ \hline
+\code{ceil()} & Round Up & \code{ceil(4.1)} $\to$ 5 \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{SPT Math}
+\end{mnemonicbox}
+
+\questionmarks{4(b OR)}{4}{Explain the concepts of global and local variables in Python.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{Variable Scope}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Type} & \textbf{Scope} & \textbf{Access} \\ \hline
+Global & Entire Program & Anywhere \\ \hline
+Local & Inside Function & Within Function Only \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{Scope Diagram:}
+\begin{center}
+\begin{tikzpicture}[gtu flow]
+    \node [gtu block, minimum width=5cm, minimum height=3cm, label=above:Global Scope] (global) {};
+    \node [gtu block, minimum width=3cm, minimum height=1.5cm, fill=white, label=above:Function Scope] (local) at (global.center) {};
+    
+    \node at ([yshift=1cm]global.center) {global\_var};
+    \node at (local.center) {local\_var};
+\end{tikzpicture}
+\captionof{figure}{Scope Hierarchy}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{GLOBAL Goes Everywhere, LOCAL Lives in Functions}
+\end{mnemonicbox}
+
+\questionmarks{4(c OR)}{7}{Create code with user defined function to check if given string is palindrome or not.}
+
+\begin{solutionbox}
+\begin{lstlisting}[language=Python]
+def is_palindrome(text):
+    raw = text.replace(" ", "").lower()
+    return raw == raw[::-1]
+
+s = input("Enter string: ")
+if is_palindrome(s):
+    print("Palindrome")
+else:
+    print("Not Palindrome")
+\end{lstlisting}
+
+\textbf{Logic Flow:}
+\begin{center}
+\begin{tikzpicture}[gtu flow]
+    \node [gtu start] (in) {Input};
+    \node [gtu process, right=1cm of in] (clean) {Clean (space/case)};
+    \node [gtu decision, right=1cm of clean] (check) {Equals Reverse?};
+    \node [gtu output, right=1cm of check] (res) {Result};
+    
+    \path [gtu arrow] (in) -- (clean);
+    \path [gtu arrow] (clean) -- (check);
+    \path [gtu arrow] (check) -- (res);
+\end{tikzpicture}
+\captionof{figure}{Palindrome Check}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Clean, Reverse, Compare}
+\end{mnemonicbox}
+
+\questionmarks{5(a)}{3}{Define class and object with example.}
+
+\begin{solutionbox}
+\begin{itemize}
+    \item \textbf{Class}: Blueprint/Template.
+    \item \textbf{Object}: Instance of class.
+\end{itemize}
+
+\textbf{Relationship Diagram:}
+\begin{center}
+\begin{tikzpicture}[gtu flow]
+    \node [gtu class] (cls) {Class: Dog};
+    \node [gtu block, below left=1cm of cls] (o1) {Dog("Rex")};
+    \node [gtu block, below right=1cm of cls] (o2) {Dog("Buddy")};
+    
+    \draw [gtu arrow] (cls) -- (o1);
+    \draw [gtu arrow] (cls) -- (o2);
+\end{tikzpicture}
+\captionof{figure}{Instantiation}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{CAMBO: Classes Are Molds, Build Objects}
+\end{mnemonicbox}
+
+\questionmarks{5(b)}{4}{Classify constructor. Explain any one in detail.}
+
+\begin{solutionbox}
+\textbf{Types}: Default, Parameterized, Non-parameterized, Copy.
+
+\textbf{Parameterized Constructor:}
+\begin{lstlisting}[language=Python]
+class Student:
+    def __init__(self, name):
+        self.name = name
+s = Student("Alice")
+\end{lstlisting}
+
+\textbf{Execution Flow:}
+\begin{center}
+\begin{tikzpicture}[gtu flow]
+    \node [gtu start] (new) {Object Created};
+    \node [gtu process, right=1cm of new] (init) {\_\_init\_\_ called};
+    \node [gtu process, right=1cm of init] (set) {Attrs Set};
+    \node [gtu stop, right=1cm of set] (rdy) {Ready};
+    
+    \path [gtu arrow] (new) -- (init);
+    \path [gtu arrow] (init) -- (set);
+    \path [gtu arrow] (set) -- (rdy);
+\end{tikzpicture}
+\captionof{figure}{Constructor Lifecycle}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{PICAN}
+\end{mnemonicbox}
+
+\questionmarks{5(c)}{7}{Develop and explain a python code to implement hierarchical inheritance.}
+
+\begin{solutionbox}
+\begin{lstlisting}[language=Python]
+class Vehicle:
+    def start(self): print("Engine On")
+
+class Car(Vehicle):
+    def drive(self): print("Driving")
+
+class Bike(Vehicle):
+    def ride(self): print("Riding")
+
+c = Car(); c.start()
+b = Bike(); b.start()
+\end{lstlisting}
+
+\textbf{Inheritance Tree:}
+\begin{center}
+\begin{tikzpicture}[gtu flow]
+    \node [gtu class] (parent) {Vehicle};
+    \node [gtu class, below left=1cm and 0.5cm of parent] (c1) {Car};
+    \node [gtu class, below right=1cm and 0.5cm of parent] (c2) {Bike};
+    
+    \draw [gtu arrow] (parent) -- (c1);
+    \draw [gtu arrow] (parent) -- (c2);
+\end{tikzpicture}
+\captionof{figure}{Hierarchical Inheritance}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Parents Share, Children Specialize}
+\end{mnemonicbox}
+
+\questionmarks{5(a OR)}{3}{What is the \_\_init\_\_ method in Python? Explain its purpose with a suitable example.}
+
+\begin{solutionbox}
+Special method automatically called during object creation to initialize attributes.
+
+\textbf{Example:}
+\begin{lstlisting}[language=Python]
+class Rect:
+    def __init__(self, w, h):
+        self.w = w
+        self.h = h
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{ASAP: Attributes Set At Production}
+\end{mnemonicbox}
+
+\questionmarks{5(b OR)}{4}{Classify methods in Python class. Explain any one in detail.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{Method Types}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Type} & \textbf{Access} & \textbf{Decorator} \\ \hline
+Instance & \code{self} & None \\ \hline
+Class & \code{cls} & \code{@classmethod} \\ \hline
+Static & None & \code{@staticmethod} \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{Instance Method}:
+\begin{lstlisting}[language=Python]
+def display(self):
+    print(self.name)
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{SIAM: Self Is Always Mentioned}
+\end{mnemonicbox}
+
+\questionmarks{5(c OR)}{7}{Develop a Python code for Polymorphism and explain it.}
+
+\begin{solutionbox}
+\begin{lstlisting}[language=Python]
+class Dog:
+    def sound(self): return "Woof"
+
+class Cat:
+    def sound(self): return "Meow"
+
+animals = [Dog(), Cat()]
+for a in animals:
+    print(a.sound())
+\end{lstlisting}
+
+\textbf{Polymorphism Diagram:}
+\begin{center}
+\begin{tikzpicture}[gtu flow]
+    \node [gtu class] (call) {Call .sound()};
+    \node [gtu class, below left=1cm of call] (dog) {Dog: Woof};
+    \node [gtu class, below right=1cm of call] (cat) {Cat: Meow};
+    
+    \draw [gtu arrow] (call) -- node[left] {If Dog} (dog);
+    \draw [gtu arrow] (call) -- node[right] {If Cat} (cat);
+\end{tikzpicture}
+\captionof{figure}{Dynamic Binding}
+\end{center}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Same Method, Different Behavior}
+\end{mnemonicbox}
+
+\end{document}

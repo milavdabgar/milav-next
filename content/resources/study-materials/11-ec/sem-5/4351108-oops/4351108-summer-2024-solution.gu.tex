@@ -1,0 +1,1244 @@
+\documentclass{article}
+% Adjust the relative path to point to the latex-templates directory
+\input{../../../../../../latex-templates/gtu-solutions/preamble.tex}
+\input{../../../../../../latex-templates/gtu-solutions/gujarati-boxes.tex}
+\input{../../../../../../latex-templates/gtu-solutions/commands.tex}
+
+\title{OOPS \& Python Programming (4351108) - Summer 2024 Solution}
+\date{May 18, 2024}
+
+\begin{document}
+\maketitle
+
+\questionmarks{1(a)}{3}{Python માં for loop નું કાર્ય સમજાવો.}
+
+\begin{solutionbox}
+For loop એ list, tuple અથવા string જેવા sequence ના દરેક item માટે code block ને repeat કરે છે.
+
+\textbf{સિન્ટેક્સ ટેબલ}:
+\begin{center}
+\captionof{table}{For Loop Syntax}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{ઘટક} & \textbf{Syntax} & \textbf{ઉદાહરણ} \\ \hline
+મૂળભૂત & \code{for variable in sequence:} & \code{for i in [1,2,3]:} \\ \hline
+Range & \code{for i in range(n):} & \code{for i in range(5):} \\ \hline
+String & \code{for char in string:} & \code{for c in "hello":} \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{આકૃતિ}:
+\begin{center}
+\begin{tikzpicture}[gtu flow]
+    \node [gtu start] (start) {Start};
+    \node [gtu decision, below=1cm of start] (check) {Items left?};
+    \node [gtu process, below=1cm of check] (execute) {Loop Body};
+    \node [gtu process, right=1cm of execute, text width=2cm] (next) {Next Item};
+    \node [gtu stop, right=3cm of check] (end) {End};
+
+    \path [gtu arrow] (start) -- (check);
+    \path [gtu arrow] (check) -- node[right] {Yes} (execute);
+    \path [gtu arrow] (execute) -- (next);
+    \path [gtu arrow] (next) |- (check);
+    \path [gtu arrow] (check) -- node[above] {No} (end);
+\end{tikzpicture}
+\captionof{figure}{For Loop Execution Flow}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{પુનરાવર્તન}: Loop variable ને sequence માંથી દરેક value એક પછી એક મળે છે
+    \item \keyword{આપમેળે}: Python આપમેળે next item પર જવાનું handle કરે છે
+    \item \keyword{લવચીક}: Lists, strings, tuples, ranges સાથે કામ કરે છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{દરેક Item માટે, Block Execute કરો}
+\end{mnemonicbox}
+
+\questionmarks{1(b)}{4}{Python માં if-elif-else નું કાર્ય સમજાવો.}
+
+\begin{solutionbox}
+બહુ-માર્ગીય નિર્ણય માળખું જે sequence માં અનેક conditions ને ચકાસે છે.
+
+\textbf{માળખાકીય ટેબલ}:
+\begin{center}
+\captionof{table}{If-Elif-Else Structure}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Statement} & \textbf{હેતુ} & \textbf{Syntax} \\ \hline
+if & પ્રથમ શરત & \code{if condition1:} \\ \hline
+elif & વૈકલ્પિક શરતો & \code{elif condition2:} \\ \hline
+else & મૂળભૂત કેસ & \code{else:} \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{પ્રવાહ આકૃતિ}:
+\begin{center}
+\begin{tikzpicture}[gtu flow]
+    \node [gtu start] (start) {Start};
+    \node [gtu decision, below=0.5cm of start] (cond1) {if condition?};
+    \node [gtu process, left=0.5cm of cond1] (block1) {Execute if};
+    
+    \node [gtu decision, below=1.5cm of cond1] (cond2) {elif condition?};
+    \node [gtu process, left=0.5cm of cond2] (block2) {Execute elif};
+    
+    \node [gtu process, right=0.5cm of cond2] (block3) {Execute else};
+    \node [gtu stop, below=1.5cm of cond2] (end) {End};
+
+    \path [gtu arrow] (start) -- (cond1);
+    \path [gtu arrow] (cond1) -- node[above] {True} (block1);
+    \path [gtu arrow] (cond1) -- node[right] {False} (cond2);
+    \path [gtu arrow] (cond2) -- node[above] {True} (block2);
+    \path [gtu arrow] (cond2) -- node[above] {False} (block3);
+    
+    \path [gtu arrow] (block1) |- (end);
+    \path [gtu arrow] (block2) |- (end);
+    \path [gtu arrow] (block3) |- (end);
+\end{tikzpicture}
+\captionof{figure}{If-Elif-Else Logic Flow}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{ક્રમબદ્ધ}: ઉપરથી નીચે conditions ને ચકાસે છે
+    \item \keyword{વિશિષ્ટ}: માત્ર એક જ block execute થાય છે
+    \item \keyword{વૈકલ્પિક}: elif અને else વૈકલ્પિક છે
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{જો આ, અથવા જો તે, અથવા Default}
+\end{mnemonicbox}
+
+\questionmarks{1(c)}{7}{Python પ્રોગ્રામનું માળખું સમજાવો.}
+
+\begin{solutionbox}
+Python પ્રોગ્રામમાં તાર્કિક ક્રમમાં વિશિષ્ટ ઘટકો સાથે વ્યવસ્થિત માળખું હોય છે.
+
+\textbf{પ્રોગ્રામ માળખું ટેબલ}:
+\begin{center}
+\captionof{table}{Python Program Structure}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{ઘટક} & \textbf{હેતુ} & \textbf{ઉદાહરણ} \\ \hline
+Comments & દસ્તાવેજીકરણ & \code{\# This is comment} \\ \hline
+Import & બાહ્ય modules & \code{import math} \\ \hline
+Constants & નિશ્ચિત વેલ્યુઝ & \code{PI = 3.14} \\ \hline
+Functions & પુનઃઉપયોગી કોડ & \code{def function\_name():} \\ \hline
+Classes & Objects નો blueprint & \code{class ClassName:} \\ \hline
+Main code & પ્રોગ્રામ execution & \code{if \_\_name\_\_ == "\_\_main\_\_":} \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{પ્રોગ્રામ આર્કિટેક્ચર}:
+\begin{center}
+\begin{tikzpicture}[gtu flow]
+    \node [gtu block] (comments) {Comments\\(\# Documentation)};
+    \node [gtu block, below=0.5cm of comments] (imports) {Import Section\\(import modules)};
+    \node [gtu block, below=0.5cm of imports] (const) {Constants \&\\Variables};
+    \node [gtu block, below=0.5cm of const] (funcs) {Function\\Definitions};
+    \node [gtu block, below=0.5cm of funcs] (classes) {Class\\Definitions};
+    \node [gtu block, below=0.5cm of classes] (main) {Main Program\\Execution};
+
+    \path [gtu arrow] (comments) -- (imports);
+    \path [gtu arrow] (imports) -- (const);
+    \path [gtu arrow] (const) -- (funcs);
+    \path [gtu arrow] (funcs) -- (classes);
+    \path [gtu arrow] (classes) -- (main);
+\end{tikzpicture}
+\captionof{figure}{Python Program Structure}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{મોડ્યુલર}: દરેક વિભાગનો વિશિષ્ટ હેતુ હોય છે
+    \item \keyword{વાંચવા યોગ્ય}: સ્પષ્ટ સંગઠન સમજવામાં મદદ કરે છે
+    \item \keyword{જાળવણી યોગ્ય}: ફેરફાર અને debug કરવું સરળ
+    \item \keyword{માનક}: Python conventions ને અનુસરે છે
+\end{itemize}
+
+\textbf{સરળ ઉદાહરણ}:
+\begin{lstlisting}[language=Python]
+# Program to calculate area
+import math
+
+PI = 3.14159
+
+def calculate_area(radius):
+    return PI * radius * radius
+
+# Main execution
+radius = float(input("Enter radius: "))
+area = calculate_area(radius)
+print(f"Area = {area}")
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Comment, Import, Constant, Function, Class, Main}
+\end{mnemonicbox}
+
+\questionmarks{1(c OR)}{7}{Python પ્રોગ્રામિંગ લેંગવેજની વિશેષતાઓ સમજાવો.}
+
+\begin{solutionbox}
+Python ની અનન્ય લાક્ષણિકતાઓ છે જે તેને beginners અને professionals માટે લોકપ્રિય બનાવે છે.
+
+\textbf{Python વિશેષતાઓ ટેબલ}:
+\begin{center}
+\captionof{table}{Python Features}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{વિશેષતા} & \textbf{વર્ણન} & \textbf{લાભ} \\ \hline
+સરળ & સરળ syntax & ઝડપી શીખવા \\ \hline
+Interpreted & કોઈ compilation નહીં & ઝડપી development \\ \hline
+Object-Oriented & Classes અને objects & કોડની પુનઃઉપયોગીતા \\ \hline
+Open Source & ઉપયોગ માટે મફત & કોઈ licensing ખર્ચ નહીં \\ \hline
+Cross-Platform & દરેક જગ્યાએ run થાય છે & ઉચ્ચ portability \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{વિશેષતા કેટેગરીઝ}:
+\begin{center}
+\begin{tikzpicture}[gtu flow, level 1/.style={sibling distance=4cm}, level 2/.style={sibling distance=1.5cm}]
+    \node [gtu root] {Python Features}
+        child {node [gtu block] {Language}
+            child {node [gtu child] {Simple}}
+            child {node [gtu child] {Readable}}
+            child {node [gtu child] {Dynamic}}
+        }
+        child {node [gtu block] {Technical}
+            child {node [gtu child] {Interpreted}}
+            child {node [gtu child] {Portable}}
+            child {node [gtu child] {Extensible}}
+        }
+        child {node [gtu block] {Community}
+            child {node [gtu child] {Open Source}}
+            child {node [gtu child] {Libraries}}
+            child {node [gtu child] {Support}}
+        };
+\end{tikzpicture}
+\captionof{figure}{Python Features Hierarchy}
+\end{center}
+
+\begin{itemize}
+    \item \keyword{શિખાઉ-મિત્ર}: અંગ્રેજી ભાષા જેવું સરળ syntax
+    \item \keyword{બહુમુખી}: web, AI, data science, automation માટે ઉપયોગ
+    \item \keyword{સમૃદ્ધ લાયબ્રેરીઝ}: પ્રી-બિલ્ટ modules નો વિશાળ સંગ્રહ
+    \item \keyword{ડાયનેમિક ટાઇપિંગ}: variable types declare કરવાની જરૂર નથી
+\end{itemize}
+
+\textbf{કોડ ઉદાહરણ}:
+\begin{lstlisting}[language=Python]
+# Simple Python syntax
+name = "Python"
+print(f"Hello, {name}!")
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{સરળ, Interpreted, Object-Oriented, Open, Cross-platform}
+\end{mnemonicbox}
+
+\questionmarks{2(a)}{3}{સ્ટ્રિંગ પર થતાં કોઈ 3 ઓપરેશન સમજાવો.}
+
+\begin{solutionbox}
+String operations વિવિધ રીતે text data ને manipulate અને process કરે છે.
+
+\textbf{સ્ટ્રિંગ ઓપરેશન્સ ટેબલ}:
+\begin{center}
+\captionof{table}{String Operations}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{ઓપરેશન} & \textbf{Method} & \textbf{ઉદાહરણ} & \textbf{પરિણામ} \\ \hline
+જોડવું & \code{+} & \code{"Hello" + "World"} & \code{"HelloWorld"} \\ \hline
+લંબાઈ & \code{len()} & \code{len("Python")} & \code{6} \\ \hline
+મોટા અક્ષર & \code{.upper()} & \code{"hello".upper()} & \code{"HELLO"} \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{ઓપરેશન ઉદાહરણો}:
+\begin{lstlisting}[language=Python]
+text = "Python"
+# 1. જોડવું
+result1 = text + " Programming"
+# 2. લંબાઈ શોધવી
+result2 = len(text)
+# 3. મોટા અક્ષરમાં કન્વર્ટ કરવું
+result3 = text.upper()
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{જોડો, ગણો, કન્વર્ટ કરો}
+\end{mnemonicbox}
+
+\questionmarks{2(b)}{4}{તાપમાનને ફેરનહાઇટથી સેલ્સિયસ એકમમાં (C=(F-32)/1.8 સમીકરણથી) પરિવર્તિત કરવા માટેનો Python પ્રોગ્રામ વિકસાવો.}
+
+\begin{solutionbox}
+પ્રોગ્રામ user input સાથે ગાણિતિક formula વાપરીને temperature convert કરે છે.
+
+\textbf{એલ્ગોરિધમ ટેબલ}:
+\begin{center}
+\captionof{table}{Conversion Algorithm}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પગલું} & \textbf{ક્રિયા} & \textbf{કોડ} \\ \hline
+1 & Input લો & \code{fahrenheit = float(input())} \\ \hline
+2 & Formula લાગુ કરો & \code{celsius = (fahrenheit - 32) / 1.8} \\ \hline
+3 & પરિણામ દર્શાવો & \code{print(f"Celsius: \{celsius\}")} \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{સંપૂર્ણ પ્રોગ્રામ}:
+\begin{lstlisting}[language=Python]
+# Temperature conversion program
+fahrenheit = float(input("Enter temperature in Fahrenheit: "))
+celsius = (fahrenheit - 32) / 1.8
+print(f"Temperature in Celsius: {celsius:.2f}")
+\end{lstlisting}
+
+\textbf{ટેસ્ટ કેસેસ}:
+\begin{itemize}
+    \item Input: 32$^\circ$F $\rightarrow$ Output: 0.00$^\circ$C
+    \item Input: 100$^\circ$F $\rightarrow$ Output: 37.78$^\circ$C
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Input, Calculate, Output}
+\end{mnemonicbox}
+
+\questionmarks{2(c)}{7}{Python માં list ડેટા ટાઇપ વિસ્તૃત રીતે સમજાવો.}
+
+\begin{solutionbox}
+List એ ordered, mutable collection છે જે single variable માં multiple items store કરે છે.
+
+\textbf{લિસ્ટ લાક્ષણિકતાઓ ટેબલ}:
+\begin{center}
+\captionof{table}{List Characteristics}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પ્રોપર્ટી} & \textbf{વર્ણન} & \textbf{ઉદાહરણ} \\ \hline
+ક્રમબદ્ધ & Items નો position હોય છે & \code{[1, 2, 3]} \\ \hline
+પરિવર્તનશીલ & બદલાઈ શકાય છે & \code{list[0] = 10} \\ \hline
+ઇન્ડેક્સ્ડ & Position દ્વારા access & \code{list[0]} \\ \hline
+મિશ્ર પ્રકારો & વિવિધ data types & \code{[1, "hello", 3.14]} \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{લિસ્ટ ઓપરેશન્સ આકૃતિ}:
+\begin{center}
+\begin{tikzpicture}[gtu flow]
+    \node [gtu block, minimum width=4cm] (list) {List: [10, 20, 30, 40]\\Index: 0~~ 1~~ 2~~ 3};
+    
+    \node [gtu input, below left=1cm and 0.5cm of list] (access) {Access\\list[0]};
+    \node [gtu process, below right=1cm and 0.5cm of list] (modify) {Modify\\list[0]=50};
+    
+    \node [gtu output, below=1cm of access] (res1) {"10"};
+    \node [gtu output, below=1cm of modify] (res2) {[50, 20, 30, 40]};
+    
+    \path [gtu arrow] (list) -- (access);
+    \path [gtu arrow] (list) -- (modify);
+    \path [gtu arrow] (access) -- (res1);
+    \path [gtu arrow] (modify) -- (res2);
+\end{tikzpicture}
+\captionof{figure}{List Operations}
+\end{center}
+
+\textbf{સામાન્ય લિસ્ટ મેથડ્સ}:
+\begin{itemize}
+    \item \code{append()}: અંતે item ઉમેરો
+    \item \code{insert()}: position પર ઉમેરો
+    \item \code{remove()}: item ડિલીટ કરો
+    \item \code{pop()}: છેલ્લું item દૂર કરો
+\end{itemize}
+
+\textbf{ઉદાહરણ કોડ}:
+\begin{lstlisting}[language=Python]
+# Creating and using lists
+numbers = [1, 2, 3, 4, 5]
+numbers.append(6)        # અંતે 6 ઉમેરો
+numbers.insert(0, 0)     # શરૂઆતમાં 0 ઉમેરો
+print(numbers[2])        # 3જું element access કરો
+numbers.remove(3)        # value 3 દૂર કરો
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{ક્રમબદ્ધ, પરિવર્તનશીલ, ઇન્ડેક્સ્ડ, મિશ્ર}
+\end{mnemonicbox}
+
+\questionmarks{2(a OR)}{3}{Python માં સ્ટ્રિંગ ફોર્મેટિંગ સમજાવો.}
+
+\begin{solutionbox}
+String formatting એ templates માં values insert કરીને formatted strings બનાવે છે.
+
+\textbf{ફોર્મેટિંગ મેથડ્સ ટેબલ}:
+\begin{center}
+\captionof{table}{Formatting Methods}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Method} & \textbf{Syntax} & \textbf{ઉદાહરણ} \\ \hline
+f-strings & \code{f"text \{variable\}"} & \code{f"Hello \{name\}"} \\ \hline
+format() & \code{"text \{\}".format(value)} & \code{"Age: \{\}".format(25)} \\ \hline
+\% operator & \code{"text \%s" \% value} & \code{"Name: \%s" \% "John"} \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{ઉપયોગ ઉદાહરણ}:
+\begin{lstlisting}[language=Python]
+name = "Alice"
+age = 25
+# f-string formatting
+message = f"Hello {name}, you are {age} years old"
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Format, Insert, Display}
+\end{mnemonicbox}
+
+\questionmarks{2(b OR)}{4}{સ્કેન કરેલ નંબર એકી સંખ્યા છે કે બેકી સંખ્યા છે તે ઓળખી અને યોગ્ય મેસેજ પ્રિન્ટ કરતો Python પ્રોગ્રામ વિકસાવો.}
+
+\begin{solutionbox}
+પ્રોગ્રામ number 2 થી divisible છે કે નહીં તે ચકાસીને even અથવા odd નક્કી કરે છે.
+
+\textbf{લૉજિક ટેબલ}:
+\begin{center}
+\captionof{table}{Even/Odd Logic}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{શરત} & \textbf{પરિણામ} & \textbf{મેસેજ} \\ \hline
+number \% 2 == 0 & Even & "Number is even" \\ \hline
+number \% 2 != 0 & Odd & "Number is odd" \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{સંપૂર્ણ પ્રોગ્રામ}:
+\begin{lstlisting}[language=Python]
+# Even/Odd checker program
+number = int(input("Enter a number: "))
+if number % 2 == 0:
+    print(f"{number} is even")
+else:
+    print(f"{number} is odd")
+\end{lstlisting}
+
+\textbf{ટેસ્ટ કેસેસ}:
+\begin{itemize}
+    \item Input: 4 $\rightarrow$ Output: "4 is even"
+    \item Input: 7 $\rightarrow$ Output: "7 is odd"
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Input, Check Remainder, Display Result}
+\end{mnemonicbox}
+
+\questionmarks{2(c OR)}{7}{Python માં Set ડેટા ટાઇપ વિસ્તૃત રીતે સમજાવો.}
+
+\begin{solutionbox}
+Set એ unordered collection છે જેમાં unique items હોય છે અને duplicate values નહીં.
+
+\textbf{સેટ લાક્ષણિકતાઓ ટેબલ}:
+\begin{center}
+\captionof{table}{Set Characteristics}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પ્રોપર્ટી} & \textbf{વર્ણન} & \textbf{ઉદાહરણ} \\ \hline
+અક્રમ & કોઈ નિશ્ચિત position નથી & \code{\{1, 3, 2\}} \\ \hline
+અનન્ય & કોઈ duplicates નથી & \code{\{1, 2, 3\}} \\ \hline
+પરિવર્તનશીલ & ફેરફાર કરી શકાય & \code{set.add(4)} \\ \hline
+પુનરાવર્તન યોગ્ય & Loop કરી શકાય & \code{for item in set:} \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{સેટ ઓપરેશન્સ આકૃતિ}:
+\begin{center}
+\begin{tikzpicture}[gtu flow]
+    \node [gtu start] (setA) {Set A: \{1, 2, 3\}};
+    \node [gtu start, right=2cm of setA] (setB) {Set B: \{3, 4, 5\}};
+    
+    \node [gtu block, below=1cm of setA, xshift=2cm] (union) {Union\\\{1, 2, 3, 4, 5\}};
+    \node [gtu block, below=0.5cm of union] (ix) {Intersection\\\{3\}};
+    \node [gtu block, below=0.5cm of ix] (diff) {Difference\\\{1, 2\}};
+    
+    \path [gtu arrow] (setA) -- (union);
+    \path [gtu arrow] (setB) -- (union);
+\end{tikzpicture}
+\captionof{figure}{Set Operations}
+\end{center}
+
+\textbf{સેટ મેથડ્સ ટેબલ}:
+\begin{center}
+\captionof{table}{Set Methods}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{Method} & \textbf{હેતુ} & \textbf{ઉદાહરણ} \\ \hline
+add() & single item ઉમેરો & \code{set.add(6)} \\ \hline
+update() & multiple items ઉમેરો & \code{set.update([7, 8])} \\ \hline
+remove() & item ડિલીટ કરો & \code{set.remove(3)} \\ \hline
+union() & sets જોડો & \code{set1.union(set2)} \\ \hline
+intersection() & સામાન્ય items & \code{set1.intersection(set2)} \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{ઉદાહરણ કોડ}:
+\begin{lstlisting}[language=Python]
+# Creating and using sets
+fruits = {"apple", "banana", "orange"}
+fruits.add("mango")              # single item ઉમેરો
+fruits.update(["grape", "kiwi"]) # multiple ઉમેરો
+fruits.remove("banana")          # item દૂર કરો
+print(len(fruits))               # items ગણો
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{અનન્ય, અક્રમ, પરિવર્તનશીલ, ગાણિતિક}
+\end{mnemonicbox}
+
+\questionmarks{3(a)}{3}{math મૉડ્યુલની કોઈ પણ 3 મેથડ સમજાવો.}
+
+\begin{solutionbox}
+Math module જટિલ ગણતરીઓ માટે ગાણિતિક functions પ્રદાન કરે છે.
+
+\textbf{મેથ મેથડ્સ ટેબલ}:
+\begin{center}
+\captionof{table}{Math Methods}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{Method} & \textbf{હેતુ} & \textbf{ઉદાહરણ} & \textbf{પરિણામ} \\ \hline
+math.sqrt() & વર્ગમૂળ & \code{math.sqrt(16)} & \code{4.0} \\ \hline
+math.pow() & પાવર ગણતરી & \code{math.pow(2, 3)} & \code{8.0} \\ \hline
+math.ceil() & ઉપર રાઉન્ડ & \code{math.ceil(4.3)} & \code{5} \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{ઉપયોગ ઉદાહરણ}:
+\begin{lstlisting}[language=Python]
+import math
+number = 16
+result1 = math.sqrt(number)  # વર્ગમૂળ
+result2 = math.pow(2, 4)     # 2 ની પાવર 4
+result3 = math.ceil(7.2)     # 8 સુધી રાઉન્ડ અપ
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{વર્ગમૂળ, પાવર, સીલિંગ}
+\end{mnemonicbox}
+
+\questionmarks{3(b)}{4}{for loop નો ઉપયોગ કરીને લિસ્ટમાં આવેલ તમામ ઘટકોનો સરવાળો શોધવા માટેનો Python પ્રોગ્રામ વિકસાવો.}
+
+\begin{solutionbox}
+પ્રોગ્રામ list દ્વારા iterate કરે છે અને બધા elements નો sum accumulate કરે છે.
+
+\textbf{એલ્ગોરિધમ ટેબલ}:
+\begin{center}
+\captionof{table}{Summation Algorithm}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પગલું} & \textbf{ક્રિયા} & \textbf{કોડ} \\ \hline
+1 & Sum initialize કરો & \code{total = 0} \\ \hline
+2 & List માં loop કરો & \code{for element in list:} \\ \hline
+3 & Sum માં ઉમેરો & \code{total += element} \\ \hline
+4 & પરિણામ દર્શાવો & \code{print(total)} \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{સંપૂર્ણ પ્રોગ્રામ}:
+\begin{lstlisting}[language=Python]
+# Sum of list elements
+numbers = [10, 20, 30, 40, 50]
+total = 0
+for element in numbers:
+    total += element
+print(f"Sum of all elements: {total}")
+\end{lstlisting}
+
+\textbf{ટેસ્ટ કેસ}:
+\begin{itemize}
+    \item Input: [1, 2, 3, 4, 5] $\rightarrow$ Output: 15
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Initialize, Loop, Add, Display}
+\end{mnemonicbox}
+
+\questionmarks{3(c)}{7}{બે list ની લંબાઈ સમાન છે કે નહીં તે ચકાસવા, અને જો હોય તો તેમને ભેગા કરીને તેમાંથી એક dictionary બનાવવાનો Python પ્રોગ્રામ વિકસાવો.}
+
+\begin{solutionbox}
+પ્રોગ્રામ list lengths ની સરખામણી કરે છે અને જો તે match કરે તો dictionary બનાવે છે.
+
+\textbf{લૉજિક ફ્લો ટેબલ}:
+\begin{center}
+\captionof{table}{Merge Logic}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પગલું} & \textbf{શરત} & \textbf{ક્રિયા} \\ \hline
+1 & લંબાઈ ચકાસો & \code{len(list1) == len(list2)} \\ \hline
+2 & જો સમાન & Merge અને dictionary બનાવો \\ \hline
+3 & જો અસમાન & Error message દર્શાવો \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{પ્રક્રિયા આકૃતિ}:
+\begin{center}
+\begin{tikzpicture}[gtu flow]
+    \node [gtu block] (l1) {List1};
+    \node [gtu block, right=2cm of l1] (l2) {List2};
+    \node [gtu decision, below=1cm of l1, xshift=2cm] (check) {Length Equal?};
+    \node [gtu process, below left=1cm and 0.5cm of check] (create) {Create Dict\\dict(zip(l1,l2))};
+    \node [gtu process, below right=1cm and 0.5cm of check] (err) {Error Message};
+    
+    \path [gtu arrow] (l1) -- (check);
+    \path [gtu arrow] (l2) -- (check);
+    \path [gtu arrow] (check) -- node[left] {Yes} (create);
+    \path [gtu arrow] (check) -- node[right] {No} (err);
+\end{tikzpicture}
+\captionof{figure}{List Merge Logic}
+\end{center}
+
+\textbf{સંપૂર્ણ પ્રોગ્રામ}:
+\begin{lstlisting}[language=Python]
+# Merge lists into dictionary
+list1 = ['name', 'age', 'city']
+list2 = ['John', 25, 'Mumbai']
+
+if len(list1) == len(list2):
+    # Create dictionary using zip
+    result_dict = dict(zip(list1, list2))
+    print("Dictionary created:", result_dict)
+else:
+    print("Lists have different lengths, cannot merge")
+\end{lstlisting}
+
+\textbf{અપેક્ષિત આઉટપુટ}:
+\begin{lstlisting}
+Dictionary created: {'name': 'John', 'age': 25, 'city': 'Mumbai'}
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{લંબાઈ ચકાસો, Zip કરો, Dictionary બનાવો}
+\end{mnemonicbox}
+
+\questionmarks{3(a OR)}{3}{statistics મૉડ્યુલની કોઈ પણ 3 મેથડ સમજાવો.}
+
+\begin{solutionbox}
+Statistics module numeric data પર statistical calculations માટે functions પ્રદાન કરે છે.
+
+\textbf{સ્ટેટિસ્ટિક્સ મેથડ્સ ટેબલ}:
+\begin{center}
+\captionof{table}{Statistics Methods}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{Method} & \textbf{હેતુ} & \textbf{ઉદાહરણ} & \textbf{પરિણામ} \\ \hline
+statistics.mean() & સરેરાશ value & \code{mean([1,2,3,4,5])} & \code{3.0} \\ \hline
+statistics.median() & મધ્ય value & \code{median([1,2,3,4,5])} & \code{3} \\ \hline
+statistics.mode() & સૌથી વધુ વારંવાર & \code{mode([1,1,2,3])} & \code{1} \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{ઉપયોગ ઉદાહરણ}:
+\begin{lstlisting}[language=Python]
+import statistics
+data = [10, 20, 30, 40, 50]
+avg = statistics.mean(data)      # સરેરાશ કેલ્ક્યુલેટ કરો
+mid = statistics.median(data)    # મધ્ય value શોધો
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Mean, Median, Mode}
+\end{mnemonicbox}
+
+\questionmarks{3(c OR)}{7}{આપેલ સ્ટ્રિંગમાં કોઈ અક્ષર કેટલી વાર આવે છે તે ગણવા માટેની dictionary બનાવવાનો Python પ્રોગ્રામ વિકસાવો.}
+
+\begin{solutionbox}
+પ્રોગ્રામ dictionary બનાવે છે જ્યાં keys અક્ષરો છે અને values તેમની counts છે.
+
+\textbf{અક્ષર ગણતરી એલ્ગોરિધમ}:
+\begin{center}
+\captionof{table}{Counting Algorithm}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પગલું} & \textbf{ક્રિયા} & \textbf{કોડ} \\ \hline
+1 & Dictionary initialize કરો & \code{char\_count = \{\}} \\ \hline
+2 & String માં loop કરો & \code{for char in string:} \\ \hline
+3 & Occurrences ગણો & \code{char\_count[char] = get() + 1} \\ \hline
+4 & પરિણામો દર્શાવો & \code{print(char\_count)} \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{ગણતરી પ્રક્રિયા}:
+\begin{center}
+\begin{tikzpicture}[gtu flow]
+    \node [gtu start] (string) {String: "hello"};
+    \node [gtu process, below=1cm of string] (loop) {Loop each char};
+    \node [gtu database, below=1cm of loop] (dict) {Dictionary\\\{'h':1, 'e':1, 'l':2, 'o':1\}};
+    
+    \path [gtu arrow] (string) -- (loop);
+    \path [gtu arrow] (loop) -- (dict);
+\end{tikzpicture}
+\captionof{figure}{Character Counting Logic}
+\end{center}
+
+\textbf{સંપૂર્ણ પ્રોગ્રામ}:
+\begin{lstlisting}[language=Python]
+# Character frequency counter
+text = input("Enter a string: ")
+char_count = {}
+
+for char in text:
+    if char in char_count:
+        char_count[char] += 1
+    else:
+        char_count[char] = 1
+
+print("Character frequencies:")
+for char, count in char_count.items():
+    print(f"'{char}': {count}")
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Loop, Check, Count, Store}
+\end{mnemonicbox}
+
+\questionmarks{4(a)}{3}{Python ક્લાસ અને ઓબ્જેક્ટ્સનું કાર્ય ઉદાહરણ સાથે સમજાવો.}
+
+\begin{solutionbox}
+Class એ objects બનાવવા માટેનો blueprint છે. Objects એ classes ના instances છે.
+
+\textbf{ક્લાસ-ઓબ્જેક્ટ સંબંધ}:
+\begin{center}
+\captionof{table}{Class vs Object}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{કન્સેપ્ટ} & \textbf{હેતુ} & \textbf{ઉદાહરણ} \\ \hline
+Class & Template/Blueprint & \code{class Car:} \\ \hline
+Object & Class નો instance & \code{my\_car = Car()} \\ \hline
+Attributes & Class માં ડેટા & \code{self.color = "red"} \\ \hline
+Methods & Class માં functions & \code{def start(self):} \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{ક્લાસ માળખું આકૃતિ}:
+\begin{center}
+\begin{tikzpicture}[gtu flow]
+    \node [gtu class] (class) {\textbf{Class: Car}\\Attributes: color, model\\Methods: start(), stop()};
+    \node [gtu object, below=1.5cm of class] (obj) {\textbf{Object}\\my\_car = Car()};
+    
+    \draw [gtu arrow] (class) -- node[right] {Instantiate} (obj);
+\end{tikzpicture}
+\captionof{figure}{Class and Object}
+\end{center}
+
+\textbf{ઉદાહરણ કોડ}:
+\begin{lstlisting}[language=Python]
+class Student:
+    def __init__(self, name, age):
+        self.name = name  # Attribute
+        self.age = age    # Attribute
+    
+    def display(self):    # Method
+        print(f"Name: {self.name}, Age: {self.age}")
+
+# Creating objects
+student1 = Student("Alice", 20)
+student1.display()
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{ક્લાસ Blueprint, ઓબ્જેક્ટ Instance}
+\end{mnemonicbox}
+
+\questionmarks{4(b)}{4}{લિસ્ટમાં આવેલી તમામ એકી સંખ્યાઓ પ્રિન્ટ કરવા માટેનો Python પ્રોગ્રામ વિકસાવો.}
+
+\begin{solutionbox}
+પ્રોગ્રામ list elements ને filter કરે છે અને માત્ર odd numbers દર્શાવે છે.
+
+\textbf{એકી સંખ્યા ચકાસણી ટેબલ}:
+\begin{center}
+\captionof{table}{Odd Number Logic}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{સંખ્યા} & \textbf{Mod 2 (mod)} & \textbf{પરિણામ} \\ \hline
+1 & 1 & એકી \\ \hline
+2 & 0 & બેકી \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{સંપૂર્ણ પ્રોગ્રામ}:
+\begin{lstlisting}[language=Python]
+# Print odd numbers from list
+numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+print("Odd numbers in the list:")
+for number in numbers:
+    if number % 2 != 0:
+        print(number, end=" ")
+\end{lstlisting}
+
+\textbf{અપેક્ષિત આઉટપુટ}:
+\begin{lstlisting}
+Odd numbers in the list:
+1 3 5 7 9
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Loop, Check Remainder, Print Odd}
+\end{mnemonicbox}
+
+\questionmarks{4(c)}{7}{Python માં યુઝર ડિફાઇન્ડ ફંક્શન્સનું કાર્ય સમજાવો.}
+
+\begin{solutionbox}
+User-defined functions એ programmers દ્વારા બનાવેલા custom functions છે જે વિશિષ્ટ કાર્યો કરે છે.
+
+\textbf{ફંક્શન ઘટકો ટેબલ}:
+\begin{center}
+\captionof{table}{Function Components}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{ઘટક} & \textbf{હેતુ} & \textbf{Syntax} \\ \hline
+def કીવર્ડ & Function declaration & \code{def function\_name():} \\ \hline
+Parameters & Input values & \code{def func(param1, param2):} \\ \hline
+Body & Function code & Indented statements \\ \hline
+return & Output value & \code{return value} \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{ફંક્શન માળખું}:
+\begin{center}
+\begin{tikzpicture}[gtu flow]
+    \node [gtu process] (def) {def function\_name(parameters):};
+    \node [gtu block, below=0.5cm of def] (body) {Function Body\\- Local variables\\- Processing logic};
+    \node [gtu output, below=0.5cm of body] (ret) {return result};
+    
+    \path [gtu arrow] (def) -- (body);
+    \path [gtu arrow] (body) -- (ret);
+\end{tikzpicture}
+\captionof{figure}{Function Anatomy}
+\end{center}
+
+\textbf{ફંક્શન પ્રકારો}:
+\begin{itemize}
+    \item કોઈ parameters નહીં: \code{def greet():}
+    \item Parameters સાથે: \code{def add(a, b):}
+    \item Return value: \code{return a + b}
+    \item કોઈ return નહીં: \code{print("Hello")}
+\end{itemize}
+
+\textbf{ઉદાહરણ ફંક્શન્સ}:
+\begin{lstlisting}[language=Python]
+# Function with parameters and return value
+def calculate_area(length, width):
+    area = length * width
+    return area
+
+# Using functions
+result = calculate_area(5, 3)
+print(f"Area: {result}")
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Define, Parameters, Body, Return}
+\end{mnemonicbox}
+
+\questionmarks{4(a OR)}{3}{Python માં કન્સ્ટ્રક્ટરનું કાર્ય સમજાવો.}
+
+\begin{solutionbox}
+Constructor એ special method છે જે objects બનાવવામાં આવે ત્યારે તેમને initialize કરે છે.
+
+\textbf{કન્સ્ટ્રક્ટર વિગતો ટેબલ}:
+\begin{center}
+\captionof{table}{Constructor Details}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પાસું} & \textbf{વર્ણન} & \textbf{Syntax} \\ \hline
+Method name & હંમેશા \code{\_\_init\_\_} & \code{def \_\_init\_\_(self):} \\ \hline
+હેતુ & Object initialize કરવું & Initial values set કરવા \\ \hline
+આપમેળે કૉલ & Object creation દરમ્યાન કૉલ થાય & \code{obj = Class()} \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{કન્સ્ટ્રક્ટર ઉદાહરણ}:
+\begin{lstlisting}[language=Python]
+class Student:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+        print("Student object created")
+
+# Object creation automatically calls constructor
+student1 = Student("Alice", 20)
+\end{lstlisting}
+
+\begin{itemize}
+    \item \keyword{આપમેળે એક્ઝિક્યુશન}: Object બનાવાતી વખતે તરત જ run થાય છે
+    \item \keyword{ઇનિશિયલાઇઝેશન}: Object ની શરૂઆતી state set કરે છે
+    \item \keyword{self પેરામીટર}: હાલનો object જે બનાવાઈ રહ્યો છે તેનો reference
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Initialize, Automatic, Self}
+\end{mnemonicbox}
+
+\questionmarks{4(b OR)}{4}{min ફંક્શનનો ઉપયોગ કર્યા વિના લિસ્ટમાંથી સૌથી નાનો નંબર શોધવા માટેનો Python પ્રોગ્રામ વિકસાવો.}
+
+\begin{solutionbox}
+પ્રોગ્રામ manually બધા elements ની સરખામણી કરીને સૌથી નાની value શોધે છે.
+
+\textbf{મિનિમમ શોધવાનો એલ્ગોરિધમ}:
+\begin{center}
+\captionof{table}{Min Finding Algorithm}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પગલું} & \textbf{ક્રિયા} & \textbf{કોડ} \\ \hline
+1 & પહેલું smallest માનો & \code{smallest = list[0]} \\ \hline
+2 & બીજાઓ સાથે સરખાવો & \code{for num in list[1:]:} \\ \hline
+3 & નાનું મળે તો અપડેટ કરો & \code{if num < smallest:} \\ \hline
+4 & પરિણામ દર્શાવો & \code{print(smallest)} \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{સંપૂર્ણ પ્રોગ્રામ}:
+\begin{lstlisting}[language=Python]
+# Find smallest number without min()
+numbers = [45, 23, 67, 12, 89, 5, 34]
+
+smallest = numbers[0]  # પ્રથમને smallest માનો
+
+for i in range(1, len(numbers)):
+    if numbers[i] < smallest:
+        smallest = numbers[i]
+
+print(f"Smallest number: {smallest}")
+\end{lstlisting}
+
+\textbf{અપેક્ષિત આઉટપુટ}:
+\begin{lstlisting}
+Smallest number: 5
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{માનો, સરખાવો, અપડેટ કરો, દર્શાવો}
+\end{mnemonicbox}
+
+\questionmarks{4(c OR)}{7}{Python માં યુઝર ડિફાઇન્ડ મોડ્યુલ્સનું કાર્ય સમજાવો.}
+
+\begin{solutionbox}
+User-defined modules એ custom Python files છે જેમાં functions, classes અને variables હોય છે જે અન્ય programs માં import અને use કરી શકાય છે.
+
+\textbf{મોડ્યુલ ઘટકો}: Functions, Classes, Variables, Constants.
+
+\textbf{મોડ્યુલ બનાવવાની પ્રક્રિયા}:
+\begin{center}
+\begin{tikzpicture}[gtu flow]
+    \node [gtu start] (step1) {Step 1: .py file બનાવો};
+    \node [gtu process, below=0.5cm of step1] (step2) {Step 2: Functions/classes લખો};
+    \node [gtu process, below=0.5cm of step2] (step3) {Step 3: Save file};
+    \node [gtu process, below=0.5cm of step3] (step4) {Step 4: અન્ય programs માં import};
+    \node [gtu stop, below=0.5cm of step4] (step5) {Step 5: Module વાપરો};
+    
+    \path [gtu arrow] (step1) -- (step2);
+    \path [gtu arrow] (step2) -- (step3);
+    \path [gtu arrow] (step3) -- (step4);
+    \path [gtu arrow] (step4) -- (step5);
+\end{tikzpicture}
+\captionof{figure}{Module Lifecycle}
+\end{center}
+
+\textbf{ઉદાહરણ મોડ્યુલ (math\_operations.py)}:
+\begin{lstlisting}[language=Python]
+PI = 3.14159
+
+def calculate_circle_area(radius):
+    return PI * radius * radius
+\end{lstlisting}
+
+\textbf{મુખ્ય પ્રોગ્રામ}:
+\begin{lstlisting}[language=Python]
+import math_operations
+
+# Module functions વાપરવા
+radius = 5
+area = math_operations.calculate_circle_area(radius)
+print(f"Circle area: {area}")
+\end{lstlisting}
+
+\textbf{મોડ્યુલ લાભો}:
+\begin{itemize}
+    \item \keyword{કોડ પુનઃઉપયોગીતા}: એકવાર લખો, અનેક programs માં વાપરો
+    \item \keyword{સંગઠન}: સંબંધિત functions એકસાથે રાખો
+    \item \keyword{નેમસ્પેસ}: Naming conflicts ટાળો
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{ફાઇલ બનાવો, ફંક્શન્સ ડિફાઇન કરો, ઇમ્પોર્ટ કરો, વાપરો}
+\end{mnemonicbox}
+
+\questionmarks{5(a)}{3}{ઉદાહરણ સાથે Python માં સિંગલ ઇન્હેરિટન્સ સમજાવો.}
+
+\begin{solutionbox}
+Single inheritance એ જ્યારે એક class બરાબર એક parent class પાસેથી properties અને methods inherit કરે છે.
+
+\textbf{ઇન્હેરિટન્સ માળખું}: Parent Class (Base) $\rightarrow$ Child Class (Derived).
+
+\textbf{ઇન્હેરિટન્સ આકૃતિ}:
+\begin{center}
+\begin{tikzpicture}[gtu flow]
+    \node [gtu class] (parent) {\textbf{Parent: Animal}\\Attributes: name, age\\Methods: eat(), sleep()};
+    \node [gtu class, below=1.5cm of parent] (child) {\textbf{Child: Dog}\\Inherited: name, eat()\\Own: bark()};
+    
+    \draw [gtu arrow, dashed] (parent) -- node[right] {inherits} (child);
+\end{tikzpicture}
+\captionof{figure}{Single Inheritance}
+\end{center}
+
+\textbf{ઉદાહરણ કોડ}:
+\begin{lstlisting}[language=Python]
+class Animal:
+    def eat(self):
+        print("Eating")
+
+class Dog(Animal):
+    def bark(self):
+        print("Barking")
+
+my_dog = Dog()
+my_dog.eat()    # Inherited
+my_dog.bark()   # Own
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{એક Parent, એક Child}
+\end{mnemonicbox}
+
+\questionmarks{5(b)}{4}{Python માં એબ્સ્ટ્રેક્શનની વિભાવના અને તેના લાભો સમજાવો.}
+
+\begin{solutionbox}
+Abstraction જટિલ implementation details છુપાવે છે અને user ને માત્ર આવશ્યક features બતાવે છે.
+
+\textbf{એબ્સ્ટ્રેક્શન કન્સેપ્ટ્સ}:
+\begin{itemize}
+    \item \textbf{Abstract Class}: Instantiate કરી શકાતું નથી (\code{class Shape(ABC):})
+    \item \textbf{Abstract Method}: Implement કરવું જ પડે (\code{@abstractmethod})
+\end{itemize}
+
+\textbf{Implementation}:
+\begin{lstlisting}[language=Python]
+from abc import ABC, abstractmethod
+
+class Shape(ABC):
+    @abstractmethod
+    def area(self):
+        pass
+
+class Rectangle(Shape):
+    def area(self):
+        return self.length * self.width
+\end{lstlisting}
+
+\textbf{લાભો}:
+\begin{itemize}
+    \item \keyword{સરળતા}: જટિલ details છુપાવે
+    \item \keyword{સુરક્ષા}: આંતરિક implementation છુપાવે
+    \item \keyword{જાળવણીયોગ્યતા}: Implementation બદલી શકાય
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{વિગતો છુપાવો, Interface બતાવો}
+\end{mnemonicbox}
+
+\questionmarks{5(c)}{7}{મલ્ટિપલ અને મલ્ટિ-લેવલ ઇન્હેરિટન્સનું કાર્ય દર્શાવતો Python પ્રોગ્રામ વિકસાવો.}
+
+\begin{solutionbox}
+પ્રોગ્રામ બંને inheritance types દર્શાવે છે: multiple (અનેક parents) અને multi-level (inheritance ની chain).
+
+\textbf{ઇન્હેરિટન્સ પદાનુક્રમ}:
+\begin{center}
+\begin{tikzpicture}[gtu flow]
+    % Multiple
+    \node [gtu class] (father) {Father};
+    \node [gtu class, right=1cm of father] (mother) {Mother};
+    \node [gtu class, below right=1cm and -0.5cm of father] (child) {Child};
+    \draw [gtu arrow] (father) -- (child);
+    \draw [gtu arrow] (mother) -- (child);
+    \node [above=0.2cm of father] {Multiple};
+    
+    % Multi-level
+    \node [gtu class, right=3cm of mother] (gpar) {Animal};
+    \node [gtu class, below=0.5cm of gpar] (par) {Mammal};
+    \node [gtu class, below=0.5cm of par] (kid) {Dog};
+    \draw [gtu arrow] (gpar) -- (par);
+    \draw [gtu arrow] (par) -- (kid);
+    \node [above=0.2cm of gpar] {Multi-level};
+\end{tikzpicture}
+\captionof{figure}{Inheritance Types}
+\end{center}
+
+\textbf{સંપૂર્ણ પ્રોગ્રામ}:
+\begin{lstlisting}[language=Python]
+print("=== Multi-level Inheritance ===")
+class Animal:
+    def eat(self): print("Eating")
+class Mammal(Animal):
+    def breathe(self): print("Breathing")
+class Dog(Mammal):
+    def bark(self): print("Barking")
+
+d = Dog()
+d.eat(); d.breathe(); d.bark()
+
+print("\n=== Multiple Inheritance ===")
+class Father:
+    def f_method(self): print("Father")
+class Mother:
+    def m_method(self): print("Mother")
+class Child(Father, Mother):
+    pass
+
+c = Child()
+c.f_method(); c.m_method()
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{અનેક Parents, મલ્ટિ-લેવલ Chain}
+\end{mnemonicbox}
+
+\questionmarks{5(a OR)}{3}{Python માં આવતી 3 પ્રકારની મેથડ્સનું કાર્ય સમજાવો.}
+
+\begin{solutionbox}
+Python classes માં ત્રણ પ્રકારની methods છે જે class data ને કેવી રીતે access કરે છે તેના આધારે.
+
+\textbf{મેથડ પ્રકારો ટેબલ}:
+\begin{center}
+\captionof{table}{Method Types}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{મેથડ પ્રકાર} & \textbf{પ્રથમ Parameter} & \textbf{હેતુ} \\ \hline
+Instance Method & \code{self} & Instance data access \\ \hline
+Class Method & \code{cls} & Class data access \\ \hline
+Static Method & કોઈ નહીં & Utility functions \\ \hline
+\end{tabulary}
+\end{center}
+
+\textbf{ઉદાહરણ કોડ}:
+\begin{lstlisting}[language=Python]
+class Student:
+    school = "ABC"
+    def display(self): pass           # Instance
+    @classmethod
+    def get_school(cls): pass         # Class
+    @staticmethod
+    def is_adult(age): pass           # Static
+\end{lstlisting}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{Instance Self, Class Cls, Static કોઈ નહીં}
+\end{mnemonicbox}
+
+\questionmarks{5(b OR)}{4}{Python માં ઇન્હેરિટન્સ દ્વારા પોલીમોર્ફિઝમ સમજાવો.}
+
+\begin{solutionbox}
+Polymorphism વિવિધ classes ના objects ને સામાન્ય base class ના objects તરીકે treat કરવાની મંજૂરી આપે છે.
+
+\textbf{મુખ્ય કન્સેપ્ટ}: સમાન method name, અલગ implementation.
+
+\textbf{ઉદાહરણ}:
+\begin{lstlisting}[language=Python]
+class Shape:
+    def area(self): pass
+
+class Rectangle(Shape):
+    def area(self): return self.l * self.w
+
+class Circle(Shape):
+    def area(self): return 3.14 * self.r * self.r
+
+shapes = [Rectangle(5,3), Circle(4)]
+for s in shapes:
+    print(s.area())  # Polymorphic call
+\end{lstlisting}
+
+\begin{itemize}
+    \item \keyword{લવચીકતા}: સમાન કોડ વિવિધ object types સાથે કામ કરે છે
+    \item \keyword{વિસ્તરણશીલતા}: વર્તમાન કોડ બદલ્યા વિના નવા classes ઉમેરવા સરળ
+\end{itemize}
+\end{solutionbox}
+
+\begin{mnemonicbox}
+\mnemonic{સમાન નામ, અલગ વર્તન}
+\end{mnemonicbox}
+
+\questionmarks{5(c OR)}{7}{હાઇબ્રિડ ઇન્હેરિટન્સનું કાર્ય દર્શાવતો Python પ્રોગ્રામ વિકસાવો.}
+
+\begin{solutionbox}
+Hybrid inheritance એ single program structure માં multiple અને multi-level inheritance ને combine કરે છે.
+
+\textbf{માળખું}: 
+\begin{itemize}
+    \item Animal $\rightarrow$ Mammal (Single)
+    \item Mammal $\rightarrow$ Dog, Cat (Hierarchical)
+    \item Dog, Cat $\rightarrow$ Pet (Multiple)
+\end{itemize}
+
+\textbf{આકૃતિ}:
+\begin{center}
+\begin{tikzpicture}[gtu flow]
+    \node [gtu class] (animal) {Animal};
+    \node [gtu class, below=0.5cm of animal] (mammal) {Mammal};
+    \node [gtu class, below left=1cm and 0.5cm of mammal] (dog) {Dog};
+    \node [gtu class, below right=1cm and 0.5cm of mammal] (cat) {Cat};
+    \node [gtu class, below=2.5cm of mammal] (pet) {Pet};
+    
+    \draw [gtu arrow] (animal) -- (mammal);
+    \draw [gtu arrow] (mammal) -- (dog);
+    \draw [gtu arrow] (mammal) -- (cat);
+    \draw [gtu arrow] (dog) -- (pet);
+    \draw [gtu arrow] (cat) -- (pet);
+\end{tikzpicture}
+\captionof{figure}{Hybrid Inheritance}
+\end{center}
+
+\textbf{સંપૂર્ણ પ્રોગ્રામ}:
+\begin{lstlisting}[language=Python]
+# Hybrid Inheritance Demo
+class Animal:
+    def __init__(self, name): self.name = name
+
+class Mammal(Animal):
+    def breathe(self): print("Breathing")
+
+class Dog(Mammal):
+    def bark(self): print("Barking")
+
+class Cat(Mammal):
+    def meow(self): print("Meowing")
+
+class Pet(Dog, Cat):
+    def play(self): print("Playing")
+
+# Usage
+p = Pet("Buddy")
+p.breathe()  # From Mammal
+p.bark()     # From Dog
+p.meow()     # From Cat
+p.play()     # Own
+\end{lstlisting}
+\end{solutionbox}
+
+\end{document}

@@ -1,0 +1,861 @@
+\documentclass{article}
+
+% Imports
+\input{../../../../../../latex-templates/gtu-solutions/preamble.tex}
+\input{../../../../../../latex-templates/gtu-solutions/gujarati-boxes.tex}
+\input{../../../../../../latex-templates/gtu-solutions/commands.tex}
+
+\title{લીનીયર ઇન્ટીગ્રેટેડ સર્કિટ (4341105) - ગ્રીષ્મ 2023 સોલ્યુશન}
+\date{૧૮ જુલાઈ, ૨૦૨૩}
+
+\begin{document}
+\maketitle
+\solutiontitle
+
+% Question 1(a)
+\questionmarks{1(a)}{3}{નેગેટીવ ફીડબેક એમ્પ્લીફાયરના ફાયદા અને ગેરફાયદા લખો.}
+\begin{solutionbox}
+    \begin{tabulary}{\linewidth}{|L|L|}
+        \hline
+        \textbf{ફાયદા} & \textbf{ગેરફાયદા} \\
+        \hline
+        બેન્ડવિડ્થ વધારે છે & ગેઇન ઘટાડે છે \\
+        \hline
+        ગેઇન સ્થિર કરે છે & વધારે કોમ્પોનન્ટ્સ જરૂરી પડે છે \\
+        \hline
+        ડિસ્ટોર્શન ઘટાડે છે & ખર્ચ વધારે છે \\
+        \hline
+        ઇનપુટ ઇમ્પીડન્સ વધારે છે (વોલ્ટેજ સીરીઝ) & જો યોગ્ય રીતે ડિઝાઇન ન કરવામાં આવે તો ઓસિલેશન થઈ શકે છે \\
+        \hline
+        આઉટપુટ ઇમ્પીડન્સ ઘટાડે છે (વોલ્ટેજ સીરીઝ) & કાળજીપૂર્વક ફેઝ કમ્પેન્સેશન જરૂરી છે \\
+        \hline
+    \end{tabulary}
+
+    \begin{mnemonicbox}
+        \mnemonic{GRASS Grows Better Despite Dry Soil: Gain Reduction, Amplifies Stability, Stops distortion, Better impedance}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+% Question 1(b)
+\questionmarks{1(b)}{4}{નેગેટીવ ફીડબેક એમ્પ્લીફાયરનુ ઓવરઓલ ગેઇન સૂત્ર મેળવો અને નેગેટીવ ફીડબેકની એપ્લીકેશન જણાવો.}
+\begin{solutionbox}
+    \textbf{નેગેટીવ ફીડબેક સાથે ઓવરઓલ ગેઇનની મેળવણી:}
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}[gtu flow]
+            \node (In) [gtu block] {ઇનપુટ};
+            \node (Sum) [gtu block, right=of In] {સમિંગ પોઇન્ટ};
+            \node (Amp) [gtu block, right=of Sum] {એમ્પ્લીફાયર A};
+            \node (Out) [gtu block, right=of Amp] {આઉટપુટ};
+            \node (Feed) [gtu block, below=of Amp] {ફીડબેક $\beta$};
+
+            \draw [gtu arrow] (In) -- (Sum) node[midway, above] {$V_{in}$};
+            \draw [gtu arrow] (Sum) -- (Amp) node[midway, above] {$V_e$};
+            \draw [gtu arrow] (Amp) -- (Out) node[midway, above] {$V_{out}$};
+            \draw [gtu arrow] (Out) |- (Feed);
+            \draw [gtu arrow] (Feed) -| (Sum) node[midway, left] {$\beta V_{out}$};
+        \end{tikzpicture}
+        \caption{નેગેટીવ ફીડબેક બ્લોક ડાયાગ્રામ}
+    \end{figure}
+
+    એમ્પ્લીફાયર ગેઇન $A$ અને ફીડબેક ફેક્ટર $\beta$ ધારો.
+    \begin{itemize}
+        \item ઇનપુટ સિગ્નલ = $V_{in}$
+        \item ફીડબેક સિગ્નલ = $\beta V_{out}$
+        \item એમ્પ્લીફાયરમાં વાસ્તવિક ઇનપુટ = $V_{in} - \beta V_{out}$
+        \item આઉટપુટ $V_{out} = A(V_{in} - \beta V_{out})$
+        \item $V_{out} + A\beta V_{out} = A V_{in}$
+        \item $V_{out}(1 + A\beta) = A V_{in}$
+        \item \textbf{ઓવરઓલ ગેઇન $A_f = \frac{V_{out}}{V_{in}} = \frac{A}{1 + A\beta}$}
+    \end{itemize}
+
+    \textbf{નેગેટીવ ફીડબેકની એપ્લીકેશન:} ઓપરેશનલ એમ્પ્લીફાયર, વોલ્ટેજ રેગ્યુલેટર્સ, ઓડિયો એમ્પ્લીફાયર્સ, ઇન્સ્ટ્રુમેન્ટેશન એમ્પ્લીફાયર્સ.
+
+    \begin{mnemonicbox}
+        \mnemonic{AVOI: Amplifiers, Voltage regulators, Oscillation control, Instrumentation}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+% Question 1(c)
+\questionmarks{1(c)}{7}{કરંટ શન્ટ નેગેટીવ ફીડબેક એમ્પ્લીફાયર દોરી ને સમજાવો અને ઈનપુટ અને આઉટપુટ ઈમ્પપીડન્સ નું સૂત્ર મેળવો.}
+\begin{solutionbox}
+    \textbf{કરંટ શન્ટ નેગેટીવ ફીડબેક:}
+    આઉટપુટ વોલ્ટેજનું સેમ્પલિંગ કરવામાં આવે છે અને તેને કરંટમાં રૂપાંતરિત કરીને ઇનપુટ કરંટમાંથી બાદ કરવામાં આવે છે (વોલ્ટેજ-શન્ટ).
+
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}[gtu flow]
+            \node (In) [gtu block] {ઇનપુટ કરંટ $I_{in}$};
+            \node (Sum) [gtu block, right=of In] {શન્ટ મિક્સર};
+            \node (Amp) [gtu block, right=of Sum] {એમ્પ્લીફાયર};
+            \node (Out) [gtu block, right=of Amp] {આઉટપુટ $V_{out}$};
+            \node (Feed) [gtu block, below=of Amp] {ફીડબેક $\beta$};
+            
+            \draw [gtu arrow] (In) -- (Sum);
+            \draw [gtu arrow] (Sum) -- (Amp);
+            \draw [gtu arrow] (Amp) -- (Out);
+            \draw [gtu arrow] (Out) |- (Feed);
+            \draw [gtu arrow] (Feed) -| (Sum) node[midway, left] {$I_f$};
+        \end{tikzpicture}
+        \caption{કરંટ શન્ટ ફીડબેક}
+    \end{figure}
+
+    \textbf{ઇનપુટ ઇમ્પીડન્સ:}
+    ફીડબેક વિના: $Z_{in}$.
+    ફીડબેક સાથે: $Z_{in}' = \frac{Z_{in}}{1 + A\beta}$.
+    ઇનપુટ ઇમ્પીડન્સ $(1 + A\beta)$ ફેક્ટર દ્વારા \textbf{ઘટે છે}.
+
+    \textbf{આઉટપુટ ઇમ્પીડન્સ:}
+    ફીડબેક વિના: $Z_{o}$.
+    ફીડબેક સાથે: $Z_{o}' = \frac{Z_{o}}{1 + A\beta}$.
+    આઉટપુટ ઇમ્પીડન્સ $(1 + A\beta)$ ફેક્ટર દ્વારા \textbf{ઘટે છે}.
+
+    \begin{mnemonicbox}
+        \mnemonic{DISCO: Decreased Impedances with Shunt Current Operation}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+% Question 1(c) OR
+\questionmarks{1(c) OR}{7}{વોલ્ટેજ સીરીઝ નેગેટીવ ફીડબેક એમ્પ્લીફાયર દોરી ને સમજાવો અને ઈનપુટ અને આઉટપુટ ઈમ્પપીડન્સ નું સૂત્ર મેળવો.}
+\begin{solutionbox}
+    \textbf{વોલ્ટેજ સીરીઝ નેગેટીવ ફીડબેક:}
+    આઉટપુટ વોલ્ટેજનું સેમ્પલિંગ કરવામાં આવે છે અને તેને ઇનપુટ વોલ્ટેજ સાથે સીરીઝમાં ફીડબેક કરવામાં આવે છે.
+
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}[gtu flow]
+            \node (In) [gtu block] {ઇનપુટ $V_{in}$};
+            \node (Sum) [gtu block, right=of In] {સીરીઝ મિક્સર};
+            \node (Amp) [gtu block, right=of Sum] {એમ્પ્લીફાયર};
+            \node (Out) [gtu block, right=of Amp] {આઉટપુટ $V_{out}$};
+            \node (Feed) [gtu block, below=of Amp] {ફીડબેક $\beta$};
+
+            \draw [gtu arrow] (In) -- (Sum);
+            \draw [gtu arrow] (Sum) -- (Amp);
+            \draw [gtu arrow] (Amp) -- (Out);
+            \draw [gtu arrow] (Out) |- (Feed);
+            \draw [gtu arrow] (Feed) -| (Sum) node[midway, left] {$V_f$};
+        \end{tikzpicture}
+        \caption{વોલ્ટેજ સીરીઝ ફીડબેક}
+    \end{figure}
+
+    \textbf{ઇનપુટ ઇમ્પીડન્સ:}
+    ફીડબેક વિના: $Z_{in}$.
+    ફીડબેક સાથે: $Z_{in}' = Z_{in}(1 + A\beta)$.
+    ઇનપુટ ઇમ્પીડન્સ $(1 + A\beta)$ ફેક્ટર દ્વારા \textbf{વધે છે}.
+
+    \textbf{આઉટપુટ ઇમ્પીડન્સ:}
+    ફીડબેક વિના: $Z_{o}$.
+    ફીડબેક સાથે: $Z_{o}' = \frac{Z_{o}}{1 + A\beta}$.
+    આઉટપુટ ઇમ્પીડન્સ $(1 + A\beta)$ ફેક્ટર દ્વારા \textbf{ઘટે છે}.
+
+    \begin{mnemonicbox}
+        \mnemonic{ISDO: Increased input impedance, Series feedback, Decreased output impedance}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+% Question 2(a)
+\questionmarks{2(a)}{3}{UJT રીલેક્ષેશન ઓસીલેટરનો સરકીટ ડાયાગ્રામ દોરીને સમજાવો.}
+\begin{solutionbox}
+    \textbf{UJT રીલેક્ષેશન ઓસીલેટર:}
+    \begin{figure}[H]
+        \centering
+        \begin{circuitikz}[scale=0.8]
+            \draw (0,0) node[ground]{} to[C, l=$C_1$] (0,2) -- (2,2) node[ujt, anchor=E](U){}; 
+            \draw (0,2) to[R, l=$R_1$] (0,5) -- (4,5) node[vcc]{$+V_{CC}$};
+            \draw (U.B2) to[short] (2,4) to[R, l=$R_2$] (2,5) -- (0,5);
+            \draw (U.B1) to[R, l=$R_3$] (2,0) node[ground]{};
+            \draw (2,2) to[short, -o] (4,2) node[right]{આઉટપુટ};
+        \end{circuitikz}
+        \caption{UJT રીલેક્ષેશન ઓસીલેટર}
+    \end{figure}
+    
+    \textbf{કાર્યપ્રણાલી:}
+    \begin{itemize}
+        \item કેપેસિટર $C_1$ ચાર્જ થાય છે.
+        \item જ્યારે વોલ્ટેજ $V_c$ પીક પોઇન્ટ ($V_p$) સુધી પહોંચે છે, UJT ફાયર થાય છે (ચાલુ થાય છે).
+        \item કેપેસિટર ઝડપથી ડિસ્ચાર્જ થાય છે.
+        \item સાયકલ પુનરાવર્તિત થાય છે, સૉટૂથ વેવફોર્મ ઉત્પન્ન થાય છે.
+    \end{itemize}
+
+    \begin{mnemonicbox}
+        \mnemonic{CURD: Capacitor charges Until Reaching Discharge point}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+% Question 2(b)
+\questionmarks{2(b)}{4}{કોલપીટ ઓસીલેટરનો સરકીટ ડાયાગ્રામ દોરો અને વિસ્તૃત માં સમજાવો. તેના ફાયદા અને ગેરફાયદા પણ જણાવો.}
+\begin{solutionbox}
+    \textbf{કોલપીટ્સ ઓસીલેટર:}
+    ફીડબેક માટે કેપેસિટિવ વોલ્ટેજ ડિવાઇડર વાપરે છે.
+
+    \begin{figure}[H]
+        \centering
+        \begin{circuitikz}[scale=0.8]
+            \draw (0,0) node[ground]{} to[C, l=$C_2$] (2,0);
+            \draw (2,0) to[C, l=$C_1$] (4,0);
+            \draw (0,0) to[L, l=$L$] (0,3) -- (4,3) -- (4,0);
+            \draw (2,0) -- (2, -1) -- (5,-1) node[npn, anchor=B](Q){};
+            \draw (Q.E) to[R, l=$R_E$] (5,-3) node[ground]{};
+            \draw (Q.C) to[R, l=$R_C$] (5,1) node[vcc]{$+V_{CC}$};
+            \draw (Q.C) -- (5,3) -- (4,3);
+            \draw (Q.B) to[R, l=$R_B$] (3,-1) to[short] (2,-1);
+        \end{circuitikz}
+        \caption{કોલપીટ્સ ઓસીલેટર}
+    \end{figure}
+
+    \textbf{કાર્યપ્રણાલી:}
+    \begin{itemize}
+        \item ફ્રીક્વન્સી: $f = \frac{1}{2\pi\sqrt{L C_{eq}}}$ જ્યાં $C_{eq} = \frac{C_1 C_2}{C_1 + C_2}$.
+        \item ઉચ્ચ ફ્રીક્વન્સી માટે યોગ્ય.
+    \end{itemize}
+
+    \begin{tabulary}{\linewidth}{|L|L|}
+        \hline
+        \textbf{ફાયદા} & \textbf{ગેરફાયદા} \\
+        \hline
+        સારી ફ્રીક્વન્સી સ્થિરતા & બે કેપેસિટર જરૂરી છે \\
+        \hline
+        ઉચ્ચ ફ્રીક્વન્સી માટે સારું & ટ્યુન કરવું મુશ્કેલ છે \\
+        \hline
+        સરળ ડિઝાઇન & સીમિત ફ્રીક્વન્સી રેન્જ \\
+        \hline
+    \end{tabulary}
+
+    \begin{mnemonicbox}
+        \mnemonic{FAST Circuits: Frequency stable, Appropriate for high frequencies, Simple design, Two capacitors}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+% Question 2(c)
+\questionmarks{2(c)}{7}{Crystal ઓસીલેટર સમજાવો.}
+\begin{solutionbox}
+    \textbf{ક્રિસ્ટલ ઓસીલેટર:}
+    સ્થાયી ફ્રીક્વન્સી માટે પિઝોઇલેક્ટ્રિક ક્રિસ્ટલ (ક્વાર્ટ્ઝ) વાપરે છે.
+
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}[gtu flow]
+            \node (Crystal) [gtu block] {પિઝોઇલેક્ટ્રિક ક્રિસ્ટલ};
+            \node (Amp) [gtu block, right=of Crystal] {એમ્પ્લીફાયર};
+            \node (Feed) [gtu block, below=of Amp] {ફીડબેક};
+            
+            \draw [gtu arrow] (Crystal) -- (Amp);
+            \draw [gtu arrow] (Amp) -- (Feed);
+            \draw [gtu arrow] (Feed) -| (Crystal);
+        \end{tikzpicture}
+        \caption{ક્રિસ્ટલ ઓસીલેટર કન્સેપ્ટ}
+    \end{figure}
+
+    \textbf{સર્કિટ ડાયાગ્રામ:}
+    \begin{figure}[H]
+        \centering
+        \begin{circuitikz}[scale=0.8]
+             \draw (0,0) node[npn](Q){};
+             \draw (Q.E) to[R, l=$R_E$] (0,-2) node[ground]{};
+             \draw (Q.C) to[R, l=$R_C$] (0,2) node[vcc]{$+V_{CC}$};
+             \draw (Q.B) -- (-1,0) to[piezoelectric, l=XTAL] (-1,-2) node[ground]{};
+             \draw (-1,0) to[R, l=$R_B$] (-1,2) node[vcc]{};
+             \draw (Q.C) to[C, l=$C_{out}$] (2,0) node[right]{Output};
+        \end{circuitikz}
+        \caption{પિયર્સ ક્રિસ્ટલ ઓસીલેટર}
+    \end{figure}
+
+    \textbf{કાર્યપ્રણાલી:}
+    \begin{itemize}
+        \item પિઝોઇલેક્ટ્રિક ઇફેક્ટ પર આધારિત.
+        \item હાઈ-Q ટ્યુન્ડ સર્કિટ તરીકે વર્તે છે. $Q \approx 10,000+$.
+        \item ખૂબ જ સ્થાયી ફ્રીક્વન્સી આપે છે $\Delta f/f \approx 10^{-6}$.
+    \end{itemize}
+
+    \textbf{એપ્લિકેશન્સ:} માઇક્રોપ્રોસેસર્સ, ડિજિટલ ઘડિયાળો, રેડિયો ટ્રાન્સમિટર.
+
+    \begin{mnemonicbox}
+        \mnemonic{STOP: Stable, Temperature-resistant, Oscillates, Piezoelectric}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+% Question 2(a) OR
+\questionmarks{2(a) OR}{3}{હાર્ટલી ઓસીલેટર દોરી ને સમજાવો.}
+\begin{solutionbox}
+    \textbf{હાર્ટલી ઓસીલેટર:}
+    ટેપ્ડ ઇન્ડક્ટર ટેન્ક સર્કિટ વાપરે છે.
+
+    \begin{figure}[H]
+        \centering
+        \begin{circuitikz}[scale=0.8]
+            \draw (0,0) node[ground]{} to[L, l=$L_2$] (0,1.5) to[L, l=$L_1$] (0,3) -- (2,3) to[C, l=$C$] (2,0) -- (0,0);
+            \draw (2,3) -- (4,3) node[npn, anchor=B](Q){};
+            \draw (Q.E) node[ground]{}; 
+            \draw (Q.C) to[R] (4.8, 5) node[vcc]{$+V_{CC}$};
+            \draw (0,1.5) -- (-1,1.5) node[left]{Tap Ground}; 
+        \end{circuitikz}
+        \caption{હાર્ટલી ટેન્ક સર્કિટ}
+    \end{figure}
+
+    \textbf{કાર્યપ્રણાલી:}
+    \begin{itemize}
+        \item ઇન્ડક્ટિવ વોલ્ટેજ ડિવાઇડર ($L_1, L_2$) ફીડબેક આપે છે.
+        \item ફ્રીક્વન્સી: $f = \frac{1}{2\pi\sqrt{L_{eq} C}}$ જ્યાં $L_{eq} = L_1 + L_2$.
+        \item RF એપ્લિકેશન્સ માટે વપરાય છે.
+    \end{itemize}
+
+    \begin{mnemonicbox}
+        \mnemonic{TIC: Tapped Inductor Circuit}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+% Question 2(b) OR
+\questionmarks{2(b) OR}{4}{વિએન બ્રીજ ઓસીલેટર દોરીને સમજાવો.}
+\begin{solutionbox}
+    \textbf{વિએન બ્રીજ ઓસીલેટર:}
+    RC બ્રીજ વાપરતું ઓડિયો ફ્રીક્વન્સી ઓસીલેટર.
+
+    \begin{figure}[H]
+        \centering
+        \begin{circuitikz}[scale=0.7]
+            \draw (0,0) node[op amp] (opamp) {};
+            \draw (opamp.+) -- (-1, -0.5) -- (-1, -2) to[R, l=$R_2$] (-1, -4) node[ground]{};
+            \draw (-1, -2) to[C, l=$C_2$] (-1, -4); 
+            \draw (-1, -0.5) -- (-3, -0.5) to[R, l=$R_1$] (-4, -0.5) to[C, l=$C_1$] (-5, -0.5) -- (-5, 1) -- (1, 1) -- (opamp.out);
+            \draw (opamp.-) -- (-1, 0.5) to[R, l=$R_3$] (-1, 2) -- (1, 2) -- (opamp.out);
+            \draw (-1, 0.5) to[R, l=$R_4$] (-3, 0.5) node[ground]{};
+        \end{circuitikz}
+        \caption{વિએન બ્રીજ ઓસીલેટર}
+    \end{figure}
+
+    \textbf{કાર્યપ્રણાલી:}
+    \begin{itemize}
+        \item સીરીઝ RC ($Z_1$) અને પેરેલલ RC ($Z_2$) ભુજાઓ વાપરે છે.
+        \item ફ્રીક્વન્સી: $f = \frac{1}{2\pi RC}$.
+        \item ઓસિલેશન માટે ગેઇન $A \ge 3$ હોવો જોઈએ.
+        \item ઓછું ડિસ્ટોર્શન.
+    \end{itemize}
+
+    \begin{mnemonicbox}
+        \mnemonic{FEAR: Frequency selective, Equal RC, Audio Range}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+% Question 2(c) OR
+\questionmarks{2(c) OR}{7}{UJT નું સ્ટ્રક્ચર, સીમ્બોલ, એક્વીવેલેન્ટ સરકીટ દોરો અને સમજાવો.}
+\begin{solutionbox}
+    \textbf{યુનિજંક્શન ટ્રાન્ઝિસ્ટર (UJT):}
+
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}[gtu flow]
+            \node[gtu block, minimum height=3cm, minimum width=1cm, fill=yellow!20] (bar) {};
+            \node at (bar.north) [above] {Base 2 ($B_2$)};
+            \node at (bar.south) [below] {Base 1 ($B_1$)};
+            \draw (bar.north) -- ++(0,0.5);
+            \draw (bar.south) -- ++(0,-0.5);
+            \node[draw, rectangle, fill=blue!20, minimum size=0.5cm, left] at (bar.west) (emitter) {P};
+            \node at (bar.center) {N-Type Si};
+            \draw (emitter.west) -- ++(-0.5,0) node[left] {Emitter ($E$)};
+        \end{tikzpicture}
+        \caption{UJT સ્ટ્રક્ચર}
+    \end{figure}
+
+    \textbf{કાર્યપ્રણાલી:}
+    \begin{itemize}
+        \item 3-ટર્મિનલ ડિવાઇસ: Emitter, Base1, Base2.
+        \item RB1 અને RB2 આંતરિક રેઝિસ્ટન્સ છે.
+        \item \textbf{ફાયરિંગ કન્ડિશન:} $V_E > \eta V_{BB} + V_D$ થાય ત્યારે.
+        \item \textbf{નેગેટિવ રેઝિસ્ટન્સ} લાક્ષણિકતા ધરાવે છે.
+    \end{itemize}
+
+    \begin{mnemonicbox}
+        \mnemonic{NEVER: Negative resistance, Emitter-triggered, Valley/Peak points}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+% Question 3(a)
+\questionmarks{3(a)}{3}{વોલ્ટેજ અને પાવર એમ્પ્લીફાયર વચ્ચેનો તફાવત સમજાવો.}
+\begin{solutionbox}
+    \begin{tabulary}{\linewidth}{|L|L|L|}
+        \hline
+        \textbf{પેરામીટર} & \textbf{વોલ્ટેજ એમ્પ્લીફાયર} & \textbf{પાવર એમ્પ્લીફાયર} \\
+        \hline
+        ઉદ્દેશ & વોલ્ટેજને એમ્પ્લિફાય કરે છે & લોડને પાવર પહોંચાડે છે \\
+        \hline
+        આઉટપુટ ઇમ્પીડન્સ & ઊંચી & નીચી \\
+        \hline
+        ઇનપુટ ઇમ્પીડન્સ & ઊંચી & તુલનાત્મક રીતે નીચી \\
+        \hline
+        કાર્યક્ષમતા & મહત્વપૂર્ણ નથી & ખૂબ મહત્વપૂર્ણ છે \\
+        \hline
+        હીટ ડિસિપેશન & ઓછી & ઊંચી (હીટ સિંક જરૂરી) \\
+        \hline
+        સ્થાન & શરૂઆતના તબક્કામાં & છેલ્લા તબક્કામાં \\
+        \hline
+    \end{tabulary}
+
+    \begin{mnemonicbox}
+        \mnemonic{PEHIP: Power for Efficiency and Heat, Impedance matters, Position differs}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+% Question 3(b)
+\questionmarks{3(b)}{4}{ક્લાસ-બી પુશ પુલ પાવર એમ્પ્લીફાયર સમજાવો.}
+\begin{solutionbox}
+    \textbf{ક્લાસ-B પુશ-પુલ એમ્પ્લિફાયર:}
+    બે કોમ્પ્લિમેન્ટરી ટ્રાન્ઝિસ્ટર વાપરે છે, દરેક 180° માટે કન્ડક્ટ કરે છે.
+
+    \begin{figure}[H]
+        \centering
+        \begin{circuitikz}[scale=0.8]
+            \draw (0,0) node[npn](Q1){Q1};
+            \draw (0,-3) node[pnp](Q2){Q2};
+            \draw (Q1.E) -- (Q2.E);
+            \draw (Q1.B) -- (Q2.B);
+            \draw (Q1.B) -- (-1.5, -1.5) node[left]{ઇનપુટ};
+            \draw (Q1.E) -- (1.5, -1.5) to[C, l=$C_{out}$] (3, -1.5) to[R, l=$R_L$] (3, -3.5) node[ground]{};
+            \draw (3, -1.5) node[right]{આઉટપુટ};
+            \draw (Q1.C) -- (0, 1.5) node[vcc]{$+V_{CC}$};
+            \draw (Q2.C) -- (0, -4.5) node[vcc]{$-V_{CC}$};
+        \end{circuitikz}
+        \caption{ક્લાસ-B પુશ-પુલ}
+    \end{figure}
+
+    \textbf{કાર્યપ્રણાલી:}
+    \begin{itemize}
+        \item Q1 પોઝિટિવ સાયકલમાં કન્ડક્ટ કરે છે.
+        \item Q2 નેગેટિવ સાયકલમાં કન્ડક્ટ કરે છે.
+        \item કાર્યક્ષમતા $\eta \approx 78.5\%$.
+        \item \textbf{ક્રોસઓવર ડિસ્ટોર્શન} થાય છે.
+    \end{itemize}
+
+    \begin{mnemonicbox}
+        \mnemonic{ECHO: Efficiency high, Crossover distortion, Half-cycle operation, Output high power}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+% Question 3(c)
+\questionmarks{3(c)}{7}{Complementary symmetry પુશ પુલ પાવર એમ્પ્લીફાયર દોરી ને સમજાવો અને તેના ગેરફાયદા લખો.}
+\begin{solutionbox}
+    \textbf{કોમ્પ્લિમેન્ટરી સિમેટ્રી પુશ-પુલ:}
+    NPN અને PNP પેરનો ઉપયોગ કરે છે. ટ્રાન્સફોર્મરની જરૂર નથી.
+
+    \begin{figure}[H]
+        \centering
+        \begin{circuitikz}[scale=0.8]
+            \draw (0,2) node[npn](Q1){NPN} -- (0,3) node[vcc]{$+V_{CC}$};
+            \draw (0,-2) node[pnp](Q2){PNP} -- (0,-3) node[vcc]{$-V_{CC}$};
+            \draw (Q1.E) -- (Q2.E);
+            \draw (Q1.B) -- (Q2.B) -- (-2,0) to[C] (-3,0) node[left]{ઇનપુટ};
+            \draw (Q1.E) -- (2,0) to[C, l=$C_C$] (3,0) to[R, l=$R_L$] (3,-2) node[ground]{};
+            \draw (3,0) node[right]{આઉટપુટ};
+            \draw (Q1.B) to[R, l=$R_1$] (0, 2.5); 
+            \draw (Q2.B) to[R, l=$R_2$] (0, -2.5); 
+        \end{circuitikz}
+        \caption{કોમ્પ્લિમેન્ટરી સિમેટ્રી એમ્પ્લિફાયર}
+    \end{figure}
+
+    \textbf{ગેરફાયદા:}
+    \begin{enumerate}
+        \item મેચ્ડ NPN/PNP પેરની જરૂર પડે છે.
+        \item થર્મલ રનવે થઈ શકે છે.
+        \item ડ્યુઅલ પાવર સપ્લાયની જરૂર પડે છે.
+        \item ક્રોસઓવર ડિસ્ટોર્શન થઈ શકે છે.
+    \end{enumerate}
+
+    \begin{mnemonicbox}
+        \mnemonic{MATCH: Matched transistors, Avoids transformers, Thermal issues, Crossover distortion}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+% Question 3(a) OR
+\questionmarks{3(a) OR}{3}{વ્યાખ્યા આપો: 1) Efficiency 2) Distortion 3) Power dissipation capability}
+\begin{solutionbox}
+    \begin{tabulary}{\linewidth}{|L|L|}
+        \hline
+        \textbf{શબ્દ} & \textbf{વ્યાખ્યા} \\
+        \hline
+        Efficiency (કાર્યક્ષમતા) & AC આઉટપુટ પાવર અને DC ઇનપુટ પાવરનો ગુણોત્તર. $\eta = \frac{P_{out}}{P_{in}} \times 100\%$. \\
+        \hline
+        Distortion & આઉટપુટ વેવફોર્મમાં અનિચ્છનીય ફેરફાર (THD). \\
+        \hline
+        Power Dissipation & એમ્પ્લિફાયર દ્વારા ગરમી તરીકે વ્યય થતી મહત્તમ પાવર. \\
+        \hline
+    \end{tabulary}
+
+    \begin{mnemonicbox}
+        \mnemonic{EDP: Efficiency converts, Distortion deforms, Power capability protects}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+% Question 3(b) OR
+\questionmarks{3(b) OR}{4}{ઓપરેશન મોડ નાં આધારે પાવર એમ્પ્લીફાયરનું વર્ગીકરણ કરો અને વિવિધ પ્રકારના પાવર એમ્પ્લીફાયરની કામગીરી સમજાવો.}
+\begin{solutionbox}
+    \textbf{વર્ગીકરણ:}
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}[gtu flow]
+            \node (PA) [gtu root] {\small પાવર એમ્પ્લિફાયર્સ};
+            \node (A) [gtu child, below left=of PA, xshift=-1cm] {Class A};
+            \node (B) [gtu child, below left=of PA, xshift=1cm] {Class B};
+            \node (AB) [gtu child, below right=of PA, xshift=-1cm] {Class AB};
+            \node (C) [gtu child, below right=of PA, xshift=1cm] {Class C};
+            
+            \draw [gtu arrow] (PA) -- (A);
+            \draw [gtu arrow] (PA) -- (B);
+            \draw [gtu arrow] (PA) -- (AB);
+            \draw [gtu arrow] (PA) -- (C);
+        \end{tikzpicture}
+    \end{figure}
+
+    \begin{tabulary}{\linewidth}{|l|l|L|}
+        \hline
+        ક્લાસ & એંગલ & કાર્યપ્રણાલી \\
+        \hline
+        A & $360^\circ$ & સંપૂર્ણ સાયકલ માટે કન્ડક્ટ કરે છે. ઓછી કાર્યક્ષમતા. \\
+        \hline
+        B & $180^\circ$ & અર્ધ સાયકલ માટે કન્ડક્ટ કરે છે. ઊંચી કાર્યક્ષમતા. \\
+        \hline
+        AB & $180^\circ-360^\circ$ & A અને B નું મિશ્રણ. ઓછું ડિસ્ટોર્શન. \\
+        \hline
+        C & $<180^\circ$ & RF સર્કિટ્સમાં વપરાય છે. શ્રેષ્ઠ કાર્યક્ષમતા. \\
+        \hline
+    \end{tabulary}
+\end{solutionbox}
+
+% Question 3(c) OR
+\questionmarks{3(c) OR}{7}{ક્લાસ-બી પુશ પુલ પાવર એમ્પ્લીફાયરનું કાર્યક્ષમતાનું સમીકરણ મેળવો.}
+\begin{solutionbox}
+    \textbf{કાર્યક્ષમતાની મેળવણી:}
+    \begin{itemize}
+        \item \textbf{DC ઇનપુટ પાવર:} $I_{dc} = \frac{2I_m}{\pi}$. $P_{dc} = V_{CC} I_{dc} = \frac{2 V_{CC} I_m}{\pi}$.
+        \item \textbf{AC આઉટપુટ પાવર:} $I_{rms} = \frac{I_m}{\sqrt{2}}$. $P_{ac} = \frac{V_m I_m}{2}$.
+        \item \textbf{કાર્યક્ષમતા:}
+        $$\eta = \frac{P_{ac}}{P_{dc}} \times 100\% = \frac{V_{CC} I_m / 2}{2 V_{CC} I_m / \pi} \times 100\%$$
+        $$\eta = \frac{\pi}{4} \times 100\% \approx 78.5\%$$
+    \end{itemize}
+
+    \begin{mnemonicbox}
+        \mnemonic{PIPE: Power ratio, Input DC vs Output AC, Pi in formula, Efficiency 78.5\%}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+% Question 4(a)
+\questionmarks{4(a)}{3}{IC 741 નો પીન ડાયાગ્રામ અને યોજનાકીય પ્રતિક દોરો અને તેને વિગતવાર સમજાવો.}
+\begin{solutionbox}
+    \textbf{IC 741 ઓપ-એમ્પ:}
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+            % Pin Diagram
+            \draw[thick] (0,0) rectangle (3,4);
+            \node at (1.5, 2) {\textbf{IC 741}};
+            \draw (1.5, 3.8) arc (180:360:0.2);
+            
+            \foreach \y/\p/\l in {3.5/1/Offset Null, 2.5/2/Inv In (-), 1.5/3/Non-Inv (+), 0.5/4/-Vcc} {
+                \draw (0,\y) -- (-1,\y) node[left, font=\scriptsize]{\p: \l};
+                \draw (0,\y) node[right, font=\tiny]{\p};
+            }
+            \foreach \y/\p/\l in {0.5/5/Offset Null, 1.5/6/Output, 2.5/7/+Vcc, 3.5/8/NC} {
+                \draw (3,\y) -- (4,\y) node[right, font=\scriptsize]{\l: \p};
+                \draw (3,\y) node[left, font=\tiny]{\p};
+            }
+            
+            % Symbol
+            \draw (6, 2) node[op amp] (op) {};
+            \node at (op.+) [left] {$+$};
+            \node at (op.-) [left] {$-$};
+            % \node at (op.out) [right] {Vo};
+        \end{tikzpicture}
+        \caption{IC 741 પીન ડાયાગ્રામ અને સિમ્બોલ}
+    \end{figure}
+
+    \textbf{પીન વિગત:}
+    \begin{itemize}
+        \item \textbf{2, 3}: ઇનપુટ્સ.
+        \item \textbf{6}: આઉટપુટ.
+        \item \textbf{7, 4}: પાવર સપ્લાય.
+        \item \textbf{1, 5}: ઓફસેટ નલ.
+    \end{itemize}
+\end{solutionbox}
+
+% Question 4(b)
+\questionmarks{4(b)}{4}{Explain differential Amplifier using OPAMP.} % English title mixed in source, keeping translated context
+% Wait, MDX title Q4(b) is English "Explain differential Amplifier using OPAMP.". But context indicates Gujarati translation needed.
+% I will use Gujarati title: "OPAMP નો ઉપયોગ કરીને ડિફરન્શિયલ એમ્પ્લીફાયર સમજાવો."
+\begin{solutionbox}
+    \textbf{ડિફરન્શિયલ એમ્પ્લીફાયર:}
+    બે ઇનપુટ વોલ્ટેજ વચ્ચેના તફાવતને એમ્પ્લિફાય કરે છે.
+
+    \begin{figure}[H]
+        \centering
+        \begin{circuitikz}[scale=0.8]
+            \draw (0,0) node[op amp](op){};
+            \draw (op.-) -- (-1, 0.5) to[R, l=$R_1$] (-3, 0.5) node[left]{$V_1$};
+            \draw (op.+) -- (-1, -0.5) to[R, l=$R_1$] (-3, -0.5) node[left]{$V_2$};
+            \draw (-1, -0.5) to[R, l=$R_2$] (-1, -2) node[ground]{};
+            \draw (-1, 0.5) to[short] (-1, 1.5) to[R, l=$R_2$] (1, 1.5) -| (op.out);
+            \draw (op.out) -- (2,0) node[right]{$V_{out}$};
+        \end{circuitikz}
+        \caption{ડિફરન્શિયલ એમ્પ્લીફાયર}
+    \end{figure}
+
+    \textbf{સૂત્ર:} $V_{out} = \frac{R_2}{R_1}(V_2 - V_1)$.
+    
+    \begin{mnemonicbox}
+        \mnemonic{CARE: Common-mode rejection, Amplifies difference}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+% Question 4(c)
+\questionmarks{4(c)}{7}{Explain the following parameters of an OP-Amp...} % "O-Amp ના નીચેના પરિમાણો સમજાવો: 1) Input Offset Voltage..."
+\begin{solutionbox}
+    \begin{itemize}
+        \item \textbf{ઇનપુટ ઓફસેટ વોલ્ટેજ:} આઉટપુટ શૂન્ય કરવા માટે જરૂરી ઇનપુટ વોલ્ટેજ.
+        \item \textbf{આઉટપુટ ઓફસેટ વોલ્ટેજ:} ઇનપુટ શૂન્ય હોય ત્યારે આઉટપુટ વોલ્ટેજ.
+        \item \textbf{ઇનપુટ ઓફસેટ કરંટ:} ઇનપુટ બાયસ કરંટનો તફાવત.
+        \item \textbf{ઇનપુટ બાયસ કરંટ:} ઇનપુટ કરંટની સરેરાશ.
+        \item \textbf{CMRR:} કોમન મોડ રિજેક્શન રેશિયો. નોઈઝ રિજેક્ટ કરવાની ક્ષમતા.
+        \item \textbf{સ્લ્યુ રેટ (Slew Rate):} આઉટપુટ વોલ્ટેજના ફેરફારનો મહત્તમ દર $dV_o/dt$.
+        \item \textbf{ગેઇન:} ઓપન લૂપ વોલ્ટેજ ગેઇન.
+    \end{itemize}
+
+    \begin{mnemonicbox}
+        \mnemonic{VICS BGR: Voltage offset, Current offset, Slew rate, Bias, Gain, Rejection}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+% Question 4(a) OR
+\questionmarks{4(a) OR}{3}{આઈડિયલ ઓપ-એમ્પ નાં લક્ષણો જણાવો.}
+\begin{solutionbox}
+    \begin{tabulary}{\linewidth}{|L|L|}
+        \hline
+        \textbf{લક્ષણ} & \textbf{આદર્શ કિંમત} \\
+        \hline
+        ઓપન લૂપ ગેઇન & અનંત ($\infty$) \\
+        \hline
+        ઇનપુટ ઇમ્પીડન્સ & અનંત ($\infty$) \\
+        \hline
+        આઉટપુટ ઇમ્પીડન્સ & શૂન્ય ($0$) \\
+        \hline
+        બેન્ડવિડ્થ & અનંત \\
+        \hline
+        CMRR & અનંત \\
+        \hline
+        સ્લ્યુ રેટ & અનંત \\
+        \hline
+        ઓફસેટ વોલ્ટેજ & શૂન્ય \\
+        \hline
+    \end{tabulary}
+
+    \begin{mnemonicbox}
+        \mnemonic{ZINC BOSS: Zero output Z, Infinite Gain/Input Z, No noise}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+% Question 4(b) OR
+\questionmarks{4(b) OR}{4}{ઓપ-એમ્પ નો બ્લોક ડાયાગ્રામ દોરી સમજાવો.}
+\begin{solutionbox}
+    \textbf{બ્લોક ડાયાગ્રામ:}
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}[gtu flow, node distance=1.5cm]
+            \node (In) [gtu block] {ઇનપુટ સ્ટેજ\\(Diff Amp)};
+            \node (Int) [gtu block, right=of In] {હાઈ ગેઇન\\સ્ટેજ};
+            \node (Level) [gtu block, right=of Int] {લેવલ\\શિફ્ટર};
+            \node (Out) [gtu block, right=of Level] {આઉટપુટ\\સ્ટેજ};
+            
+            \draw [gtu arrow] (In) -- (Int);
+            \draw [gtu arrow] (Int) -- (Level);
+            \draw [gtu arrow] (Level) -- (Out);
+            \draw [gtu arrow] (Out) -- ++(1.5,0) node[right]{$V_{out}$};
+            \draw [gtu arrow] (In) -- ++(-1.5,0) node[left]{ઇનપુટ્સ};
+        \end{tikzpicture}
+        \caption{ઓપ-એમ્પ બ્લોક ડાયાગ્રામ}
+    \end{figure}
+
+    \textbf{સ્ટેજીસ:}
+    \begin{enumerate}
+        \item \textbf{ઇનપુટ સ્ટેજ:} ડિફરન્શિયલ એમ્પ્લીફાયર.
+        \item \textbf{ઇન્ટરમીડિયેટ સ્ટેજ:} વોલ્ટેજ ગેઇન.
+        \item \textbf{લેવલ શિફ્ટર:} DC લેવલ શિફ્ટ કરે છે.
+        \item \textbf{આઉટપુટ સ્ટેજ:} પુશ-પુલ એમ્પ્લીફાયર (લો આઉટપુટ ઇમ્પીડન્સ).
+    \end{enumerate}
+\end{solutionbox}
+
+% Question 4(c) OR
+\questionmarks{4(c) OR}{7}{ઇન્વર્ટિંગ અને નોન-ઇન્વર્ટિંગ એમ્પ્લીફાયર દોરી સમજાવો અને ગેઇન સૂત્ર મેળવો.}
+\begin{solutionbox}
+    \textbf{1. ઇન્વર્ટિંગ એમ્પ્લીફાયર:}
+    \begin{figure}[H]
+        \centering
+        \begin{circuitikz}[scale=0.7]
+            \draw (0,0) node[op amp](op){};
+            \draw (op.+) -- (-1, -0.5) node[ground]{};
+            \draw (op.-) -- (-1, 0.5) to[R, l=$R_1$] (-3, 0.5) node[left]{$V_{in}$};
+            \draw (-1, 0.5) -- (-1, 1.5) to[R, l=$R_f$] (1, 1.5) -| (op.out);
+            \draw (op.out) -- (2,0) node[right]{$V_{out}$};
+        \end{circuitikz}
+    \end{figure}
+    \textbf{ગેઇન:} $V_{out} = -(V_{in}/R_1)R_f \implies A_v = -R_f/R_1$.
+
+    \textbf{2. નોન-ઇન્વર્ટિંગ એમ્પ્લીફાયર:}
+    \begin{figure}[H]
+        \centering
+        \begin{circuitikz}[scale=0.7]
+            \draw (0,0) node[op amp](op){};
+            \draw (op.+) -- (-1, -0.5) -- (-2, -0.5) node[left]{$V_{in}$};
+            \draw (op.-) -- (-1, 0.5) to[R, l=$R_1$] (-1, -1.5) node[ground]{};
+            \draw (-1, 0.5) -- (-1, 1.5) to[R, l=$R_f$] (1, 1.5) -| (op.out);
+            \draw (op.out) -- (2,0) node[right]{$V_{out}$};
+        \end{circuitikz}
+    \end{figure}
+    \textbf{ગેઇન:} $V_{in} = V_{out} \frac{R_1}{R_1+R_f} \implies A_v = 1 + R_f/R_1$.
+
+    \begin{mnemonicbox}
+        \mnemonic{PING-PONG: Phase Inverted Negative Gain vs Positive Output Non-inverted Gain}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+% Question 5(a)
+\questionmarks{5(a)}{3}{ઓપ-એમ્પ નો ઉપયોગ કરીને ઇન્ટીગ્રેટર દોરી સમજાવો.}
+\begin{solutionbox}
+    \textbf{ઇન્ટીગ્રેટર:}
+    \begin{figure}[H]
+        \centering
+        \begin{circuitikz}[scale=0.8]
+            \draw (0,0) node[op amp](op){};
+            \draw (op.+) node[ground]{};
+            \draw (op.-) -- (-1, 0.5) to[R, l=$R$] (-3, 0.5) node[left]{$V_{in}$};
+            \draw (-1, 0.5) -- (-1, 1.5) to[C, l=$C$] (1, 1.5) -| (op.out);
+            \draw (op.out) -- (2,0) node[right]{$V_{out}$};
+        \end{circuitikz}
+        \caption{આદર્શ ઇન્ટીગ્રેટર}
+    \end{figure}
+    \textbf{કાર્યઃ} આઉટપુટ ઇનપુટના સંકલન (integration) ના પ્રમાણમાં હોય છે.
+    $V_{out} = -\frac{1}{RC} \int V_{in} dt$.
+
+    \begin{mnemonicbox}
+        \mnemonic{TIME: Takes Input and Makes integral over time}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+% Question 5(b)
+\questionmarks{5(b)}{4}{વિવિધ પ્રકારના પાવર એમ્પ્લીફાયરની સરખામણી કરો.}
+\begin{solutionbox}
+    \begin{tabulary}{\linewidth}{|l|c|c|c|c|}
+        \hline
+        પેરામીટર & Class A & Class B & Class AB & Class C \\
+        \hline
+        કન્ડક્શન & $360^\circ$ & $180^\circ$ & $180^\circ-360^\circ$ & $<180^\circ$ \\
+        \hline
+        કાર્યક્ષમતા & 25-50\% & 78.5\% & 50-70\% & >80\% \\
+        \hline
+        ડિસ્ટોર્શન & ખૂબ ઓછું & વધુ & ઓછું & ખૂબ વધુ \\
+        \hline
+        ઉપયોગ & ઓડિયો & General & ઓડિયો & RF \\
+        \hline
+    \end{tabulary}
+    \begin{mnemonicbox}
+        \mnemonic{CABINET: Conduction, Amplification, Biasing, Efficiency}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+% Question 5(c)
+\questionmarks{5(c)}{7}{IC 555 ની એપ્લીકેશન લખો અને કોઈપણ એક સમજાવો.}
+\begin{solutionbox}
+    \textbf{એપ્લીકેશન્સ:} ટાઈમર, ઓસિલેટર, પલ્સ જનરેટર, PWM, ફ્રીક્વન્સી ડિવાઈડર.
+
+    \textbf{એસ્ટેબલ મલ્ટિવાઈબ્રેટર:}
+    \begin{figure}[H]
+        \centering
+        \begin{circuitikz}[scale=0.7]
+            \draw (0,0) rectangle (3,4);
+            \node at (1.5,2) {555};
+            \draw (0,3.5) -- (-1,3.5) -- (-1,4.5) to[R, l=$R_1$] (-1,6) node[vcc]{$V_{CC}$};
+            \draw (-1,3.5) to[R, l=$R_2$] (-1,1.5) -- (0,1.5);
+            \draw (-1,1.5) to[C, l=$C_1$] (-1,0) node[ground]{};
+            \draw (0,0.5) -- (-2,0.5) node[ground]{};
+            \draw (3,3.5) -- (4,3.5) node[vcc]{$V_{CC}$};
+            \draw (3,2) -- (4,2) node[right]{Output};
+            \draw (0,2.5) -- (-0.5,2.5) -- (-0.5, 3.5);
+            \draw (-0.5, 3.5) -- (-1, 3.5);
+            \draw (0, 1) -- (-1, 1) -- (-1, 1.5);
+            \draw (0, 3) -- (-0.5, 3) -- (-0.5, 1);
+        \end{circuitikz}
+        \caption{એસ્ટેબલ મોડ}
+    \end{figure}
+
+    \textbf{કાર્યઃ} સ્ક્વેર વેવ જનરેટ કરે છે.
+    $f = \frac{1.44}{(R_1+2R_2)C}$.
+\end{solutionbox}
+
+% Question 5(a) OR
+\questionmarks{5(a) OR}{3}{ઓપ-એમ્પ નો ઉપયોગ કરીને સમિંગ એમ્પ્લીફાયર સમજાવો.}
+\begin{solutionbox}
+    \textbf{સમિંગ એમ્પ્લીફાયર:}
+    \begin{figure}[H]
+        \centering
+        \begin{circuitikz}[scale=0.7]
+            \draw (0,0) node[op amp](op){};
+            \draw (op.+) node[ground]{};
+            \draw (op.-) -- (-1, 0.5) -- (-1, 1.5) to[R, l=$R_f$] (1, 1.5) -| (op.out);
+            \draw (-1, 0.5) -- (-2, 0.5);
+            \draw (-2, 0.5) to[R, l=$R_1$] (-4, 0.5) node[left]{$V_1$};
+            \draw (-2, 0.5) -- (-2, -0.5) to[R, l=$R_2$] (-4, -0.5) node[left]{$V_2$};
+            \draw (-2, -0.5) -- (-2, -1.5) to[R, l=$R_3$] (-4, -1.5) node[left]{$V_3$};
+            \draw (op.out) -- (2,0) node[right]{$V_{out}$};
+        \end{circuitikz}
+    \end{figure}
+    \textbf{કાર્યઃ} $V_{out} = -(V_1+V_2+V_3)$ (જો તમામ R સમાન હોય).
+\end{solutionbox}
+
+% Question 5(b) OR
+\questionmarks{5(b) OR}{4}{પુશ-પુલ અને કોમ્પ્લિમેન્ટરી પુશ-પુલ વચ્ચેનો તફાવત આપો.}
+\begin{solutionbox}
+    \begin{tabulary}{\linewidth}{|l|L|L|}
+        \hline
+        લક્ષણ & પુશ-પુલ & કોમ્પ્લિમેન્ટરી પુશ-પુલ \\
+        \hline
+        ટ્રાન્ઝિસ્ટર & સમાન પ્રકાર (NPN) & મેચ્ડ પેર (NPN+PNP) \\
+        \hline
+        ટ્રાન્સફોર્મર & 2 જરૂરી & જરૂરી નથી \\
+        \hline
+        કદ/વજન & વધારે & ઓછું \\
+        \hline
+        ખર્ચ & વધુ & ઓછો \\
+        \hline
+    \end{tabulary}
+    \begin{mnemonicbox}
+        \mnemonic{TONIC: Transformers, One type vs Complementary, Cost}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+% Question 5(c) OR
+\questionmarks{5(c) OR}{7}{IC 555 નો બ્લોક ડાયાગ્રામ દોરો અને સમજાવો.}
+\begin{solutionbox}
+    \textbf{IC 555 બ્લોક ડાયાગ્રામ:}
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}[gtu flow]
+            \node (Vcc) [coordinate] at (0,4) {};
+            \node (Gnd) [coordinate] at (0,-4) {};
+            \node (Div1) [gtu block, align=center] at (0, 2) {કમ્પેરેટર 1\\(થ્રેશોલ્ડ)};
+            \node (Div2) [gtu block, align=center] at (0, -2) {કમ્પેરેટર 2\\(ટ્રિગર)};
+            \node (FF) [gtu block, right=of Div1] at (3,0) {ફ્લિપ-ફ્લોપ\\(RS)};
+            \node (Out) [gtu block, right=of FF] {આઉટપુટ\\સ્ટેજ};
+            \node (Dis) [gtu block, below=of FF] {ડિસ્ચાર્જ\\ટ્રાન્ઝિસ્ટર};
+            
+            \draw [gtu arrow] (Div1) -- (FF);
+            \draw [gtu arrow] (Div2) -- (FF);
+            \draw [gtu arrow] (FF) -- (Out);
+            \draw [gtu arrow] (FF) -- (Dis);
+            
+            \draw (Out.east) -- ++(1,0) node[right]{આઉટપુટ (3)};
+        \end{tikzpicture}
+    \end{figure}
+    \textbf{ઘટકો:} વોલ્ટેજ ડિવાઈડર, કમ્પેરેટર્સ, ફ્લિપ-ફ્લોપ, આઉટપુટ સ્ટેજ, ડિસ્ચાર્જ ટ્રાન્ઝિસ્ટર.
+
+    \begin{mnemonicbox}
+        \mnemonic{VICTOR: Voltage divider, Internal comparators, Control flip-flop, Timing, Output, Reset}
+    \end{mnemonicbox}
+\end{solutionbox}
+
+\end{document}
