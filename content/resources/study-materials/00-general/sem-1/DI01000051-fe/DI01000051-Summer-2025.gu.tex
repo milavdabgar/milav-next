@@ -1,0 +1,917 @@
+\documentclass{article}
+% Adjust the relative path to point to the latex-templates directory
+\input{../../../../../../latex-templates/gtu-solutions/preamble.tex}
+\input{../../../../../../latex-templates/gtu-solutions/gujarati-boxes.tex}
+\input{../../../../../../latex-templates/gtu-solutions/commands.tex}
+
+\title{Fundamentals of Electronics (DI01000051) - Summer 2025 Solution}
+\date{June 12, 2025}
+
+\begin{document}
+\maketitle
+
+% ==================================================================
+% Q.1
+% ==================================================================
+
+\questionmarks{1(અ)}{3}{555 ટાઈમર IC નો ઉપયોગ કરીને બાય-સ્ટેબલ મલ્ટીવાઈબ્રેટર દોરો.}
+
+\begin{solutionbox}
+બાય-સ્ટેબલ મલ્ટીવાઈબ્રેટર પાસે બે સ્થિર અવસ્થાઓ (HIGH અને LOW) છે. તે ટ્રિગર કરવામાં આવે ત્યાં સુધી એક સ્થિતિમાં રહે છે.
+
+\textbf{સર્કિટ ડાયાગ્રામ:}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.8, transform shape]
+    % 555 Timer IC
+    \draw (0,0) rectangle (4,5);
+    \node at (2,2.5) {\textbf{555 Timer}};
+    
+    % Pins
+    \node[left] at (0,4.5) {GND (1)};
+    \node[left] at (0,3.5) {TRIG (2)};
+    \node[left] at (0,2.5) {OUT (3)};
+    \node[left] at (0,1.5) {RESET (4)};
+    
+    \node[right] at (4,4.5) {Vcc (8)};
+    \node[right] at (4,3.5) {DISCH (7)};
+    \node[right] at (4,2.5) {THRES (6)};
+    \node[right] at (4,1.5) {CV (5)};
+    
+    % Bi-stable Connections
+    % Trigger input (Set)
+    \draw (0,3.5) -- (-1.5,3.5) node[left] {Trigger (Set)};
+    
+    % Reset input (Reset)
+    \draw (0,1.5) -- (-1.5,1.5) node[left] {Reset};
+    
+    % Output
+    \draw (0,2.5) -- (-1,2.5) -- (-1,0.5) -- (2,0.5) -- (2,-1);
+    \node[below] at (2,-1) {Output};
+    
+    % Vcc and GND
+    \draw (4,4.5) -- (5,4.5) node[right] {+Vcc};
+    \draw (0,4.5) -- (-0.5,4.5) node[left] {GND};
+    
+    % Threshold grounded
+    \draw (4,2.5) -- (4.5,2.5) -- (4.5,0) node[ground]{};
+    
+    % Notes
+    \node[draw, align=left] at (6.5,2.5) {
+        \textbf{Operation:}\\
+        - Trigger (Pin 2) LOW $\rightarrow$ Output HIGH\\
+        - Reset (Pin 4) LOW $\rightarrow$ Output LOW\\
+        - Threshold (Pin 6) is Grounded.
+    };
+\end{tikzpicture}
+\captionof{figure}{555 IC નો ઉપયોગ કરીને બાય-સ્ટેબલ મલ્ટીવાઈબ્રેટર}
+\end{center}
+
+\begin{itemize}
+    \item તે મૂળભૂત Flip-Flop તરીકે કાર્ય કરે છે.
+    \item \textbf{Set State:} જ્યારે Trigger pin (2) પર નેગેટિવ પલ્સ આપવામાં આવે છે, ત્યારે આઉટપુટ HIGH થાય છે.
+    \item \textbf{Reset State:} જ્યારે Reset pin (4) પર નેગેટિવ પલ્સ આપવામાં આવે છે, ત્યારે આઉટપુટ LOW થાય છે.
+\end{itemize}
+\end{solutionbox}
+
+\questionmarks{1(બ)}{4}{IC 555 ટાઈમર નો પિન ડાયાગ્રામ દોરો અને સમજાવો.}
+
+\begin{solutionbox}
+IC 555 એ 8-પિન DIP (Dual Inline Package) ઇન્ટિગ્રેટેડ સર્કિટ છે.
+
+\textbf{પિન ડાયાગ્રામ:}
+
+\begin{center}
+\begin{tikzpicture}
+    % IC Body
+    \draw[thick] (0,0) rectangle (3,4);
+    \draw (1.2,4) arc (180:360:0.3); % Notch
+    
+    % Left Pins
+    \foreach \i/\label in {1/GND, 2/TRIG, 3/OUT, 4/RESET} {
+        \draw (0, 4.5-\i) -- (-0.8, 4.5-\i);
+        \node[left] at (-0.8, 4.5-\i) {\textbf{\i} \label};
+        \filldraw (0, 4.5-\i) ++(-0.2,0) rectangle ++(0.2,0.2) [fill=gray!30];
+    }
+    
+    % Right Pins
+    \foreach \i/\label in {8/Vcc, 7/DISCH, 6/THRES, 5/CV} {
+        \draw (3, \i-4.5+1) -- (3.8, \i-4.5+1);
+        \node[right] at (3.8, \i-4.5+1) {\textbf{\i} \label};
+        \filldraw (3, \i-4.5+1) ++(0,0) rectangle ++(-0.2,0.2) [fill=gray!30];
+    }
+\end{tikzpicture}
+\captionof{figure}{555 ટાઈમરનું પિન કોન્ફિગરેશન}
+\end{center}
+
+\textbf{પિન સમજૂતી:}
+\begin{enumerate}
+    \item \textbf{GND (Ground):} નેગેટિવ સપ્લાય રેલ (0V) સાથે જોડાયેલ છે.
+    \item \textbf{Trigger:} આ પિન પર નેગેટિવ પલ્સ (વોલ્ટેજ < 1/3 Vcc) આંતરિક Flip-Flop સેટ કરે છે, જેનાથી આઉટપુટ HIGH થાય છે.
+    \item \textbf{Output:} લોડ ચલાવવા માટે આ પિન કરંટ સોર્સ અથવા સિંક (200mA સુધી) કરી શકે છે.
+    \item \textbf{Reset:} એક્ટિવ લો પિન. તેને GND સાથે જોડવાથી ટાઈમર રિસેટ થાય છે (આઉટપુટ LOW). સામાન્ય રીતે Vcc સાથે જોડાયેલ હોય છે.
+    \item \textbf{Control Voltage (CV):} 2/3 Vcc આંતરિક ડિવાઈડર પોઈન્ટને એક્સેસ કરવાની મંજૂરી આપે છે. સામાન્ય રીતે નોઈઝ ઈમ્યુનિટી માટે 0.01$\mu$F કેપેસિટર દ્વારા GND સાથે જોડાયેલ હોય છે.
+    \item \textbf{Threshold:} બાહ્ય કેપેસિટર પર વોલ્ટેજ તપાસે છે. જો વોલ્ટેજ > 2/3 Vcc હોય, તો તે આંતરિક Flip-Flop રિસેટ કરે છે (આઉટપુટ LOW).
+    \item \textbf{Discharge:} આંતરિક NPN ટ્રાન્ઝિસ્ટરના ઓપન કલેક્ટર સાથે જોડાયેલ છે. જ્યારે આઉટપુટ LOW હોય ત્યારે બાહ્ય કેપેસિટરને ડિસ્ચાર્જ કરે છે.
+    \item \textbf{Vcc:} પાવર સપ્લાય પિન (+5V થી +15V).
+\end{enumerate}
+
+\begin{mnemonicbox}
+\mnemonic{Pins: G-T-O-R | C-T-D-V (Ground, Trigger, Out, Reset | Ctrl, Thres, Disch, Vcc)}
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{1(ક)}{7}{IC 555 ટાઈમર નો બ્લોક ડાયાગ્રામ દોરો અને સમજાવો.}
+
+\begin{solutionbox}
+આંતરિક બ્લોક ડાયાગ્રામમાં રેઝિસ્ટર, કમ્પેરેટર, SR ફ્લિપ-ફ્લોપ અને આઉટપુટ સ્ટેજનો સમાવેશ થાય છે.
+
+\textbf{બ્લોક ડાયાગ્રામ:}
+
+\begin{center}
+\begin{tikzpicture}[auto, node distance=1.5cm]
+    % Components
+    \node [gtu block] (div) {Voltage Divider\\(3 $\times$ 5k$\Omega$)};
+    \node [gtu block, right=1cm of div] (comp1) {Comparator 1\\(Threshold)};
+    \node [gtu block, below=1cm of comp1] (comp2) {Comparator 2\\(Trigger)};
+    \node [gtu block, right=1.5cm of comp1] (ff) {SR Flip-Flop};
+    \node [gtu block, right=1.5cm of ff] (out) {Output Stage\\(Inverter)};
+    \node [gtu block, below=1cm of out] (disch) {Discharge\\Transistor};
+
+    % Wiring
+    \node[above=0.5cm of div] (vcc) {Vcc (8)};
+    \draw [gtu arrow] (vcc) -- (div);
+    
+    \draw [->] (div.east) -- (comp1.west) node[midway, above, font=\tiny] {2/3 Vcc};
+    \draw [->] (div.south east) -- (comp2.west) node[midway, below, font=\tiny] {1/3 Vcc};
+    
+    \node[above=0.5cm of comp1] (thres) {Threshold (6)};
+    \draw [gtu arrow] (thres) -- (comp1);
+    
+    \node[below=0.5cm of comp2] (trig) {Trigger (2)};
+    \draw [gtu arrow] (trig) -- (comp2);
+    
+    \draw [gtu arrow] (comp1) -- (ff) node[midway, above, font=\tiny] {R};
+    \draw [gtu arrow] (comp2) -- (ff) node[midway, below, font=\tiny] {S};
+    
+    \node[above=0.5cm of ff] (rst) {Reset (4)};
+    \draw [gtu arrow] (rst) -- (ff);
+    
+    \draw [gtu arrow] (ff) -- (out);
+    \node[right=0.5cm of out] (outpin) {Output (3)};
+    \draw [gtu arrow] (out) -- (outpin);
+    
+    \draw [->] (ff.south) |- (disch.west);
+    \node[right=0.5cm of disch] (dischpin) {Discharge (7)};
+    \draw [gtu arrow] (disch) -- (dischpin);
+    
+\end{tikzpicture}
+\captionof{figure}{555 ટાઈમરનો ફંક્શનલ બ્લોક ડાયાગ્રામ}
+\end{center}
+
+\textbf{બ્લોક્સની સમજૂતી:}
+\begin{enumerate}
+    \item \textbf{વોલ્ટેજ ડિવાઈડર:} ત્રણ 5k$\Omega$ રેઝિસ્ટર Vcc ને 2/3 Vcc અને 1/3 Vcc રેફરન્સમાં વિભાજિત કરે છે.
+    \item \textbf{કમ્પેરેટર:}
+        \begin{itemize}
+            \item \textbf{અપર કમ્પેરેટર (Threshold):} પિન 6 પરના ઈનપુટને 2/3 Vcc સાથે સરખાવે છે. જો પિન 6 > 2/3 Vcc હોય, તો આઉટપુટ રિસેટ (LOW) થાય છે.
+            \item \textbf{લોઅર કમ્પેરેટર (Trigger):} પિન 2 પરના ઈનપુટને 1/3 Vcc સાથે સરખાવે છે. જો પિન 2 < 1/3 Vcc હોય, તો આઉટપુટ સેટ (HIGH) થાય છે.
+        \end{itemize}
+    \item \textbf{SR Flip-Flop:} કમ્પેરેટર દ્વારા નક્કી કરાયેલ સ્ટેટને સ્ટોર કરે છે. રિસેટ પિન (4) તેને રિસેટ સ્ટેટમાં લઈ જઈ શકે છે.
+    \item \textbf{આઉટપુટ સ્ટેજ:} બાહ્ય લોડ ચલાવવા માટે પાવર એમ્પ્લીફાયર/ઈન્વર્ટર બફર (પિન 3).
+    \item \textbf{ડિસ્ચાર્જ ટ્રાન્ઝિસ્ટર:} NPN ટ્રાન્ઝિસ્ટર જે આઉટપુટ LOW હોય ત્યારે ON થાય છે, બાહ્ય કેપેસિટર માટે ડિસ્ચાર્જ પાથ પૂરો પાડે છે (પિન 7).
+\end{enumerate}
+\end{solutionbox}
+
+\questionmarks{1(ક OR)}{7}{555 ટાઈમર IC નો ઉપયોગ કરીને એ-સ્ટેબલ અને મોનો-સ્ટેબલ મલ્ટીવાઈબ્રેટર દોરો અને સમજાવો.}
+
+\begin{solutionbox}
+\textbf{1. એ-સ્ટેબલ મલ્ટીવાઈબ્રેટર (Free Running Oscillator)}
+\begin{itemize}
+    \item કોઈ સ્થિર અવસ્થા નથી; HIGH અને LOW વચ્ચે ઓસિલેટ થાય છે.
+    \item \textbf{સર્કિટ:} પિન 2 અને 6 એક સાથે કેપેસિટર $C$ સાથે જોડાયેલ છે. બે રેઝિસ્ટર $R_1$ અને $R_2$ $C$ ને ચાર્જ કરે છે, અને $R_2$ તેને ડિસ્ચાર્જ કરે છે.
+\end{itemize}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.7, transform shape]
+    \node[draw, minimum width=2cm, minimum height=3cm] (ic) at (0,0) {555};
+    
+    % Components for Astable
+    \node (vcc) at (0, 4) {Vcc};
+    \node[draw, rectangle] (r1) at (-2, 3) {$R_1$};
+    \node[draw, rectangle] (r2) at (-2, 1) {$R_2$};
+    \node (cap) at (-2, -2) {$C$};
+    \draw (-2,-2.5) node[ground]{};
+    
+    % Connections
+    \draw (vcc) -| (r1);
+    \draw (r1) -- (r2);
+    \draw (r2) -- (-2, -1.8) -- (-2, -2);
+    
+    \draw (0, 1.5) -- (-0.8, 1.5) node[right, font=\tiny] {7} -- (-0.8, 2) -| (-2, 2);
+    
+    \draw (0, 0.5) node[right, font=\tiny] {6} -- (-1, 0.5) -- (-1, -1) -- (-2, -1);
+    \draw (0, -0.5) node[right, font=\tiny] {2} -- (-1, -0.5) -- (-1, -1);
+    
+    \draw (0, 2.5) node[right, font=\tiny] {8} -- (0, 3.5) -- (-2, 3.5);
+    \draw (0.5, 2.5) node[right, font=\tiny] {4} -- (0.5, 3.5) -| (0, 3.5);
+
+    \draw (0, -1.5) node[right, font=\tiny] {1} -- (0, -2.5) node[ground]{};
+    
+    \draw (1, 0) node[left, font=\tiny] {3} -- (2, 0) node[right] {Output};
+\end{tikzpicture}
+\captionof{figure}{એ-સ્ટેબલ મલ્ટીવાઈબ્રેટર}
+\end{center}
+
+\textbf{કાર્ય:} કેપેસિટર $R_1+R_2$ (આઉટપુટ HIGH) દ્વારા ચાર્જ થાય છે અને $R_2$ (આઉટપુટ LOW) દ્વારા ડિસ્ચાર્જ થાય છે.
+
+\textbf{2. મોનો-સ્ટેબલ મલ્ટીવાઈબ્રેટર (One-Shot)}
+\begin{itemize}
+    \item એક સ્થિર અવસ્થા (LOW). Trigger (Pin 2) કામચલાઉ HIGH પલ્સ બનાવે છે.
+    \item \textbf{સર્કિટ:} Trigger પિન 2 પર આપવામાં આવે છે. રેઝિસ્ટર $R$ અને કેપેસિટર $C$ પલ્સની પહોળાઈ નક્કી કરે છે $T = 1.1 RC$.
+\end{itemize}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.7, transform shape]
+    \node[draw, minimum width=2cm, minimum height=3cm] (ic) at (0,0) {555};
+    
+    % Components
+    \node (vcc) at (0, 4) {Vcc};
+    \node[draw, rectangle] (r) at (-2, 2) {$R$};
+    \node (cap) at (-2, -2) {$C$};
+    \draw (-2,-2.5) node[ground]{};
+    
+    % Connections
+    \draw (vcc) -| (r);
+    \draw (r) -- (-2, -1.8) -- (-2, -2);
+    
+    \draw (0, 1.5) node[right, font=\tiny] {7} -- (-1, 1.5) -- (-1, 0) -- (-2, 0);
+    \draw (0, 0.5) node[right, font=\tiny] {6} -- (-1, 0.5) -- (-1, 0);
+    
+    \draw (0, -0.5) node[right, font=\tiny] {2} -- (-1, -0.5) -- (-1.5, -0.5) node[left] {Trigger};
+    
+    \draw (0, 2.5) -- (0, 3.5);
+    \draw (0.5, 2.5) -- (0.5, 3.5) -| (0, 3.5);
+    
+    \draw (0, -1.5) -- (0, -2.5) node[ground]{};
+\end{tikzpicture}
+\captionof{figure}{મોનો-સ્ટેબલ મલ્ટીવાઈબ્રેટર}
+\end{center}
+
+\textbf{કાર્ય:} આઉટપુટ સામાન્ય રીતે LOW હોય છે. નેગેટિવ ટ્રિગર આઉટપુટ HIGH કરે છે. કેપેસિટર $R$ દ્વારા ચાર્જ થાય છે. જ્યારે $V_C = 2/3 Vcc$ થાય છે, ત્યારે આઉટપુટ LOW થાય છે અને C ડિસ્ચાર્જ થાય છે.
+\end{solutionbox}
+
+% ==================================================================
+% Q.2
+% ==================================================================
+
+\questionmarks{2(અ)}{3}{સક્રિય અને નિષ્ક્રિય ઘટકો ઉપર ટૂંક નોંધ લખો.}
+
+\begin{solutionbox}
+ઊર્જા સંભાળવાની ક્ષમતાના આધારે ઇલેક્ટ્રોનિક ઘટકોને બે પ્રકારમાં વર્ગીકૃત કરવામાં આવે છે:
+
+\textbf{1. સક્રિય ઘટકો (Active Components):}
+\begin{itemize}
+    \item તે કમ્પોનન્ટસ જે કરંટના પ્રવાહને \textbf{નિયંત્રિત} કરી શકે છે અથવા સિગ્નલને \textbf{એમ્પ્લીફાય} કરી શકે છે.
+    \item તેમને કાર્ય કરવા માટે બાહ્ય પાવર સ્ત્રોતની જરૂર પડે છે.
+    \item \textbf{ઉદાહરણો:} Transistors (BJT, FET), Diodes (Zener, LED), ICs, Op-Amps.
+\end{itemize}
+
+\textbf{2. નિષ્ક્રિય ઘટકો (Passive Components):}
+\begin{itemize}
+    \item તે કમ્પોનન્ટસ જે માત્ર ઊર્જાનો \textbf{સંગ્રહ} અથવા \textbf{વ્યય} કરી શકે છે. તેઓ કરંટને નિયંત્રિત કરી શકતા નથી કે સિગ્નલને એમ્પ્લીફાય કરી શકતા નથી.
+    \item તેમને કાર્ય કરવા માટે બાહ્ય પાવર સ્ત્રોતની જરૂર હોતી નથી.
+    \item \textbf{ઉદાહરણો:} Resistors (ઊર્જાનો વ્યય), Capacitors (ઇલેક્ટ્રિક ઊર્જાનો સંગ્રહ), Inductors (ચુંબકીય ઊર્જાનો સંગ્રહ).
+\end{itemize}
+
+\begin{center}
+\captionof{table}{સક્રિય અને નિષ્ક્રિય ઘટકોની સરખામણી}
+\begin{tabulary}{\linewidth}{|L|L|L|}
+\hline
+\textbf{પેરામીટર} & \textbf{સક્રિય ઘટકો} & \textbf{નિષ્ક્રિય ઘટકો} \\ \hline
+કાર્ય & એમ્પ્લીફાય/સ્વિચ સિગ્નલ & ઊર્જા સંગ્રહ/વ્યય \\ \hline
+ગેઇન (Gain) & પાવર ગેઇન આપી શકે છે & પાવર ગેઇન નથી (ગેઇન < 1) \\ \hline
+નિયંત્રણ & કરંટ પ્રવાહનું નિયંત્રણ & કરંટ નિયંત્રિત કરી શકતા નથી \\ \hline
+ઉદાહરણ & Transistor, Diode & Resistor, Capacitor \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+
+\questionmarks{2(બ)}{4}{નીચેના રેઝિસ્ટન્સ માટે કલર બેંડ લખો. (1) 47 $\Omega \pm 5\%$}
+
+\begin{solutionbox}
+$47 \Omega \pm 5\%$ માટે કલર કોડ શોધવા માટે:
+
+\begin{itemize}
+    \item \textbf{કિંમત:} 47 $\Omega$
+    \item \textbf{અંક 1:} 4 એટલે \textbf{Yellow (પીળો)}.
+    \item \textbf{અંક 2:} 7 એટલે \textbf{Violet (જાંબલી)}.
+    \item \textbf{મલ્ટીપ્લાયર:} 47 મેળવવા માટે, $47 \times 10^0 = 47$. તેથી મલ્ટીપ્લાયર $10^0$ છે, જે \textbf{Black (કાળો)} છે.
+    \item \textbf{ટોલરન્સ:} $\pm 5\%$ એટલે \textbf{Gold (સોનેરી)}.
+\end{itemize}
+
+\textbf{જવાબ:}
+\begin{center}
+    \textbf{Yellow - Violet - Black - Gold}
+\end{center}
+
+\begin{mnemonicbox}
+\mnemonic{BBROYGBVGW: Black Brown Red Orange Yellow Green Blue Violet Grey White}
+\end{mnemonicbox}
+\end{solutionbox}
+
+\questionmarks{2(ક)}{7}{ફુલ વેવ સેન્ટર ટેપ રેક્ટિફાયરનું કાર્ય સર્કિટ ડાયાગ્રામ અને વેવફોર્મ સાથે સમજાવો.}
+
+\begin{solutionbox}
+ફુલ વેવ સેન્ટર ટેપ રેક્ટિફાયર સંપૂર્ણ AC સાયકલને પલ્સેટિંગ DC માં રૂપાંતરિત કરવા માટે બે ડાયોડ અને સેન્ટર-ટેપ ટ્રાન્સફોર્મરનો ઉપયોગ કરે છે.
+
+\textbf{સર્કિટ ડાયાગ્રામ:}
+\begin{center}
+\begin{tikzpicture}
+    % Transformer Coils
+    \draw (0,2) to[L] (0,0); % Primary
+    \draw (0.5,2) -- (0.5,0); \draw (0.6,2) -- (0.6,0); % Core
+    \draw (1.5,2) to[L, name=L2] (1.5,0); % Secondary
+    
+    % Center Tap
+    \coordinate (CT) at (1.5,1); % Midpoint of secondary visually
+    \draw (CT) -- (2.5,1) -- (2.5,-1) -- (5.5,-1); % GND path
+    \node at (4.5,-1) [ground]{};
+    
+    % Diodes
+    \draw (1.5,2) -- (2.5,2) to[D, l=$D_1$] (4,2) -- (4,0.5);
+    \draw (1.5,0) -- (2.5,0) to[D, l=$D_2$] (4,0) -- (4,0.5);
+    
+    % Load
+    \draw (4,0.5) -- (5.5,0.5) to[R, l=$R_L$] (5.5,-1);
+    
+    % Labels
+    \node at (-1,1) {230V AC};
+    \node at (6.5,0) {$V_{out}$};
+\end{tikzpicture}
+\captionof{figure}{ફુલ વેવ સેન્ટર ટેપ રેક્ટિફાયર}
+\end{center}
+
+\textbf{કાર્ય પદ્ધતિ:}
+\begin{itemize}
+    \item \textbf{પોઝિટિવ હાફ સાયકલ:} પોઈન્ટ A (ઉપર) CT ની સાપેક્ષમાં પોઝિટિવ છે. $D_1$ ફોરવર્ડ બાયસ (ON) થાય છે, $D_2$ રિવર્સ બાયસ (OFF) થાય છે. કરંટ $D_1$ અને $R_L$ માંથી વહે છે.
+    \item \textbf{નેગેટિવ હાફ સાયકલ:} પોઈન્ટ B (નીચે) CT ની સાપેક્ષમાં પોઝિટિવ છે. $D_2$ ફોરવર્ડ બાયસ (ON) થાય છે, $D_1$ રિવર્સ બાયસ (OFF) થાય છે. કરંટ $D_2$ અને $R_L$ માંથી વહે છે.
+    \item બંને હાફ સાયકલ દરમિયાન $R_L$ માંથી કરંટ \textbf{એક જ દિશામાં} વહે છે.
+\end{itemize}
+
+\textbf{વેવફોર્મ્સ:}
+\begin{center}
+\begin{tikzpicture}[xscale=0.015, yscale=0.5]
+    % Input
+    \draw[->] (0,3) -- (360,3) node[right] {Input};
+    \draw[thick] plot[domain=0:360, samples=100] (\x, {3 + sin(\x)});
+    
+    % Output
+    \draw[->] (0,0) -- (360,0) node[right] {Output ($V_{dc}$)};
+    \draw[thick] plot[domain=0:360, samples=100] (\x, {abs(sin(\x))});
+\end{tikzpicture}
+\captionof{figure}{ઇનપુટ અને આઉટપુટ વેવફોર્મ્સ}
+\end{center}
+\end{solutionbox}
+
+\questionmarks{2(અ OR)}{3}{કેપેસિટન્સનો ખ્યાલ સમજાવો.}
+
+\begin{solutionbox}
+કેપેસિટર એ નિષ્ક્રિય (passive) ઘટક છે જે ઇલેક્ટ્રિક ફિલ્ડમાં વિદ્યુત ઊર્જાનો સંગ્રહ કરે છે.
+
+\begin{itemize}
+    \item \textbf{રચના:} બે વાહક પ્લેટો હોય છે જે અવાહક સામગ્રી જેને \textbf{ડાઇલેક્ટ્રિક} કહેવાય છે (હવા, કાગળ, માયકા, સિરામિક) દ્વારા અલગ પડે છે.
+    \item \textbf{કાર્ય:} તે વોલ્ટેજમાં થતા ફેરફારનો વિરોધ કરે છે. તે DC ને બ્લોક કરે છે અને AC ને પસાર કરે છે.
+    \item \textbf{કેપેસિટન્સ ($C$):} ચાર્જ સંગ્રહ કરવાની ક્ષમતા. $C = Q/V$. એકમ ફેરાડ (F) છે.
+    \item \textbf{ચાર્જિંગ/ડિસ્ચાર્જિંગ:} જ્યારે વોલ્ટેજ આપવામાં આવે છે, ત્યારે તે સોર્સ વોલ્ટેજ સુધી ચાર્જ થાય છે. જ્યારે પાથ બંધ થાય છે, ત્યારે તે ડિસ્ચાર્જ થાય છે.
+\end{itemize}
+\end{solutionbox}
+
+\questionmarks{2(બ OR)}{4}{નીચે આપેલ કલર બેંડ માટે રેઝિસ્ટર ની કિંમત તથા ટોલરન્સ શોધો. (1) Brown, Green, yellow, gold (2) Grey, blue, brown}
+
+\begin{solutionbox}
+\textbf{1. Brown, Green, Yellow, Gold}
+\begin{itemize}
+    \item \textbf{Brown (1st Band):} 1
+    \item \textbf{Green (2nd Band):} 5
+    \item \textbf{Yellow (Multiplier):} $\times 10^4$ (10,000)
+    \item \textbf{Gold (Tolerance):} $\pm 5\%$
+    \item \textbf{ગણતરી:} $15 \times 10,000 = 150,000 \Omega$
+    \item \textbf{જવાબ:} \textbf{150 k$\Omega$ $\pm 5\%$}
+\end{itemize}
+
+\textbf{2. Grey, Blue, Brown}
+\begin{itemize}
+    \item \textbf{Grey (1st Band):} 8
+    \item \textbf{Blue (2nd Band):} 6
+    \item \textbf{Brown (Multiplier):} $\times 10^1$ (10)
+    \item \textbf{Tolerance:} 4થો બેન્ડ નથી એટલે $\pm 20\%$ (સ્ટાન્ડર્ડ).
+    \item \textbf{ગણતરી:} $86 \times 10 = 860 \Omega$
+    \item \textbf{જવાબ:} \textbf{860 $\Omega$ $\pm 20\%$}
+\end{itemize}
+\end{solutionbox}
+
+\questionmarks{2(ક OR)}{7}{ફુલ વેવ બ્રિજ રેક્ટિફાયરનું કાર્ય સર્કિટ ડાયાગ્રામ અને વેવફોર્મ સાથે સમજાવો.}
+
+\begin{solutionbox}
+ફુલ વેવ બ્રિજ રેક્ટિફાયર બ્રિજ કન્ફિગરેશનમાં ચાર ડાયોડ ($D_1, D_2, D_3, D_4$) નો ઉપયોગ કરે છે. તેને સેન્ટર-ટેપ ટ્રાન્સફોર્મરની જરૂર નથી.
+
+\textbf{સર્કિટ ડાયાગ્રામ:}
+\begin{center}
+\begin{tikzpicture}
+    % AC Source
+    \draw (-2,0) to[sV, l=AC] (-2,2) -- (0,2);
+    \draw (-2,0) -- (0,0);
+    
+    % Bridge
+    \draw (1.5,1.5) to[D] (2.5, 2.5); 
+    \draw (3.5,1.5) to[D] (2.5, 2.5);
+    \draw (2.5,0.5) to[D] (1.5, 1.5);
+    \draw (2.5,0.5) to[D] (3.5, 1.5);
+    
+    % Inputs
+    \draw (0,2) -| (1.5,1.5);
+    \draw (0,0) -| (3.5,1.5);
+    
+    % Load
+    \draw (2.5, 2.5) -- (2.5, 3) -- (4.5, 3) to[R, l=$R_L$] (4.5, 0) -- (2.5, 0) -- (2.5, 0.5);
+    
+    % Labels
+    \node at (-1,1) {Input};
+    \node at (5, 1.5) {$V_{out}$};
+\end{tikzpicture}
+\captionof{figure}{બ્રિજ રેક્ટિફાયર સર્કિટ}
+\end{center}
+
+\textbf{કાર્ય પદ્ધતિ:}
+\begin{itemize}
+    \item \textbf{પોઝિટિવ હાફ સાયકલ:} કરંટ $D_1 \rightarrow R_L \rightarrow D_3$ માર્ગે વહે છે. બે ડાયોડ કન્ડક્ટ કરે છે.
+    \item \textbf{નેગેટિવ હાફ સાયકલ:} કરંટ $D_2 \rightarrow R_L \rightarrow D_4$ માર્ગે વહે છે. અન્ય બે ડાયોડ કન્ડક્ટ કરે છે.
+    \item પરિણામે આઉટપુટમાં પલ્સેટિંગ DC મળે છે.
+\end{itemize}
+
+\textbf{ફાયદા:}
+\begin{itemize}
+    \item સેન્ટર-ટેપ ટ્રાન્સફોર્મરની જરૂર નથી.
+    \item સેન્ટર-ટેપની સરખામણીમાં ઉચ્ચ PIV કાર્યક્ષમતા ($PIV = V_m$ vs $2V_m$).
+\end{itemize}
+\end{solutionbox}
+
+% ==================================================================
+% Q.3
+% ==================================================================
+
+\questionmarks{3(અ)}{3}{લાઇટ ડિપેન્ડન્ટ રેઝિસ્ટર (LDR) સમજાવો.}
+
+\begin{solutionbox}
+LDR (Light Dependent Resistor) એક નિષ્ક્રિય ઘટક છે જેનો અવરોધ (resistance) તેના પર પડતા પ્રકાશની તીવ્રતા સાથે બદલાય છે.
+
+\begin{itemize}
+    \item \textbf{સિદ્ધાંત:} ફોટોકન્ડક્ટિવિટી. જ્યારે સામગ્રી (Cadmium Sulfide - CdS) પર પ્રકાશ પડે છે, ત્યારે ઇલેક્ટ્રોન-હોલ જોડીઓ ઉત્પન્ન થાય છે, જેનાથી વાહકતા વધે છે (અવરોધ ઘટે છે).
+    \item \textbf{ડાર્ક રેઝિસ્ટન્સ:} અંધારામાં ખૂબ જ વધારે (M$\Omega$ રેન્જ).
+    \item \textbf{લાઇટ રેઝિસ્ટન્સ:} તેજસ્વી પ્રકાશમાં ઓછો (k$\Omega$ અથવા $\Omega$ રેન્જ).
+    \item \textbf{પ્રતીક:}
+    \begin{tikzpicture}[baseline]
+        \draw (0,0) to[R] (2,0);
+        \draw[->, thick] (0.5, 0.8) -- (1, 0.3);
+        \draw[->, thick] (0.8, 0.8) -- (1.3, 0.3);
+        \draw (1,0) circle (0.5);
+    \end{tikzpicture}
+    \item \textbf{ઉપયોગો:} સ્ટ્રીટ લાઈટ કંટ્રોલ, બર્ગલર એલાર્મ, કેમેરા એક્સપોઝર કંટ્રોલ.
+\end{itemize}
+\end{solutionbox}
+
+\questionmarks{3(બ)}{4}{હાલ્ફ વેવ રેક્ટિફાયર સર્કિટ વેવફોર્મ સાથે સમજાવો.}
+
+\begin{solutionbox}
+હાલ્ફ વેવ રેક્ટિફાયર AC સાયકલના માત્ર એક જ અડધા ભાગને DC માં રૂપાંતરિત કરે છે.
+
+\textbf{સર્કિટ ડાયાગ્રામ:}
+\begin{center}
+\begin{tikzpicture}
+    % Transformer
+    \draw (0,0) node[transformer core](T){};
+    \draw (T.A1) -- ++(-1,0) node[left] {AC In}; \draw (T.A2) -- ++(-1,0);
+    
+    % Circuit
+    \draw (T.B1) -- ++(1,0) to[D, l=D] ++(2,0) -- ++(0, -1) to[R, l=$R_L$] ++(0, -2) -- (T.B2);
+    \node at (4.5, -1) {$V_{out}$};
+\end{tikzpicture} 
+\captionof{figure}{હાલ્ફ વેવ રેક્ટિફાયર}
+\end{center}
+
+\textbf{કાર્ય પદ્ધતિ:}
+\begin{itemize}
+    \item પોઝિટિવ હાફ સાયકલ દરમિયાન: ડાયોડ ફોરવર્ડ બાયસ (ON) થાય છે. કરંટ $R_L$ માંથી વહે છે.
+    \item નેગેટિવ હાફ સાયકલ દરમિયાન: ડાયોડ રિવર્સ બાયસ (OFF) થાય છે. કોઈ કરંટ વહેતો નથી.
+\end{itemize}
+
+\textbf{વેવફોર્મ:} આઉટપુટ વોલ્ટેજ માત્ર 0 થી $\pi$ સુધી મળે છે, $\pi$ થી $2\pi$ માટે શૂન્ય છે.
+\end{solutionbox}
+
+\questionmarks{3(ક)}{7}{વિવિધ પ્રકારના ક્લિપર સર્કિટોની યાદી બનાવો અને તે પૈકી કોઇ પણ બે પ્રકારની ક્લિપર સર્કિટો તેના વેવફોર્મસ સાથે દોરો.}
+
+\begin{solutionbox}
+\textbf{ક્લિપર સર્કિટના પ્રકારો:}
+\begin{enumerate}
+    \item સિરીઝ ક્લિપર (પોઝિટિવ/નેગેટિવ)
+    \item શંટ (પેરેલલ) ક્લિપર (પોઝિટિવ/નેગેટિવ)
+    \item બાયસ્ડ ક્લિપર (પોઝિટિવ/નેગેટિવ)
+    \item કોમ્બિનેશન (ડ્યુઅલ) ક્લિપર
+\end{enumerate}
+
+\textbf{1. પોઝિટિવ શંટ ક્લિપર:}
+\begin{itemize}
+    \item પોઝિટિવ હાફ સાયકલને દૂર કરે છે.
+\end{itemize}
+\begin{center}
+\begin{tikzpicture}[scale=0.8]
+    % Circuit
+    \draw (0,2) to[R, l=$R$] (2,2) -- (3,2);
+    \draw (2,2) -- (2,1) to[D, l=$D$] (2,0);
+    \draw (0,0) -- (3,0);
+    \draw (0,2) node[left] {In}; \draw (3,2) node[right] {Out};
+    
+    % Waveform
+    \begin{scope}[xshift=4cm]
+        \draw[->] (0,1) -- (2,1); \draw[->] (0,0) -- (0,2);
+        \draw[thick] plot[domain=0:2*pi, xscale=0.3, yscale=0.5] (\x, {-abs(sin(\x r))});
+    \end{scope}
+\end{tikzpicture}
+\end{center}
+પોઝિટિવ ઇનપુટ માટે: D ON (શોર્ટ) થાય છે, $V_{out} = 0$. નેગેટિવ ઇનપુટ માટે: D OFF (ઓપન) થાય છે, $V_{out} = V_{in}$.
+
+\textbf{2. પોઝિટિવ સિરીઝ ક્લિપર:}
+\begin{itemize}
+    \item ડાયોડ સિરીઝમાં, વિરુદ્ધ દિશામાં.
+\end{itemize}
+\begin{center}
+\begin{tikzpicture}[scale=0.8]
+    % Circuit
+    \draw (0,0) -- (3,0);
+    \draw (0,2) -- (1,2) to[D, l=$D$, invert] (2,2) to[R, l=$R_L$] (2,0);
+    \draw (2,2) -- (3,2);
+\end{tikzpicture}
+\captionof{figure}{પોઝિટિવ સિરીઝ ક્લિપર}
+\end{center}
+\end{solutionbox}
+
+\questionmarks{3(અ OR)}{3}{સેલ્ફ અને મ્યુચ્યુઅલ ઇન્ડક્ટન્સ ટૂંકમાં સમજાવો.}
+
+\begin{solutionbox}
+\textbf{સેલ્ફ ઇન્ડક્ટન્સ ($L$):} કોઇલનો ગુણધર્મ જે \textbf{પોતાના}માંથી વહેતા કરંટમાં થતા કોઈપણ ફેરફારનો EMF પ્રેરિત કરીને વિરોધ કરે છે. $e = -L \frac{di}{dt}$.
+
+\textbf{મ્યુચ્યુઅલ ઇન્ડક્ટન્સ ($M$):} કોઇલનો ગુણધર્મ જે \textbf{પડોશી} કોઇલમાં કરંટના ફેરફારનો, ચુંબકીય કપલિંગને કારણે પોતાનામાં EMF પ્રેરિત કરીને વિરોધ કરે છે. $e_2 = -M \frac{di_1}{dt}$.
+\end{solutionbox}
+
+\questionmarks{3(બ OR)}{4}{નીચેના પદો ટૂંકમાં સમજાવો. (1) રિપલ ફેક્ટર (2) રિપલ ફ્રિક્વન્સી}
+
+\begin{solutionbox}
+\textbf{1. રિપલ ફેક્ટર ($\gamma$):}
+\begin{itemize}
+    \item તે આઉટપુટના AC ઘટકની RMS કિંમત અને આઉટપુટના DC ઘટકનો ગુણોત્તર છે.
+    \item $\gamma = \frac{V_{ac(rms)}}{V_{dc}}$. તે DC આઉટપુટની શુદ્ધતા દર્શાવે છે (જેટલું ઓછું તેટલું સારું).
+\end{itemize}
+
+\textbf{2. રિપલ ફ્રિક્વન્સી ($f_r$):}
+\begin{itemize}
+    \item DC આઉટપુટમાં રહેલા AC રિપલ્સની ફ્રિક્વન્સી.
+    \item હાલ્ફ વેવ માટે: $f_r = f_{in}$ (દા.ત., 50 Hz).
+    \item ફુલ વેવ માટે: $f_r = 2f_{in}$ (દા.ત., 100 Hz).
+\end{itemize}
+\end{solutionbox}
+
+\questionmarks{3(ક OR)}{7}{વિવિધ પ્રકારના ક્લેમ્પર સર્કિટોની યાદી બનાવો અને તે પૈકી કોઇ પણ બે પ્રકારની ક્લેમ્પર સર્કિટો તેના વેવફોર્મસ સાથે દોરો.}
+
+\begin{solutionbox}
+ક્લેમ્પર સર્કિટ્સ સિગ્નલનો આકાર બદલ્યા વિના તેનું DC સ્તર શિફ્ટ કરે છે.
+\textbf{પ્રકારો:} પોઝિટિવ ક્લેમ્પર, નેગેટિવ ક્લેમ્પર, બાયસ્ડ ક્લેમ્પર.
+
+\textbf{1. પોઝિટિવ ક્લેમ્પર:}
+\begin{itemize}
+    \item વેવફોર્મને ઉપર શિફ્ટ કરે છે.
+\end{itemize}
+\begin{center}
+\begin{tikzpicture}[scale=0.8]
+    % Circuit
+    \draw (0,2) to[C, l=$C$] (2,2) -- (3,2);
+    \draw (2,2) -- (2,1) to[D, l=$D$, invert] (2,0); 
+    \draw (2,0) -- (2,0.5) to[D] (2,2); 
+    \draw (0,0) -- (3,0);
+\end{tikzpicture}
+\captionof{figure}{પોઝિટિવ ક્લેમ્પર}
+\end{center}
+
+\textbf{2. નેગેટિવ ક્લેમ્પર:}
+\begin{itemize}
+    \item વેવફોર્મને નીચે શિફ્ટ કરે છે.
+    \item ડાયોડની દિશા ઉલટી (કેથોડ GND પર).
+\end{itemize}
+\end{solutionbox}
+
+% ==================================================================
+% Q.4
+% ==================================================================
+
+\questionmarks{4(અ)}{3}{ઝેનર ડાયોડ, LED અને વેરેક્ટર ડાયોડ ના સિમ્બોલ દોરો.}
+
+\begin{solutionbox}
+\begin{center}
+\begin{tikzpicture}
+    % Zener
+    \draw (0,0) to[zD, l=Zener Diode] (0,2);
+    
+    % LED
+    \draw (3,0) to[leD, l=LED] (3,2);
+    
+    % Varactor
+    \draw (6,0) to[vC, l=Varactor Diode, invert] (6,2); 
+\end{tikzpicture}
+\end{center}
+\end{solutionbox}
+
+\questionmarks{4(બસ)}{4}{ફોટો ડાયોડ સમજાવો.}
+
+\begin{solutionbox}
+ફોટો ડાયોડ એ PN જંકશન ડાયોડ છે જે પ્રકાશ ઊર્જાને વિદ્યુત કરંટમાં રૂપાંતરિત કરે છે.
+\begin{itemize}
+    \item \textbf{ઓપરેશન:} તે \textbf{રિવર્સ બાયસ}માં કાર્ય કરે છે.
+    \item \textbf{કાર્ય:} જ્યારે જંકશન પર પ્રકાશ પડે છે, ત્યારે ઊર્જા સહસંયોજક બંધ તોડી નાખે છે, ઇલેક્ટ્રોન-હોલ જોડી બનાવે છે. આ કેરિયર્સ ઇલેક્ટ્રિક ફિલ્ડ દ્વારા સ્વીપ થાય છે, જે પ્રકાશની તીવ્રતાના પ્રમાણમાં રિવર્સ કરંટ બનાવે છે.
+    \item \textbf{ડાર્ક કરંટ:} પ્રકાશ ન હોય ત્યારે પણ વહેતો નાનો લિકેજ કરંટ.
+    \item \textbf{ઉપયોગો:} ઓપ્ટિકલ કોમ્યુનિકેશન, રિમોટ કંટ્રોલ, સ્મોક ડિટેક્ટર.
+\end{itemize}
+\end{solutionbox}
+
+\questionmarks{4(ક)}{7}{ઝેનર ડાયોડના બાંધકામ, લાક્ષણિકતાઓ અને કાર્ય સમજાવો.}
+
+\begin{solutionbox}
+\textbf{ઝેનર ડાયોડ:} રિવર્સ બ્રેકડાઉન રિજનમાં કામ કરવા માટે રચાયેલ હેવી ડોપ્ડ PN જંકશન ડાયોડ.
+
+\textbf{બાંધકામ:}
+\begin{itemize}
+    \item સાંકડો ડિપ્લેશન રિજન બનાવવા માટે હેવી ડોપ્ડ P અને N વિસ્તારો.
+    \item ગ્લાસ અથવા પ્લાસ્ટિકમાં એનકેપ્સ્યુલેટેડ.
+\end{itemize}
+
+\textbf{કાર્ય:}
+\begin{itemize}
+    \item \textbf{ફોરવર્ડ બાયસ:} સામાન્ય ડાયોડની જેમ કાર્ય કરે છે.
+    \item \textbf{રિવર્સ બાયસ:}
+    \item ઓછા વોલ્ટેજ પર, નહિવત કરંટ વહે છે.
+    \item બ્રેકડાઉન વોલ્ટેજ ($V_z$) પર, કરંટ ઝડપથી વધે છે (એવેલેન્ચ/ઝેનર બ્રેકડાઉન). કરંટમાં મોટા ફેરફારો હોવા છતાં તેની આસપાસનો વોલ્ટેજ અચળ ($V_z$) રહે છે.
+\end{itemize}
+
+\textbf{V-I લાક્ષણિકતાઓ:}
+\begin{center}
+\begin{tikzpicture}[scale=0.7]
+    \draw[->] (-4,0) -- (2,0) node[right] {$V$};
+    \draw[->] (0,-3) -- (0,3) node[above] {$I$};
+    
+    % Forward
+    \draw[thick] (0,0) -- (0.5,0) to[out=0,in=270] (1,2);
+    \node at (1.2,1) {Forward};
+    
+    % Reverse
+    \draw[thick] (0,0) -- (-2,0) -- (-2,-2.5);
+    \node at (-2,-2.8) {$V_z$};
+    \node[left] at (-2, -1) {Breakdown};
+    
+    \node at (2.5,-3) {Reverse};
+\end{tikzpicture}
+\captionof{figure}{ઝેનર ડાયોડની V-I લાક્ષણિકતાઓ}
+\end{center}
+\end{solutionbox}
+
+\questionmarks{4(અ OR)}{3}{LED અને વેરેક્ટર ડાયોડ ની એપ્લિકેશનો લખો.}
+
+\begin{solutionbox}
+\textbf{LED (Light Emitting Diode):}
+\begin{itemize}
+    \item ઇન્ડિકેટર્સ અને ડિસ્પ્લે (7-સેગમેન્ટ).
+    \item લાઇટિંગ (બલ્બ, ટોર્ચ).
+    \item ઓપ્ટિકલ કોમ્યુનિકેશન (ફાઇબર ઓપ્ટિક્સ).
+    \item રિમોટ કંટ્રોલ (IR LED).
+\end{itemize}
+
+\textbf{વેરેક્ટર ડાયોડ (Varicap):}
+\begin{itemize}
+    \item ટ્યુનિંગ સર્કિટ (FM/TV રીસીવર).
+    \item વોલ્ટેજ નિયંત્રિત ઓસિલેટર (VCO).
+    \item ફ્રિકવન્સી મલ્ટિપ્લાયર્સ.
+    \item એડજસ્ટેબલ બેન્ડપાસ ફિલ્ટર.
+\end{itemize}
+\end{solutionbox}
+
+\questionmarks{4(બ OR)}{4}{ઝેનર ડાયોડને વોલ્ટેજ રેગ્યુલેટર તરીકે સમજાવો.}
+
+\begin{solutionbox}
+ઇનપુટ વોલ્ટેજ ($V_{in}$) અથવા લોડ કરંટ ($I_L$) માં ફેરફાર થાય તો પણ ઝેનર ડાયોડ અચળ આઉટપુટ વોલ્ટેજ ($V_z$) જાળવી રાખે છે.
+
+\textbf{સર્કિટ:}
+\begin{center}
+\begin{tikzpicture}[scale=0.8]
+    \draw (-2,0) to[V, l=$V_{in}$] (-2,2) to[R, l=$R_s$] (0,2) -- (2,2);
+    \draw (0,2) to[zD, l=$D_z$] (0,0); 
+    \draw (2,2) to[R, l=$R_L$] (2,0);
+    \draw (-2,0) -- (2,0);
+    \node at (2.5,1) {$V_{out} = V_z$};
+\end{tikzpicture}
+\end{center}
+
+\textbf{કાર્ય:}
+\begin{itemize}
+    \item જો $V_{in}$ વધે છે, તો કરંટ વધે છે. ઝેનર વધારાનો કરંટ શોષી લે છે. સિરીઝ રેઝિસ્ટર ($R_s$) પર વોલ્ટેજ ડ્રોપ વધે છે. $V_{out}$ અચળ ($V_z$) રહે છે.
+    \item જો લોડ કરંટ ($I_L$) બદલાય છે, તો ઝેનર કરંટ ($I_z$) એ રીતે એડજસ્ટ થાય છે જેથી $I_s = I_z + I_L$ વોલ્ટેજ અચળ રાખે.
+\end{itemize}
+\end{solutionbox}
+
+\questionmarks{4(ક OR)}{7}{વેરેક્ટર ડાયોડના બાંધકામ, લાક્ષણિકતાઓ અને કાર્ય સમજાવો.}
+
+\begin{solutionbox}
+\textbf{વેરેક્ટર ડાયોડ:} એક વેરિયેબલ કેપેસિટન્સ ડાયોડ. તે વોલ્ટેજ-ડિપેન્ડન્ટ કેપેસિટર તરીકે કામ કરે છે.
+
+\textbf{કાર્ય સિદ્ધાંત:}
+\begin{itemize}
+    \item તે \textbf{રિવર્સ બાયસ}માં કાર્ય કરે છે.
+    \item ડિપ્લેશન રિજન ડાઇલેક્ટ્રિક તરીકે કામ કરે છે. P અને N વિસ્તારો પ્લેટો તરીકે કામ કરે છે.
+    \item \textbf{કેપેસિટન્સ સૂત્ર:} $C_T = \frac{\epsilon A}{W}$.
+    \item રિવર્સ વોલ્ટેજ ($V_R$) વધે $\rightarrow$ ડિપ્લેશન રિજન પહોળાઈ ($W$) વધે $\rightarrow$ કેપેસિટન્સ ($C_T$) ઘટે.
+    \item $C \propto \frac{1}{\sqrt{V_R}}$.
+\end{itemize}
+
+\textbf{લાક્ષણિકતાઓ:}
+\begin{center}
+\begin{tikzpicture}[scale=0.8]
+    \draw[->] (0,0) -- (4,0) node[right] {$V_R$ (Reverse Voltage)};
+    \draw[->] (0,0) -- (0,3) node[above] {$C_T$ (Capacitance)};
+    \draw[thick] plot[domain=0.5:3.5] (\x, {1.5/\x}); 
+\end{tikzpicture}
+\captionof{figure}{વેરેક્ટર ડાયોડની C-V લાક્ષણિકતાઓ}
+\end{center}
+\end{solutionbox}
+
+% ==================================================================
+% Q.5
+% ==================================================================
+
+\questionmarks{5(અ)}{3}{ટ્રાન્ઝિસ્ટરને સ્વીચ તરીકે સમજાવો.}
+
+\begin{solutionbox}
+ટ્રાન્ઝિસ્ટર \textbf{કટ-ઓફ} અને \textbf{સેચ્યુરેશન} રિજન વચ્ચે ફેરબદલ કરીને સ્વીચ તરીકે કાર્ય કરે છે.
+\begin{itemize}
+    \item \textbf{OFF State (Open Switch):} કટ-ઓફ રિજનમાં કાર્ય કરે છે. $I_B = 0 \Rightarrow I_C = 0$. $V_{CE} = V_{CC}$.
+    \item \textbf{ON State (Closed Switch):} સેચ્યુરેશન રિજનમાં કાર્ય કરે છે. $I_B$ એટલો ઊંચો હોય છે કે $I_C$ મહત્તમ ($V_{CC}/R_C$) થાય છે. $V_{CE} \approx 0$ (Saturation voltage).
+\end{itemize}
+\end{solutionbox}
+
+\questionmarks{5(બ)}{4}{NPN ટ્રાન્ઝિસ્ટરનું સામાન્ય એમીટર (CE) રૂપરેખાંકન અને તેની ઇનપુટ લાક્ષણિકતા દોરો.}
+
+\begin{solutionbox}
+\textbf{CE કન્ફિગરેશન:} એમીટર ઇનપુટ અને આઉટપુટ બંને માટે સામાન્ય છે.
+\begin{center}
+\begin{tikzpicture}[scale=0.8]
+    \draw (0,0) node[npn](Q){};
+    \draw (Q.E) -- (0,-1) node[ground]{}; % Emitter to GND
+    \draw (Q.B) -- (-1.5,0) to[V, l=$V_{BB}$] (-1.5,-1) -- (0,-1); % Input loop
+    \draw (Q.C) -- (0,1.5) to[R, l=$R_L$] (0,2.5) -- (1.5,2.5) to[V, l=$V_{CC}$] (1.5,-1) -- (0,-1); % Output loop
+    
+    \node at (-1, 0.5) {$I_B$};
+    \node at (0.5, 1) {$I_C$};
+\end{tikzpicture}
+\end{center}
+
+\textbf{ઇનપુટ લાક્ષણિકતાઓ:} અચળ $V_{CE}$ પર $I_B$ વિરુદ્ધ $V_{BE}$ નો ગ્રાફ.
+\begin{center}
+\begin{tikzpicture}[scale=0.7]
+    \draw[->] (0,0) -- (4,0) node[right] {$V_{BE}$ (V)};
+    \draw[->] (0,0) -- (0,3) node[above] {$I_B$ ($\mu A$)};
+    
+    \draw[thick] (0.6,0) to[out=80, in=260] (1.5, 2.5) node[right] {$V_{CE}=1V$};
+    \draw[thick] (0.6,0) to[out=70, in=250] (2, 2.5) node[right] {$V_{CE}=10V$};
+    
+    \node at (0.6, -0.4) {0.7V}; % Knee voltage
+\end{tikzpicture}
+\end{center}
+\end{solutionbox}
+
+\questionmarks{5(ક)}{7}{NPN ટ્રાન્ઝિસ્ટરનું સિમ્બોલ અને બાંધકામ દોરો અને તેનું કાર્ય સમજાવો.}
+
+\begin{solutionbox}
+\textbf{સિમ્બોલ:}
+\begin{center}
+\begin{tikzpicture}
+    \draw (0,0) node[npn](Q){};
+    \node[right] at (Q.C) {C (Collector)};
+    \node[right] at (Q.B) {B (Base)};
+    \node[right] at (Q.E) {E (Emitter)};
+    \node at (1, 0) {Arrow points Out (NPN)};
+\end{tikzpicture}
+\end{center}
+
+\textbf{બાંધકામ:}
+\begin{itemize}
+    \item ત્રણ સ્તરો ધરાવે છે: P-પ્રકારના પ્રદેશ દ્વારા અલગ પડેલા બે N-પ્રકારના પ્રદેશો.
+    \item \textbf{એમીટર:} હેવી ડોપ્ડ (કેરિયર્સ પૂરા પાડે છે).
+    \item \textbf{બેઝ:} લાઈટલી ડોપ્ડ અને ખૂબ પાતળું (કેરિયર્સને નિયંત્રિત કરે છે).
+    \item \textbf{કલેક્ટર:} મોડરેટ ડોપ્ડ અને ભૌતિક રીતે મોટું (કેરિયર્સ એકત્ર કરે છે).
+\end{itemize}
+
+\textbf{કાર્ય (Active Mode):}
+\begin{itemize}
+    \item \textbf{બાયસિંગ:} એમીટર-બેઝ જંકશન ફોરવર્ડ બાયસ ($V_{BE}$) છે. કલેક્ટર-બેઝ જંકશન રિવર્સ બાયસ ($V_{CB}$) છે.
+    \item એમીટરમાંથી મેજોરિટી કેરિયર્સ (ઇલેક્ટ્રોન) બેઝમાં જાય છે.
+    \item બેઝ પાતળું અને લાઈટલી ડોપ્ડ હોવાથી, માત્ર થોડા ($\approx 5\%$) હોલ્સ સાથે પુનઃસંયોજન પામે છે. $I_B$ નાનો છે.
+    \item બાકીના ($\approx 95\%$) કલેક્ટરના ઉચ્ચ પોઝિટિવ પોટેન્શિયલ દ્વારા આકર્ષાય છે.
+    \item $I_E = I_B + I_C$.
+\end{itemize}
+\end{solutionbox}
+
+\questionmarks{5(અ OR)}{3}{ટ્રાન્ઝિસ્ટરના CB, CE અને CC રૂપરેખાંકનની સરખામણી કરો.}
+
+\begin{solutionbox}
+\begin{center}
+\captionof{table}{ટ્રાન્ઝિસ્ટર કન્ફિગરેશનની સરખામણી}
+\begin{tabulary}{\linewidth}{|L|L|L|L|}
+\hline
+\textbf{પેરામીટર} & \textbf{Common Base (CB)} & \textbf{Common Emitter (CE)} & \textbf{Common Collector (CC)} \\ \hline
+ઇનપુટ રેઝિ. & ઓછું & મધ્યમ & વધારે \\ \hline
+આઉટપુટ રેઝિ. & વધારે & મધ્યમ & ઓછું \\ \hline
+કરંટ ગેઇન & ઓછું ($\alpha < 1$) & વધારે ($\beta$) & વધારે ($\gamma$) \\ \hline
+વોલ્ટેજ ગેઇન & વધારે & મધ્યમ & ઓછું ($<1$) \\ \hline
+ફેઝ શિફ્ટ & $0^\circ$ & $180^\circ$ & $0^\circ$ \\ \hline
+ઉપયોગ & RF એમ્પ્લીફાયર & ઓડિયો એમ્પ્લીફાયર & ઇમ્પીડન્સ મેચિંગ \\ \hline
+\end{tabulary}
+\end{center}
+\end{solutionbox}
+
+\questionmarks{5(બ OR)}{4}{ટ્રાન્ઝિસ્ટરને સિંગલ સ્ટેજ કોમન એમીટર એમ્પ્લીફાયર તરીકે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{સર્કિટ ડાયાગ્રામ:}
+\begin{center}
+\begin{tikzpicture}[scale=0.8]
+    % Simple CE Amp with biasing
+    \draw (0,0) node[npn](Q){};
+    \draw (Q.E) -- (0,-1) to[R, l=$R_E$] (0,-2) node[ground]{};
+    \draw (0,-1) -- (1,-1) to[C, l=$C_E$] (1,-2) -- (0,-2); 
+    
+    \draw (Q.C) -- (0,1) to[R, l=$R_C$] (0,2) -- (2,2) node[right] {$+V_{CC}$};
+    \draw (0,1) -- (1,1) to[C, l=$C_C$] (2,1) node[right] {$V_{out}$};
+    
+    \draw (Q.B) -- (-1.5,0);
+    \draw (-1.5,0) -- (-1.5, 2) to[R, l=$R_1$] (-1.5,2.5) -- (0,2.5) -- (0,2); 
+    \draw (-1.5,0) -- (-1.5, -2) to[R, l=$R_2$] (-1.5,-2.5) node[ground]{}; 
+    
+    \draw (-1.5,0) -- (-2.5,0) to[C, l=$C_{in}$] (-3.5,0) node[left] {$V_{in}$};
+    
+    % Vcc line
+    \draw (0,2) -- (-1.5, 2); 
+\end{tikzpicture} 
+\captionof{figure}{સિંગલ સ્ટેજ CE એમ્પ્લીફાયર (વોલ્ટેજ ડિવાઈડર બાયસ)}
+\end{center}
+
+\textbf{કાર્ય:}
+\begin{itemize}
+    \item $R_1, R_2$ બેઝને બાયસ કરવા માટે વોલ્ટેજ ડિવાઈડર બનાવે છે.
+    \item ઇનપુટ સિગ્નલ DC બાયસ પર સુપરઇમ્પોઝ થાય છે.
+    \item ઇનપુટના પોઝિટિવ હાફ દરમિયાન, $V_{BE}$ વધે છે $\rightarrow$ $I_B$ વધે છે $\rightarrow$ $I_C$ વધે છે $\rightarrow$ $R_C$ પર વોલ્ટેજ ડ્રોપ વધે છે $\rightarrow$ $V_{CE}$ ઘટે છે.
+    \item પરિણામ: આઉટપુટ $180^\circ$ ફેઝ શિફ્ટ (ઉલટું) અને એમ્પ્લીફાય થયેલું મળે છે.
+\end{itemize}
+\end{solutionbox}
+
+\questionmarks{5(ક OR)}{7}{NPN ટ્રાન્ઝિસ્ટરનું સામાન્ય બેઝ (CB) રૂપરેખાંકન તેની ઇનપુટ-આઉટપુટ લાક્ષણિકતાઓ સાથે સમજાવો.}
+
+\begin{solutionbox}
+\textbf{CB કન્ફિગરેશન:} બેઝ કોમન (ગ્રાઉન્ડેડ) છે. એમીટર પર ઇનપુટ, કલેક્ટર પર આઉટપુટ.
+
+\textbf{ઇનપુટ લાક્ષણિકતાઓ (અચળ $V_{CB}$ પર $V_{EB}$ વિરુદ્ધ $I_E$):}
+\begin{itemize}
+    \item ફોરવર્ડ બાયસ ડાયોડ જેવું જ છે.
+    \item જેમ $V_{EB}$ વધે છે તેમ $I_E$ ઝડપથી વધે છે.
+\end{itemize}
+
+\textbf{આઉટપુટ લાક્ષણિકતાઓ (અચળ $I_E$ પર $V_{CB}$ વિરુદ્ધ $I_C$):}
+\begin{center}
+\begin{tikzpicture}[scale=0.7]
+    \draw[->] (0,0) -- (4,0) node[right] {$V_{CB}$ (V)};
+    \draw[->] (0,0) -- (0,3) node[above] {$I_C$ (mA)};
+    
+    % Curves
+    \draw (0,0.5) -- (4,0.5) node[right] {$I_E=0.5mA$};
+    \draw (0,1) -- (4,1) node[right] {$I_E=1mA$};
+    \draw (0,1.5) -- (4,1.5) node[right] {$I_E=1.5mA$};
+\end{tikzpicture}
+\captionof{figure}{CB કન્ફિગરેશનની આઉટપુટ લાક્ષણિકતાઓ}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{એક્ટિવ રિજન:} $I_C$ લગભગ $V_{CB}$ થી સ્વતંત્ર છે અને માત્ર $I_E$ પર આધાર રાખે છે. ($I_C \approx I_E$).
+    \item \textbf{સેચ્યુરેશન રિજન:} $V_{CB} < 0$. $I_C$ ઘટે છે.
+\end{itemize}
+\end{solutionbox}
+
+\end{document}
+
+
+
+
