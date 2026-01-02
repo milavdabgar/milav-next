@@ -17,11 +17,13 @@ import { mdxComponents } from '@/components/mdx-components';
 import { visit } from 'unist-util-visit';
 import fs from 'fs';
 import { formatDate } from '@/lib/utils';
+import type { Root, Element } from 'hast';
+import type { DirectoryItem, FileItem } from '@/lib/directory-utils';
 
 // Custom rehype plugin to rewrite relative image paths
 const rehypeRelativeImages = (options: { baseUrl: string }) => {
-    return (tree: any) => {
-        visit(tree, 'element', (node: any) => {
+    return (tree: Root) => {
+        visit(tree, 'element', (node: Element) => {
             if (node.tagName === 'img' && node.properties && node.properties.src) {
                 const src = node.properties.src as string;
                 if (src.startsWith('./')) {
@@ -115,8 +117,8 @@ export async function ContentPageHandler({
     const directoryPath = slug.length > 0 ? `${basePath}/${slugPath}` : basePath;
     const { directories, files } = getDirectoryContent(directoryPath, isGujarati ? 'gu' : undefined);
 
-    const mdxFiles = files.filter((f: any) => f.type === 'mdx');
-    const staticFiles = files.filter((f: any) => f.type !== 'mdx');
+    const mdxFiles = files.filter((f: FileItem) => f.type === 'mdx');
+    const staticFiles = files.filter((f: FileItem) => f.type !== 'mdx');
 
     // Try to find _index file for metadata
     const indexContent = getContentBySlug(directoryPath, '_index', isGujarati ? 'gu' : undefined);
@@ -155,7 +157,7 @@ export async function ContentPageHandler({
             {directories.map((dir) => (
                 <Link key={dir.slug} href={`/${[basePath, ...slug, dir.slug].filter(Boolean).join('/')}${isGujarati ? '?lang=gu' : ''}`}>
                     <ResourceCard
-                        title={dir.title}
+                        title={dir.title || dir.slug}
                         description={dir.description}
                         type="folder"
                         className="h-full"

@@ -102,11 +102,11 @@ export default async function Home() {
                     {item.metadata.description || item.metadata.summary || "No description available."}
                   </p>
                 </CardContent>
-                {item.metadata.readingTime && (
+                {item.metadata.readingTime ? (
                   <CardFooter className="text-xs text-muted-foreground pt-0 mt-auto">
-                    {item.metadata.usedTime || item.metadata.readingTime}
+                    {String(item.metadata.usedTime || item.metadata.readingTime)}
                   </CardFooter>
-                )}
+                ) : null}
               </Card>
             </Link>
           ))}

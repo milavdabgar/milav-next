@@ -43,7 +43,8 @@ export function TableOfContents({ className }: TableOfContentsProps) {
       tocItems.push({ id, text, level });
     });
 
-    setToc(tocItems);
+    // Use setTimeout to avoid direct setState in effect
+    setTimeout(() => setToc(tocItems), 0);
 
     // Set up intersection observer for active heading
     const observer = new IntersectionObserver(

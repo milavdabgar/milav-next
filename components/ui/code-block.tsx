@@ -25,13 +25,11 @@ export function CodeBlock({ children, className = '', inline }: CodeBlockProps) 
   if (language.startsWith('{')) {
     language = 'text';
   }
-
-  // If inline code, render as simple code tag
-  if (inline) {
-    return <code className={className}>{children}</code>;
-  }
+  const shouldHighlight = !inline;
 
   useEffect(() => {
+    if (!shouldHighlight) return;
+    
     const highlightCode = async () => {
       try {
         // Handle special cases that Shiki doesn't support
@@ -116,6 +114,11 @@ export function CodeBlock({ children, className = '', inline }: CodeBlockProps) 
     };
     return languageMap[lang.toLowerCase()] || lang;
   };
+
+  // If inline code, render as simple code tag
+  if (inline) {
+    return <code className={className}>{children}</code>;
+  }
 
   return (
     <div className="relative group my-6">

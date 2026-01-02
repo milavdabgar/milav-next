@@ -2,18 +2,25 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 
-interface DirectoryItem {
-    name: string;
-    path: string;
+export interface DirectoryItem {
+    name?: string;
+    path?: string;
+    slug: string;
     title?: string;
+    description?: string;
+    type?: string;
 }
 
-interface FileItem {
-    name: string;
-    path: string;
+export interface FileItem {
+    name?: string;
+    path?: string;
+    slug: string;
+    filename?: string;
     title?: string;
     description?: string;
     date?: string;
+    type?: string;
+    extension?: string;
 }
 
 export function getDirectoryContent(folderPath: string, locale?: string) {

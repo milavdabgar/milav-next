@@ -45,7 +45,8 @@ export function ResponsiveToc({ className, locale }: ResponsiveTocProps) {
       tocItems.push({ id, text, level });
     });
 
-    setToc(tocItems);
+    // Use a callback to set toc to avoid direct setState in effect
+    setTimeout(() => setToc(tocItems), 0);
 
     // Set up intersection observer for active heading
     const observer = new IntersectionObserver(
@@ -82,28 +83,6 @@ export function ResponsiveToc({ className, locale }: ResponsiveTocProps) {
 
   if (toc.length === 0) return null;
 
-  const TocContent = () => (
-    <nav className="space-y-1">
-      {toc.map((item) => (
-        <button
-          key={item.id}
-          onClick={() => scrollToHeading(item.id)}
-          className={cn(
-            "block w-full text-left py-2 px-3 text-sm transition-colors hover:text-foreground rounded-md",
-            item.level === 2 && "pl-3",
-            item.level === 3 && "pl-6",
-            item.level === 4 && "pl-9",
-            activeId === item.id
-              ? "font-medium text-foreground bg-muted"
-              : "text-muted-foreground hover:bg-muted/50"
-          )}
-        >
-          {item.text}
-        </button>
-      ))}
-    </nav>
-  );
-
   return (
     <>
       {/* Desktop TOC - Always visible on large screens */}
@@ -111,7 +90,25 @@ export function ResponsiveToc({ className, locale }: ResponsiveTocProps) {
         <div className="sticky top-24 space-y-4">
           <div className="text-sm font-semibold px-3 mb-4">On This Page</div>
           <ScrollArea className="h-[calc(100vh-12rem)]">
-            <TocContent />
+            <nav className="space-y-1">
+              {toc.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => scrollToHeading(item.id)}
+                  className={cn(
+                    "block w-full text-left py-2 px-3 text-sm transition-colors hover:text-foreground rounded-md",
+                    item.level === 2 && "pl-3",
+                    item.level === 3 && "pl-6",
+                    item.level === 4 && "pl-9",
+                    activeId === item.id
+                      ? "font-medium text-foreground bg-muted"
+                      : "text-muted-foreground hover:bg-muted/50"
+                  )}
+                >
+                  {item.text}
+                </button>
+              ))}
+            </nav>
           </ScrollArea>
         </div>
       </aside>
@@ -128,7 +125,25 @@ export function ResponsiveToc({ className, locale }: ResponsiveTocProps) {
             <SheetTitle>Table of Contents</SheetTitle>
           </SheetHeader>
           <ScrollArea className="h-[calc(100vh-8rem)] mt-6">
-            <TocContent />
+            <nav className="space-y-1">
+              {toc.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => scrollToHeading(item.id)}
+                  className={cn(
+                    "block w-full text-left py-2 px-3 text-sm transition-colors hover:text-foreground rounded-md",
+                    item.level === 2 && "pl-3",
+                    item.level === 3 && "pl-6",
+                    item.level === 4 && "pl-9",
+                    activeId === item.id
+                      ? "font-medium text-foreground bg-muted"
+                      : "text-muted-foreground hover:bg-muted/50"
+                  )}
+                >
+                  {item.text}
+                </button>
+              ))}
+            </nav>
           </ScrollArea>
         </SheetContent>
       </Sheet>

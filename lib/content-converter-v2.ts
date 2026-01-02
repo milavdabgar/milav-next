@@ -39,10 +39,11 @@ interface ChromiumInstance {
 
 let chromium: ChromiumInstance | null = null;
 try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     puppeteer = require('puppeteer');
     // For production environments, also try chromium
     try {
-        // @ts-ignore - Optional dependency for production
+        // Optional dependency for production
         chromium = eval("require('@sparticuz/chromium-min')");
     } catch {
         // Chromium package is optional
@@ -62,6 +63,7 @@ interface KatexInstance {
 
 let katex: KatexInstance | null = null;
 try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     katex = require('katex');
 } catch {
     console.log('KaTeX not available, math rendering will be limited');
@@ -236,7 +238,9 @@ export class ContentConverterV2 {
     /**
      * Convert Slidev presentation to HTML
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private async convertSlidevToHtml(presentation: any, options: ConversionOptions): Promise<string> {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const slides = presentation.slides.map((slide: any, index: number) => {
             return `
                 <section class="slide slide-${index + 1}" data-layout="${slide.layout || 'default'}">
@@ -286,6 +290,7 @@ export class ContentConverterV2 {
     /**
      * Convert Slidev presentation to PDF
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private async convertSlidevToPdf(presentation: any, options: ConversionOptions): Promise<Buffer> {
         const html = await this.convertSlidevToHtml(presentation, options);
 
@@ -318,6 +323,7 @@ export class ContentConverterV2 {
     /**
      * Convert Slidev presentation to PowerPoint (basic version)
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private async convertSlidevToPptx(presentation: any, options: ConversionOptions): Promise<Buffer> {
         // Convert to markdown first, then use existing PPTX conversion
         const markdownContent = this.convertSlidevToMarkdown(presentation);
@@ -328,8 +334,10 @@ export class ContentConverterV2 {
     /**
      * Convert Slidev presentation to plain text
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private convertSlidevToPlainText(presentation: any, options: ConversionOptions): string {
         const title = presentation.title || 'Slidev Presentation';
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const slides = presentation.slides.map((slide: any, index: number) => {
             const content = slide.content
                 .replace(/#+\s/g, '') // Remove markdown headers
@@ -348,11 +356,13 @@ export class ContentConverterV2 {
     /**
      * Convert Slidev presentation to plain markdown
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private convertSlidevToMarkdown(presentation: any): string {
         const frontmatterString = Object.keys(presentation.frontmatter).length > 0
             ? `---\n${Object.entries(presentation.frontmatter).map(([key, value]) => `${key}: ${value}`).join('\n')}\n---\n\n`
             : '';
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const slidesMarkdown = presentation.slides.map((slide: any) => slide.content).join('\n\n---\n\n');
 
         return frontmatterString + slidesMarkdown;
@@ -464,6 +474,7 @@ export class ContentConverterV2 {
 
             // Use the system chromium binary if available, otherwise try Chrome paths
             let chromePath = '/usr/bin/chromium-browser'; // Alpine Linux path
+            // eslint-disable-next-line @typescript-eslint/no-require-imports
             if (!require('fs').existsSync(chromePath)) {
                 chromePath = '/Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome'; // macOS path
             }
@@ -499,6 +510,7 @@ export class ContentConverterV2 {
         let puppeteerInstance = puppeteer;
         if (!puppeteerInstance) {
             try {
+                // eslint-disable-next-line @typescript-eslint/no-require-imports
                 puppeteerInstance = require('puppeteer');
             } catch {
                 console.log('Puppeteer not available, falling back to Chrome headless');
