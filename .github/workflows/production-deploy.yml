@@ -6,7 +6,7 @@ name: Production Deployment
 on:
   push:
     branches:
-      - master  # Only deploy from master (production-ready)
+      - main  # Only deploy from main (production-ready)
   workflow_dispatch:  # Allow manual deployment
     inputs:
       force_rebuild:
@@ -22,25 +22,25 @@ jobs:
     timeout-minutes: 10
     
     steps:
-      - name: Checkout master branch
+      - name: Checkout main branch
         uses: actions/checkout@v4
         with:
-          ref: master
+          ref: main
           fetch-depth: 1
 
-      - name: Verify this is master branch
+      - name: Verify this is main branch
         run: |
-          if [ "${{ github.ref }}" != "refs/heads/master" ]; then
-            echo "❌ This workflow should only run on master branch"
+          if [ "${{ github.ref }}" != "refs/heads/main" ]; then
+            echo "❌ This workflow should only run on main branch"
             exit 1
           fi
-          echo "✅ Confirmed deployment from master branch"
+          echo "✅ Confirmed deployment from main branch"
 
-      - name: Check for recent dev merges
+      - name: Check recent commits
         run: |
-          echo "📋 Recent commits on master:"
+          echo "📋 Recent commits on main:"
           git log --oneline -5
-          echo "✅ Master branch is ready for production deployment"
+          echo "✅ Main branch is ready for production deployment"
 
   deploy-to-production:
     name: Deploy to Production Server
@@ -52,7 +52,7 @@ jobs:
       - name: Checkout production code
         uses: actions/checkout@v4
         with:
-          ref: master
+          ref: main
           fetch-depth: 1
 
       - name: Install SSH key
@@ -86,7 +86,7 @@ jobs:
             echo "=== 🚀 Production Deployment Started ==="
             echo "Timestamp: $(date)"
             echo "Project: milav-next (Personal Portfolio/Blog)"
-            echo "Branch: master"
+            echo "Branch: main"
             echo "Force rebuild: $FORCE_REBUILD"
             echo "=============================================="
             
@@ -95,10 +95,10 @@ jobs:
             docker compose -f docker-compose.production.yml down --remove-orphans 2>/dev/null || true
             docker rm -f milav-next-app 2>/dev/null || true
             
-            # Pull latest master branch
-            echo "📥 Pulling latest code from master..."
+            # Pull latest main branch
+            echo "📥 Pulling latest code from main..."
             git fetch origin
-            git reset --hard origin/master
+            git reset --hard origin/main
             git clean -fd
             
             # Clean Docker system if force rebuild requested
