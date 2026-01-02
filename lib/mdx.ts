@@ -15,7 +15,7 @@ export interface ContentMetadata {
   showReadingTime?: boolean;
   showEdit?: boolean;
   tags?: string[];
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface ContentItem {
@@ -39,7 +39,7 @@ export function getContentBySlug(
     // 3. folder/slug/index.locale.mdx (Localized Bundle)
     // 4. folder/slug/index.mdx (Default Bundle)
 
-    let possiblePaths: string[] = [];
+    const possiblePaths: string[] = [];
 
     if (locale) {
       possiblePaths.push(path.join(contentPath, `${slug}.${locale}.mdx`));

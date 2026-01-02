@@ -107,7 +107,7 @@ export default async function ProjectsPage({
             <CardTitle className="text-3xl">Projects</CardTitle>
             <CardDescription className="text-base">
               Explore technical projects spanning embedded systems, data science, IoT, and electronics engineering.
-              This section showcases various research and implementation projects I've worked on personally, 
+              This section showcases various research and implementation projects I&apos;ve worked on personally, 
               guided students through, or collaborated on with industry partners.
             </CardDescription>
           </CardHeader>
@@ -192,7 +192,7 @@ export default async function ProjectsPage({
               <CardHeader>
                 <CardTitle>Student Projects</CardTitle>
                 <CardDescription>
-                  I've guided numerous student projects that demonstrate creative solutions to real-world challenges
+                  I&apos;ve guided numerous student projects that demonstrate creative solutions to real-world challenges
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">

@@ -138,7 +138,7 @@ function SocialLink({ href, icon }: { href: string; icon: string }) {
 }
 
 function Icon({ name, className }: { name: string; className?: string }) {
-  const icons: { [key: string]: any } = {
+  const icons: { [key: string]: React.ComponentType<{ className?: string }> } = {
     github: Github,
     linkedin: Linkedin,
     mail: Mail,

@@ -78,7 +78,7 @@ export default async function AboutPage({
                 <div className="space-y-2">
                   <p className="font-medium">Goals:</p>
                   <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-                    <li>Document solutions to technical problems I've encountered</li>
+                    <li>Document solutions to technical problems I&apos;ve encountered</li>
                     <li>Share educational resources with students and fellow enthusiasts</li>
                     <li>Track my learning journey across various technical domains</li>
                     <li>Connect with like-minded individuals in the tech community</li>
@@ -158,7 +158,7 @@ export default async function AboutPage({
               <CardHeader>
                 <CardTitle>About the Author</CardTitle>
                 <CardDescription>
-                  I'm Milav Dabgar, an Electronics and Communication Engineering professional with 
+                  I&apos;m Milav Dabgar, an Electronics and Communication Engineering professional with 
                   experience in both academia and industry.
                 </CardDescription>
               </CardHeader>
@@ -201,8 +201,8 @@ export default async function AboutPage({
                   <Separator />
                   
                   <p className="text-sm text-muted-foreground italic">
-                    I'm passionate about continuous learning and applying technology to solve real-world problems. 
-                    When I'm not teaching or working on technical projects, I enjoy music and practicing yoga.
+                    I&apos;m passionate about continuous learning and applying technology to solve real-world problems. 
+                    When I&apos;m not teaching or working on technical projects, I enjoy music and practicing yoga.
                   </p>
                 </div>
               </CardContent>

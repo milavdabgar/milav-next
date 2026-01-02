@@ -2,6 +2,20 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 
+interface DirectoryItem {
+    name: string;
+    path: string;
+    title?: string;
+}
+
+interface FileItem {
+    name: string;
+    path: string;
+    title?: string;
+    description?: string;
+    date?: string;
+}
+
 export function getDirectoryContent(folderPath: string, locale?: string) {
     try {
         // Use template strings to avoid overly broad pattern matching by Turbopack
@@ -25,8 +39,8 @@ export function getDirectoryContent(folderPath: string, locale?: string) {
 
         const items = fs.readdirSync(fullPath);
 
-        const directories: any[] = [];
-        const files: any[] = [];
+        const directories: DirectoryItem[] = [];
+        const files: FileItem[] = [];
 
         items.forEach(item => {
             const itemPath = `${fullPath}/${item}`;

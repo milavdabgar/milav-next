@@ -18,11 +18,12 @@ import rehypeKatex from 'rehype-katex';
 import { getBreadcrumbs } from '@/lib/breadcrumbs';
 import { visit } from 'unist-util-visit';
 import { mdxComponents } from '@/components/mdx-components';
+import type { Root, Element } from 'hast';
 
 // Custom rehype plugin to rewrite relative image paths
 const rehypeRelativeImages = (options: { baseUrl: string }) => {
-    return (tree: any) => {
-        visit(tree, 'element', (node: any) => {
+    return (tree: Root) => {
+        visit(tree, 'element', (node: Element) => {
             if (node.tagName === 'img' && node.properties && node.properties.src) {
                 const src = node.properties.src as string;
                 if (src.startsWith('./')) {
@@ -97,8 +98,8 @@ export default async function StudyMaterialDynamicPage({
     const directoryPath = `resources/study-materials/${slugPath}`;
     const { directories, files } = getDirectoryContent(directoryPath, locale === 'gu' ? 'gu' : undefined);
 
-    const mdxFiles = files.filter((f: any) => f.type === 'mdx');
-    const staticFiles = files.filter((f: any) => f.type !== 'mdx');
+    const mdxFiles = files.filter((f) => 'type' in f && f.type === 'mdx');
+    const staticFiles = files.filter((f) => !('type' in f) || f.type !== 'mdx');
 
     // Try to find index file for this directory for metadata
     const indexContent = getContentBySlug(directoryPath, '_index', locale === 'gu' ? 'gu' : undefined);
