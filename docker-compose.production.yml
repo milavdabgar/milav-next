@@ -1,0 +1,39 @@
+# Production Docker Compose for milav-next personal portfolio/blog
+# Designed to run alongside studio app on the same server
+
+services:
+  milav-next:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      # Build args for cache control
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+        - BUILD_DATE=${BUILD_DATE:-}
+        - GIT_COMMIT=${GIT_COMMIT:-}
+      # No cache for production builds to avoid stale deployments
+      no_cache: true
+      pull: true  # Always pull base images
+    container_name: milav-next-app
+    image: milav-next:${GIT_COMMIT:-latest}
+    expose:
+      - "3001"  # Different port from studio (3000)
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - PORT=3001  # Different port from studio
+      - HOSTNAME=0.0.0.0
+      - BUILD_DATE=${BUILD_DATE:-}
+      - GIT_COMMIT=${GIT_COMMIT:-}
+    networks:
+      - npm-network
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3001/api/health', (res) => process.exit(res.statusCode === 200 ? 0 : 1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  npm-network:
+    external: true

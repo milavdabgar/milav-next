@@ -1,0 +1,120 @@
+name: Development CI
+
+on:
+  push:
+    branches:
+      - dev
+  pull_request:
+    branches:
+      - dev
+
+jobs:
+  quality-checks:
+    name: Code Quality & Security
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for security scanning
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: TypeScript Type Check
+        run: npx tsc --noEmit
+
+      - name: ESLint Check
+        run: npm run lint
+
+      - name: Security Audit
+        run: npm audit --audit-level=moderate
+
+      - name: Check for outdated dependencies
+        run: npm outdated --depth=0 || true  # Don't fail on outdated deps, just warn
+
+  build-test:
+    name: Build & Performance
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+
+      - name: Check bundle size
+        run: |
+          echo "📦 Build size analysis:"
+          
+          # Debug: Check what's actually in .next
+          echo "🔍 Debug: .next directory contents:"
+          ls -la .next/ || echo "No .next directory found"
+          
+          # Clean up cache before measuring (cache shouldn't count toward deployment size)
+          echo "🧹 Cleaning webpack cache..."
+          rm -rf .next/cache
+          
+          # Get the actual deployment size (excluding cache)
+          if [ -d ".next" ]; then
+            echo "📏 Measuring .next directory size (excluding cache)..."
+            du -sh .next/
+            BUILD_SIZE=$(du -sm .next/ 2>/dev/null | cut -f1 || echo "0")
+            echo "Build size: ${BUILD_SIZE}MB"
+            
+            # Show breakdown of subdirectories
+            echo "📊 Build breakdown:"
+            du -sh .next/*/ 2>/dev/null | sort -hr || echo "No subdirectories found"
+            
+            # Check for large content files that shouldn't be in build
+            if [ -d ".next/standalone/content" ]; then
+              echo "⚠️  Warning: Content files found in standalone build:"
+              du -sh .next/standalone/content/ 2>/dev/null || echo "No content directory"
+            fi
+            
+            # Reasonable limit for Next.js production build (1.5GB without cache)
+            if [ "$BUILD_SIZE" -gt 1500 ]; then
+              echo "❌ Build size too large: ${BUILD_SIZE}MB (max: 1500MB)"
+              echo "🔍 Top 10 largest files in build:"
+              find .next -type f -exec du -h {} \; | sort -hr | head -10
+              exit 1
+            else
+              echo "✅ Build size is acceptable: ${BUILD_SIZE}MB (max: 1500MB)"
+            fi
+          else
+            echo "❌ No .next directory found - build may have failed"
+            exit 1
+          fi
+
+      - name: Test production start
+        run: |
+          timeout 30 npm start &
+          PID=$!
+          sleep 10
+          if curl -f http://localhost:3000 > /dev/null 2>&1; then
+            echo "✅ Production server started successfully"
+            kill $PID 2>/dev/null || true
+          else
+            echo "❌ Production server failed to start"
+            kill $PID 2>/dev/null || true
+            exit 1
+          fi

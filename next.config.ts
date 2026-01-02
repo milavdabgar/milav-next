@@ -2,6 +2,8 @@ import type { NextConfig } from "next";
 import createMDX from '@next/mdx';
 
 const nextConfig: NextConfig = {
+  // Enable standalone output for Docker deployments
+  output: 'standalone',
   pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
   images: {
     remotePatterns: [
