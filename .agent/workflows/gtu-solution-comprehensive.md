@@ -33,7 +33,7 @@ date: 2026-01-03
 
 - **Tables**: Caption at TOP, use `\tabulary{\linewidth}{|L|L|}`
 - **Figures**: Caption at BOTTOM
-- **Diagrams**: TikZ only, use `gtu block`, `gtu state`, `gtu arrow`, `gtu decision` styles
+- **Diagrams**: TikZ with standard inline styles: `circle`, `rectangle`, `diamond`, `draw`, `-latex`, `fill=color!shade`
 
 ## SOLUTION TEMPLATE
 
