@@ -55,7 +55,7 @@ public class MaxOfThree {
 - **Alternative**: Can use `Math.max(a, Math.max(b, c))` for concise
   code
 
-> **MAX: Compare in pairs, update Maximum At eXamination**
+> **Mnemonic:** *MAX: Compare in pairs, update Maximum At eXamination*
 
 ### Question 1(b) \[4 marks\]
 
@@ -109,7 +109,8 @@ V_{out} = 0.707 \times V_{in} = 0.707 \times 10 = 7.07\,V
 
 - **Phase Shift**: $`-45^\circ`$ at cutoff frequency
 
-> **RC-Formula: fc = 1/(2$`\pi`$ RC), Vout = 0.707 Vin at fc**
+> **Mnemonic:** *RC-Formula: fc = 1/(2$`\pi`$ RC), Vout = 0.707 Vin at
+> fc*
 
 ### Question 1(c) \[7 marks\]
 
@@ -168,8 +169,8 @@ The fundamental difference is that active components can “inject power”
 into a circuit (amplification), while passive components can only
 “absorb or store” energy, never increase it.
 
-> **ACTIVE = Amplify, Control, Transform; PASSIVE = Resist, Store,
-> Filter**
+> **Mnemonic:** *ACTIVE = Amplify, Control, Transform; PASSIVE = Resist,
+> Store, Filter*
 
 ### Question 1(c) OR \[7 marks\]
 
@@ -238,4 +239,5 @@ Half-wave rectifiers are used in low-power applications like battery
 charging, signal demodulation, and voltage multipliers. They are “not
 suitable” for high-power applications due to poor efficiency.
 
-> **HWR: Half-Wave = Half output, 40.6% efficiency, PIV = Vm**
+> **Mnemonic:** *HWR: Half-Wave = Half output, 40.6% efficiency, PIV =
+> Vm*

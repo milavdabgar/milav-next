@@ -57,7 +57,7 @@ public class MaxOfThree {
 - **વૈકલ્પિક**: Concise code માટે `Math.max(a, Math.max(b, c))` નો ઉપયોગ
   કરી શકાય
 
-> **MAX: જોડીમાં સરખાવો, પરીક્ષણે મહત્તમ અપડેટ કરો**
+> **મેમરી ટ્રીક:** *MAX: જોડીમાં સરખાવો, પરીક્ષણે મહત્તમ અપડેટ કરો*
 
 ### Question 1(બ) \[4 marks\]
 
@@ -111,7 +111,8 @@ V_{out} = 0.707 \times V_{in} = 0.707 \times 10 = 7.07\,V
 
 - **Phase Shift**: $`-45^\circ`$ cutoff frequency પર
 
-> **RC-Formula: fc = 1/(2$`\pi`$ RC), Vout = 0.707 Vin at fc**
+> **મેમરી ટ્રીક:** *RC-Formula: fc = 1/(2$`\pi`$ RC), Vout = 0.707 Vin at
+> fc*
 
 ### Question 1(ક) \[7 marks\]
 
@@ -170,8 +171,8 @@ Active vs Passive Components Comparison
 (amplification), જ્યારે passive components ફક્ત energy “absorb અથવા store”
 કરી શકે, તેને ક્યારેય વધારી શકતા નથી.
 
-> **ACTIVE = Amplify, Control, Transform; PASSIVE = Resist, Store,
-> Filter**
+> **મેમરી ટ્રીક:** *ACTIVE = Amplify, Control, Transform; PASSIVE =
+> Resist, Store, Filter*
 
 ### Question 1(ક OR) \[7 marks\]
 
@@ -241,4 +242,5 @@ Half-wave rectifiers નો ઉપયોગ low-power applications માં થ
 battery charging, signal demodulation, અને voltage multipliers. તેઓ poor
 efficiency ને કારણે high-power applications માટે *યોગ્ય નથી*.
 
-> **HWR: Half-Wave = અડધું output, 40.6% efficiency, PIV = Vm**
+> **મેમરી ટ્રીક:** *HWR: Half-Wave = અડધું output, 40.6% efficiency, PIV =
+> Vm*

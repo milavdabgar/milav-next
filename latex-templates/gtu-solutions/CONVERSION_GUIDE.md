@@ -27,7 +27,7 @@ Details...
 More details...
 
 \begin{quote}
-\textbf{Memory aid text}
+\textbf{Mnemonic:} \emph{Memory aid text}
 \end{quote}
 ```
 
@@ -80,7 +80,7 @@ title: Subject Name (SUBJECT001) - Sample Term Solution
 ##### Given Data:                (H5)
 ##### Step 1: Calculate          (H5)
 
-> **Mnemonic text**              (blockquote with bold)
+> **Mnemonic:** *Memory aid*     (blockquote with label)
 ```
 
 ### Perfect Tables
@@ -94,7 +94,7 @@ title: Subject Name (SUBJECT001) - Sample Term Solution
 
 1. **Always use `\maketitle`** - Required for title export to YAML
 2. **Standard LaTeX only** - Use `\section`, `\subsection`, `\subsubsection`, `\paragraph`
-3. **Bold for mnemonics** - Use `\textbf{}` inside `\begin{quote}` (more visible than italic)
+3. **Label mnemonics clearly** - Use `\textbf{Mnemonic:} \emph{text}` inside `\begin{quote}`
 4. **Semantic commands OK** - `\keyword{}` → `**bold**`, `\code{}` → `` `code` ``
 5. **Use `tabularx` + `booktabs`** - Converts to perfect GFM pipe tables
 6. **Minimal colors** - Only `headcolor` for section titles (optional, for branding)
