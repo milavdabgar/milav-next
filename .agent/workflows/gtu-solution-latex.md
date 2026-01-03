@@ -15,13 +15,22 @@ date: 2026-01-03
 ```
 /Users/milav/Code/milav-next/latex-templates/gtu-solutions/
 ├── sample_paper.md              # Input format example
-├── sample_solution.tex          # English output example
-├── sample_solution.gu.tex       # Gujarati output example
-├── latex-conventions.tex        # Style guide with examples
-└── latex-conventions.gu.tex     # Gujarati style guide
+├── sample_solution.tex          # English output - YOUR SPEC
+└── sample_solution.gu.tex       # Gujarati output - YOUR SPEC
 ```
 
 **Your task**: Given a question paper like `sample_paper.md`, produce solutions following the EXACT structure, formatting, and conventions shown in `sample_solution.tex` and `sample_solution.gu.tex`.
+
+**The sample solutions ARE the specification** - they show everything you need:
+
+- Smart quotes in text vs straight quotes in code (Q1a)
+- Tables with caption at TOP (Q1c)
+- Figures with caption at BOTTOM (Q1c OR)
+- Mathematics with \[ \] (Q1b)
+- Code with lstlisting (Q1a)
+- CircuiTikZ circuits (Q1c OR)
+- TikZ diagrams (Q1c OR)
+- \keyword{} and \code{} usage (all questions)
 
 ## File Structure
 
@@ -55,18 +64,18 @@ date: 2026-01-03
 
 **See `sample_solution.tex` lines 15-60 (3 marks), 62-105 (4 marks), 107-148 (7 marks) for examples.**
 
-### Typography (Examples in latex-conventions.tex)
+### Typography (Study sample_solution.tex)
 
-- **Smart quotes in text**: `` ``double'' `` and `` `single' ``
-- **Straight quotes in code**: `"string"` inside lstlisting
-- **Inline code**: `\code{text}` NOT `\texttt{text}`
+- **Smart quotes in text**: `` ``double'' `` and `` `single' `` (see Q1a "largest value", Q1c "inject power")
+- **Straight quotes in code**: `"string"` inside lstlisting (see Q1a line 31)
+- **Inline code**: `\code{text}` NOT `\texttt{text}` (see Q1a lines 55-57)
 
-### Structure (Examples in sample_solution.tex)
+### Structure (Study sample_solution.tex)
 
-- **Tables**: `\captionof{table}` at TOP, use `\tabulary{\linewidth}{|L|L|}`
-- **Figures**: `\captionof{figure}` at BOTTOM
-- **Circuits**: Use CircuiTikZ (see sample_solution.tex lines 161-183)
-- **Diagrams**: Use TikZ with inline styles like `circle, draw, fill=blue!10` (see latex-conventions.tex lines 84-93)
+- **Tables**: `\captionof{table}` at TOP, use `\tabulary{\linewidth}{|L|L|}` (see Q1c lines 115-128)
+- **Figures**: `\captionof{figure}` at BOTTOM (see Q1c OR lines 183, 210)
+- **Circuits**: Use CircuiTikZ (see Q1c OR lines 161-183)
+- **Diagrams**: Use TikZ with inline styles like `circle, draw, fill=blue!10` (see Q1c OR lines 194-209)
 
 ### Question Format
 
@@ -85,6 +94,7 @@ date: 2026-01-03
 ## Content Guidelines
 
 **FOLLOW THE EXAMPLES** for:
+
 - How to structure explanations (see sample_solution.tex Q1a, Q1b, Q1c)
 - When to use tables vs diagrams (Q1c uses table, Q1c OR uses circuit diagram)
 - How to format mathematics (Q1b shows step-by-step with \[ \])
@@ -95,6 +105,7 @@ date: 2026-01-03
 ## Gujarati Version
 
 **Follow `sample_solution.gu.tex` exactly**:
+
 - Natural Gujarati translation (not word-by-word)
 - Keep technical terms in English (e.g., "Transistors", "BJT", "FET")
 - Keep all code, equations, diagrams identical
@@ -103,6 +114,7 @@ date: 2026-01-03
 ## Quality Checklist
 
 Compare your output with `sample_solution.tex`:
+
 - ✅ Every question has \questionmarks, \solutionbox, \mnemonicbox
 - ✅ Word counts match mark allocation (3→90-150, 4→120-180, 7→200-300)
 - ✅ All visuals present (tables for comparisons, diagrams for concepts, code for programming)
