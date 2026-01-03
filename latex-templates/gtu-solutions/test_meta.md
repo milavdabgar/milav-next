@@ -1,6 +1,11 @@
-# Subject Name (SUBJECT001) - Sample Term Solution
+---
+author:
+- Milav Dabgar
+date: Month Day, Year
+title: Subject Name (SUBJECT001) - Sample Term Solution
+---
 
-## Question 1
+# Question 1
 
 ### Question 1(a) \[3 marks\]
 

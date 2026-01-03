@@ -1,18 +1,16 @@
-# Subject Name (SUBJECT001) - Sample Term Solution
-
 ## Question 1
 
-### Question 1(a) \[3 marks\]
+#### Question 1(a) \[3 marks\]
 
 **Write a Java program to find the maximum of three numbers.**
 
-#### Solution
+##### Solution
 
 To find the **maximum** of three numbers, we use **conditional
 statements** (if-else) to compare values. The program takes three
 numbers as input and returns the “largest value” among them.
 
-##### Java Program:
+###### Java Program:
 
 ``` java
 public class MaxOfThree {
@@ -37,11 +35,11 @@ public class MaxOfThree {
 }
 ```
 
-##### Output:
+###### Output:
 
     Maximum number is: 40
 
-##### Key Points:
+###### Key Points:
 
 - **Logic**: First compare `a` and `b`, store larger in `max`
 
@@ -53,15 +51,15 @@ public class MaxOfThree {
 > <span style="color: mnemoniccolor">“MAX: Compare in pairs, update
 > Maximum At eXamination”</span>
 
-### Question 1(b) \[4 marks\]
+#### Question 1(b) \[4 marks\]
 
 **Calculate the cutoff frequency of an RC low-pass filter with
 $`R = 1.5\,k\Omega`$ and $`C = 100\,nF`$. Also find the output voltage
 if input is 10V at cutoff frequency.**
 
-#### Solution
+##### Solution
 
-##### Given Data:
+###### Given Data:
 
 - Resistance: $`R = 1.5\,k\Omega = 1500\,\Omega`$
 
@@ -69,7 +67,7 @@ if input is 10V at cutoff frequency.**
 
 - Input Voltage: $`V_{in} = 10\,V`$
 
-##### Step 1: Calculate Cutoff Frequency
+###### Step 1: Calculate Cutoff Frequency
 
 The **cutoff frequency** formula for RC low-pass filter is:
 ``` math
@@ -87,7 +85,7 @@ f_c = \frac{1}{2\pi \times 1.5 \times 10^{-4}}
 f_c = \frac{1}{9.42 \times 10^{-4}} = 1061.57\,Hz \approx 1.06\,kHz
 ```
 
-##### Step 2: Calculate Output Voltage at Cutoff
+###### Step 2: Calculate Output Voltage at Cutoff
 
 At cutoff frequency, output voltage is **0.707 times** (or
 $`\frac{1}{\sqrt{2}}`$) the input voltage:
@@ -95,7 +93,7 @@ $`\frac{1}{\sqrt{2}}`$) the input voltage:
 V_{out} = 0.707 \times V_{in} = 0.707 \times 10 = 7.07\,V
 ```
 
-##### Results:
+###### Results:
 
 - **Cutoff Frequency**: $`f_c = 1.06\,kHz`$
 
@@ -108,12 +106,12 @@ V_{out} = 0.707 \times V_{in} = 0.707 \times 10 = 7.07\,V
 > <span style="color: mnemoniccolor">“RC-Formula: fc = 1/(2$`\pi`$ RC),
 > Vout = 0.707 Vin at fc”</span>
 
-### Question 1(c) \[7 marks\]
+#### Question 1(c) \[7 marks\]
 
 **Compare active and passive electronic components with suitable
 examples.**
 
-#### Solution
+##### Solution
 
 Electronic components are classified into **active** and **passive**
 categories based on their ability to control or amplify electrical
@@ -131,7 +129,7 @@ energy.
 
 Active vs Passive Components Comparison
 
-##### Active Components in Detail:
+###### Active Components in Detail:
 
 - **Transistors**: Used for amplification and switching. BJT uses
   current control, FET uses voltage control.
@@ -145,7 +143,7 @@ Active vs Passive Components Comparison
 - **Power Requirement**: All active components need DC bias/supply to
   operate.
 
-##### Passive Components in Detail:
+###### Passive Components in Detail:
 
 - **Resistors**: Oppose current flow, dissipate power as heat. Value in
   $`\Omega`$.
@@ -159,7 +157,7 @@ Active vs Passive Components Comparison
 - **Transformers**: Transfer energy between circuits via magnetic
   coupling.
 
-##### Key Distinction:
+###### Key Distinction:
 
 The fundamental difference is that active components can “inject power”
 into a circuit (amplification), while passive components can only
@@ -168,18 +166,18 @@ into a circuit (amplification), while passive components can only
 > <span style="color: mnemoniccolor">“ACTIVE = Amplify, Control,
 > Transform; PASSIVE = Resist, Store, Filter”</span>
 
-### Question 1(c) OR \[7 marks\]
+#### Question 1(c) OR \[7 marks\]
 
 **Draw and explain the working of a half-wave rectifier circuit with
 input and output waveforms.**
 
-#### Solution
+##### Solution
 
 A **half-wave rectifier** converts AC voltage to pulsating DC by
 allowing only one half-cycle (positive or negative) of the input AC
 waveform to pass through.
 
-##### Circuit Diagram:
+###### Circuit Diagram:
 
 <figure data-latex-placement="H">
 <div class="circuitikz">
@@ -198,7 +196,7 @@ class="math inline"><em>V</em><sub><em>o</em><em>u</em><em>t</em></sub></span></
 <figcaption>Half-Wave Rectifier Circuit</figcaption>
 </figure>
 
-##### Working Principle:
+###### Working Principle:
 
 1.  **Positive Half-Cycle**: When input AC is positive, diode is
     forward-biased (conducts). Current flows through load resistor
@@ -210,14 +208,14 @@ class="math inline"><em>V</em><sub><em>o</em><em>u</em><em>t</em></sub></span></
 3.  **Result**: Only positive half-cycles appear at output, creating
     pulsating DC.
 
-##### Waveform Representation:
+###### Waveform Representation:
 
 <figure data-latex-placement="H">
 
 <figcaption>Input and Output Waveforms</figcaption>
 </figure>
 
-##### Key Parameters:
+###### Key Parameters:
 
 - **Efficiency**: $`\eta = 40.6\%`$ (theoretical maximum)
 
@@ -229,7 +227,7 @@ class="math inline"><em>V</em><sub><em>o</em><em>u</em><em>t</em></sub></span></
 - **DC Output**: $`V_{DC} = \frac{V_m}{\pi} = 0.318 V_m`$ where $`V_m`$
   is peak AC voltage
 
-##### Applications:
+###### Applications:
 
 Half-wave rectifiers are used in low-power applications like battery
 charging, signal demodulation, and voltage multipliers. They are “not

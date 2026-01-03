@@ -1,4 +1,9 @@
-# Subject Name (SUBJECT001) - Sample Term Solution
+---
+author:
+- Milav Dabgar
+date: Month Day, Year
+title: Subject Name (SUBJECT001) - Sample Term Solution
+---
 
 ## Question 1
 
@@ -50,8 +55,7 @@ public class MaxOfThree {
 - **Alternative**: Can use `Math.max(a, Math.max(b, c))` for concise
   code
 
-> <span style="color: mnemoniccolor">“MAX: Compare in pairs, update
-> Maximum At eXamination”</span>
+> *MAX: Compare in pairs, update Maximum At eXamination*
 
 ### Question 1(b) \[4 marks\]
 
@@ -105,8 +109,7 @@ V_{out} = 0.707 \times V_{in} = 0.707 \times 10 = 7.07\,V
 
 - **Phase Shift**: $`-45^\circ`$ at cutoff frequency
 
-> <span style="color: mnemoniccolor">“RC-Formula: fc = 1/(2$`\pi`$ RC),
-> Vout = 0.707 Vin at fc”</span>
+> *RC-Formula: fc = 1/(2$`\pi`$ RC), Vout = 0.707 Vin at fc*
 
 ### Question 1(c) \[7 marks\]
 
@@ -165,8 +168,8 @@ The fundamental difference is that active components can “inject power”
 into a circuit (amplification), while passive components can only
 “absorb or store” energy, never increase it.
 
-> <span style="color: mnemoniccolor">“ACTIVE = Amplify, Control,
-> Transform; PASSIVE = Resist, Store, Filter”</span>
+> *ACTIVE = Amplify, Control, Transform; PASSIVE = Resist, Store,
+> Filter*
 
 ### Question 1(c) OR \[7 marks\]
 
@@ -235,5 +238,4 @@ Half-wave rectifiers are used in low-power applications like battery
 charging, signal demodulation, and voltage multipliers. They are “not
 suitable” for high-power applications due to poor efficiency.
 
-> <span style="color: mnemoniccolor">“HWR: Half-Wave = Half output,
-> 40.6% efficiency, PIV = Vm”</span>
+> *HWR: Half-Wave = Half output, 40.6% efficiency, PIV = Vm*

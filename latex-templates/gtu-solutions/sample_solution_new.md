@@ -1,22 +1,18 @@
----
-author:
-- Milav Dabgar
-date: Month Day, Year
-title: Subject Name (SUBJECT001) - Sample Term Solution
----
+# Question 1
 
-# Question 1(a) \[3 marks\] {#question-1a-3-marks .unnumbered}
+## Question 1(a) \[3 marks\]
 
 **Write a Java program to find the maximum of three numbers.**
 
-::: solutionbox
+### Solution
+
 To find the **maximum** of three numbers, we use **conditional
 statements** (if-else) to compare values. The program takes three
-numbers as input and returns the "largest value" among them.
+numbers as input and returns the “largest value” among them.
 
 #### Java Program:
 
-``` {.java language="Java" caption="Find Maximum of Three Numbers"}
+``` java
 public class MaxOfThree {
     public static void main(String[] args) {
         int a = 25, b = 40, c = 15;
@@ -51,80 +47,87 @@ public class MaxOfThree {
 
 - **Alternative**: Can use `Math.max(a, Math.max(b, c))` for concise
   code
-:::
 
-::: mnemonicbox
-["MAX: Compare in pairs, update Maximum At
-eXamination"]{style="color: mnemoniccolor"}
-:::
+> <span style="color: mnemoniccolor">“MAX: Compare in pairs, update
+> Maximum At eXamination”</span>
 
-# Question 1(b) \[4 marks\] {#question-1b-4-marks .unnumbered}
+## Question 1(b) \[4 marks\]
 
 **Calculate the cutoff frequency of an RC low-pass filter with
-$R = 1.5\,k\Omega$ and $C = 100\,nF$. Also find the output voltage if
-input is 10V at cutoff frequency.**
+$`R = 1.5\,k\Omega`$ and $`C = 100\,nF`$. Also find the output voltage
+if input is 10V at cutoff frequency.**
 
-::: solutionbox
+### Solution
+
 #### Given Data:
 
-- Resistance: $R = 1.5\,k\Omega = 1500\,\Omega$
+- Resistance: $`R = 1.5\,k\Omega = 1500\,\Omega`$
 
-- Capacitance: $C = 100\,nF = 100 \times 10^{-9}\,F$
+- Capacitance: $`C = 100\,nF = 100 \times 10^{-9}\,F`$
 
-- Input Voltage: $V_{in} = 10\,V$
+- Input Voltage: $`V_{in} = 10\,V`$
 
 #### Step 1: Calculate Cutoff Frequency
 
 The **cutoff frequency** formula for RC low-pass filter is:
-$$f_c = \frac{1}{2\pi RC}$$
+``` math
+f_c = \frac{1}{2\pi RC}
+```
 
 Substituting values:
-$$f_c = \frac{1}{2\pi \times 1500 \times 100 \times 10^{-9}}$$
-$$f_c = \frac{1}{2\pi \times 1.5 \times 10^{-4}}$$
-$$f_c = \frac{1}{9.42 \times 10^{-4}} = 1061.57\,Hz \approx 1.06\,kHz$$
+``` math
+f_c = \frac{1}{2\pi \times 1500 \times 100 \times 10^{-9}}
+```
+``` math
+f_c = \frac{1}{2\pi \times 1.5 \times 10^{-4}}
+```
+``` math
+f_c = \frac{1}{9.42 \times 10^{-4}} = 1061.57\,Hz \approx 1.06\,kHz
+```
 
 #### Step 2: Calculate Output Voltage at Cutoff
 
 At cutoff frequency, output voltage is **0.707 times** (or
-$\frac{1}{\sqrt{2}}$) the input voltage:
-$$V_{out} = 0.707 \times V_{in} = 0.707 \times 10 = 7.07\,V$$
+$`\frac{1}{\sqrt{2}}`$) the input voltage:
+``` math
+V_{out} = 0.707 \times V_{in} = 0.707 \times 10 = 7.07\,V
+```
 
 #### Results:
 
-- **Cutoff Frequency**: $f_c = 1.06\,kHz$
+- **Cutoff Frequency**: $`f_c = 1.06\,kHz`$
 
-- **Output Voltage**: $V_{out} = 7.07\,V$ at cutoff
+- **Output Voltage**: $`V_{out} = 7.07\,V`$ at cutoff
 
-- **Attenuation**: $-3\,dB$ at cutoff frequency
+- **Attenuation**: $`-3\,dB`$ at cutoff frequency
 
-- **Phase Shift**: $-45^\circ$ at cutoff frequency
-:::
+- **Phase Shift**: $`-45^\circ`$ at cutoff frequency
 
-::: mnemonicbox
-["RC-Formula: fc = 1/(2$\pi$ RC), Vout = 0.707 Vin at
-fc"]{style="color: mnemoniccolor"}
-:::
+> <span style="color: mnemoniccolor">“RC-Formula: fc = 1/(2$`\pi`$ RC),
+> Vout = 0.707 Vin at fc”</span>
 
-# Question 1(c) \[7 marks\] {#question-1c-7-marks .unnumbered}
+## Question 1(c) \[7 marks\]
 
 **Compare active and passive electronic components with suitable
 examples.**
 
-::: solutionbox
+### Solution
+
 Electronic components are classified into **active** and **passive**
 categories based on their ability to control or amplify electrical
 energy.
 
-  **Characteristic**   **Active Components**           **Passive Components**
-  -------------------- ------------------------------- ----------------------------------
-  Energy Source        Require external power          Do not require external power
-  Control Ability      Can control/amplify current     Cannot amplify, only regulate
-  Directionality       Usually unidirectional          Bidirectional
-  Power Gain           Provide power gain ($>1$)       Power gain always $\leq 1$
-  Examples             Transistors, Diodes, ICs, SCR   Resistors, Capacitors, Inductors
-  Function             Amplification, switching,       Resistance, capacitance,
-                       oscillation, rectification      inductance, filtering
-  Linearity            Can be linear or non-linear     Generally linear
+| **Characteristic** | **Active Components** | **Passive Components** |
+|:---|:---|:---|
+| Energy Source | Require external power source | Do not require external power |
+| Control Ability | Can control/amplify current flow | Cannot amplify, only regulate |
+| Directionality | Usually unidirectional | Bidirectional |
+| Power Gain | Provide power gain ($`>1`$) | Power gain is always $`\leq 1`$ |
+| Examples | Transistors (BJT, FET), Diodes (LED, Zener), ICs (Op-Amp, 555), SCR | Resistors, Capacitors, Inductors, Transformers |
+| Function | Amplification, switching, oscillation, rectification | Resistance, capacitance, inductance, filtering |
+| Linearity | Can be linear or non-linear | Generally linear |
+
+Active vs Passive Components Comparison
 
 #### Active Components in Detail:
 
@@ -143,7 +146,7 @@ energy.
 #### Passive Components in Detail:
 
 - **Resistors**: Oppose current flow, dissipate power as heat. Value in
-  $\Omega$.
+  $`\Omega`$.
 
 - **Capacitors**: Store energy in electric field. Value in Farads (F),
   blocks DC, passes AC.
@@ -156,22 +159,20 @@ energy.
 
 #### Key Distinction:
 
-The fundamental difference is that active components can "inject power"
+The fundamental difference is that active components can “inject power”
 into a circuit (amplification), while passive components can only
-"absorb or store" energy, never increase it.
-:::
+“absorb or store” energy, never increase it.
 
-::: mnemonicbox
-["ACTIVE = Amplify, Control, Transform; PASSIVE = Resist, Store,
-Filter"]{style="color: mnemoniccolor"}
-:::
+> <span style="color: mnemoniccolor">“ACTIVE = Amplify, Control,
+> Transform; PASSIVE = Resist, Store, Filter”</span>
 
-# Question 1(c OR) \[7 marks\] {#question-1c-or-7-marks .unnumbered}
+## Question 1(c) OR \[7 marks\]
 
 **Draw and explain the working of a half-wave rectifier circuit with
 input and output waveforms.**
 
-::: solutionbox
+### Solution
+
 A **half-wave rectifier** converts AC voltage to pulsating DC by
 allowing only one half-cycle (positive or negative) of the input AC
 waveform to pass through.
@@ -199,7 +200,7 @@ class="math inline"><em>V</em><sub><em>o</em><em>u</em><em>t</em></sub></span></
 
 1.  **Positive Half-Cycle**: When input AC is positive, diode is
     forward-biased (conducts). Current flows through load resistor
-    $R_L$, producing output voltage.
+    $`R_L`$, producing output voltage.
 
 2.  **Negative Half-Cycle**: When input AC is negative, diode is
     reverse-biased (blocks). No current flows, output voltage is zero.
@@ -216,24 +217,21 @@ class="math inline"><em>V</em><sub><em>o</em><em>u</em><em>t</em></sub></span></
 
 #### Key Parameters:
 
-- **Efficiency**: $\eta = 40.6\%$ (theoretical maximum)
+- **Efficiency**: $`\eta = 40.6\%`$ (theoretical maximum)
 
-- **Ripple Factor**: $r = 1.21$ (high ripple content)
+- **Ripple Factor**: $`r = 1.21`$ (high ripple content)
 
-- **Peak Inverse Voltage (PIV)**: $PIV = V_m$ (maximum reverse voltage
+- **Peak Inverse Voltage (PIV)**: $`PIV = V_m`$ (maximum reverse voltage
   across diode)
 
-- **DC Output**: $V_{DC} = \frac{V_m}{\pi} = 0.318 V_m$ where $V_m$ is
-  peak AC voltage
+- **DC Output**: $`V_{DC} = \frac{V_m}{\pi} = 0.318 V_m`$ where $`V_m`$
+  is peak AC voltage
 
 #### Applications:
 
 Half-wave rectifiers are used in low-power applications like battery
-charging, signal demodulation, and voltage multipliers. They are "not
-suitable" for high-power applications due to poor efficiency.
-:::
+charging, signal demodulation, and voltage multipliers. They are “not
+suitable” for high-power applications due to poor efficiency.
 
-::: mnemonicbox
-["HWR: Half-Wave = Half output, 40.6% efficiency, PIV =
-Vm"]{style="color: mnemoniccolor"}
-:::
+> <span style="color: mnemoniccolor">“HWR: Half-Wave = Half output,
+> 40.6% efficiency, PIV = Vm”</span>

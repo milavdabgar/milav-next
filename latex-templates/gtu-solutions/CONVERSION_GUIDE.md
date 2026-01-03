@@ -27,7 +27,7 @@ Details...
 More details...
 
 \begin{quote}
-\mnemonic{Memory aid text}
+\emph{Memory aid text}
 \end{quote}
 ```
 
@@ -80,7 +80,7 @@ title: Subject Name (SUBJECT001) - Sample Term Solution
 ##### Given Data:                (H5)
 ##### Step 1: Calculate          (H5)
 
-> "Mnemonic text"                (blockquote)
+> *Mnemonic text*                (blockquote with emphasis)
 ```
 
 ### Perfect Tables
@@ -93,10 +93,11 @@ title: Subject Name (SUBJECT001) - Sample Term Solution
 ## 🎯 Best Practices
 
 1. **Always use `\maketitle`** - Required for title export to YAML
-2. **Standard sectioning only** - Don't use custom `\questionmarks{}` commands
-3. **Blockquotes for mnemonics** - `\begin{quote}...\end{quote}` converts cleanly
-4. **Use `tabularx` + `booktabs`** - Converts to perfect GFM pipe tables
-5. **H1 from CMS** - Your Next.js/Hugo controls H1 from frontmatter
+2. **Standard LaTeX only** - Use `\section`, `\subsection`, `\subsubsection`, `\paragraph`
+3. **Standard emphasis** - Use `\emph{}` for mnemonics inside `\begin{quote}`
+4. **Semantic commands OK** - `\keyword{}` → `**bold**`, `\code{}` → `` `code` ``
+5. **Use `tabularx` + `booktabs`** - Converts to perfect GFM pipe tables
+6. **H1 from CMS** - Your Next.js/Hugo controls H1 from frontmatter
 
 ## 🚀 For Production
 
