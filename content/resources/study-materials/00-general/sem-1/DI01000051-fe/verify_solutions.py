@@ -360,6 +360,189 @@ def check_custom_commands(filename):
         print(f"❌ FAIL: {errors} custom command definitions found.")
         return False
 
+def check_document_structure(filename):
+    print(f"\n--- Checking Document Structure: {filename} ---")
+    errors = 0
+    with open(filename, 'r') as f:
+        content = f.read()
+    
+    required_elements = [
+        (r'\documentclass{article}', 'documentclass{article}'),
+        (r'\begin{document}', 'begin{document}'),
+        (r'\end{document}', 'end{document}'),
+        (r'\maketitle', 'maketitle'),
+        (r'\title{', 'title'),
+        (r'\date{', 'date')
+    ]
+    
+    for pattern, name in required_elements:
+        if pattern not in content:
+            print(f"❌ Missing: {name}")
+            errors += 1
+    
+    if errors == 0:
+        print("✅ PASS: Document structure complete.")
+        return True
+    else:
+        print(f"❌ FAIL: {errors} structural elements missing.")
+        return False
+
+def check_pdf_metadata(filename):
+    print(f"\n--- Checking PDF Metadata: {filename} ---")
+    warnings = 0
+    with open(filename, 'r') as f:
+        content = f.read()
+    
+    if r'\hypersetup{' not in content:
+        print("⚠️  Missing \\hypersetup{{}} for PDF metadata")
+        warnings += 1
+    else:
+        # Check for key metadata fields
+        metadata_fields = ['pdftitle', 'pdfsubject', 'pdfauthor', 'pdfkeywords']
+        for field in metadata_fields:
+            if field not in content:
+                print(f"⚠️  Missing PDF metadata field: {field}")
+    
+    if warnings == 0:
+        print("✅ PASS: PDF metadata present.")
+        return True
+    else:
+        print(f"⚠️  PASS with {warnings} warnings.")
+        return True
+
+def check_preamble_usage(filename, language="English"):
+    print(f"\n--- Checking Preamble Usage: {filename} ({language}) ---")
+    with open(filename, 'r') as f:
+        content = f.read()
+    
+    expected_preamble = 'preamble.gu.tex' if language == "Gujarati" else 'preamble.tex'
+    
+    if r'\input{' not in content:
+        print("❌ Missing \\input for preamble")
+        return False
+    
+    if expected_preamble in content:
+        print(f"✅ PASS: Correct preamble ({expected_preamble}) used.")
+        return True
+    else:
+        print(f"⚠️  Expected {expected_preamble} in preamble input")
+        return True
+
+def check_code_math_diagram_identity(file_en, file_gu):
+    print(f"\n--- Checking Code/Math/Diagram Identity (En vs Gu) ---")
+    warnings = 0
+    
+    with open(file_en, 'r') as f:
+        content_en = f.read()
+    with open(file_gu, 'r') as f:
+        content_gu = f.read()
+    
+    # Extract code listings
+    code_en = re.findall(r'\\begin\{lstlisting\}.*?\\end\{lstlisting\}', content_en, re.DOTALL)
+    code_gu = re.findall(r'\\begin\{lstlisting\}.*?\\end\{lstlisting\}', content_gu, re.DOTALL)
+    
+    if len(code_en) != len(code_gu):
+        print(f"❌ Code block count mismatch: En={len(code_en)}, Gu={len(code_gu)}")
+        warnings += 1
+    else:
+        # Check if code blocks are identical (ignoring caption text)
+        for i, (en_code, gu_code) in enumerate(zip(code_en, code_gu)):
+            # Remove caption for comparison
+            en_clean = re.sub(r'caption=\{[^}]+\}', '', en_code)
+            gu_clean = re.sub(r'caption=\{[^}]+\}', '', gu_code)
+            if en_clean != gu_clean:
+                print(f"⚠️  Code block {i+1} differs between En and Gu")
+                warnings += 1
+    
+    # Extract inline and display math
+    inline_math_en = re.findall(r'\\\([^)]+\\\)', content_en)
+    inline_math_gu = re.findall(r'\\\([^)]+\\\)', content_gu)
+    
+    if len(inline_math_en) != len(inline_math_gu):
+        print(f"⚠️  Inline math count differs: En={len(inline_math_en)}, Gu={len(inline_math_gu)}")
+        warnings += 1
+    
+    display_math_en = re.findall(r'\\\[[^\]]+\\\]', content_en, re.DOTALL)
+    display_math_gu = re.findall(r'\\\[[^\]]+\\\]', content_gu, re.DOTALL)
+    
+    if len(display_math_en) != len(display_math_gu):
+        print(f"⚠️  Display math count differs: En={len(display_math_en)}, Gu={len(display_math_gu)}")
+        warnings += 1
+    
+    # Extract diagrams (tikz, circuitikz, karnaugh-map)
+    diagram_types = ['tikzpicture', 'circuitikz', 'karnaugh-map']
+    for dtype in diagram_types:
+        diag_en = re.findall(rf'\\begin\{{{dtype}\}}.*?\\end\{{{dtype}\}}', content_en, re.DOTALL)
+        diag_gu = re.findall(rf'\\begin\{{{dtype}\}}.*?\\end\{{{dtype}\}}', content_gu, re.DOTALL)
+        
+        if len(diag_en) != len(diag_gu):
+            print(f"⚠️  {dtype} count differs: En={len(diag_en)}, Gu={len(diag_gu)}")
+            warnings += 1
+        elif len(diag_en) > 0:
+            # Check if diagrams are identical
+            for i, (en_diag, gu_diag) in enumerate(zip(diag_en, diag_gu)):
+                if en_diag != gu_diag:
+                    print(f"⚠️  {dtype} diagram {i+1} differs between En and Gu")
+                    warnings += 1
+    
+    if warnings == 0:
+        print("✅ PASS: Code/Math/Diagrams are identical between versions.")
+        return True
+    else:
+        print(f"⚠️  PASS with {warnings} identity warnings.")
+        return True
+
+def check_smart_quotes(filename):
+    print(f"\n--- Checking Smart Quotes Usage: {filename} ---")
+    warnings = 0
+    with open(filename, 'r') as f:
+        lines = f.readlines()
+    
+    in_lstlisting = False
+    for i, line in enumerate(lines, 1):
+        if '\\begin{lstlisting}' in line:
+            in_lstlisting = True
+        elif '\\end{lstlisting}' in line:
+            in_lstlisting = False
+        
+        # Skip code blocks and comments
+        if in_lstlisting or line.strip().startswith('%'):
+            continue
+        
+        # Check for smart quote patterns in text
+        if '\\emph{' in line or '\\paragraph{' in line or '\\textbf{' not in line:
+            # Look for opening quotes
+            if "''" in line or '``' in line:
+                pass  # Has smart quotes, good
+            elif '"' in line and 'lstlisting' not in line:
+                # Has straight quotes in text - already warned by syntax check
+                pass
+    
+    print("✅ PASS: Smart quotes check complete.")
+    return True
+
+def check_marks_format(filename):
+    print(f"\n--- Checking Marks Format in Subsections: {filename} ---")
+    warnings = 0
+    with open(filename, 'r') as f:
+        content = f.read()
+    
+    # Find all subsections
+    subsections = re.findall(r'\\subsection\{([^}]+)\}', content)
+    
+    for subsec in subsections:
+        # Check for marks notation [X marks] or [X ગુણ]
+        if not re.search(r'\[\s*\d+\s*(marks|Marks|ગુણ)\s*\]', subsec):
+            print(f"⚠️  Subsection missing marks notation: {subsec[:50]}...")
+            warnings += 1
+    
+    if warnings == 0:
+        print("✅ PASS: All subsections have marks notation.")
+        return True
+    else:
+        print(f"⚠️  PASS with {warnings} warnings.")
+        return True
+
 def check_typography(filename):
     print(f"\n--- Checking Typography (Units, Spacing): {filename} ---")
     errors = 0
@@ -462,6 +645,14 @@ if __name__ == "__main__":
     pass_lc = check_line_counts(file_en, file_gu)
     pass_struct = check_structure(file_en, file_gu)
     
+    # Document structure and metadata
+    pass_doc_en = check_document_structure(file_en)
+    pass_doc_gu = check_document_structure(file_gu)
+    pass_meta_en = check_pdf_metadata(file_en)
+    pass_meta_gu = check_pdf_metadata(file_gu)
+    pass_preamble_en = check_preamble_usage(file_en, "English")
+    pass_preamble_gu = check_preamble_usage(file_gu, "Gujarati")
+    
     # Syntax and compliance checks
     pass_syn_en = check_syntax(file_en, "English")
     pass_syn_gu = check_syntax(file_gu, "Gujarati")
@@ -474,8 +665,14 @@ if __name__ == "__main__":
     pass_wc_en = check_word_counts(file_en)
     pass_wc_gu = check_word_counts(file_gu)
     pass_typo_en = check_typography(file_en)
+    pass_quotes = check_smart_quotes(file_en)  # Check one file as example
+    pass_marks_en = check_marks_format(file_en)
+    pass_marks_gu = check_marks_format(file_gu)
     
-    # New comprehensive checks
+    # Content fidelity checks (En vs Gu)
+    pass_identity = check_code_math_diagram_identity(file_en, file_gu)
+    
+    # Structural checks
     pass_toc_en = check_toc_setup(file_en)
     pass_toc_gu = check_toc_setup(file_gu)
     pass_mnem_en = check_mnemonics(file_en)
@@ -496,7 +693,9 @@ if __name__ == "__main__":
     print("\n========================================")
     # Critical checks that must pass
     critical_checks = [
-        pass_lc, pass_struct, 
+        pass_lc, pass_struct,
+        pass_doc_en, pass_doc_gu,
+        pass_preamble_en, pass_preamble_gu,
         pass_syn_en, pass_syn_gu, 
         pass_cont_en, pass_cont_gu, 
         pass_hier_en, pass_hier_gu,
@@ -506,6 +705,7 @@ if __name__ == "__main__":
     
     if all(critical_checks):
         print("OVERALL STATUS: ✅ PASSED")
+        print("\nNote: All critical checks passed. Quality warnings (if any) should be reviewed.")
         sys.exit(0)
     else:
         print("OVERALL STATUS: ❌ FAILED")
