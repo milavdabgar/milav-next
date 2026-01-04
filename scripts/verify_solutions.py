@@ -2,6 +2,8 @@ import sys
 import re
 import subprocess
 import difflib
+import os
+import argparse
 
 def check_line_counts(file_en, file_gu):
     print(f"\n--- Checking Line Counts ---")
@@ -646,14 +648,46 @@ def check_compilation(filename, language="English"):
     
     compiler = 'xelatex' if language == "Gujarati" else 'pdflatex'
     
+    # Get absolute path and split into directory and basename
+    abs_path = os.path.abspath(filename)
+    file_dir = os.path.dirname(abs_path)
+    file_base = os.path.basename(abs_path)
+    
+    # Save current directory
+    original_dir = os.getcwd()
+    
     try:
+        # Change to the file's directory so output files are created there
+        os.chdir(file_dir)
+        
         # Run compiler in nonstopmode (doesn't stop on errors)
         result = subprocess.run(
-            [compiler, '-interaction=nonstopmode', '-halt-on-error', filename],
+            [compiler, '-interaction=nonstopmode', '-halt-on-error', file_base],
             capture_output=True,
             text=True,
             timeout=30
         )
+        
+        # Clean up residual LaTeX files in the file's directory
+        base_name = os.path.splitext(file_base)[0]
+        residual_extensions = ['.pdf', '.aux', '.log', '.out', '.toc', '.synctex.gz', '.fls', '.fdb_latexmk']
+        for ext in residual_extensions:
+            residual_file = base_name + ext
+            if os.path.exists(residual_file):
+                try:
+                    os.remove(residual_file)
+                except:
+                    pass  # Ignore errors during cleanup
+        
+        # Also clean up any files that may have been created in the original directory
+        os.chdir(original_dir)
+        for ext in residual_extensions:
+            residual_file = base_name + ext
+            if os.path.exists(residual_file):
+                try:
+                    os.remove(residual_file)
+                except:
+                    pass
         
         if result.returncode == 0:
             print(f"✅ PASS: {filename} compiles successfully with {compiler}.")
@@ -667,11 +701,17 @@ def check_compilation(filename, language="English"):
                     print(f"  {line}")
             return False
     except subprocess.TimeoutExpired:
+        os.chdir(original_dir)
         print(f"❌ FAIL: Compilation timeout (>30s).")
         return False
     except FileNotFoundError:
+        os.chdir(original_dir)
         print(f"⚠️  {compiler} not installed/found. Skipping compilation check.")
         return True
+    except Exception as e:
+        os.chdir(original_dir)
+        print(f"❌ ERROR: {str(e)}")
+        return False
 
 def check_filename_convention(filename):
     print(f"\n--- Checking Filename Convention: {filename} ---")
@@ -1099,8 +1139,8 @@ if __name__ == "__main__":
     import argparse
     
     parser = argparse.ArgumentParser(description='Verify GTU LaTeX Solutions.')
-    parser.add_argument('file_en', nargs='?', default="DI01000051-Summer-2025-Solution-Full.tex", help='English Solution File')
-    parser.add_argument('file_gu', nargs='?', default="DI01000051-Summer-2025-Solution-Full.gu.tex", help='Gujarati Solution File')
+    parser.add_argument('file_en', help='English Solution File (path to .tex file)')
+    parser.add_argument('file_gu', help='Gujarati Solution File (path to .gu.tex file)')
     
     args = parser.parse_args()
     
