@@ -1,11 +1,10 @@
 ---
-title: "GTU LaTeX Solution Generator - Quick Workflow v2"
+title: "GTU LaTeX Solution Generator - Short Workflow"
 description: "Condensed workflow with logical sequence for LLM execution"
 date: 2026-01-04
-version: 2.0
 ---
 
-# GTU Solution Generator - Quick Guide
+# GTU Solution Generator - Short Guide
 
 **INPUT**: Question paper (markdown)  
 **OUTPUT**: English `.tex` + Gujarati `.gu.tex` (both with PDFs)

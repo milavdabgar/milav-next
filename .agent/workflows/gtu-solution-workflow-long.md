@@ -1,11 +1,10 @@
 ---
-title: "GTU LaTeX Solution Generator - Workflow v2"
+title: "GTU LaTeX Solution Generator - Workflow Long"
 description: "Complete workflow with logical sequence for LLM execution"
 date: 2026-01-04
-version: 2.0
 ---
 
-# GTU LaTeX Solution Generator
+# GTU LaTeX Solution Generator - Detailed Guide
 
 **INPUT**: Question paper (markdown format)  
 **OUTPUT**: Complete LaTeX solution files (English `.tex` + Gujarati `.gu.tex`)
