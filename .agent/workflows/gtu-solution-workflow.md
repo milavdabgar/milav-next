@@ -35,9 +35,35 @@ Two LaTeX solution files with:
 
 **These samples show ALL patterns - refer to them frequently.**
 
+## ⛔ CRITICAL: DO NOT Reference Existing Solutions
+
+**NEVER look at or reference any other `.tex` or `.gu.tex` files in the working directory!**
+
+- ❌ **DO NOT** study existing solution files (e.g., `DI01000051-Summer-2025.tex`)
+- ❌ **DO NOT** use old attempts as examples (they may not meet quality standards)
+- ❌ **DO NOT** copy patterns from files in the working directory
+- ✅ **ONLY** refer to `sample_solution.tex` and `sample_solution.gu.tex` from `/latex-templates/gtu-solutions/`
+
+**Why?** Old solution files may have quality issues and do not pass strict verification. The sample files are the ONLY verified reference that demonstrates correct patterns.
+
 ---
 
 ## PART 2: Specifications
+
+### ⚠️ IMPORTANT: Use ONLY Sample Files as Reference
+
+Before proceeding, understand this critical rule:
+
+**The ONLY valid reference files are:**
+- `/Users/milav/Code/milav-next/latex-templates/gtu-solutions/sample_solution.tex`
+- `/Users/milav/Code/milav-next/latex-templates/gtu-solutions/sample_solution.gu.tex`
+
+**DO NOT reference:**
+- Any other `.tex` files in the working directory
+- Previously generated solution files
+- Old attempts or existing solutions
+
+**If you see other solution files in the directory, IGNORE them completely. They do not meet quality standards.**
 
 ### Document Template
 
@@ -361,3 +387,5 @@ After: Q1, Q2, Q3, Q4, Q5, Finalization
 ---
 
 **Remember**: Reference `sample_solution.tex` constantly - it shows exact patterns for everything.
+
+**⛔ NEVER reference other `.tex` files in the working directory - they are old attempts and do not meet quality standards!**
