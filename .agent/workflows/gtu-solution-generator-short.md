@@ -26,7 +26,10 @@ date: 2026-01-04
 - For each subsequent Question (Q2, Q3, Q4, Q5):
   1. **Generate En & Gu Simultaneously**: Produce LaTeX code for the entire question block.
   2. **Append**: Add to respective files.
-  3. **Quick Check**: Ensure no `$` usage and structure matches reference.
+  3. **Quick Check**: 
+     - Ensure no `$` or `**` or any other Markdown Native Syntax usage, we must use latex syntaxes and structure matches reference.
+     - **Verify Line Counts**: Compare line counts of En and Gu files. They should be roughly similar (within ~10%). Large discrepancies indicate missing content or extra spacing.
+     - **Verify TOC**: Ensure section/subsection structure is identical in both files.
 
 ### 4. Finalization
 
