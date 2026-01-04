@@ -3,8 +3,6 @@ title: "GTU LaTeX Solution Generator"
 date: 2026-01-04
 ---
 
-# Generate GTU Exam Solutions in LaTeX
-
 **INPUT**: Question paper (markdown format like `sample_paper.md`)  
 **OUTPUT**: Complete LaTeX solution files in same folder (English `.tex` + Gujarati `.gu.tex`)
 
@@ -53,7 +51,9 @@ date: 2026-01-04
 
 \begin{document}
 \maketitle
-Conventions (MUST Follow)
+```
+
+## Conventions (MUST Follow)
 
 ### 1. Mathematics Notation (LaTeX Standard - NOT Markdown)
 
@@ -89,6 +89,7 @@ Display: $$...$$       % Deprecated TeX notation
 ```
 
 **When to use each**:
+
 - `description`: Labeled items (Key Points, Results, Parameters)
 - `itemize`: Unlabeled bullet lists (Given Data)
 - `enumerate`: Numbered sequences (steps, procedures)
@@ -101,6 +102,7 @@ Display: $$...$$       % Deprecated TeX notation
 \subsubsection{Solution}                 % H3 - Solution header
 \paragraph{Java Program:}                % H4 - Content sections
 \paragraph{Structure Examples
+```
 
 **See `sample_solution.tex` for complete patterns**:
 
@@ -198,9 +200,12 @@ Display: $$...$$       % Deprecated TeX notation
 \end{solutionbox}
 
 \begin{mnemonicbox}
+```
+
 **Before submitting, verify against `sample_solution.tex`**:
 
 ### Structure
+
 - ✅ Uses only standard LaTeX commands (no `\keyword{}`, `\code{}`, `\questionmarks{}`)
 - ✅ Standard sectioning: `\section{}` → `\subsection{}` → `\subsubsection{}` → `\paragraph{}`
 - ✅ Description lists for all labeled items
@@ -208,12 +213,14 @@ Display: $$...$$       % Deprecated TeX notation
 - ✅ Only one dependency: `preamble.tex`
 
 ### Mathematics
+
 - ✅ Inline math uses `\(...\)` NOT `$...$`
 - ✅ Display math uses `\[...\]` NOT `$$...$$`
 - ✅ All formulas use proper LaTeX notation
 - ✅ Spacing in units: `\,` for thin space
 
 ### Content
+
 - ✅ Word counts match marks (3→90-150, 4→120-180, 7→200-300)
 - ✅ All questions have visuals (tables/diagrams/code)
 - ✅ Description lists for Key Points, Results, Parameters
@@ -221,6 +228,7 @@ Display: $$...$$       % Deprecated TeX notation
 - ✅ Every question has mnemonic section
 
 ### Compilation
+
 - ✅ English: `pdflatex sample_solution.tex` compiles
 - ✅ Gujarati: `xelatex sample_solution.gu.tex` compiles
 - ✅ ChkTeX shows only cosmetic warnings (TikZ trailing spaces acceptable)
@@ -235,7 +243,8 @@ pandoc sample_solution.tex -o sample_solution.md --to=gfm --wrap=none --standalo
 pandoc sample_solution.gu.tex -o sample_solution.gu.md --to=gfm --wrap=none --standalone --shift-heading-level-by=1
 ```
 
-**Output format**: 
+**Output format**:
+
 - Inline math: `` $`x + y`$ `` (GFM with backticks)
 - Display math: ` ``` math` block
 - Tables: Proper GFM tables
@@ -257,6 +266,7 @@ pandoc sample_solution.gu.tex -o sample_solution.gu.md --to=gfm --wrap=none --st
 ---
 
 **Golden Rule**: The examples ARE the specification. When in doubt, copy the exact
+
 - Translate only explanatory text and labels
 
 ## Quality Checklist
