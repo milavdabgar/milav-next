@@ -292,7 +292,44 @@ def check_hierarchy_levels(filename):
         print("✅ PASS: All 5 hierarchy levels present.")
         return True
 
+def check_caption_presence(filename):
+    """Check that all tables, figures, and listings have captions."""
+    print(f"\n--- Checking Caption Presence: {filename} ---")
+    errors = 0
+    with open(filename, 'r') as f:
+        content = f.read()
+    
+    # Check tables have \caption{}
+    tables = list(re.finditer(r'\\begin\{table\}.*?\\end\{table\}', content, re.DOTALL))
+    for i, match in enumerate(tables, 1):
+        if r'\caption{' not in match.group(0):
+            print(f"❌ Table #{i} missing \\caption{{}}")
+            errors += 1
+    
+    # Check figures have \caption{}
+    figures = list(re.finditer(r'\\begin\{figure\}.*?\\end\{figure\}', content, re.DOTALL))
+    for i, match in enumerate(figures, 1):
+        if r'\caption{' not in match.group(0):
+            print(f"❌ Figure #{i} missing \\caption{{}}")
+            errors += 1
+    
+    # Check lstlisting blocks have caption parameter
+    listings = list(re.finditer(r'\\begin\{lstlisting\}(?:\[([^\]]*)\])?.*?\\end\{lstlisting\}', content, re.DOTALL))
+    for i, match in enumerate(listings, 1):
+        params = match.group(1) if match.group(1) else ''
+        if 'caption=' not in params:
+            print(f"❌ Listing #{i} missing caption parameter")
+            errors += 1
+    
+    if errors == 0:
+        print("✅ PASS: All tables, figures, and listings have captions.")
+        return True
+    else:
+        print(f"❌ FAIL: {errors} items missing captions.")
+        return False
+
 def check_caption_positions(filename):
+    """Check that table captions are at TOP and figure captions are at BOTTOM."""
     print(f"\n--- Checking Table/Figure Caption Positions: {filename} ---")
     warnings = 0
     with open(filename, 'r') as f:
@@ -693,6 +730,83 @@ def check_preamble_path(filename, language="English"):
         print(f"⚠️  Expected {expected_preamble} in preamble path")
         return True
 
+def check_table_format(filename):
+    print(f"\n--- Checking Table Format Standards: {filename} ---")
+    warnings = 0
+    with open(filename, 'r') as f:
+        content = f.read()
+    
+    # Find all table environments
+    tables = re.findall(r'\\begin\{table\}.*?\\end\{table\}', content, re.DOTALL)
+    
+    for i, table in enumerate(tables, 1):
+        # Check if table uses tabularx
+        if r'\begin{tabularx}' not in table:
+            print(f"⚠️  Table {i} doesn't use tabularx (uses tabular or other format)")
+            warnings += 1
+    
+    if warnings == 0:
+        print("✅ PASS: All tables use tabularx format.")
+        return True
+    else:
+        print(f"⚠️  PASS with {warnings} warnings.")
+        return True
+
+def check_figure_placement(filename):
+    print(f"\n--- Checking Figure Placement Specifiers: {filename} ---")
+    warnings = 0
+    with open(filename, 'r') as f:
+        content = f.read()
+    
+    # Find all figure environments
+    figures = re.findall(r'\\begin\{figure\}(\[.*?\])?', content)
+    
+    for i, placement in enumerate(figures, 1):
+        if not placement or '[H]' not in placement:
+            print(f"⚠️  Figure {i} missing [H] placement specifier")
+            warnings += 1
+    
+    if warnings == 0:
+        print("✅ PASS: All figures use [H] placement.")
+        return True
+    else:
+        print(f"⚠️  PASS with {warnings} warnings.")
+        return True
+
+def check_solution_content_structure(filename):
+    print(f"\n--- Checking Solution Content Structure: {filename} ---")
+    errors = 0
+    with open(filename, 'r') as f:
+        content = f.read()
+    
+    # Find all solution blocks: from \subsubsection{Solution} to \paragraph{Mnemonic}
+    solution_pattern = r'\\subsubsection\{(Solution|ઉકેલ)\}(.*?)\\paragraph\{(Mnemonic|મેમરી ટ્રીક):?\}'
+    solutions = re.findall(solution_pattern, content, re.DOTALL)
+    
+    for i, (sol_type, sol_content, mnem_type) in enumerate(solutions, 1):
+        # Check for forbidden sectioning commands within solution content
+        forbidden = [
+            (r'\\section\{', 'section'),
+            (r'\\subsection\{', 'subsection'),
+            (r'\\subsubsection\{', 'subsubsection')
+        ]
+        
+        for pattern, name in forbidden:
+            if re.search(pattern, sol_content):
+                print(f"❌ Solution {i}: Found \\{name}{{}} inside solution content (only \\paragraph and \\subparagraph allowed)")
+                errors += 1
+        
+        # Verify it has at least one \paragraph (besides the mnemonic which we already matched)
+        if r'\paragraph{' not in sol_content:
+            print(f"⚠️  Solution {i}: No \\paragraph{{}} commands found (solution should use paragraphs for structure)")
+    
+    if errors == 0:
+        print("✅ PASS: Solution content structure valid (only paragraph/subparagraph used).")
+        return True
+    else:
+        print(f"❌ FAIL: {errors} solution structure violations.")
+        return False
+
 def check_description_item_count(file_en, file_gu):
     print(f"\n--- Checking Description List Item Counts (En vs Gu) ---")
     warnings = 0
@@ -788,6 +902,71 @@ def check_code_math_diagram_identity(file_en, file_gu):
         return True
     else:
         print(f"⚠️  PASS with {warnings} identity warnings.")
+        return True
+
+def check_sectioning_line_alignment(file_en, file_gu):
+    """Check that all sectioning commands appear at the same line numbers in both files."""
+    print(f"\n--- Checking Sectioning Command Line Alignment ---")
+    errors = 0
+    
+    with open(file_en, 'r') as f:
+        lines_en = f.readlines()
+    with open(file_gu, 'r') as f:
+        lines_gu = f.readlines()
+    
+    # Define sectioning commands to track
+    sectioning_cmds = [
+        r'\\section\{',
+        r'\\subsection\{',
+        r'\\subsubsection\{',
+        r'\\paragraph\{',
+        r'\\subparagraph\{'
+    ]
+    
+    # Extract sectioning commands with line numbers from both files
+    sections_en = []
+    sections_gu = []
+    
+    for i, line in enumerate(lines_en, 1):
+        for cmd in sectioning_cmds:
+            if re.search(cmd, line):
+                # Extract command type (e.g., "section", "subsection")
+                cmd_type = cmd.replace(r'\\', '').replace(r'\{', '')
+                sections_en.append((i, cmd_type))
+                break  # Only one sectioning command per line
+    
+    for i, line in enumerate(lines_gu, 1):
+        for cmd in sectioning_cmds:
+            if re.search(cmd, line):
+                cmd_type = cmd.replace(r'\\', '').replace(r'\{', '')
+                sections_gu.append((i, cmd_type))
+                break
+    
+    # Compare counts first
+    if len(sections_en) != len(sections_gu):
+        print(f"❌ Sectioning command count mismatch: En={len(sections_en)}, Gu={len(sections_gu)}")
+        errors += 1
+        return False
+    
+    # Compare line-by-line
+    mismatches = []
+    for (line_en, cmd_en), (line_gu, cmd_gu) in zip(sections_en, sections_gu):
+        if line_en != line_gu:
+            mismatches.append(f"  Line mismatch: En L{line_en} ({cmd_en}) vs Gu L{line_gu} ({cmd_gu})")
+            errors += 1
+        elif cmd_en != cmd_gu:
+            mismatches.append(f"  Command mismatch at L{line_en}: En={cmd_en} vs Gu={cmd_gu}")
+            errors += 1
+    
+    if mismatches:
+        print(f"❌ Found {len(mismatches)} sectioning alignment issues:")
+        for mismatch in mismatches[:10]:  # Show first 10
+            print(mismatch)
+        if len(mismatches) > 10:
+            print(f"  ... and {len(mismatches) - 10} more")
+        return False
+    else:
+        print(f"✅ PASS: All {len(sections_en)} sectioning commands aligned at same line numbers.")
         return True
 
 def check_smart_quotes(filename):
@@ -948,6 +1127,7 @@ if __name__ == "__main__":
     
     # Content fidelity checks (En vs Gu)
     pass_identity = check_code_math_diagram_identity(file_en, file_gu)
+    pass_sectioning_align = check_sectioning_line_alignment(file_en, file_gu)
     pass_list_parity = check_list_count_parity(file_en, file_gu)
     pass_table_parity = check_table_count_parity(file_en, file_gu)
     pass_figure_parity = check_figure_count_parity(file_en, file_gu)
@@ -976,10 +1156,18 @@ if __name__ == "__main__":
     pass_levels_gu = check_hierarchy_levels(file_gu)
     pass_list_types_en = check_list_types(file_en)
     pass_list_types_gu = check_list_types(file_gu)
-    pass_captions_en = check_caption_positions(file_en)
-    pass_captions_gu = check_caption_positions(file_gu)
+    pass_caption_present_en = check_caption_presence(file_en)
+    pass_caption_present_gu = check_caption_presence(file_gu)
+    pass_caption_pos_en = check_caption_positions(file_en)
+    pass_caption_pos_gu = check_caption_positions(file_gu)
     pass_cmds_en = check_custom_commands(file_en)
     pass_cmds_gu = check_custom_commands(file_gu)
+    pass_table_fmt_en = check_table_format(file_en)
+    pass_table_fmt_gu = check_table_format(file_gu)
+    pass_fig_place_en = check_figure_placement(file_en)
+    pass_fig_place_gu = check_figure_placement(file_gu)
+    pass_sol_struct_en = check_solution_content_structure(file_en)
+    pass_sol_struct_gu = check_solution_content_structure(file_gu)
     
     # External tools
     run_chktex(file_en)
@@ -1002,6 +1190,9 @@ if __name__ == "__main__":
         pass_toc_en, pass_toc_gu,
         pass_content_after_toc_en, pass_content_after_toc_gu,
         pass_cmds_en, pass_cmds_gu,
+        pass_caption_present_en, pass_caption_present_gu,
+        pass_sectioning_align,
+        pass_sol_struct_en, pass_sol_struct_gu,
         pass_compile_en, pass_compile_gu
     ]
     
