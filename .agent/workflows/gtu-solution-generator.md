@@ -62,8 +62,18 @@ They show exact patterns for all question types.
 \paragraph{Given Data:}                        % H4: For subsections
 \paragraph{Step 1:}                            % H4: For steps
 \paragraph{Key Points:}                        % H4: For description lists
+
+\subparagraph{Additional Detail:}             % H5: For nested detail (rarely used)
+
 \paragraph{Mnemonic:}                          % H4: Always end with mnemonic
 ```
+
+**Complete Hierarchy**:
+1. `\section` → Main question number
+2. `\subsection` → Sub-question with marks
+3. `\subsubsection` → Solution heading
+4. `\paragraph` → Major subsections
+5. `\subparagraph` → Minor nested details (optional, use sparingly)
 
 **Example**:
 ```latex
@@ -72,6 +82,14 @@ They show exact patterns for all question types.
 
 \subsubsection{Solution}
 To find the \textbf{maximum} of three numbers...
+
+\paragraph{Key Points:}
+\begin{description}
+    \item[Logic:] Compare values...
+\end{description}
+
+\subparagraph{Optimization Note:}
+For production code, use built-in Math.max() method.
 ```
 
 ### 3. Semantic Lists
