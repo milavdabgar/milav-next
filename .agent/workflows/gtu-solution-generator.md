@@ -173,29 +173,117 @@ public class MaxOfThree {
 | ----------- | ------- | ------------------------------------------------------------ |
 | **3 marks** | 90-150  | Explanation + Visual OR Code + Description list + Mnemonic   |
 | **4 marks** | 120-180 | Explanation + Visual + Calculation OR Example + Description list + Mnemonic |
-| **7 marks** | 200-300 | Detailed explanation + Table where appropriate (HTML, CSS, JavaScript, acronyms like BJT, FET, etc.)
-- Transliterate technical terms naturally (જાવા, ટ્રાન્ઝિસ્ટર્સ, ડાયોડ્સ)
-- Code/math/diagrams identical  
-- Use `preamble.gu.tex` (includes Gujarati font setup)
-- **CRITICAL**: Maintain exact same structure and content as English version (content fidelity)
-- Same number of paragraphs, subparagraphs, lists, examples
-- Same hierarchy levels at same positions
-- Natural translation, keep technical terms in English
-- Code/math/diagrams identical  
-- Use `preamble.gu.tex` (includes Gujarati font setup)
-- Same structure as English version
+| **7 marks** | 200-300 | Detailed explanation + Table where appropriate |
 
-## Quality Check
 
-- ✅ Standard LaTeX only, math: `\(...\)` a
-- ✅ TOC included with `\setcounter{tocdepth}{5}`
-- ✅Packages Available
+## Gujarati Version
+
+**Follow `sample_solution.gu.tex` conventions exactly:**
+
+### Translation Rules
+
+1. **Natural translation**: Not word-by-word, but meaning-preserving Gujarati
+2. **Technical terms**: Keep English acronyms (HTML, CSS, JavaScript, BJT, FET, MOSFET, IC, SCR, PIV)
+3. **Transliteration**: Use natural Gujarati for common technical terms:
+   - Java → જાવા
+   - Transistors → ટ્રાન્ઝિસ્ટર્સ
+   - Diodes → ડાયોડ્સ
+   - Capacitor → કેપેસિટર
+   - Resistor → રેઝિસ્ટર
+
+### Preservation Rules
+
+4. **Code blocks**: Keep 100% identical (no translation in `\begin{lstlisting}...\end{lstlisting}`)
+5. **Math expressions**: Keep 100% identical (all `\(...\)` and `\[...\]` unchanged)
+6. **Diagrams**: Keep 100% identical (all TikZ/CircuiTikZ/karnaugh-map code unchanged)
+7. **Translate only**: Regular text paragraphs, descriptions, explanations, list items
+
+### Structure Requirements (Content Fidelity)
+
+8. **Same hierarchy**: Identical sectioning levels at identical positions
+9. **Same elements**: Same number of paragraphs, subparagraphs, lists, tables, figures
+10. **Same patterns**: If English has 3 subparagraphs in Q1(a), Gujarati must have 3 subparagraphs in Q1(a)
+11. **Same flow**: Introduction → Explanation → Visual → Analysis → Mnemonic (exactly matching English)
+
+### Technical Requirements
+
+- Use `preamble.gu.tex` (includes Gujarati font setup with Noto Sans Gujarati)
+- Compile with `xelatex` (NOT `pdflatex`)
+- Run twice to populate table of contents
+
+**Critical**: Compare final English and Gujarati PDFs side-by-side. Structure, length, and visual layout should be nearly identical.
+
+## Quality Checklist
+
+Before submitting, verify:
+
+- ✅ **Math notation**: `\(...\)` for inline, `\[...\]` for display (NO `$` or `$$`)
+- ✅ **Semantic lists**: Description lists for labeled items, itemize for bullets, enumerate for numbered
+- ✅ **Word counts**: Match marks allocation (3→90-150, 4→120-180, 7→200-300 words)
+- ✅ **Typography**: Smart quotes in text (`` ``double'' ``), straight quotes in code
+- ✅ **TOC**: Included with `\setcounter{tocdepth}{5}` and `\newpage` after
+- ✅ **Subparagraphs**: Multiple examples throughout (not just one)
+- ✅ **Code listings**: NO `\paragraph{}` headings before them (use caption parameter only)
+- ✅ **Content fidelity**: English and Gujarati have identical structure
+- ✅ **All 5 levels**: Each solution demonstrates complete hierarchy
+- ✅ **Mnemonics**: Every question ends with `\paragraph{Mnemonic:}` or `\paragraph{મેમરી ટ્રીક:}`
+- ✅ **Compilation**: Both versions compile without errors (run twice for TOC)
+
+## Packages Available
 
 - **karnaugh-map**: For K-map diagrams (already in preambles)
 - **circuitikz**: For circuit diagrams
 - **tikz**: For custom diagrams
 - **listings**: Code syntax highlighting (configured with proper spacing)
 - See preambles for complete list
+
+## Common Patterns from Samples
+
+**Programming Questions (3 marks)**:
+- Intro paragraph explaining approach
+- Code listing with caption (NO paragraph heading before it)
+- Output section with `\begin{verbatim}`
+- Key Points (description list)
+- Subparagraph for comparison methods/optimizations
+- Mnemonic
+
+**Math/Calculation Questions (4 marks)**:
+- Given Data (itemize list)
+- Step-by-step calculation (separate paragraph for each step with `\paragraph{Step 1:}`, `\paragraph{Step 2:}`)
+- Results (description list)
+- Subparagraph for filter behavior/additional context
+- Mnemonic
+
+**Comparison Questions (7 marks)**:
+- Intro paragraph
+- Comparison table with caption at TOP
+- First category detailed (paragraph with description list)
+- Subparagraph for subcategory types
+- Second category detailed (paragraph with description list)
+- Subparagraph for subcategory types
+- Key distinction paragraph
+- Mnemonic
+
+**Circuit/Diagram Questions (7 marks)**:
+- Intro paragraph
+- Circuit diagram (figure with caption at BOTTOM)
+- Working principle (description list with 3-4 items)
+- Waveform/visualization (figure if applicable)
+- Parameters/calculations (description list)
+- Subparagraph for derivations/efficiency proofs
+- Applications paragraph
+- Mnemonic
+
+**Boolean/K-map Questions (3 marks)**:
+- Intro paragraph
+- K-map figure with grouping
+- Grouping analysis (description list)
+- Simplified expression with steps
+- Verification (description list)
+- Subparagraph for K-map rules
+- Mnemonic
+
+**Study `sample_solution.tex` and `sample_solution.gu.tex` for exact implementations of these patterns.**
 
 ## Compilation
 
@@ -205,47 +293,5 @@ public class MaxOfThree {
 - **ChkTeX**: Only cosmetic TikZ warnings acceptable
 
 **Critical**: Compile twice to populate table of contents correctly.
-
-## Common Patterns from Samples
-
-**Programming Questions (3 marks)**:
-- Code listing (no paragraph heading before it)
-- Output section
-- Key Points (description list)
-- Subparagraph for additional methods/notes
-- Mnemonic
-
-**Math/Calculation Questions (4 marks)**:
-- Given Data (itemize)
-- Step-by-step calculation (paragraph for each step)
-- Results (description list)
-- Subparagraph for additional context
-- Mnemonic
-
-**Comparison Questions (7 marks)**:
-- Intro paragraph
-- Comparison table (caption at TOP)
-- Detailed sections (paragraphs with description lists)
-- Subparagraphs for subcategories
-- Key distinction paragraph
-- Mnemonic
-
-**Circuit/Diagram Questions (7 marks)**:
-- Intro paragraph
-- Circuit/diagram (figure with caption at BOTTOM)
-- Working principle (description list or paragraphs)
-- Parameters/calculations (description list)
-- Subparagraph for derivations/rules
-- Applications
-- Mnemonic
-
-**Copy exact patterns from `sample_solution.tex` and `sample_solution.gu.tex` - they show
-
-## Compilation
-
-- **English**: `pdflatex sample_solution.tex`
-- **Gujarati**: `xelatex sample_solution.gu.tex`
-- **Markdown**: `pandoc file.tex -o file.md --to=gfm --wrap=none --standalone --shift-heading-level-by=1`
-- **ChkTeX**: Only cosmetic TikZ warnings acceptable
 
 **Copy patterns from `sample_solution.tex` - it shows everything.**
