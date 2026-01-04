@@ -104,6 +104,7 @@ python verify_solutions.py [english-file.tex] [gujarati-file.gu.tex]
 ```
 
 **When to Use**:
+
 - After generating Q1 (before proceeding to Q2)
 - After adding each subsequent question (Q2, Q3, Q4, Q5)
 - Before final submission
@@ -120,10 +121,12 @@ python verify_solutions.py [english-file.tex] [gujarati-file.gu.tex]
 8. **Compilation**: Both files compile successfully
 
 **Critical vs Warning Checks**:
+
 - **26 Critical checks**: Must pass for `✅ PASSED` status
 - **27 Warning checks**: Informational, don't fail verification
 
 **If verification fails**: 
+
 1. Review error messages (script shows exactly what failed)
 2. Fix ALL identified issues
 3. Recompile both files
@@ -350,6 +353,7 @@ public class MaxOfThree {
 **Before submitting**: Run `verify_solutions.py` (must show `✅ PASSED`)
 
 **Key manual checks** (also verified by script):
+
 - Math: `\(...\)` and `\[...\]` only (NO `$`)
 - Lists: Use semantic types (description/itemize/enumerate)
 - Word counts: 3 marks→90-150, 4 marks→120-180, 7 marks→200-300
