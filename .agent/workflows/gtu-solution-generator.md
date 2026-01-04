@@ -46,14 +46,32 @@ They show exact patterns for all question types.
 \[display math\]         % NOT $$...$$
 ```
 
-### 2. Sectioning Hierarchy
+### 2. Question and Answer Structure
+
+**Critical Pattern** (MUST follow exactly):
 
 ```latex
-\section{Question 1}                  % H1
-\subsection{Question 1(a) [3 marks]} % H2
-\subsubsection{Solution}             % H3
-\paragraph{Step 1:}                  % H4
-\paragraph{Mnemonic:}                % H4
+\section{Question 1}                           % H1: Main question number
+
+\subsection{Question 1(a) [3 marks]}          % H2: Sub-question with marks
+\textbf{Question statement here.}              % Question text in bold, separate line
+
+\subsubsection{Solution}                       % H3: Solution heading
+
+% Solution content using:
+\paragraph{Given Data:}                        % H4: For subsections
+\paragraph{Step 1:}                            % H4: For steps
+\paragraph{Key Points:}                        % H4: For description lists
+\paragraph{Mnemonic:}                          % H4: Always end with mnemonic
+```
+
+**Example**:
+```latex
+\subsection{Question 1(a) [3 marks]}
+\textbf{Write a Java program to find the maximum of three numbers.}
+
+\subsubsection{Solution}
+To find the \textbf{maximum} of three numbers...
 ```
 
 ### 3. Semantic Lists
