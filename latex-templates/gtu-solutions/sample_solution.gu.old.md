@@ -115,7 +115,7 @@ $`-45^\circ`$ cutoff frequency પર
 
 ##### મેમરી ટ્રીક:
 
-*RC-Formula:* $`f_c = \frac{1}{2\pi RC}`$, $`V_{out} = 0.707 \times V_{in}`$ at $`f_c`$
+*RC-Formula: fc = 1/(2$`\pi`$ RC), Vout = 0.707 Vin at fc*
 
 ### Question 1(ક) \[7 marks\]
 
