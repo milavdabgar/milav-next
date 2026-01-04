@@ -31,11 +31,20 @@ They show exact patterns for all question types.
 
 \begin{document}
 \maketitle
+
+% Table of Contents (REQUIRED)
+\setcounter{tocdepth}{5}
+\tableofcontents
+\newpage
+
 % Solutions here
 \end{document}
 ```
 
-**Note**: Use `preamble.gu.tex` for Gujarati (includes font setup), `preamble.tex` for English.
+**Note**: 
+- Use `preamble.gu.tex` for Gujarati (includes font setup), `preamble.tex` for English
+- TOC with depth=5 shows all 5 hierarchy levels
+- Always include `\newpage` after TOC
 
 ## Critical LaTeX Conventions
 
@@ -73,7 +82,7 @@ They show exact patterns for all question types.
 2. `\subsection` → Sub-question with marks
 3. `\subsubsection` → Solution heading
 4. `\paragraph` → Major subsections
-5. `\subparagraph` → Minor nested details (optional, use sparingly)
+5. `\subparagraph` → Minor nested details (use multiple times throughout for additional context)
 
 **Example**:
 ```latex
@@ -140,13 +149,17 @@ For production code, use built-in Math.max() method.
 \caption{Title}
 \end{figure}
 
-% Code: caption BOTTOM (inside lstlisting)
+% Code: NO paragraph heading before listing (caption is sufficient)
+% WRONG: \paragraph{Java Program:}\begin{lstlisting}...
+% CORRECT:
 \begin{lstlisting}[language=Java,caption={Find Maximum of Three Numbers}]
 public class MaxOfThree {
     // code here
 }
 \end{lstlisting}
 ```
+
+**Important**: Never add `\paragraph` headings before code listings - the `caption` parameter provides the heading. Adding both causes overlap issues.
 
 ### 6. Typography
 
@@ -160,10 +173,13 @@ public class MaxOfThree {
 | ----------- | ------- | ------------------------------------------------------------ |
 | **3 marks** | 90-150  | Explanation + Visual OR Code + Description list + Mnemonic   |
 | **4 marks** | 120-180 | Explanation + Visual + Calculation OR Example + Description list + Mnemonic |
-| **7 marks** | 200-300 | Detailed explanation + Table/Diagram + Code/Circuit + Description lists + Mnemonic |
-
-## Gujarati Version
-
+| **7 marks** | 200-300 | Detailed explanation + Table where appropriate (HTML, CSS, JavaScript, acronyms like BJT, FET, etc.)
+- Transliterate technical terms naturally (જાવા, ટ્રાન્ઝિસ્ટર્સ, ડાયોડ્સ)
+- Code/math/diagrams identical  
+- Use `preamble.gu.tex` (includes Gujarati font setup)
+- **CRITICAL**: Maintain exact same structure and content as English version (content fidelity)
+- Same number of paragraphs, subparagraphs, lists, examples
+- Same hierarchy levels at same positions
 - Natural translation, keep technical terms in English
 - Code/math/diagrams identical  
 - Use `preamble.gu.tex` (includes Gujarati font setup)
@@ -171,10 +187,59 @@ public class MaxOfThree {
 
 ## Quality Check
 
-- ✅ Standard LaTeX only, math: `\(...\)` and `\[...\]`
-- ✅ Description lists for labeled items
-- ✅ Word counts match marks (see table above)
-- ✅ Smart quotes in text, straight in code
+- ✅ Standard LaTeX only, math: `\(...\)` a
+- ✅ TOC included with `\setcounter{tocdepth}{5}`
+- ✅Packages Available
+
+- **karnaugh-map**: For K-map diagrams (already in preambles)
+- **circuitikz**: For circuit diagrams
+- **tikz**: For custom diagrams
+- **listings**: Code syntax highlighting (configured with proper spacing)
+- See preambles for complete list
+
+## Compilation
+
+- **English**: `pdflatex sample_solution.tex` (run twice for TOC)
+- **Gujarati**: `xelatex sample_solution.gu.tex` (run twice for TOC)
+- **Markdown**: `pandoc file.tex -o file.md --to=gfm --wrap=none --standalone --shift-heading-level-by=1`
+- **ChkTeX**: Only cosmetic TikZ warnings acceptable
+
+**Critical**: Compile twice to populate table of contents correctly.
+
+## Common Patterns from Samples
+
+**Programming Questions (3 marks)**:
+- Code listing (no paragraph heading before it)
+- Output section
+- Key Points (description list)
+- Subparagraph for additional methods/notes
+- Mnemonic
+
+**Math/Calculation Questions (4 marks)**:
+- Given Data (itemize)
+- Step-by-step calculation (paragraph for each step)
+- Results (description list)
+- Subparagraph for additional context
+- Mnemonic
+
+**Comparison Questions (7 marks)**:
+- Intro paragraph
+- Comparison table (caption at TOP)
+- Detailed sections (paragraphs with description lists)
+- Subparagraphs for subcategories
+- Key distinction paragraph
+- Mnemonic
+
+**Circuit/Diagram Questions (7 marks)**:
+- Intro paragraph
+- Circuit/diagram (figure with caption at BOTTOM)
+- Working principle (description list or paragraphs)
+- Parameters/calculations (description list)
+- Subparagraph for derivations/rules
+- Applications
+- Mnemonic
+
+**Copy exact patterns from `sample_solution.tex` and `sample_solution.gu.tex` - they show
 
 ## Compilation
 
