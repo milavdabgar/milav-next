@@ -15,6 +15,7 @@ version: 2.0
 ## 1. UNDERSTAND: What to Generate
 
 ### Reference Files (Study These First)
+
 ```
 /Users/milav/Code/milav-next/latex-templates/gtu-solutions/
 ├── sample_solution.tex       # Shows ALL patterns
@@ -28,6 +29,7 @@ version: 2.0
 **Math**: `\(...\)` and `\[...\]` ONLY (NEVER `$`)
 
 **Hierarchy** (All 5 levels required):
+
 ```latex
 \section{Question 1}                      % H1
 \subsection{Question 1(a) [3 marks]}     % H2
@@ -61,6 +63,7 @@ version: 2.0
 Create `[Code]-[Season]-[Year]-Solution-Full.tex` and `.gu.tex`
 
 Add to both:
+
 - Metadata block
 - `\documentclass{article}`
 - Preamble input (`.tex` or `.gu.tex`)
@@ -72,6 +75,7 @@ Add to both:
 ### Step 2: Generate Q1 (Both Languages Simultaneously)
 
 For each part (a, b, c, OR):
+
 1. Comment block describing question
 2. Section/subsection structure
 3. Bold question statement
@@ -84,12 +88,14 @@ For each part (a, b, c, OR):
 ### Step 3: Verify Q1
 
 **Compile**:
+
 ```bash
 pdflatex [file].tex
 xelatex [file].gu.tex
 ```
 
 **Verify**:
+
 ```bash
 python verify_solutions.py [english.tex] [gujarati.gu.tex]
 ```
@@ -103,6 +109,7 @@ python verify_solutions.py [english.tex] [gujarati.gu.tex]
 ### Step 4: Add Q2-Q5 Iteratively
 
 For each question:
+
 1. Generate both En & Gu simultaneously
 2. Append to files
 3. Compile both
@@ -156,6 +163,7 @@ For each question:
 ## Quick Checklist
 
 ### Per Question
+
 - [ ] Comment block
 - [ ] All 5 hierarchy levels used
 - [ ] Bold question statement
@@ -168,6 +176,7 @@ For each question:
 - [ ] Comments identical
 
 ### Per Verification
+
 - [ ] Both compile successfully
 - [ ] `verify_solutions.py` shows `✅ PASSED`
 - [ ] Line counts match
@@ -179,6 +188,7 @@ For each question:
 ## Success = ✅ PASSED + 2 PDFs
 
 **When done right**:
+
 - Both files same line count
 - All sectioning at same lines
 - Technical content 100% identical

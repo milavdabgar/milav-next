@@ -17,10 +17,12 @@ version: 2.0
 ### What You're Creating
 
 Two complete LaTeX solution files for GTU exam papers:
+
 - **English version**: `[Code]-[Season]-[Year]-Solution-Full.tex`
 - **Gujarati version**: `[Code]-[Season]-[Year]-Solution-Full.gu.tex`
 
 Both files must have:
+
 - **Identical structure** (same line counts, same sectioning at same line numbers)
 - **Identical technical content** (code, math, diagrams 100% same)
 - **Different languages** (only descriptive text translated)
@@ -103,6 +105,7 @@ Solution content here...
 ### Critical LaTeX Conventions (MUST FOLLOW)
 
 #### 1. Math Notation
+
 ```latex
 ✅ CORRECT:
 \(inline math\)          
@@ -114,6 +117,7 @@ $$display$$              % NEVER use $$
 ```
 
 #### 2. Complete Hierarchy (All 5 Levels Required)
+
 ```latex
 \section{Question 1}                           % H1: Main question
 
@@ -138,6 +142,7 @@ Additional context when needed...
 ```
 
 #### 3. Semantic Lists
+
 ```latex
 % Description lists: for labeled items
 \paragraph{Key Points:}
@@ -162,6 +167,7 @@ Additional context when needed...
 ```
 
 #### 4. Tables (Caption at TOP)
+
 ```latex
 \begin{table}[H]
 \centering
@@ -178,11 +184,13 @@ Input Impedance & Low & High \\
 ```
 
 **CRITICAL**: 
+
 - Use `\begin{tabularx}{\textwidth}{lXX}` (NOT `tabular`)
 - Use `[H]` placement
 - Caption BEFORE tabularx
 
 #### 5. Figures (Caption at BOTTOM)
+
 ```latex
 \begin{figure}[H]
 \centering
@@ -194,10 +202,12 @@ Input Impedance & Low & High \\
 ```
 
 **CRITICAL**: 
+
 - Use `[H]` placement
 - Caption AFTER diagram
 
 #### 6. Code Listings (NO paragraph before)
+
 ```latex
 ❌ WRONG:
 \paragraph{Java Program:}
@@ -228,12 +238,14 @@ public class MaxOfThree {
 **CRITICAL**: The `caption` parameter provides the heading. Never add `\paragraph` before code.
 
 #### 7. Typography
+
 - **Text**: Use smart quotes: `` ``double'' `` and `` `single' ``
 - **Code**: Use straight quotes: `"string"` inside lstlisting
 - **Emphasis**: Use `\textbf{bold}`, `\texttt{code}`, `\emph{emphasis}`
 - **NO custom commands**: Don't create `\keyword{}`, `\code{}`, etc.
 
 #### 8. Comments (Must be identical in both files)
+
 ```latex
 % ========================================
 % QUESTION 1(a): Programming Code (3 marks)
@@ -250,6 +262,7 @@ public class MaxOfThree {
 | **7 marks** | 200-300    | Comprehensive explanation + (Code OR Diagram OR Calculation) + Mnemonic |
 
 **Target word counts** (aim for middle of range):
+
 - 3 marks → 120 words
 - 4 marks → 150 words  
 - 7 marks → 250 words
@@ -257,23 +270,27 @@ public class MaxOfThree {
 ### Gujarati Translation Rules
 
 #### Translation Strategy
+
 1. **Translate**: Descriptive text, explanations, list items
 2. **Keep English**: Acronyms (HTML, CSS, JavaScript, BJT, FET, MOSFET, IC, SCR, PIV)
 3. **Transliterate**: Common technical terms (Java → જાવા, Resistor → રેઝિસ્ટર)
 
 #### Preservation Rules (100% Identical)
+
 4. **Code blocks**: NO translation in `\begin{lstlisting}...\end{lstlisting}`
 5. **Math expressions**: NO translation in `\(...\)` and `\[...\]`
 6. **Diagrams**: NO translation in TikZ/CircuiTikZ/karnaugh-map code
 7. **Comments**: Keep exact same comments including section separators
 
 #### Structure Rules (Perfect Fidelity)
+
 8. **Same line count**: Gujarati MUST have exactly same number of lines as English
 9. **Same sectioning**: All `\section`, `\subsection`, `\subsubsection`, `\paragraph`, `\subparagraph` at same line numbers
 10. **Same elements**: Identical count of paragraphs, lists, tables, figures
 11. **Same flow**: Maintain exact same sequence and structure
 
 #### Technical Setup
+
 - Use `\input{.../preamble.gu.tex}` (includes Gujarati font setup)
 - Compile with `xelatex` (NOT `pdflatex`)
 - PDF metadata: Add `(Gujarati)` to title, add `gujarati` to keywords
@@ -290,6 +307,7 @@ Create both files simultaneously:
 **Gujarati file**: `[Code]-[Season]-[Year]-Solution-Full.gu.tex`
 
 Add to both:
+
 1. Metadata block (see template above)
 2. `\documentclass{article}`
 3. Preamble input (`.tex` for English, `.gu.tex` for Gujarati)
@@ -305,6 +323,7 @@ Add to both:
 For Question 1 with parts (a), (b), (c), (OR):
 
 1. **Start with section comment block**:
+
 ```latex
 % ========================================
 % QUESTION 1(a): [Brief description] ([X] marks)
@@ -313,6 +332,7 @@ For Question 1 with parts (a), (b), (c), (OR):
 ```
 
 2. **Add section and subsection**:
+
 ```latex
 \section{Question 1}
 
@@ -321,6 +341,7 @@ For Question 1 with parts (a), (b), (c), (OR):
 ```
 
 3. **Add solution with complete hierarchy**:
+
 ```latex
 \subsubsection{Solution}
 [Introduction paragraph explaining approach]
@@ -350,12 +371,14 @@ For Question 1 with parts (a), (b), (c), (OR):
 ### Step 3: Compile & Verify Q1
 
 **Compile both files**:
+
 ```bash
 pdflatex [Code]-[Season]-[Year]-Solution-Full.tex
 xelatex [Code]-[Season]-[Year]-Solution-Full.gu.tex
 ```
 
 **Run verification script**:
+
 ```bash
 python content/resources/study-materials/00-general/sem-1/DI01000051-fe/verify_solutions.py \
   [english-file.tex] [gujarati-file.gu.tex]
@@ -364,6 +387,7 @@ python content/resources/study-materials/00-general/sem-1/DI01000051-fe/verify_s
 **CRITICAL**: Must see `✅ PASSED` before proceeding to Q2.
 
 **If verification fails**:
+
 1. Read error messages carefully
 2. Fix ALL identified issues
 3. Recompile both files
@@ -371,6 +395,7 @@ python content/resources/study-materials/00-general/sem-1/DI01000051-fe/verify_s
 5. Repeat until `✅ PASSED`
 
 **Key checks verified**:
+
 - ✅ Line counts match exactly
 - ✅ All sectioning commands at same line numbers
 - ✅ All tables/figures/listings have captions
@@ -394,6 +419,7 @@ For each remaining question:
 7. **Only then proceed to next question**
 
 **Pattern for each question**:
+
 - Add section comment block
 - Add `\section{Question X}`
 - Add subsections for each part
@@ -406,6 +432,7 @@ For each remaining question:
 1. **Add to both files**: `\end{document}`
 
 2. **Final compilation** (run TWICE for TOC):
+
 ```bash
 pdflatex [file].tex
 pdflatex [file].tex
@@ -414,11 +441,13 @@ xelatex [file].gu.tex
 ```
 
 3. **Final verification**:
+
 ```bash
 python verify_solutions.py [english-file.tex] [gujarati-file.gu.tex]
 ```
 
 **Must achieve**:
+
 - `✅ PASSED` status
 - All 53 checks passing
 - Both PDFs generated successfully
@@ -444,14 +473,17 @@ python verify_solutions.py [english-file.tex] [gujarati-file.gu.tex]
 8. **Compilation**: Both files compile successfully
 
 **Critical checks** (26 checks - must pass):
+
 - Line counts, sectioning alignment, compilation, syntax, structure hierarchy, preambles, TOC, content compliance, custom commands, caption presence, solution structure
 
 **Warning checks** (27 checks - informational):
+
 - Word counts, typography, marks format, mnemonics, caption positions, filename conventions, etc.
 
 ### When to Verify
 
 **Mandatory verification points**:
+
 1. After generating Q1 (before Q2)
 2. After adding Q2 (before Q3)
 3. After adding Q3 (before Q4)
@@ -545,6 +577,7 @@ python verify_solutions.py [english-file.tex] [gujarati-file.gu.tex]
 10. Files follow all conventions from reference samples
 
 **Final deliverables**:
+
 - `[Code]-[Season]-[Year]-Solution-Full.tex` (English)
 - `[Code]-[Season]-[Year]-Solution-Full.gu.tex` (Gujarati)
 - `[Code]-[Season]-[Year]-Solution-Full.pdf` (English)
