@@ -20,6 +20,7 @@ They show exact patterns for all question types.
 
 ```latex
 \documentclass{article}
+% Use preamble.tex for English OR preamble.gu.tex for Gujarati
 \input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions/preamble.tex}
 
 \title{Subject Name (CODE) - Term Year Solution}
@@ -33,6 +34,8 @@ They show exact patterns for all question types.
 % Solutions here
 \end{document}
 ```
+
+**Note**: Use `preamble.gu.tex` for Gujarati (includes font setup), `preamble.tex` for English.
 
 ## Critical LaTeX Conventions
 
@@ -117,8 +120,9 @@ They show exact patterns for all question types.
 ## Gujarati Version
 
 - Natural translation, keep technical terms in English
-- Code/math/diagrams identical
-- Same structure, use fontspec + Noto Sans Gujarati
+- Code/math/diagrams identical  
+- Use `preamble.gu.tex` (includes Gujarati font setup)
+- Same structure as English version
 
 ## Quality Check
 
