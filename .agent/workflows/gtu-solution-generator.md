@@ -16,7 +16,10 @@ Study `sample_solution.tex` and `sample_solution.gu.tex` in:
 
 They show exact patterns for all question types.
 
-## File Structure
+## File Name, Location & Structure
+
+**Filename**: `[Code]-[Season]-[Year]-Solution-Full.tex` (e.g., `4341101-Summer-2024-Solution-Full.tex`)  
+**Location**: Same folder as question paper
 
 ```latex
 \documentclass{article}
@@ -174,9 +177,9 @@ public class MaxOfThree {
 
 | Marks       | Words   | Structure                                                    |
 | ----------- | ------- | ------------------------------------------------------------ |
-| **3 marks** | 90-150  | Explanation + Visual OR Code + Description list + Mnemonic   |
-| **4 marks** | 120-180 | Explanation + Visual + Calculation OR Example + Description list + Mnemonic |
-| **7 marks** | 200-300 | Detailed explanation + Table where appropriate |
+| **3 marks** | 90-150  | Explanation AND/OR Description list + (Diagrams AND/OR Tables) OR Code Listing + Mnemonic   |
+| **4 marks** | 120-180 | Explanation AND/OR Description list + (Diagrams AND/OR Tables) OR Code Listing OR Calculation + Mnemonic |
+| **7 marks** | 200-300 | Detailed explanation AND/OR Description list + (Diagrams AND/OR Tables) OR Code Listing OR Calculation + Mnemonic  |
 
 
 ## Gujarati Version
