@@ -219,8 +219,15 @@ def check_syntax(filename, language="English"):
     errors = 0
     with open(filename, 'r') as f:
         lines = f.readlines()
-        
+    
+    in_lstlisting = False
     for i, line in enumerate(lines, 1):
+        # Track lstlisting blocks
+        if '\\begin{lstlisting}' in line:
+            in_lstlisting = True
+        elif '\\end{lstlisting}' in line:
+            in_lstlisting = False
+            
         suspicious_dollar = re.search(r'(?<!\()(\$)(?!\))', line)
         if suspicious_dollar:
              print(f"❌ Line {i}: Found forbidden '$' syntax. Use \(...\) or \[...\]")
@@ -231,7 +238,8 @@ def check_syntax(filename, language="English"):
             errors += 1
             
         if '"' in line:
-             if 'lstlisting' in line or line.strip().startswith('%'):
+             # Skip if inside lstlisting block, or line has lstlisting, or is a comment
+             if in_lstlisting or 'lstlisting' in line or line.strip().startswith('%'):
                  continue
              print(f"⚠️  Line {i}: Found straight quote [\"] in text? Use smart quotes [`` or '']. (Ignore if code)")
             
