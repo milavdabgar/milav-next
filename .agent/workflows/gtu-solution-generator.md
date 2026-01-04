@@ -215,6 +215,7 @@ public class MaxOfThree {
 - Run twice to populate table of contents
 
 **Verification**: 
+
 1. Compare TOC entries: English and Gujarati should have identical number of entries at each level
 2. Line count check: Both `.tex` files should have similar line counts (±10% variation is acceptable due to Gujarati text width)
 3. Structure match: Same number of `\section`, `\subsection`, `\subsubsection`, `\paragraph`, `\subparagraph` commands in both files
