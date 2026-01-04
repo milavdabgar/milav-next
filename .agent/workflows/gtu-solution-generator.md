@@ -6,6 +6,58 @@ date: 2026-01-04
 **INPUT**: Question paper (markdown format)  
 **OUTPUT**: Complete LaTeX solution files (English `.tex` + Gujarati `.gu.tex`)
 
+# Workflow Steps (Simultaneous Generation Approach)
+
+**Goal**: ensure high fidelity between English and Gujarati versions by generating them together for each question.
+
+## 1. Initialization
+- Create `[Code]-[Season]-[Year]-Solution-Full.tex` and `.gu.tex`.
+- Add Preamble (`preamble.tex` for English, `preamble.gu.tex` for Gujarati).
+- Add Title, Date, PDF Metadata.
+- Add `\begin{document}`, `\maketitle`, table of contents setup, and `\newpage`.
+- **Do not** add `\end{document}` yet.
+
+## 2. Strict Q1 Verification (The Foundation)
+1. **Generate Q1 (En & Gu)**:
+   - Generate full LaTeX content for **Question 1** (all parts: a, b, c, OR) for **BOTH** English and Gujarati in a **single step**.
+   - **Crucial**: Ensure Gujarati structure (paragraphs, lists, diagrams) matches English exactly.
+   - **Compliance**: Use `\(...\)` for math, end with `Mnemonic`.
+   
+2. **Compile & Verify**:
+   - Compile both Q1 files.
+   - **Thorough Check**: 
+     - Does it follow all "Critical LaTeX Conventions"?
+     - Are math delimiters `\(...\)` used?
+     - Is the Gujarati content fully translated but structurally identical?
+     - Are diagrams identical?
+   
+3. **Iterate**:
+   - If ANY issue is found (compilation error, formatting violation), fix it **immediately** before proceeding.
+   - Do not move to Q2 until Q1 is perfect.
+
+## 3. Iterative Append (Q2 to Q5)
+Once Q1 is satisfactory, proceed with Q2, then Q3, up to Q5.
+
+For each subsequent Question (Qx):
+1. **Generate En & Gu Simultaneously**: produces the LaTeX coding for Qx (a, b, c, OR) for both languages at the same time.
+2. **Append**: Add the content to the respective main files.
+3. **Quick Check**: Ensure no `$` usage and structure is correct.
+
+## 4. Finalization
+- Append `\end{document}` to both files.
+- **Final Compilation**:
+  - English: `pdflatex` (Runs 2x).
+  - Gujarati: `xelatex` (Runs 2x).
+- **Final Verification**:
+  - **TOC**: Check depth-5 Table of Contents in both.
+  - **Line Count**: Verify English and Gujarati files have similar line counts (indicates structural fidelity).
+  - **Math**: Ensure logic/math is identical.
+  - **Guidelines**: Final pass against reference styles.
+
+---
+
+# Reference / Specification
+
 ## Reference Files (These ARE the Specification)
 
 Study `sample_solution.tex` and `sample_solution.gu.tex` in:
