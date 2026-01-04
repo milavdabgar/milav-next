@@ -108,55 +108,16 @@ python verify_solutions.py [english-file.tex] [gujarati-file.gu.tex]
 - After adding each subsequent question (Q2, Q3, Q4, Q5)
 - Before final submission
 
-**What It Checks** (53 comprehensive checks):
+**What It Checks** (53 comprehensive checks across 8 categories):
 
-### Core Structure (2 checks)
-- Line counts match exactly
-- TOC hierarchy structure matches
-
-### Document Metadata (6 checks)
-- Document structure completeness
-- PDF metadata presence
-- Correct preamble usage (English/Gujarati)
-- Preamble paths (absolute paths required)
-
-### Syntax Compliance (8 checks)
-- No forbidden syntax (`$`, `**`, straight quotes in text)
-- Content compliance (no deprecated commands)
-- Proper sectioning hierarchy
-
-### Content Quality (12 checks)
-- Word counts vs marks allocation
-- Typography standards
-- Marks format in subsections
-- Mnemonics present
-- Smart quotes usage
-
-### Content Fidelity (6 checks)
-- Code/Math/Diagram 100% identical between files
-- List/Table/Figure count parity
-- Description item counts match
-- **Sectioning command line alignment** (all commands at same line numbers)
-
-### Structural Validation (14 checks)
-- TOC setup correct
-- Content exists after TOC
-- Question structure pattern
-- Bold question statements
-- Section numbering
-- Subsection labeling
-- All 5 hierarchy levels present
-- Semantic list types
-- Caption positions (tables top, figures bottom)
-
-### Format Standards (3 checks)
-- Table format (must use `tabularx`)
-- Figure placement (must use `[H]`)
-- **Solution content structure** (only `\paragraph` and `\subparagraph` allowed)
-
-### Additional Checks (2 checks)
-- Caption presence (all tables/figures/listings)
-- Compilation success (both files)
+1. **Core Structure**: Line counts match, TOC hierarchy identical
+2. **Document Metadata**: Complete structure, PDF metadata, correct preambles with absolute paths
+3. **Syntax Compliance**: No `$`, `**`, straight quotes in text; proper hierarchy; no deprecated commands
+4. **Content Quality**: Word counts match marks allocation, proper typography, mnemonics present
+5. **Content Fidelity**: Code/Math/Diagrams 100% identical, list/table/figure parity, **sectioning alignment at same line numbers**
+6. **Structural Validation**: TOC setup, question patterns, bold statements, section numbering, all 5 hierarchy levels, semantic lists, caption positions
+7. **Format Standards**: Tables use `tabularx`, figures use `[H]`, **solutions use only `\paragraph`/`\subparagraph`**
+8. **Compilation**: Both files compile successfully
 
 **Critical vs Warning Checks**:
 - **26 Critical checks**: Must pass for `✅ PASSED` status
@@ -382,27 +343,20 @@ public class MaxOfThree {
 - Use `preamble.gu.tex` (includes Gujarati font setup with Noto Sans Gujarati)
 - Compile with `xelatex` (NOT `pdflatex`)
 - Run twice to populate table of contents
-
-**Verification**: 
-
-1. Compare TOC entries: English and Gujarati should have identical number of entries at each level
-2. Line count check: Both `.tex` files should have similar line counts (±10% variation is acceptable due to Gujarati text width)
-3. Structure match: Same number of `\section`, `\subsection`, `\subsubsection`, `\paragraph`, `\subparagraph` commands in both files
+- **Verification**: Use `verify_solutions.py` to ensure perfect content fidelity (see Verification Script Usage section)
 
 ## Quality Checklist
 
-Before submitting, verify:
+**Before submitting**: Run `verify_solutions.py` (must show `✅ PASSED`)
 
-- ✅ **Math notation**: `\(...\)` for inline, `\[...\]` for display (NO `$` or `$$`)
-- ✅ **Semantic lists**: Description lists for labeled items, itemize for bullets, enumerate for numbered
-- ✅ **Word counts**: Match marks allocation (3→90-150, 4→120-180, 7→200-300 words)
-- ✅ **Typography**: Smart quotes in text (`` ``double'' ``), straight quotes in code
-- ✅ **TOC**: Included with `\setcounter{tocdepth}{5}` and `\newpage` after
-- ✅ **Code listings**: NO `\paragraph{}` headings before them (use caption parameter only)
-- ✅ **Content fidelity**: English and Gujarati have identical structure
-- ✅ **All 5 levels**: Each solution demonstrates complete hierarchy
-- ✅ **Mnemonics**: Every question ends with `\paragraph{Mnemonic:}` or `\paragraph{મેમરી ટ્રીક:}`
-- ✅ **Compilation**: Both versions compile without errors (run twice for TOC)
+**Key manual checks** (also verified by script):
+- Math: `\(...\)` and `\[...\]` only (NO `$`)
+- Lists: Use semantic types (description/itemize/enumerate)
+- Word counts: 3 marks→90-150, 4 marks→120-180, 7 marks→200-300
+- Code: Use `caption` parameter (NO `\paragraph` before listings)
+- Structure: All 5 hierarchy levels present
+- Mnemonics: End every question with `\paragraph{Mnemonic:}`
+- Compilation: Both files compile twice without errors
 
 ## Packages Available
 
