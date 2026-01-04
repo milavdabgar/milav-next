@@ -83,7 +83,7 @@ They show exact patterns for all question types.
 \emph{emphasis}  % For semantic emphasis
 ```
 
-### 5. Tables and Figures
+### 5. Tables, Figures, and Code
 
 ```latex
 % Table: caption TOP
@@ -91,7 +91,9 @@ They show exact patterns for all question types.
 \centering
 \caption{Title}
 \begin{tabularx}{\textwidth}{lXX}
+\toprule
 ...
+\bottomrule
 \end{tabularx}
 \end{table}
 
@@ -101,6 +103,13 @@ They show exact patterns for all question types.
 ...circuit/diagram...
 \caption{Title}
 \end{figure}
+
+% Code: caption BOTTOM (inside lstlisting)
+\begin{lstlisting}[language=Java,caption={Find Maximum of Three Numbers}]
+public class MaxOfThree {
+    // code here
+}
+\end{lstlisting}
 ```
 
 ### 6. Typography
