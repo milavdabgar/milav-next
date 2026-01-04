@@ -9,7 +9,7 @@ title: Subject Name (SUBJECT001) - Sample Term Solution
 
 ### Question 1(a) \[3 marks\]
 
-**Write a Java program to find the maximum of three numbers.**
+Write a Java program to find the maximum of three numbers.
 
 #### Solution
 
@@ -46,17 +46,20 @@ public class MaxOfThree {
 
 ##### Key Points:
 
-- **Logic**: First compare `a` and `b`, store larger in `max`
+Logic:  
+First compare `a` and `b`, store larger in `max`
 
-- **Second Comparison**: Compare `max` with `c` to get final maximum
+Second Comparison:  
+Compare `max` with `c` to get final maximum
 
-- **Alternative**: Can use `Math.max(a, Math.max(b, c))` for concise code
+Alternative:  
+Can use `Math.max(a, Math.max(b, c))` for concise code
 
 > **Mnemonic:** *MAX: Compare in pairs, update Maximum At eXamination*
 
 ### Question 1(b) \[4 marks\]
 
-**Calculate the cutoff frequency of an RC low-pass filter with $`R = 1.5\,k\Omega`$ and $`C = 100\,nF`$. Also find the output voltage if input is 10V at cutoff frequency.**
+Calculate the cutoff frequency of an RC low-pass filter with $`R = 1.5\,k\Omega`$ and $`C = 100\,nF`$. Also find the output voltage if input is 10V at cutoff frequency.
 
 #### Solution
 
@@ -95,19 +98,23 @@ V_{out} = 0.707 \times V_{in} = 0.707 \times 10 = 7.07\,V
 
 ##### Results:
 
-- **Cutoff Frequency**: $`f_c = 1.06\,kHz`$
+Cutoff Frequency:  
+$`f_c = 1.06\,kHz`$
 
-- **Output Voltage**: $`V_{out} = 7.07\,V`$ at cutoff
+Output Voltage:  
+$`V_{out} = 7.07\,V`$ at cutoff
 
-- **Attenuation**: $`-3\,dB`$ at cutoff frequency
+Attenuation:  
+$`-3\,dB`$ at cutoff frequency
 
-- **Phase Shift**: $`-45^\circ`$ at cutoff frequency
+Phase Shift:  
+$`-45^\circ`$ at cutoff frequency
 
 > **Mnemonic:** *RC-Formula: fc = 1/(2$`\pi`$ RC), Vout = 0.707 Vin at fc*
 
 ### Question 1(c) \[7 marks\]
 
-**Compare active and passive electronic components with suitable examples.**
+Compare active and passive electronic components with suitable examples.
 
 #### Solution
 
@@ -153,7 +160,7 @@ The fundamental difference is that active components can *inject power* into a c
 
 ### Question 1(c) OR \[7 marks\]
 
-**Draw and explain the working of a half-wave rectifier circuit with input and output waveforms.**
+Draw and explain the working of a half-wave rectifier circuit with input and output waveforms.
 
 #### Solution
 
