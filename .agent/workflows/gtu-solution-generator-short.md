@@ -27,15 +27,15 @@ date: 2026-01-04
   1. **Generate En & Gu Simultaneously**: Produce LaTeX code for the entire question block.
   2. **Append**: Add to respective files.
   3. **Quick Check**: 
-     - Ensure no `$` or `**` or any other Markdown Native Syntax usage, we must use latex syntaxes and structure matches reference.
-     - **Verify Line Counts**: Compare line counts of En and Gu files. They should be roughly similar (within ~10%). Large discrepancies indicate missing content or extra spacing.
+     - **Verify Line Counts**: **STRICTLY** Compare line counts of En and Gu files. They MUST BE IDENTICAL. If they differ, check for missing comments or extra newlines and fix immediately.
      - **Verify TOC**: Ensure section/subsection structure is identical in both files.
+     - Ensure no `$` or `**` or any other Markdown Native Syntax usage, we must use latex syntaxes.
 
 ### 4. Finalization
 
 - Add `\end{document}`.
 - **Final Compilation**: Run `pdflatex`/`xelatex` twice.
-- **Verification**: Check TOC, line counts, and math fidelity.
+- **Verification**: Check TOC, line counts (MUST match), and math fidelity.
 
 ## Reference Specifications
 
@@ -58,3 +58,4 @@ date: 2026-01-04
 2. **Keep English**: Acronyms (HTML, CPU, BJT, LED).
 3. **NO Translation**: Code blocks, Math expressions, TikZ/CircuitTikZ commands.
 4. **Fidelity**: Maintain exact same paragraph/list count as English.
+5. **Comments**: Maintain exact same comments as English source code.
