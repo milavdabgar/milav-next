@@ -184,6 +184,182 @@ def check_word_counts(filename):
         print(f"⚠️  PASS with Warnings: Found {warnings} potentially short answers.")
         return True
 
+def check_toc_setup(filename):
+    print(f"\n--- Checking TOC Setup: {filename} ---")
+    errors = 0
+    with open(filename, 'r') as f:
+        content = f.read()
+    
+    # Check for tocdepth=5
+    if r'\setcounter{tocdepth}{5}' not in content:
+        print("❌ Missing: \\setcounter{tocdepth}{5}")
+        errors += 1
+    
+    # Check for tableofcontents
+    if r'\tableofcontents' not in content:
+        print("❌ Missing: \\tableofcontents")
+        errors += 1
+    
+    # Check for newpage after tableofcontents
+    if r'\tableofcontents' in content:
+        toc_pos = content.find(r'\tableofcontents')
+        after_toc = content[toc_pos:toc_pos+100]
+        if r'\newpage' not in after_toc:
+            print("⚠️  Missing \\newpage after \\tableofcontents")
+    
+    if errors == 0:
+        print("✅ PASS: TOC setup correct.")
+        return True
+    else:
+        print(f"❌ FAIL: {errors} TOC setup errors.")
+        return False
+
+def check_mnemonics(filename):
+    print(f"\n--- Checking Mnemonics: {filename} ---")
+    warnings = 0
+    with open(filename, 'r') as f:
+        content = f.read()
+    
+    # Find all subsections
+    subsections = re.findall(r'\\subsection\{[^}]+\}', content)
+    
+    # Check for mnemonic paragraphs
+    mnemonic_en = re.findall(r'\\paragraph\{Mnemonic:?\}', content)
+    mnemonic_gu = re.findall(r'\\paragraph\{મેમરી ટ્રીક:?\}', content)
+    mnemonic_count = len(mnemonic_en) + len(mnemonic_gu)
+    
+    print(f"Found {len(subsections)} subsections and {mnemonic_count} mnemonics")
+    
+    if mnemonic_count < len(subsections):
+        print(f"⚠️  Some subsections may be missing mnemonics")
+        warnings += 1
+    
+    if warnings == 0:
+        print("✅ PASS: Mnemonic count reasonable.")
+        return True
+    else:
+        print(f"⚠️  PASS with {warnings} warnings.")
+        return True
+
+def check_question_structure(filename):
+    print(f"\n--- Checking Question Structure Pattern: {filename} ---")
+    errors = 0
+    with open(filename, 'r') as f:
+        lines = f.readlines()
+    
+    subsection_lines = []
+    for i, line in enumerate(lines):
+        if line.strip().startswith(r'\subsection{'):
+            subsection_lines.append(i)
+    
+    for sub_line in subsection_lines:
+        # Check next few lines for textbf and subsubsection{Solution}
+        next_5_lines = lines[sub_line:sub_line+5]
+        has_textbf = any(r'\textbf{' in line for line in next_5_lines)
+        has_solution = any('subsubsection{Solution}' in line or 'subsubsection{ઉકેલ}' in line for line in next_5_lines)
+        
+        if not has_textbf:
+            print(f"⚠️  Line {sub_line+1}: Subsection missing \\textbf{{}} question statement")
+        
+        if not has_solution:
+            print(f"⚠️  Line {sub_line+1}: Subsection missing \\subsubsection{{Solution}}")
+    
+    print("✅ PASS: Question structure pattern verified.")
+    return True
+
+def check_hierarchy_levels(filename):
+    print(f"\n--- Checking 5-Level Hierarchy: {filename} ---")
+    with open(filename, 'r') as f:
+        content = f.read()
+    
+    levels = {
+        'section': len(re.findall(r'\\section\{', content)),
+        'subsection': len(re.findall(r'\\subsection\{', content)),
+        'subsubsection': len(re.findall(r'\\subsubsection\{', content)),
+        'paragraph': len(re.findall(r'\\paragraph\{', content)),
+        'subparagraph': len(re.findall(r'\\subparagraph\{', content))
+    }
+    
+    print(f"Hierarchy counts: section={levels['section']}, subsection={levels['subsection']}, " 
+          f"subsubsection={levels['subsubsection']}, paragraph={levels['paragraph']}, subparagraph={levels['subparagraph']}")
+    
+    missing = [level for level, count in levels.items() if count == 0]
+    
+    if missing:
+        print(f"⚠️  Missing levels: {', '.join(missing)}")
+        return True  # Warning, not failure
+    else:
+        print("✅ PASS: All 5 hierarchy levels present.")
+        return True
+
+def check_caption_positions(filename):
+    print(f"\n--- Checking Table/Figure Caption Positions: {filename} ---")
+    warnings = 0
+    with open(filename, 'r') as f:
+        content = f.read()
+    
+    # Find tables and check caption position
+    tables = re.finditer(r'\\begin\{table\}.*?\\end\{table\}', content, re.DOTALL)
+    for match in tables:
+        table_content = match.group(0)
+        caption_pos = table_content.find(r'\caption{')
+        tabular_pos = table_content.find(r'\begin{tabular')
+        if tabular_pos == -1:
+            tabular_pos = table_content.find(r'\begin{tabularx')
+        
+        if caption_pos > 0 and tabular_pos > 0 and caption_pos > tabular_pos:
+            print(f"⚠️  Table has caption AFTER tabular (should be BEFORE/TOP)")
+            warnings += 1
+    
+    # Find figures and check caption position
+    figures = re.finditer(r'\\begin\{figure\}.*?\\end\{figure\}', content, re.DOTALL)
+    for match in figures:
+        fig_content = match.group(0)
+        caption_pos = fig_content.find(r'\caption{')
+        # Check if caption is before tikzpicture/includegraphics
+        tikz_pos = fig_content.find(r'\begin{tikz')
+        img_pos = fig_content.find(r'\includegraphics')
+        circuit_pos = fig_content.find(r'\begin{circuitikz')
+        kmap_pos = fig_content.find(r'\begin{karnaugh-map')
+        
+        content_pos = min([p for p in [tikz_pos, img_pos, circuit_pos, kmap_pos] if p > 0], default=-1)
+        
+        if caption_pos > 0 and content_pos > 0 and caption_pos < content_pos:
+            print(f"⚠️  Figure has caption BEFORE content (should be AFTER/BOTTOM)")
+            warnings += 1
+    
+    if warnings == 0:
+        print("✅ PASS: Caption positions correct.")
+        return True
+    else:
+        print(f"⚠️  PASS with {warnings} caption position warnings.")
+        return True
+
+def check_custom_commands(filename):
+    print(f"\n--- Checking for Custom Commands: {filename} ---")
+    errors = 0
+    with open(filename, 'r') as f:
+        content = f.read()
+    
+    # Check for \newcommand definitions
+    custom_cmds = re.findall(r'\\newcommand\{[^}]+\}', content)
+    if custom_cmds:
+        print(f"❌ Found custom command definitions: {custom_cmds}")
+        errors += len(custom_cmds)
+    
+    # Check for suspicious custom-looking commands (not in standard LaTeX)
+    suspicious = [r'\keyword{', r'\code{', r'\important{', r'\note{']
+    for cmd in suspicious:
+        if cmd in content:
+            print(f"⚠️  Found suspicious command: {cmd}")
+    
+    if errors == 0:
+        print("✅ PASS: No custom commands found.")
+        return True
+    else:
+        print(f"❌ FAIL: {errors} custom command definitions found.")
+        return False
+
 def check_typography(filename):
     print(f"\n--- Checking Typography (Units, Spacing): {filename} ---")
     errors = 0
@@ -195,7 +371,7 @@ def check_typography(filename):
     for i, line in enumerate(lines, 1):
          # Search for number followed immediately by unit chars in the typical set
          # Simplified heuristic
-         for u in ['V', 'Hz', 'k\Omega', 'nF', 'F', 'H']:
+         for u in ['V', 'Hz', r'k\Omega', 'nF', 'F', 'H']:
              if re.search(r'\d+' + re.escape(u) + r'\b', line):
                  # Filter out if it actually has \, in file
                  # Reading raw line: '10\,V' matches regex `\d+V` ?? No, `\,` breaks it if looking for 'V' directly?
@@ -230,7 +406,7 @@ def check_syntax(filename, language="English"):
             
         suspicious_dollar = re.search(r'(?<!\()(\$)(?!\))', line)
         if suspicious_dollar:
-             print(f"❌ Line {i}: Found forbidden '$' syntax. Use \(...\) or \[...\]")
+             print(rf"❌ Line {i}: Found forbidden '$' syntax. Use \(...\) or \[...\]")
              errors += 1
              
         if "**" in line:
@@ -282,8 +458,11 @@ if __name__ == "__main__":
     print(f" Gu: {file_gu}")
     print("========================================")
     
+    # Core structure checks
     pass_lc = check_line_counts(file_en, file_gu)
     pass_struct = check_structure(file_en, file_gu)
+    
+    # Syntax and compliance checks
     pass_syn_en = check_syntax(file_en, "English")
     pass_syn_gu = check_syntax(file_gu, "Gujarati")
     pass_cont_en = check_content_compliance(file_en)
@@ -291,15 +470,41 @@ if __name__ == "__main__":
     pass_hier_en = check_structure_strict(file_en)
     pass_hier_gu = check_structure_strict(file_gu)
     
+    # Content quality checks
     pass_wc_en = check_word_counts(file_en)
     pass_wc_gu = check_word_counts(file_gu)
     pass_typo_en = check_typography(file_en)
     
+    # New comprehensive checks
+    pass_toc_en = check_toc_setup(file_en)
+    pass_toc_gu = check_toc_setup(file_gu)
+    pass_mnem_en = check_mnemonics(file_en)
+    pass_mnem_gu = check_mnemonics(file_gu)
+    pass_qstruct_en = check_question_structure(file_en)
+    pass_qstruct_gu = check_question_structure(file_gu)
+    pass_levels_en = check_hierarchy_levels(file_en)
+    pass_levels_gu = check_hierarchy_levels(file_gu)
+    pass_captions_en = check_caption_positions(file_en)
+    pass_captions_gu = check_caption_positions(file_gu)
+    pass_cmds_en = check_custom_commands(file_en)
+    pass_cmds_gu = check_custom_commands(file_gu)
+    
+    # External tools
     run_chktex(file_en)
     run_chktex(file_gu)
     
     print("\n========================================")
-    if pass_lc and pass_struct and pass_syn_en and pass_syn_gu and pass_cont_en and pass_cont_gu and pass_hier_en and pass_hier_gu:
+    # Critical checks that must pass
+    critical_checks = [
+        pass_lc, pass_struct, 
+        pass_syn_en, pass_syn_gu, 
+        pass_cont_en, pass_cont_gu, 
+        pass_hier_en, pass_hier_gu,
+        pass_toc_en, pass_toc_gu,
+        pass_cmds_en, pass_cmds_gu
+    ]
+    
+    if all(critical_checks):
         print("OVERALL STATUS: ✅ PASSED")
         sys.exit(0)
     else:
