@@ -228,7 +228,6 @@ public class MaxOfThree {
 
 - **Text quotes**: `` ``double'' `` and `` `single' `` (smart quotes)
 - **Code quotes**: `"string"` inside lstlisting (straight quotes)
-- **Spacing**: `\,` for thin space in units (\(1.5\,k\Omega\))
 
 ## Content Requirements by Marks
 

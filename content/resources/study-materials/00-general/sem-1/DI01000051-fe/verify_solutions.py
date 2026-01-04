@@ -428,6 +428,304 @@ def check_preamble_usage(filename, language="English"):
         print(f"⚠️  Expected {expected_preamble} in preamble input")
         return True
 
+def check_list_types(filename):
+    print(f"\n--- Checking Semantic List Types: {filename} ---")
+    warnings = 0
+    with open(filename, 'r') as f:
+        content = f.read()
+    
+    # Check for proper list usage patterns
+    description_lists = len(re.findall(r'\\begin\{description\}', content))
+    itemize_lists = len(re.findall(r'\\begin\{itemize\}', content))
+    enumerate_lists = len(re.findall(r'\\begin\{enumerate\}', content))
+    
+    print(f"Found: {description_lists} description, {itemize_lists} itemize, {enumerate_lists} enumerate lists")
+    
+    # Description lists should have \item[Label:] format
+    desc_blocks = re.findall(r'\\begin\{description\}.*?\\end\{description\}', content, re.DOTALL)
+    for i, block in enumerate(desc_blocks, 1):
+        items_with_labels = len(re.findall(r'\\item\[[^\]]+\]', block))
+        items_without = len(re.findall(r'\\item(?!\[)', block))
+        if items_without > 0:
+            print(f"⚠️  Description list {i} has {items_without} items without labels")
+            warnings += 1
+    
+    if warnings == 0:
+        print("✅ PASS: Semantic list types used correctly.")
+        return True
+    else:
+        print(f"⚠️  PASS with {warnings} warnings.")
+        return True
+
+def check_textbf_after_subsection(filename):
+    print(f"\n--- Checking \\textbf{{}} After Subsections: {filename} ---")
+    warnings = 0
+    with open(filename, 'r') as f:
+        lines = f.readlines()
+    
+    for i, line in enumerate(lines):
+        if line.strip().startswith(r'\subsection{'):
+            # Check next few non-empty lines for \textbf
+            found_textbf = False
+            for j in range(i+1, min(i+4, len(lines))):
+                next_line = lines[j].strip()
+                if next_line and not next_line.startswith('%'):
+                    if r'\textbf{' in next_line:
+                        found_textbf = True
+                        break
+                    elif next_line.startswith(r'\subsubsection'):
+                        break
+            
+            if not found_textbf:
+                print(f"⚠️  Line {i+1}: Subsection missing \\textbf{{}} question statement")
+                warnings += 1
+    
+    if warnings == 0:
+        print("✅ PASS: All subsections have bold question statements.")
+        return True
+    else:
+        print(f"⚠️  PASS with {warnings} warnings.")
+        return True
+
+def check_section_numbering(filename):
+    print(f"\n--- Checking Section Numbering Pattern: {filename} ---")
+    with open(filename, 'r') as f:
+        content = f.read()
+    
+    sections = re.findall(r'\\section\{([^}]+)\}', content)
+    
+    print(f"Found {len(sections)} sections")
+    for i, section in enumerate(sections, 1):
+        # Check for "Question N" pattern
+        if 'Question' not in section and 'પ્રશ્ન' not in section:
+            print(f"⚠️  Section '{section[:40]}' doesn't follow 'Question N' pattern")
+    
+    print("✅ PASS: Section numbering check complete.")
+    return True
+
+def check_subsection_labeling(filename):
+    print(f"\n--- Checking Subsection Labeling: {filename} ---")
+    warnings = 0
+    with open(filename, 'r') as f:
+        content = f.read()
+    
+    subsections = re.findall(r'\\subsection\{([^}]+)\}', content)
+    
+    for subsec in subsections:
+        # Check for (a), (b), (c), OR pattern and marks
+        has_part = re.search(r'\([a-z]\)|OR|અથવા', subsec)
+        has_marks = re.search(r'\[\s*\d+\s*(marks|Marks|ગુણ)\s*\]', subsec)
+        
+        if not has_part:
+            print(f"⚠️  Subsection '{subsec[:40]}' missing part label (a), (b), (c), or OR")
+            warnings += 1
+        if not has_marks:
+            # Already checked in check_marks_format, skip duplicate
+            pass
+    
+    if warnings == 0:
+        print("✅ PASS: Subsection labeling correct.")
+        return True
+    else:
+        print(f"⚠️  PASS with {warnings} warnings.")
+        return True
+
+def check_list_count_parity(file_en, file_gu):
+    print(f"\n--- Checking List Count Parity (En vs Gu) ---")
+    warnings = 0
+    
+    with open(file_en, 'r') as f:
+        content_en = f.read()
+    with open(file_gu, 'r') as f:
+        content_gu = f.read()
+    
+    list_types = ['description', 'itemize', 'enumerate']
+    
+    for ltype in list_types:
+        count_en = len(re.findall(rf'\\begin\{{{ltype}\}}', content_en))
+        count_gu = len(re.findall(rf'\\begin\{{{ltype}\}}', content_gu))
+        
+        if count_en != count_gu:
+            print(f"⚠️  {ltype} list count differs: En={count_en}, Gu={count_gu}")
+            warnings += 1
+    
+    if warnings == 0:
+        print("✅ PASS: List counts match between versions.")
+        return True
+    else:
+        print(f"⚠️  PASS with {warnings} identity warnings.")
+        return True
+
+def check_table_count_parity(file_en, file_gu):
+    print(f"\n--- Checking Table Count Parity (En vs Gu) ---")
+    
+    with open(file_en, 'r') as f:
+        content_en = f.read()
+    with open(file_gu, 'r') as f:
+        content_gu = f.read()
+    
+    tables_en = len(re.findall(r'\\begin\{table\}', content_en))
+    tables_gu = len(re.findall(r'\\begin\{table\}', content_gu))
+    
+    if tables_en != tables_gu:
+        print(f"⚠️  Table count differs: En={tables_en}, Gu={tables_gu}")
+        return True
+    else:
+        print(f"✅ PASS: Table counts match (En={tables_en}, Gu={tables_gu}).")
+        return True
+
+def check_figure_count_parity(file_en, file_gu):
+    print(f"\n--- Checking Figure Count Parity (En vs Gu) ---")
+    
+    with open(file_en, 'r') as f:
+        content_en = f.read()
+    with open(file_gu, 'r') as f:
+        content_gu = f.read()
+    
+    figures_en = len(re.findall(r'\\begin\{figure\}', content_en))
+    figures_gu = len(re.findall(r'\\begin\{figure\}', content_gu))
+    
+    if figures_en != figures_gu:
+        print(f"⚠️  Figure count differs: En={figures_en}, Gu={figures_gu}")
+        return True
+    else:
+        print(f"✅ PASS: Figure counts match (En={figures_en}, Gu={figures_gu}).")
+        return True
+
+def check_compilation(filename, language="English"):
+    print(f"\n--- Checking Compilation: {filename} ({language}) ---")
+    
+    compiler = 'xelatex' if language == "Gujarati" else 'pdflatex'
+    
+    try:
+        # Run compiler in nonstopmode (doesn't stop on errors)
+        result = subprocess.run(
+            [compiler, '-interaction=nonstopmode', '-halt-on-error', filename],
+            capture_output=True,
+            text=True,
+            timeout=30
+        )
+        
+        if result.returncode == 0:
+            print(f"✅ PASS: {filename} compiles successfully with {compiler}.")
+            return True
+        else:
+            print(f"❌ FAIL: Compilation failed. Check .log file for details.")
+            # Print last 20 lines of error output
+            error_lines = result.stdout.split('\n')[-20:]
+            for line in error_lines:
+                if line.strip():
+                    print(f"  {line}")
+            return False
+    except subprocess.TimeoutExpired:
+        print(f"❌ FAIL: Compilation timeout (>30s).")
+        return False
+    except FileNotFoundError:
+        print(f"⚠️  {compiler} not installed/found. Skipping compilation check.")
+        return True
+
+def check_filename_convention(filename):
+    print(f"\n--- Checking Filename Convention: {filename} ---")
+    
+    # Extract just the filename without path
+    import os
+    basename = os.path.basename(filename)
+    
+    # Pattern: [Code]-[Season]-[Year]-Solution-Full.tex or .gu.tex
+    pattern = r'^[A-Z0-9]+-(?:Summer|Winter)-\d{4}-Solution-Full(?:\.gu)?\.tex$'
+    
+    if re.match(pattern, basename):
+        print(f"✅ PASS: Filename follows convention.")
+        return True
+    else:
+        print(f"⚠️  Filename '{basename}' doesn't follow [Code]-[Season]-[Year]-Solution-Full.tex convention")
+        return True
+
+def check_content_after_toc(filename):
+    print(f"\n--- Checking Content After TOC: {filename} ---")
+    
+    with open(filename, 'r') as f:
+        content = f.read()
+    
+    # Find position of \tableofcontents
+    toc_pos = content.find(r'\tableofcontents')
+    if toc_pos == -1:
+        print("⚠️  No \\tableofcontents found")
+        return True
+    
+    # Check for sections after TOC
+    after_toc = content[toc_pos:]
+    sections = re.findall(r'\\section\{', after_toc)
+    
+    if len(sections) > 0:
+        print(f"✅ PASS: Found {len(sections)} sections after TOC.")
+        return True
+    else:
+        print("❌ FAIL: No sections found after TOC.")
+        return False
+
+def check_preamble_path(filename, language="English"):
+    print(f"\n--- Checking Preamble Path: {filename} ({language}) ---")
+    
+    with open(filename, 'r') as f:
+        content = f.read()
+    
+    # Check for \input command
+    input_match = re.search(r'\\input\{([^}]+)\}', content)
+    
+    if not input_match:
+        print("❌ FAIL: No \\input{{}} command found for preamble.")
+        return False
+    
+    input_path = input_match.group(1)
+    
+    # Check if path is absolute
+    if not (input_path.startswith('/') or input_path.startswith('C:')):
+        print(f"⚠️  Preamble path is relative: {input_path}")
+        print("    Consider using absolute path for consistency.")
+    
+    # Check if correct preamble is used
+    expected_preamble = 'preamble.gu.tex' if language == "Gujarati" else 'preamble.tex'
+    if expected_preamble in input_path:
+        print(f"✅ PASS: Correct preamble path ({expected_preamble}).")
+        return True
+    else:
+        print(f"⚠️  Expected {expected_preamble} in preamble path")
+        return True
+
+def check_description_item_count(file_en, file_gu):
+    print(f"\n--- Checking Description List Item Counts (En vs Gu) ---")
+    warnings = 0
+    
+    with open(file_en, 'r') as f:
+        content_en = f.read()
+    with open(file_gu, 'r') as f:
+        content_gu = f.read()
+    
+    # Extract description blocks
+    desc_en = re.findall(r'\\begin\{description\}.*?\\end\{description\}', content_en, re.DOTALL)
+    desc_gu = re.findall(r'\\begin\{description\}.*?\\end\{description\}', content_gu, re.DOTALL)
+    
+    if len(desc_en) != len(desc_gu):
+        print(f"⚠️  Description list count differs (checked in list parity)")
+        return True
+    
+    # Check item counts in each description block
+    for i, (block_en, block_gu) in enumerate(zip(desc_en, desc_gu), 1):
+        items_en = len(re.findall(r'\\item\[', block_en))
+        items_gu = len(re.findall(r'\\item\[', block_gu))
+        
+        if items_en != items_gu:
+            print(f"⚠️  Description list {i} item count differs: En={items_en}, Gu={items_gu}")
+            warnings += 1
+    
+    if warnings == 0:
+        print("✅ PASS: Description list item counts match.")
+        return True
+    else:
+        print(f"⚠️  PASS with {warnings} warnings.")
+        return True
+
 def check_code_math_diagram_identity(file_en, file_gu):
     print(f"\n--- Checking Code/Math/Diagram Identity (En vs Gu) ---")
     warnings = 0
@@ -629,6 +927,8 @@ if __name__ == "__main__":
     pass_meta_gu = check_pdf_metadata(file_gu)
     pass_preamble_en = check_preamble_usage(file_en, "English")
     pass_preamble_gu = check_preamble_usage(file_gu, "Gujarati")
+    pass_preamble_path_en = check_preamble_path(file_en, "English")
+    pass_preamble_path_gu = check_preamble_path(file_gu, "Gujarati")
     
     # Syntax and compliance checks
     pass_syn_en = check_syntax(file_en, "English")
@@ -648,16 +948,34 @@ if __name__ == "__main__":
     
     # Content fidelity checks (En vs Gu)
     pass_identity = check_code_math_diagram_identity(file_en, file_gu)
+    pass_list_parity = check_list_count_parity(file_en, file_gu)
+    pass_table_parity = check_table_count_parity(file_en, file_gu)
+    pass_figure_parity = check_figure_count_parity(file_en, file_gu)
+    pass_desc_items = check_description_item_count(file_en, file_gu)
+    
+    # Filename convention checks
+    pass_filename_en = check_filename_convention(file_en)
+    pass_filename_gu = check_filename_convention(file_gu)
     
     # Structural checks
     pass_toc_en = check_toc_setup(file_en)
     pass_toc_gu = check_toc_setup(file_gu)
+    pass_content_after_toc_en = check_content_after_toc(file_en)
+    pass_content_after_toc_gu = check_content_after_toc(file_gu)
     pass_mnem_en = check_mnemonics(file_en)
     pass_mnem_gu = check_mnemonics(file_gu)
     pass_qstruct_en = check_question_structure(file_en)
     pass_qstruct_gu = check_question_structure(file_gu)
+    pass_textbf_en = check_textbf_after_subsection(file_en)
+    pass_textbf_gu = check_textbf_after_subsection(file_gu)
+    pass_section_num_en = check_section_numbering(file_en)
+    pass_section_num_gu = check_section_numbering(file_gu)
+    pass_subsec_label_en = check_subsection_labeling(file_en)
+    pass_subsec_label_gu = check_subsection_labeling(file_gu)
     pass_levels_en = check_hierarchy_levels(file_en)
     pass_levels_gu = check_hierarchy_levels(file_gu)
+    pass_list_types_en = check_list_types(file_en)
+    pass_list_types_gu = check_list_types(file_gu)
     pass_captions_en = check_caption_positions(file_en)
     pass_captions_gu = check_caption_positions(file_gu)
     pass_cmds_en = check_custom_commands(file_en)
@@ -667,17 +985,24 @@ if __name__ == "__main__":
     run_chktex(file_en)
     run_chktex(file_gu)
     
+    # Compilation checks (optional but recommended)
+    pass_compile_en = check_compilation(file_en, "English")
+    pass_compile_gu = check_compilation(file_gu, "Gujarati")
+    
     print("\n========================================")
     # Critical checks that must pass
     critical_checks = [
         pass_lc, pass_struct,
         pass_doc_en, pass_doc_gu,
         pass_preamble_en, pass_preamble_gu,
+        pass_preamble_path_en, pass_preamble_path_gu,
         pass_syn_en, pass_syn_gu, 
         pass_cont_en, pass_cont_gu, 
         pass_hier_en, pass_hier_gu,
         pass_toc_en, pass_toc_gu,
-        pass_cmds_en, pass_cmds_gu
+        pass_content_after_toc_en, pass_content_after_toc_gu,
+        pass_cmds_en, pass_cmds_gu,
+        pass_compile_en, pass_compile_gu
     ]
     
     if all(critical_checks):
