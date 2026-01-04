@@ -40,12 +40,23 @@ xelatex sample_solution.tex
 ### 3. Convert to Markdown for Web
 
 ```bash
+# For GitHub/web (with line wrapping)
 pandoc sample_solution.tex \
   -o sample_solution.md \
   --to=gfm \
   --standalone \
   --shift-heading-level-by=1
+
+# For Typora/editors (no hard line wrapping)
+pandoc sample_solution.tex \
+  -o sample_solution.md \
+  --to=gfm \
+  --wrap=none \
+  --standalone \
+  --shift-heading-level-by=1
 ```
+
+**Note:** Use `--wrap=none` to prevent hard line breaks at 80 characters, which causes unnecessary line breaks in Typora and other markdown editors.
 
 ## 📊 Heading Mapping
 
