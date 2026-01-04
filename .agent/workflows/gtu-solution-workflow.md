@@ -34,6 +34,7 @@ Two LaTeX solution files with:
 ```
 
 **These samples show ALL patterns - refer to them frequently.**
+
 ---
 
 ## PART 2: Specifications
@@ -368,6 +369,42 @@ After: Q1, Q2, Q3, Q4, Q5, Finalization
 
 ---
 
-**Remember**: Reference `sample_solution.tex` constantly - it shows exact patterns for everything.
+## Common Challenges & Solutions (Learnings from Past Agents)
 
-**⛔ NEVER reference other `.tex` files in the working directory - they are old attempts and do not meet quality standards!**
+### 1. Strict Math & Diagram Parity (Identity Violations)
+
+- **Challenge:** The verification script enforces 100% identity for `code`, `math`, and `tikz` blocks between English and Gujarati files. Even a single extra space, a different label name (e.g., "Construction" vs "બંધારણ"), or re-ordering variables in an equation caused a failure.
+- **Solution:** Copy the English math/diagram block entirely to the Gujarati file, then translate *only* the text strings inside them. Do not re-type equations or diagrams from scratch.
+
+### 2. Word Count Thresholds
+
+- **Challenge:** Technical answers often fall short of the required word count (e.g., 200-300 words for 7 marks).
+- **Solution:** Proactively expand answers with:
+  - "Selection Guides" or "Comparison Tables".
+  - "Real-world Analogy" paragraphs.
+  - Additional derivation steps or conceptual definitions (like "Relationship with Gamma").
+
+### 3. Compilation Errors (LaTeX Syntax)
+
+- **Challenge:** Several recurring syntax errors:
+  - **Underscores in Text:** Mnemonics using variable names like `R_A` without math mode.
+  - **Circuitikz Keys:** Using keys like `vD` that may be unsupported in the specific installed version.
+  - **Caption Placement:** Tables captions must be TOP, Figure captions BOTTOM.
+- **Solution:**
+  - Wrap variables with underscores in math mode (`$R_A$`).
+  - Use standard TikZ keys (replace `vD` with `D` + manual label).
+  - Strictly check caption placement against templates.
+
+### 4. Gujarati Translation Context
+
+- **Challenge:** Direct translation often loses technical meaning or context.
+- **Solution:** Keep technical terms (Emitter, Base, Collector) in English or provide the English term in parentheses alongside the Gujarati term.
+
+### 5. Task Boundary Management
+
+- **Challenge:** Managing complex state and context across long generation tasks.
+- **Solution:** Break down large tasks (like "Question 4") into granular sub-tasks in the checklist (`task.md`) to track progress effectively.
+
+---
+
+**Remember**: Reference `sample_solution.tex` constantly - it shows exact patterns for everything.
