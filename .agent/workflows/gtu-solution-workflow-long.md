@@ -71,7 +71,7 @@ Both files must have:
   pdfsubject={GTU Exam Solution - Term-Year},
   pdfauthor={Milav Dabgar},
   pdfkeywords={study-material, solutions, gtu, code},
-  pdfcreator={pdflatex}  % or XeLaTeX for Gujarati
+  pdfcreator={xelatex}  % or XeLaTeX for Gujarati
 }
 
 \begin{document}
@@ -292,7 +292,7 @@ public class MaxOfThree {
 #### Technical Setup
 
 - Use `\input{.../preamble.gu.tex}` (includes Gujarati font setup)
-- Compile with `xelatex` (NOT `pdflatex`)
+- Compile with `xelatex` (NOT `xelatex`)
 - PDF metadata: Add `(Gujarati)` to title, add `gujarati` to keywords
 
 ---
@@ -373,7 +373,7 @@ For Question 1 with parts (a), (b), (c), (OR):
 **Compile both files**:
 
 ```bash
-pdflatex [Code]-[Season]-[Year]-Solution-Full.tex
+xelatex [Code]-[Season]-[Year]-Solution-Full.tex
 xelatex [Code]-[Season]-[Year]-Solution-Full.gu.tex
 ```
 
@@ -434,8 +434,8 @@ For each remaining question:
 2. **Final compilation** (run TWICE for TOC):
 
 ```bash
-pdflatex [file].tex
-pdflatex [file].tex
+xelatex [file].tex
+xelatex [file].tex
 xelatex [file].gu.tex
 xelatex [file].gu.tex
 ```
@@ -550,7 +550,7 @@ python verify_solutions.py [english-file.tex] [gujarati-file.gu.tex]
 
 ### Verification Checklist
 
-- [ ] `pdflatex` compiles English successfully
+- [ ] `xelatex` compiles English successfully
 - [ ] `xelatex` compiles Gujarati successfully
 - [ ] `verify_solutions.py` shows `✅ PASSED`
 - [ ] Line counts match exactly

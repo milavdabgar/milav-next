@@ -31,13 +31,13 @@ version: 2.0
 **Hierarchy** (All 5 levels required):
 
 ```latex
-\section{Question 1}                      % H1
-\subsection{Question 1(a) [3 marks]}     % H2
-\textbf{Question statement}              % Bold (separate line)
-\subsubsection{Solution}                  % H3
-\paragraph{Given Data:}                   % H4
-\subparagraph{Detail:}                    % H5 (when needed)
-\paragraph{Mnemonic:}                     % H4 (required ending)
+\section{Question 1}                      % Major Question/Section
+\subsection{Question 1(a) [3 marks]}      % SubQuestion of Main Question
+\textbf{Question statement}               % Question Statement, on separate line
+\subsubsection{Solution}                  % Solution Heading
+\paragraph{Key Topic of Solution}         % Paragraphs To Explain Solution
+\subparagraph{Subtopic of solution}       % Subparagraphs (when needed)
+\paragraph{Mnemonic:}                     % Mnemonic at end (required end)
 ```
 
 **Tables**: Use `tabularx`, caption TOP, `[H]` placement
@@ -90,7 +90,7 @@ For each part (a, b, c, OR):
 **Compile**:
 
 ```bash
-pdflatex [file].tex
+xelatex [file].tex
 xelatex [file].gu.tex
 ```
 
@@ -120,7 +120,7 @@ For each question:
 ### Step 5: Finalize
 
 1. Add `\end{document}` to both
-2. Compile twice (for TOC): `pdflatex` twice, `xelatex` twice
+2. Compile twice (for TOC): `xelatex` twice, `xelatex` twice
 3. Final verification (must pass all 53 checks)
 4. Output: 2 PDFs ready
 
