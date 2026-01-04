@@ -13,9 +13,7 @@ title: Subject Name (SUBJECT001) - Sample Term Solution
 
 #### Solution
 
-To find the **maximum** of three numbers, we use **conditional
-statements** (if-else) to compare values. The program takes three
-numbers as input and returns the “largest value” among them.
+To find the **maximum** of three numbers, we use **conditional statements** (if-else) to compare values. The program takes three numbers as input and returns the *largest value* among them.
 
 ##### Java Program:
 
@@ -52,16 +50,13 @@ public class MaxOfThree {
 
 - **Second Comparison**: Compare `max` with `c` to get final maximum
 
-- **Alternative**: Can use `Math.max(a, Math.max(b, c))` for concise
-  code
+- **Alternative**: Can use `Math.max(a, Math.max(b, c))` for concise code
 
 > **Mnemonic:** *MAX: Compare in pairs, update Maximum At eXamination*
 
 ### Question 1(b) \[4 marks\]
 
-**Calculate the cutoff frequency of an RC low-pass filter with
-$`R = 1.5\,k\Omega`$ and $`C = 100\,nF`$. Also find the output voltage
-if input is 10V at cutoff frequency.**
+**Calculate the cutoff frequency of an RC low-pass filter with $`R = 1.5\,k\Omega`$ and $`C = 100\,nF`$. Also find the output voltage if input is 10V at cutoff frequency.**
 
 #### Solution
 
@@ -93,8 +88,7 @@ f_c = \frac{1}{9.42 \times 10^{-4}} = 1061.57\,Hz \approx 1.06\,kHz
 
 ##### Step 2: Calculate Output Voltage at Cutoff
 
-At cutoff frequency, output voltage is **0.707 times** (or
-$`\frac{1}{\sqrt{2}}`$) the input voltage:
+At cutoff frequency, output voltage is **0.707 times** (or $`\frac{1}{\sqrt{2}}`$) the input voltage:
 ``` math
 V_{out} = 0.707 \times V_{in} = 0.707 \times 10 = 7.07\,V
 ```
@@ -109,19 +103,15 @@ V_{out} = 0.707 \times V_{in} = 0.707 \times 10 = 7.07\,V
 
 - **Phase Shift**: $`-45^\circ`$ at cutoff frequency
 
-> **Mnemonic:** *RC-Formula: fc = 1/(2$`\pi`$ RC), Vout = 0.707 Vin at
-> fc*
+> **Mnemonic:** *RC-Formula: fc = 1/(2$`\pi`$ RC), Vout = 0.707 Vin at fc*
 
 ### Question 1(c) \[7 marks\]
 
-**Compare active and passive electronic components with suitable
-examples.**
+**Compare active and passive electronic components with suitable examples.**
 
 #### Solution
 
-Electronic components are classified into **active** and **passive**
-categories based on their ability to control or amplify electrical
-energy.
+Electronic components are classified into **active** and **passive** categories based on their ability to control or amplify electrical energy.
 
 | **Characteristic** | **Active Components** | **Passive Components** |
 |:---|:---|:---|
@@ -137,82 +127,57 @@ Active vs Passive Components Comparison
 
 ##### Active Components in Detail:
 
-- **Transistors**: Used for amplification and switching. BJT uses
-  current control, FET uses voltage control.
+- **Transistors**: Used for amplification and switching. BJT uses current control, FET uses voltage control.
 
-- **Diodes**: Allow current in one direction. LED emits light, Zener
-  regulates voltage.
+- **Diodes**: Allow current in one direction. LED emits light, Zener regulates voltage.
 
-- **ICs**: Integrated circuits like `555 timer` (oscillator), op-amps
-  (amplifier).
+- **ICs**: Integrated circuits like `555 timer` (oscillator), op-amps (amplifier).
 
-- **Power Requirement**: All active components need DC bias/supply to
-  operate.
+- **Power Requirement**: All active components need DC bias/supply to operate.
 
 ##### Passive Components in Detail:
 
-- **Resistors**: Oppose current flow, dissipate power as heat. Value in
-  $`\Omega`$.
+- **Resistors**: Oppose current flow, dissipate power as heat. Value in $`\Omega`$.
 
-- **Capacitors**: Store energy in electric field. Value in Farads (F),
-  blocks DC, passes AC.
+- **Capacitors**: Store energy in electric field. Value in Farads (F), blocks DC, passes AC.
 
-- **Inductors**: Store energy in magnetic field. Value in Henry (H),
-  opposes AC changes.
+- **Inductors**: Store energy in magnetic field. Value in Henry (H), opposes AC changes.
 
-- **Transformers**: Transfer energy between circuits via magnetic
-  coupling.
+- **Transformers**: Transfer energy between circuits via magnetic coupling.
 
 ##### Key Distinction:
 
-The fundamental difference is that active components can “inject power”
-into a circuit (amplification), while passive components can only
-“absorb or store” energy, never increase it.
+The fundamental difference is that active components can *inject power* into a circuit (amplification), while passive components can only *absorb or store* energy, never increase it.
 
-> **Mnemonic:** *ACTIVE = Amplify, Control, Transform; PASSIVE = Resist,
-> Store, Filter*
+> **Mnemonic:** *ACTIVE = Amplify, Control, Transform; PASSIVE = Resist, Store, Filter*
 
 ### Question 1(c) OR \[7 marks\]
 
-**Draw and explain the working of a half-wave rectifier circuit with
-input and output waveforms.**
+**Draw and explain the working of a half-wave rectifier circuit with input and output waveforms.**
 
 #### Solution
 
-A **half-wave rectifier** converts AC voltage to pulsating DC by
-allowing only one half-cycle (positive or negative) of the input AC
-waveform to pass through.
+A **half-wave rectifier** converts AC voltage to pulsating DC by allowing only one half-cycle (positive or negative) of the input AC waveform to pass through.
 
 ##### Circuit Diagram:
 
 <figure data-latex-placement="H">
 <div class="circuitikz">
-<p>(0,0) to[sV, l=<span
-class="math inline"><em>V</em><sub><em>i</em><em>n</em></sub></span>]
-(0,2); (0,2) to[short] (2,2);</p>
-<p>(2,2) to[D*, l=<span class="math inline"><em>D</em></span>]
-(4,2);</p>
-<p>(4,2) to[short] (5,2); (5,2) to[R, l=<span
-class="math inline"><em>R</em><sub><em>L</em></sub></span>] (5,0); (5,0)
-to[short] (0,0);</p>
-<p>(4.5,2) to[short, *-] (4.5,2.5); at (4.5,2.7) <span><span
-class="math inline"><em>V</em><sub><em>o</em><em>u</em><em>t</em></sub></span></span>;
-(4.5,0) to[short, *-] (4.5,-0.5); at (4.5,-0.5) ;</p>
+<p>(0,0) to[sV, l=<span class="math inline"><em>V</em><sub><em>i</em><em>n</em></sub></span>] (0,2); (0,2) to[short] (2,2);</p>
+<p>(2,2) to[D*, l=<span class="math inline"><em>D</em></span>] (4,2);</p>
+<p>(4,2) to[short] (5,2); (5,2) to[R, l=<span class="math inline"><em>R</em><sub><em>L</em></sub></span>] (5,0); (5,0) to[short] (0,0);</p>
+<p>(4.5,2) to[short, *-] (4.5,2.5); at (4.5,2.7) <span><span class="math inline"><em>V</em><sub><em>o</em><em>u</em><em>t</em></sub></span></span>; (4.5,0) to[short, *-] (4.5,-0.5); at (4.5,-0.5) ;</p>
 </div>
 <figcaption>Half-Wave Rectifier Circuit</figcaption>
 </figure>
 
 ##### Working Principle:
 
-1.  **Positive Half-Cycle**: When input AC is positive, diode is
-    forward-biased (conducts). Current flows through load resistor
-    $`R_L`$, producing output voltage.
+1.  **Positive Half-Cycle**: When input AC is positive, diode is forward-biased (conducts). Current flows through load resistor $`R_L`$, producing output voltage.
 
-2.  **Negative Half-Cycle**: When input AC is negative, diode is
-    reverse-biased (blocks). No current flows, output voltage is zero.
+2.  **Negative Half-Cycle**: When input AC is negative, diode is reverse-biased (blocks). No current flows, output voltage is zero.
 
-3.  **Result**: Only positive half-cycles appear at output, creating
-    pulsating DC.
+3.  **Result**: Only positive half-cycles appear at output, creating pulsating DC.
 
 ##### Waveform Representation:
 
@@ -227,17 +192,12 @@ class="math inline"><em>V</em><sub><em>o</em><em>u</em><em>t</em></sub></span></
 
 - **Ripple Factor**: $`r = 1.21`$ (high ripple content)
 
-- **Peak Inverse Voltage (PIV)**: $`PIV = V_m`$ (maximum reverse voltage
-  across diode)
+- **Peak Inverse Voltage (PIV)**: $`PIV = V_m`$ (maximum reverse voltage across diode)
 
-- **DC Output**: $`V_{DC} = \frac{V_m}{\pi} = 0.318 V_m`$ where $`V_m`$
-  is peak AC voltage
+- **DC Output**: $`V_{DC} = \frac{V_m}{\pi} = 0.318 V_m`$ where $`V_m`$ is peak AC voltage
 
 ##### Applications:
 
-Half-wave rectifiers are used in low-power applications like battery
-charging, signal demodulation, and voltage multipliers. They are “not
-suitable” for high-power applications due to poor efficiency.
+Half-wave rectifiers are used in low-power applications like battery charging, signal demodulation, and voltage multipliers. They are *not suitable* for high-power applications due to poor efficiency.
 
-> **Mnemonic:** *HWR: Half-Wave = Half output, 40.6% efficiency, PIV =
-> Vm*
+> **Mnemonic:** *HWR: Half-Wave = Half output, 40.6% efficiency, PIV = Vm*
