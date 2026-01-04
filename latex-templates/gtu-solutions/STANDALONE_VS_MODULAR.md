@@ -7,6 +7,7 @@ Two versions available: **Modular** (with custom helpers) and **Standalone** (ze
 **Files:** `sample_solution_standalone.tex` and `sample_solution_standalone.gu.tex`
 
 ### Features
+
 - ✅ **ZERO external files** - Everything in one file
 - ✅ **ZERO custom commands** - 100% standard LaTeX  
 - ✅ **Minimal packages** - Only essential ones
@@ -15,6 +16,7 @@ Two versions available: **Modular** (with custom helpers) and **Standalone** (ze
 - ✅ **Self-contained** - Copy anywhere and compile
 
 ### Usage
+
 ```bash
 # English
 pdflatex sample_solution_standalone.tex
@@ -32,6 +34,7 @@ pandoc sample_solution_standalone.tex -o output.md \
 **Files:** `sample_solution.tex` and `sample_solution.gu.tex` + external files
 
 ### Features
+
 - ✅ **Reusable** - Shared preamble and commands
 - ✅ **Custom helpers** - `\keyword{}`, `\code{}` shortcuts
 - ✅ **Branded styling** - Custom colors for headers
