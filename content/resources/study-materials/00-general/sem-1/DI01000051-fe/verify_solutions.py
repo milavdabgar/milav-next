@@ -181,8 +181,8 @@ def check_word_counts(filename):
         print(f"✅ PASS: Word counts are reasonable.")
         return True
     else:
-        print(f"⚠️  PASS with Warnings: Found {warnings} potentially short answers.")
-        return True
+        print(f"❌ FAIL: Found {warnings} answers below minimum word count.")
+        return False
 
 def check_toc_setup(filename):
     print(f"\n--- Checking TOC Setup: {filename} ---")
@@ -238,8 +238,8 @@ def check_mnemonics(filename):
         print("✅ PASS: Mnemonic count reasonable.")
         return True
     else:
-        print(f"⚠️  PASS with {warnings} warnings.")
-        return True
+        print(f"❌ FAIL: {warnings} subsections missing mnemonics.")
+        return False
 
 def check_question_structure(filename):
     print(f"\n--- Checking Question Structure Pattern: {filename} ---")
@@ -259,13 +259,19 @@ def check_question_structure(filename):
         has_solution = any('subsubsection{Solution}' in line or 'subsubsection{ઉકેલ}' in line for line in next_5_lines)
         
         if not has_textbf:
-            print(f"⚠️  Line {sub_line+1}: Subsection missing \\textbf{{}} question statement")
+            print(f"❌ Line {sub_line+1}: Subsection missing \\textbf{{}} question statement")
+            errors += 1
         
         if not has_solution:
-            print(f"⚠️  Line {sub_line+1}: Subsection missing \\subsubsection{{Solution}}")
+            print(f"❌ Line {sub_line+1}: Subsection missing \\subsubsection{{Solution}}")
+            errors += 1
     
-    print("✅ PASS: Question structure pattern verified.")
-    return True
+    if errors == 0:
+        print("✅ PASS: Question structure pattern verified.")
+        return True
+    else:
+        print(f"❌ FAIL: {errors} question structure violations.")
+        return False
 
 def check_hierarchy_levels(filename):
     print(f"\n--- Checking 5-Level Hierarchy: {filename} ---")
@@ -286,8 +292,8 @@ def check_hierarchy_levels(filename):
     missing = [level for level, count in levels.items() if count == 0]
     
     if missing:
-        print(f"⚠️  Missing levels: {', '.join(missing)}")
-        return True  # Warning, not failure
+        print(f"❌ FAIL: Missing hierarchy levels: {', '.join(missing)}")
+        return False
     else:
         print("✅ PASS: All 5 hierarchy levels present.")
         return True
@@ -369,8 +375,8 @@ def check_caption_positions(filename):
         print("✅ PASS: Caption positions correct.")
         return True
     else:
-        print(f"⚠️  PASS with {warnings} caption position warnings.")
-        return True
+        print(f"❌ FAIL: {warnings} caption position errors (table captions must be BEFORE tabularx, figure captions AFTER content).")
+        return False
 
 def check_custom_commands(filename):
     print(f"\n--- Checking for Custom Commands: {filename} ---")
@@ -444,8 +450,8 @@ def check_pdf_metadata(filename):
         print("✅ PASS: PDF metadata present.")
         return True
     else:
-        print(f"⚠️  PASS with {warnings} warnings.")
-        return True
+        print(f"❌ FAIL: {warnings} PDF metadata issues.")
+        return False
 
 def check_preamble_usage(filename, language="English"):
     print(f"\n--- Checking Preamble Usage: {filename} ({language}) ---")
@@ -462,8 +468,8 @@ def check_preamble_usage(filename, language="English"):
         print(f"✅ PASS: Correct preamble ({expected_preamble}) used.")
         return True
     else:
-        print(f"⚠️  Expected {expected_preamble} in preamble input")
-        return True
+        print(f"❌ FAIL: Expected {expected_preamble} in preamble input")
+        return False
 
 def check_list_types(filename):
     print(f"\n--- Checking Semantic List Types: {filename} ---")
@@ -491,8 +497,8 @@ def check_list_types(filename):
         print("✅ PASS: Semantic list types used correctly.")
         return True
     else:
-        print(f"⚠️  PASS with {warnings} warnings.")
-        return True
+        print(f"❌ FAIL: {warnings} description lists with items missing [Label:] format.")
+        return False
 
 def check_textbf_after_subsection(filename):
     print(f"\n--- Checking \\textbf{{}} After Subsections: {filename} ---")
@@ -521,11 +527,12 @@ def check_textbf_after_subsection(filename):
         print("✅ PASS: All subsections have bold question statements.")
         return True
     else:
-        print(f"⚠️  PASS with {warnings} warnings.")
-        return True
+        print(f"❌ FAIL: {warnings} subsections missing \\textbf{{}} question statements.")
+        return False
 
 def check_section_numbering(filename):
     print(f"\n--- Checking Section Numbering Pattern: {filename} ---")
+    errors = 0
     with open(filename, 'r') as f:
         content = f.read()
     
@@ -535,10 +542,15 @@ def check_section_numbering(filename):
     for i, section in enumerate(sections, 1):
         # Check for "Question N" pattern
         if 'Question' not in section and 'પ્રશ્ન' not in section:
-            print(f"⚠️  Section '{section[:40]}' doesn't follow 'Question N' pattern")
+            print(f"❌ Section '{section[:40]}' doesn't follow 'Question N' pattern")
+            errors += 1
     
-    print("✅ PASS: Section numbering check complete.")
-    return True
+    if errors == 0:
+        print("✅ PASS: Section numbering check complete.")
+        return True
+    else:
+        print(f"❌ FAIL: {errors} sections with incorrect numbering pattern.")
+        return False
 
 def check_subsection_labeling(filename):
     print(f"\n--- Checking Subsection Labeling: {filename} ---")
@@ -564,8 +576,8 @@ def check_subsection_labeling(filename):
         print("✅ PASS: Subsection labeling correct.")
         return True
     else:
-        print(f"⚠️  PASS with {warnings} warnings.")
-        return True
+        print(f"❌ FAIL: {warnings} subsections with incorrect labeling.")
+        return False
 
 def check_list_count_parity(file_en, file_gu):
     print(f"\n--- Checking List Count Parity (En vs Gu) ---")
@@ -590,8 +602,8 @@ def check_list_count_parity(file_en, file_gu):
         print("✅ PASS: List counts match between versions.")
         return True
     else:
-        print(f"⚠️  PASS with {warnings} identity warnings.")
-        return True
+        print(f"❌ FAIL: {warnings} list count mismatches between En and Gu.")
+        return False
 
 def check_table_count_parity(file_en, file_gu):
     print(f"\n--- Checking Table Count Parity (En vs Gu) ---")
@@ -605,8 +617,8 @@ def check_table_count_parity(file_en, file_gu):
     tables_gu = len(re.findall(r'\\begin\{table\}', content_gu))
     
     if tables_en != tables_gu:
-        print(f"⚠️  Table count differs: En={tables_en}, Gu={tables_gu}")
-        return True
+        print(f"❌ FAIL: Table count differs: En={tables_en}, Gu={tables_gu}")
+        return False
     else:
         print(f"✅ PASS: Table counts match (En={tables_en}, Gu={tables_gu}).")
         return True
@@ -623,8 +635,8 @@ def check_figure_count_parity(file_en, file_gu):
     figures_gu = len(re.findall(r'\\begin\{figure\}', content_gu))
     
     if figures_en != figures_gu:
-        print(f"⚠️  Figure count differs: En={figures_en}, Gu={figures_gu}")
-        return True
+        print(f"❌ FAIL: Figure count differs: En={figures_en}, Gu={figures_gu}")
+        return False
     else:
         print(f"✅ PASS: Figure counts match (En={figures_en}, Gu={figures_gu}).")
         return True
@@ -668,6 +680,11 @@ def check_filename_convention(filename):
     import os
     basename = os.path.basename(filename)
     
+    # Skip check for sample files (reference templates)
+    if basename.startswith('sample_'):
+        print(f"⚠️  INFO: Skipping filename check for sample file '{basename}'")
+        return True
+    
     # Pattern: [Code]-[Season]-[Year]-Solution-Full.tex or .gu.tex
     pattern = r'^[A-Z0-9]+-(?:Summer|Winter)-\d{4}-Solution-Full(?:\.gu)?\.tex$'
     
@@ -675,8 +692,8 @@ def check_filename_convention(filename):
         print(f"✅ PASS: Filename follows convention.")
         return True
     else:
-        print(f"⚠️  Filename '{basename}' doesn't follow [Code]-[Season]-[Year]-Solution-Full.tex convention")
-        return True
+        print(f"❌ FAIL: Filename '{basename}' doesn't follow [Code]-[Season]-[Year]-Solution-Full.tex convention")
+        return False
 
 def check_content_after_toc(filename):
     print(f"\n--- Checking Content After TOC: {filename} ---")
@@ -718,8 +735,9 @@ def check_preamble_path(filename, language="English"):
     
     # Check if path is absolute
     if not (input_path.startswith('/') or input_path.startswith('C:')):
-        print(f"⚠️  Preamble path is relative: {input_path}")
-        print("    Consider using absolute path for consistency.")
+        print(f"❌ FAIL: Preamble path is relative: {input_path}")
+        print("    Must use absolute path for consistency.")
+        return False
     
     # Check if correct preamble is used
     expected_preamble = 'preamble.gu.tex' if language == "Gujarati" else 'preamble.tex'
@@ -727,8 +745,8 @@ def check_preamble_path(filename, language="English"):
         print(f"✅ PASS: Correct preamble path ({expected_preamble}).")
         return True
     else:
-        print(f"⚠️  Expected {expected_preamble} in preamble path")
-        return True
+        print(f"❌ FAIL: Expected {expected_preamble} in preamble path")
+        return False
 
 def check_table_format(filename):
     print(f"\n--- Checking Table Format Standards: {filename} ---")
@@ -749,8 +767,8 @@ def check_table_format(filename):
         print("✅ PASS: All tables use tabularx format.")
         return True
     else:
-        print(f"⚠️  PASS with {warnings} warnings.")
-        return True
+        print(f"❌ FAIL: {warnings} tables not using tabularx format.")
+        return False
 
 def check_figure_placement(filename):
     print(f"\n--- Checking Figure Placement Specifiers: {filename} ---")
@@ -770,8 +788,8 @@ def check_figure_placement(filename):
         print("✅ PASS: All figures use [H] placement.")
         return True
     else:
-        print(f"⚠️  PASS with {warnings} warnings.")
-        return True
+        print(f"❌ FAIL: {warnings} figures missing [H] placement specifier.")
+        return False
 
 def check_solution_content_structure(filename):
     print(f"\n--- Checking Solution Content Structure: {filename} ---")
@@ -837,8 +855,8 @@ def check_description_item_count(file_en, file_gu):
         print("✅ PASS: Description list item counts match.")
         return True
     else:
-        print(f"⚠️  PASS with {warnings} warnings.")
-        return True
+        print(f"❌ FAIL: {warnings} description lists with item count mismatches between En and Gu.")
+        return False
 
 def check_code_math_diagram_identity(file_en, file_gu):
     print(f"\n--- Checking Code/Math/Diagram Identity (En vs Gu) ---")
@@ -901,8 +919,8 @@ def check_code_math_diagram_identity(file_en, file_gu):
         print("✅ PASS: Code/Math/Diagrams are identical between versions.")
         return True
     else:
-        print(f"⚠️  PASS with {warnings} identity warnings.")
-        return True
+        print(f"❌ FAIL: {warnings} identity violations (Code/Math/Diagrams must be 100% identical).")
+        return False
 
 def check_sectioning_line_alignment(file_en, file_gu):
     """Check that all sectioning commands appear at the same line numbers in both files."""
@@ -1017,8 +1035,8 @@ def check_marks_format(filename):
         print("✅ PASS: All subsections have marks notation.")
         return True
     else:
-        print(f"⚠️  PASS with {warnings} warnings.")
-        return True
+        print(f"❌ FAIL: {warnings} subsections missing marks notation [X marks].")
+        return False
 
 def check_typography(filename):
     print(f"\n--- Checking Typography: {filename} ---")
@@ -1178,28 +1196,54 @@ if __name__ == "__main__":
     pass_compile_gu = check_compilation(file_gu, "Gujarati")
     
     print("\n========================================")
-    # Critical checks that must pass
-    critical_checks = [
+    # ALL checks must pass (no warnings allowed)
+    all_checks = [
+        # Core structure
         pass_lc, pass_struct,
+        # Document structure and metadata
         pass_doc_en, pass_doc_gu,
+        pass_meta_en, pass_meta_gu,
         pass_preamble_en, pass_preamble_gu,
         pass_preamble_path_en, pass_preamble_path_gu,
+        # Syntax and compliance
         pass_syn_en, pass_syn_gu, 
         pass_cont_en, pass_cont_gu, 
         pass_hier_en, pass_hier_gu,
+        # Content quality (now strict)
+        pass_wc_en, pass_wc_gu,
+        pass_marks_en, pass_marks_gu,
+        pass_mnem_en, pass_mnem_gu,
+        # Content fidelity (now strict)
+        pass_identity, pass_sectioning_align,
+        pass_list_parity, pass_table_parity, pass_figure_parity,
+        pass_desc_items,
+        # Filename convention (now strict)
+        pass_filename_en, pass_filename_gu,
+        # Structural validation (now strict)
         pass_toc_en, pass_toc_gu,
         pass_content_after_toc_en, pass_content_after_toc_gu,
-        pass_cmds_en, pass_cmds_gu,
+        pass_qstruct_en, pass_qstruct_gu,
+        pass_textbf_en, pass_textbf_gu,
+        pass_section_num_en, pass_section_num_gu,
+        pass_subsec_label_en, pass_subsec_label_gu,
+        pass_levels_en, pass_levels_gu,
+        pass_list_types_en, pass_list_types_gu,
+        # Format standards (now strict)
         pass_caption_present_en, pass_caption_present_gu,
-        pass_sectioning_align,
+        pass_caption_pos_en, pass_caption_pos_gu,
+        pass_cmds_en, pass_cmds_gu,
+        pass_table_fmt_en, pass_table_fmt_gu,
+        pass_fig_place_en, pass_fig_place_gu,
         pass_sol_struct_en, pass_sol_struct_gu,
+        # Compilation
         pass_compile_en, pass_compile_gu
     ]
     
-    if all(critical_checks):
+    if all(all_checks):
         print("OVERALL STATUS: ✅ PASSED")
-        print("\nNote: All critical checks passed. Quality warnings (if any) should be reviewed.")
+        print("\nAll quality checks passed. Solution files meet all standards.")
         sys.exit(0)
     else:
         print("OVERALL STATUS: ❌ FAILED")
+        print("\nFix all issues above before proceeding. No warnings are allowed.")
         sys.exit(1)
