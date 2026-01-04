@@ -42,6 +42,7 @@ They show exact patterns for all question types.
 ```
 
 **Note**: 
+
 - Use `preamble.gu.tex` for Gujarati (includes font setup), `preamble.tex` for English
 - TOC with depth=5 shows all 5 hierarchy levels
 - Always include `\newpage` after TOC
@@ -78,6 +79,7 @@ They show exact patterns for all question types.
 ```
 
 **Complete Hierarchy**:
+
 1. `\section` → Main question number
 2. `\subsection` → Sub-question with marks
 3. `\subsubsection` → Solution heading
@@ -85,6 +87,7 @@ They show exact patterns for all question types.
 5. `\subparagraph` → Minor nested details (use multiple times throughout for additional context)
 
 **Example**:
+
 ```latex
 \subsection{Question 1(a) [3 marks]}
 \textbf{Write a Java program to find the maximum of three numbers.}
@@ -211,7 +214,10 @@ public class MaxOfThree {
 - Compile with `xelatex` (NOT `pdflatex`)
 - Run twice to populate table of contents
 
-**Critical**: Compare final English and Gujarati PDFs side-by-side. Structure, length, and visual layout should be nearly identical.
+**Verification**: 
+1. Compare TOC entries: English and Gujarati should have identical number of entries at each level
+2. Line count check: Both `.tex` files should have similar line counts (±10% variation is acceptable due to Gujarati text width)
+3. Structure match: Same number of `\section`, `\subsection`, `\subsubsection`, `\paragraph`, `\subparagraph` commands in both files
 
 ## Quality Checklist
 
@@ -222,7 +228,6 @@ Before submitting, verify:
 - ✅ **Word counts**: Match marks allocation (3→90-150, 4→120-180, 7→200-300 words)
 - ✅ **Typography**: Smart quotes in text (`` ``double'' ``), straight quotes in code
 - ✅ **TOC**: Included with `\setcounter{tocdepth}{5}` and `\newpage` after
-- ✅ **Subparagraphs**: Multiple examples throughout (not just one)
 - ✅ **Code listings**: NO `\paragraph{}` headings before them (use caption parameter only)
 - ✅ **Content fidelity**: English and Gujarati have identical structure
 - ✅ **All 5 levels**: Each solution demonstrates complete hierarchy
@@ -236,54 +241,6 @@ Before submitting, verify:
 - **tikz**: For custom diagrams
 - **listings**: Code syntax highlighting (configured with proper spacing)
 - See preambles for complete list
-
-## Common Patterns from Samples
-
-**Programming Questions (3 marks)**:
-- Intro paragraph explaining approach
-- Code listing with caption (NO paragraph heading before it)
-- Output section with `\begin{verbatim}`
-- Key Points (description list)
-- Subparagraph for comparison methods/optimizations
-- Mnemonic
-
-**Math/Calculation Questions (4 marks)**:
-- Given Data (itemize list)
-- Step-by-step calculation (separate paragraph for each step with `\paragraph{Step 1:}`, `\paragraph{Step 2:}`)
-- Results (description list)
-- Subparagraph for filter behavior/additional context
-- Mnemonic
-
-**Comparison Questions (7 marks)**:
-- Intro paragraph
-- Comparison table with caption at TOP
-- First category detailed (paragraph with description list)
-- Subparagraph for subcategory types
-- Second category detailed (paragraph with description list)
-- Subparagraph for subcategory types
-- Key distinction paragraph
-- Mnemonic
-
-**Circuit/Diagram Questions (7 marks)**:
-- Intro paragraph
-- Circuit diagram (figure with caption at BOTTOM)
-- Working principle (description list with 3-4 items)
-- Waveform/visualization (figure if applicable)
-- Parameters/calculations (description list)
-- Subparagraph for derivations/efficiency proofs
-- Applications paragraph
-- Mnemonic
-
-**Boolean/K-map Questions (3 marks)**:
-- Intro paragraph
-- K-map figure with grouping
-- Grouping analysis (description list)
-- Simplified expression with steps
-- Verification (description list)
-- Subparagraph for K-map rules
-- Mnemonic
-
-**Study `sample_solution.tex` and `sample_solution.gu.tex` for exact implementations of these patterns.**
 
 ## Compilation
 
