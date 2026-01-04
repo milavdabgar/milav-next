@@ -11,6 +11,7 @@ date: 2026-01-04
 **Goal**: ensure high fidelity between English and Gujarati versions by generating them together for each question.
 
 ## 1. Initialization
+
 - Create `[Code]-[Season]-[Year]-Solution-Full.tex` and `.gu.tex`.
 - Add Preamble (`preamble.tex` for English, `preamble.gu.tex` for Gujarati).
 - Add Title, Date, PDF Metadata.
@@ -18,6 +19,7 @@ date: 2026-01-04
 - **Do not** add `\end{document}` yet.
 
 ## 2. Strict Q1 Verification (The Foundation)
+
 1. **Generate Q1 (En & Gu)**:
    - Generate full LaTeX content for **Question 1** (all parts: a, b, c, OR) for **BOTH** English and Gujarati in a **single step**.
    - **Crucial**: Ensure Gujarati structure (paragraphs, lists, diagrams) matches English exactly.
@@ -36,14 +38,17 @@ date: 2026-01-04
    - Do not move to Q2 until Q1 is perfect.
 
 ## 3. Iterative Append (Q2 to Q5)
+
 Once Q1 is satisfactory, proceed with Q2, then Q3, up to Q5.
 
 For each subsequent Question (Qx):
+
 1. **Generate En & Gu Simultaneously**: produces the LaTeX coding for Qx (a, b, c, OR) for both languages at the same time.
 2. **Append**: Add the content to the respective main files.
 3. **Quick Check**: Ensure no `$` usage and structure is correct.
 
 ## 4. Finalization
+
 - Append `\end{document}` to both files.
 - **Final Compilation**:
   - English: `pdflatex` (Runs 2x).
