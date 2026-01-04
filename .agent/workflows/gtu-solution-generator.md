@@ -26,38 +26,148 @@ date: 2026-01-04
    - **Compliance**: Use `\(...\)` for math, end with `Mnemonic`.
    
 2. **Compile & Verify**:
-   - Compile both Q1 files.
+   - Compile both Q1 files using `pdflatex` (En) and `xelatex` (Gu).
    - **Thorough Check**: 
      - Does it follow all "Critical LaTeX Conventions"?
      - Are math delimiters `\(...\)` used?
      - Is the Gujarati content fully translated but structurally identical?
      - Are diagrams identical?
+
+3. **Run Verification Script**: Execute `verify_solutions.py [en-file] [gu-file]`
+   - **CRITICAL**: ALL checks must pass before proceeding to Q2. Fix any errors:
+     - ✅ **Line counts match exactly** (same number of lines in both files)
+     - ✅ **Sectioning alignment** (all `\section`, `\subsection`, `\subsubsection`, `\paragraph`, `\subparagraph` at same line numbers)
+     - ✅ **Caption presence** (all tables, figures, listings have captions)
+     - ✅ **Code/Math/Diagram identity** (100% identical between En and Gu)
+     - ✅ **Structure hierarchy** (Section → Subsection → Subsubsection{Solution} → Paragraph)
+     - ✅ **Compilation success** (both PDFs generated without errors)
+     - ✅ **Content fidelity** (identical paragraph/list/table/figure counts)
+     - ✅ **Syntax compliance** (no `$`, `**`, straight quotes in text)
    
-3. **Iterate**:
-   - If ANY issue is found (compilation error, formatting violation), fix it **immediately** before proceeding.
-   - Do not move to Q2 until Q1 is perfect.
+4. **Iterate**:
+   - If ANY issue is found in verification, fix it **immediately** before proceeding.
+   - Recompile and re-verify after fixes.
+   - **DO NOT** move to Q2 until verification shows `✅ PASSED`.
 
 ## 3. Iterative Append (Q2 to Q5)
 
-Once Q1 is satisfactory, proceed with Q2, then Q3, up to Q5.
+Once Q1 verification passes, proceed with Q2, then Q3, up to Q5.
 
 For each subsequent Question (Qx):
 
-1. **Generate En & Gu Simultaneously**: produces the LaTeX coding for Qx (a, b, c, OR) for both languages at the same time.
+1. **Generate En & Gu Simultaneously**: Produce the LaTeX code for Qx (all parts: a, b, c, OR) for both languages at the same time.
 2. **Append**: Add the content to the respective main files.
-3. **Quick Check**: Ensure no `$` usage and structure is correct.
+3. **Compile**: Run `pdflatex` (En) and `xelatex` (Gu) to check for compilation errors.
+4. **Run Verification Script**: Execute `verify_solutions.py [en-file] [gu-file]`
+   - **MANDATORY**: Fix ALL issues identified by the script before proceeding.
+   - **Key checks**:
+     - Line count parity (En and Gu must have identical line counts)
+     - Sectioning command alignment (must be at same line numbers)
+     - Caption presence and positions (tables top, figures bottom)
+     - Math/Code/Diagram fidelity (100% identical)
+     - No forbidden syntax (`$`, `**`, straight quotes in text)
+     - Solution structure (only `\paragraph` and `\subparagraph` inside solutions)
+     - TOC structure remains consistent
+   - **If verification fails**: Fix issues immediately, recompile, and re-verify before continuing.
+5. **Only after ✅ PASS**: Proceed to next question.
 
 ## 4. Finalization
 
 - Append `\end{document}` to both files.
 - **Final Compilation**:
-  - English: `pdflatex` (Runs 2x).
-  - Gujarati: `xelatex` (Runs 2x).
-- **Final Verification**:
-  - **TOC**: Check depth-5 Table of Contents in both.
-  - **Line Count**: Verify English and Gujarati files have similar line counts (indicates structural fidelity).
-  - **Math**: Ensure logic/math is identical.
-  - **Guidelines**: Final pass against reference styles.
+  - English: `pdflatex` (Run twice for TOC update).
+  - Gujarati: `xelatex` (Run twice for TOC update).
+- **Final Verification**: Execute `verify_solutions.py [en-file] [gu-file]`
+  - **ALL 53 checks must pass**:
+    - Core structure (line counts, TOC hierarchy)
+    - Document metadata and preambles
+    - Syntax compliance (no `$`, `**`, straight quotes)
+    - Content fidelity (code/math/diagrams identical)
+    - Structural validation (sectioning alignment, solution structure)
+    - Format standards (table format, figure placement, caption presence)
+    - Compilation success
+    - Word count vs marks allocation
+    - Typography and formatting standards
+  - **Status must be**: `✅ PASSED`
+  - **If any check fails**: Fix issues, recompile, re-verify until all pass.
+- **Output**: Two complete, verified PDF files ready for distribution.
+
+---
+
+# Verification Script Usage
+
+**Location**: `content/resources/study-materials/00-general/sem-1/DI01000051-fe/verify_solutions.py`
+
+**Command**:
+```bash
+python verify_solutions.py [english-file.tex] [gujarati-file.gu.tex]
+```
+
+**When to Use**:
+- After generating Q1 (before proceeding to Q2)
+- After adding each subsequent question (Q2, Q3, Q4, Q5)
+- Before final submission
+
+**What It Checks** (53 comprehensive checks):
+
+### Core Structure (2 checks)
+- Line counts match exactly
+- TOC hierarchy structure matches
+
+### Document Metadata (6 checks)
+- Document structure completeness
+- PDF metadata presence
+- Correct preamble usage (English/Gujarati)
+- Preamble paths (absolute paths required)
+
+### Syntax Compliance (8 checks)
+- No forbidden syntax (`$`, `**`, straight quotes in text)
+- Content compliance (no deprecated commands)
+- Proper sectioning hierarchy
+
+### Content Quality (12 checks)
+- Word counts vs marks allocation
+- Typography standards
+- Marks format in subsections
+- Mnemonics present
+- Smart quotes usage
+
+### Content Fidelity (6 checks)
+- Code/Math/Diagram 100% identical between files
+- List/Table/Figure count parity
+- Description item counts match
+- **Sectioning command line alignment** (all commands at same line numbers)
+
+### Structural Validation (14 checks)
+- TOC setup correct
+- Content exists after TOC
+- Question structure pattern
+- Bold question statements
+- Section numbering
+- Subsection labeling
+- All 5 hierarchy levels present
+- Semantic list types
+- Caption positions (tables top, figures bottom)
+
+### Format Standards (3 checks)
+- Table format (must use `tabularx`)
+- Figure placement (must use `[H]`)
+- **Solution content structure** (only `\paragraph` and `\subparagraph` allowed)
+
+### Additional Checks (2 checks)
+- Caption presence (all tables/figures/listings)
+- Compilation success (both files)
+
+**Critical vs Warning Checks**:
+- **26 Critical checks**: Must pass for `✅ PASSED` status
+- **27 Warning checks**: Informational, don't fail verification
+
+**If verification fails**: 
+1. Review error messages (script shows exactly what failed)
+2. Fix ALL identified issues
+3. Recompile both files
+4. Re-run verification
+5. DO NOT proceed until `✅ PASSED`
 
 ---
 
