@@ -38,7 +38,7 @@ os.environ['COQUI_TTS_AGREED'] = '1'
 
 # Import dependencies with availability tracking
 try:
-    from moviepy.editor import ImageClip, AudioFileClip, concatenate_videoclips
+    from moviepy import ImageClip, AudioFileClip, concatenate_videoclips
     MOVIEPY_AVAILABLE = True
 except ImportError:
     MOVIEPY_AVAILABLE = False
@@ -135,9 +135,22 @@ class SlidevUnifiedProcessor:
         elif self.tts_provider == 'gtts' and not GTTS_AVAILABLE:
             print("⚠️ Google TTS (free) not available, switching to auto fallback")
             self.tts_provider = 'auto'
+            self._initialize_fallback_providers()
         elif self.tts_provider == 'gcloud' and not GCLOUD_AVAILABLE:
             print("⚠️ Google Cloud TTS not available, switching to auto fallback")
             self.tts_provider = 'auto'
+            self._initialize_fallback_providers()
+
+    def _initialize_fallback_providers(self):
+        """Initialize all available providers for fallback"""
+        if GTTS_AVAILABLE:
+             pass # details in _generate_audio_gtts
+        if GCLOUD_AVAILABLE:
+             self._initialize_gcloud()
+        if ELEVENLABS_AVAILABLE:
+             self._initialize_elevenlabs()
+        if COQUI_TTS_AVAILABLE:
+             self._initialize_coqui()
     
     def _initialize_elevenlabs(self):
         """Initialize ElevenLabs connection"""
@@ -238,7 +251,7 @@ class SlidevUnifiedProcessor:
         with open(slidev_file, 'r', encoding='utf-8') as f:
             content = f.read()
         
-        sections = content.split('---')
+        sections = re.split(r'(?m)^---$', content)
         slide_data_list = []
         
         slide_counter = 1
@@ -247,8 +260,9 @@ class SlidevUnifiedProcessor:
                 continue
             
             # Skip config sections
-            if (section.strip().startswith('theme:') or 
-                section.strip().startswith('layout:') or
+            # Skip config sections (frontmatter or setup)
+            if (re.search(r'^\s*theme:\s+', section, re.MULTILINE) or 
+                re.search(r'^\s*layout:\s+', section, re.MULTILINE) or
                 ('background:' in section and 'title:' in section and '# ' not in section)):
                 continue
             
@@ -333,7 +347,7 @@ class SlidevUnifiedProcessor:
         with open(slidev_file, 'r', encoding='utf-8') as f:
             content = f.read()
         
-        sections = content.split('---')
+        sections = re.split(r'(?m)^---$', content)
         slide_data_list = []
         
         slide_counter = 1
@@ -435,6 +449,12 @@ class SlidevUnifiedProcessor:
             return False
         
         os.makedirs(self.slides_dir, exist_ok=True)
+        
+        # Check if slides already exist
+        existing_slides = list(Path(self.slides_dir).glob("*.png"))
+        if len(existing_slides) > 0:
+            print(f"   ⚠️ Found {len(existing_slides)} existing slides in {self.slides_dir}. Skipping export.")
+            return True
         
         try:
             slidev_dir = os.path.dirname(slidev_file)
@@ -874,8 +894,12 @@ class SlidevUnifiedProcessor:
                         duration = audio_clip.duration
                         total_duration += duration
                         
-                        image_clip = ImageClip(str(slide_image), duration=duration)
-                        video_clip = image_clip.set_audio(audio_clip)
+                        abs_slide_path = str(slide_image.resolve())
+                        image_clip = ImageClip(abs_slide_path, duration=duration)
+                        if hasattr(image_clip, 'with_audio'):
+                            video_clip = image_clip.with_audio(audio_clip)
+                        else:
+                            video_clip = image_clip.set_audio(audio_clip)
                         video_clips.append(video_clip)
                         
                         print(f"      ✅ Processed ({duration:.1f}s)")
@@ -919,8 +943,12 @@ class SlidevUnifiedProcessor:
                     duration = audio_clip.duration
                     total_duration += duration
                     
-                    image_clip = ImageClip(str(slide_file), duration=duration)
-                    video_clip = image_clip.set_audio(audio_clip)
+                    abs_slide_path = str(slide_file.resolve())
+                    image_clip = ImageClip(abs_slide_path, duration=duration)
+                    if hasattr(image_clip, 'with_audio'):
+                        video_clip = image_clip.with_audio(audio_clip)
+                    else:
+                        video_clip = image_clip.set_audio(audio_clip)
                     video_clips.append(video_clip)
                     
                     print(f"   ✅ Processed ({duration:.1f}s)")
