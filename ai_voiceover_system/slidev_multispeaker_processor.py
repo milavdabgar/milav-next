@@ -27,10 +27,16 @@ os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = os.path.expanduser('~/.config/gcl
 
 # Import dependencies with availability tracking
 try:
-    from moviepy.editor import ImageClip, AudioFileClip, concatenate_videoclips
+    # Try MoviePy v2 import structure first
+    from moviepy import ImageClip, AudioFileClip, concatenate_videoclips
     MOVIEPY_AVAILABLE = True
 except ImportError:
-    MOVIEPY_AVAILABLE = False
+    try:
+        # Fallback to MoviePy v1 structure
+        from moviepy.editor import ImageClip, AudioFileClip, concatenate_videoclips
+        MOVIEPY_AVAILABLE = True
+    except ImportError:
+        MOVIEPY_AVAILABLE = False
 
 try:
     from google.cloud import texttospeech_v1beta1 as texttospeech
@@ -482,6 +488,12 @@ class SlidevMultiSpeakerProcessor:
             return False
         
         os.makedirs(self.slides_dir, exist_ok=True)
+
+        # Check if slides already exist
+        existing_slides = list(Path(self.slides_dir).glob("*.png"))
+        if existing_slides:
+            print(f"   ⚠️ Found {len(existing_slides)} existing slides in {self.slides_dir}. Skipping export.")
+            return True
         
         try:
             slidev_dir = os.path.dirname(slidev_file)
@@ -598,8 +610,9 @@ class SlidevMultiSpeakerProcessor:
         slide_data_list = []
         slide_counter = 1
         
-        # Simple approach: Split on '---' and process each part
-        parts = content.split('---')
+        # Use regex to split on '---' only when it's a dedicated line
+        # This handles tables with '---' correctly and ensures cleaner splits
+        parts = re.split(r'(?m)^---$', content)
         
         i = 0
         while i < len(parts):
@@ -790,8 +803,13 @@ class SlidevMultiSpeakerProcessor:
                     duration = audio_clip.duration
                     total_duration += duration
                     
-                    image_clip = ImageClip(str(slide_file), duration=duration)
-                    video_clip = image_clip.set_audio(audio_clip)
+                    abs_slide_path = str(slide_file.resolve())
+                    print(f"   🖼️ Loading image: {abs_slide_path}")
+                    image_clip = ImageClip(abs_slide_path, duration=duration)
+                    if hasattr(image_clip, 'with_audio'):
+                        video_clip = image_clip.with_audio(audio_clip)
+                    else:
+                        video_clip = image_clip.set_audio(audio_clip)
                     video_clips.append(video_clip)
                     
                     print(f"   ✅ Processed ({duration:.1f}s)")
@@ -864,8 +882,13 @@ class SlidevMultiSpeakerProcessor:
                         duration = audio_clip.duration
                         total_duration += duration
                         
-                        image_clip = ImageClip(str(slide_image), duration=duration)
-                        video_clip = image_clip.set_audio(audio_clip)
+                        abs_slide_path = str(slide_image.resolve())
+                        print(f"      🖼️ Loading image: {abs_slide_path}")
+                        image_clip = ImageClip(abs_slide_path, duration=duration)
+                        if hasattr(image_clip, 'with_audio'):
+                            video_clip = image_clip.with_audio(audio_clip)
+                        else:
+                            video_clip = image_clip.set_audio(audio_clip)
                         video_clips.append(video_clip)
                         
                         print(f"      ✅ Processed ({duration:.1f}s)")
@@ -948,8 +971,9 @@ class SlidevMultiSpeakerProcessor:
         try:
             if os.path.exists(self.slides_dir):
                 import shutil
-                shutil.rmtree(self.slides_dir)
-                print(f"   🗑️ Removed directory: {self.slides_dir}")
+                # shutil.rmtree(self.slides_dir)
+                # print(f"   🗑️ Removed directory: {self.slides_dir}")
+                pass
         except Exception as e:
             print(f"   ⚠️ Could not remove directory {self.slides_dir}: {e}")
         
