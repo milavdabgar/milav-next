@@ -207,19 +207,67 @@ class SlidevVideoGenerator:
         
         # Robust split (handling frontmatter and code blocks)
         # We cannot use simple regex split because '---' can appear inside code blocks (e.g. YAML examples)
+        slides, _ = self._parse_items_recursive(content, os.path.dirname(self.input_file), max_slides)
+        return slides
+
+    def _parse_items_recursive(self, content, base_dir, max_slides=None, current_count=0):
+        """Recursively key items from content, handling src: imports."""
         sections = self._split_content_robust(content)
-        
         parsed_slides = []
-        slide_number = 0
+        
+        # Determine where to start processing
+        # If the file starts with '---', sections[0] is empty, and sections[1] is Frontmatter/Config.
+        # We should skip S0 and S1, UNLESS S1 contains 'src:' (Global Import).
+        # If file starts with content (no '---'), S0 is the first slide.
+        
+        start_index = 0
+        if sections and not sections[0].strip():
+            # File started with ---
+            # Check S1
+            if len(sections) > 1:
+                has_src = re.search(r'^\s*src:\s+', sections[1], re.MULTILINE)
+                if has_src:
+                    # S1 is a valid slide/import defined in frontmatter block style
+                    start_index = 1
+                else:
+                    # S1 is just configuration (theme, title, etc) -> Skip S0 and S1
+                    start_index = 2
+            else:
+                 start_index = 1 # Just empty start?
         
         for i, section in enumerate(sections):
-            if i == 0: continue # Frontmatter
-            
-            # Skip empty sections (due to regex split)
+            if i < start_index:
+                continue
+                
+            # Skip empty sections
             if not section.strip():
                 continue
 
-            # Check for title to protect content slides from over-aggressive skipping
+            # Check for Import (src: ...)
+            src_match = re.search(r'^\s*src:\s+(.*)', section, re.MULTILINE)
+            if src_match:
+                import_path = src_match.group(1).strip()
+                full_import_path = os.path.join(base_dir, import_path)
+                
+                if os.path.exists(full_import_path):
+                    print(f"   ↪ Parsing imported slides from: {import_path}")
+                    with open(full_import_path, 'r', encoding='utf-8') as f:
+                        imported_content = f.read()
+                        
+                        # Recurse
+                        imported_items, new_count = self._parse_items_recursive(
+                            imported_content, 
+                            os.path.dirname(full_import_path), 
+                            max_slides, 
+                            current_count
+                        )
+                        parsed_slides.extend(imported_items)
+                        current_count = new_count
+                        if max_slides and current_count >= max_slides:
+                            break
+                continue
+
+            # Check for title to protect content slides
             has_title = re.search(r'^#\s', section, re.MULTILINE)
 
             # Skip config/setup (ONLY if no title found)
@@ -228,22 +276,32 @@ class SlidevVideoGenerator:
                 re.search(r'^\s*layout:\s+', section, re.MULTILINE) or
                 re.search(r'^\s*transition:\s+', section, re.MULTILINE) or
                 re.search(r'^\s*level:\s+', section, re.MULTILINE) or
-                re.search(r'^\s*src:\s+', section, re.MULTILINE) or
+                # src handled above
                 re.search(r'^\s*foo:\s+', section, re.MULTILINE) or
                 re.search(r'^\s*dragPos:\s+', section, re.MULTILINE) or
                 re.search(r'^\s*class:\s+', section, re.MULTILINE) or
                 ('background:' in section and 'title:' in section and '# ' not in section)):
                 continue
                 
-            slide_number += 1
-            if max_slides and slide_number > max_slides:
+            current_count += 1
+            
+            if max_slides and current_count > max_slides:
                 break
                 
-            slide_data = self._parse_single_slide(section, slide_number)
+            # Parse the slide note: The slide number is current_count
+            slide_data = self._parse_single_slide(section, current_count)
             if slide_data:
                 parsed_slides.append(slide_data)
-                
-        return parsed_slides
+        
+        if max_slides:
+             # Just returning the count needed for recursion context
+             pass
+             
+        return parsed_slides, current_count
+
+    def _parse_slidev_file_wrapper(self, max_slides=None):
+        """Wrapper to maintain signature if needed, but we replaced the body above"""
+        pass
 
     def _split_content_robust(self, content):
         """Split content by '---' separators, but ignore those inside code blocks."""
