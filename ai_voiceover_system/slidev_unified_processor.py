@@ -72,7 +72,7 @@ ELEVENLABS_AVAILABLE = bool(ELEVENLABS_API_KEY)
 
 # Google Cloud TTS configuration
 GCLOUD_TTS_API_URL = "https://texttospeech.googleapis.com/v1/text:synthesize"
-GCLOUD_DEFAULT_VOICE = "en-US-Chirp3-HD-Achernar"  # Latest HD Chirp voice
+GCLOUD_DEFAULT_VOICE = "en-US-Studio-M"  # Male Studio voice
 GCLOUD_HD_VOICES = [
     "en-US-Chirp3-HD-Achernar", "en-US-Studio-M", "en-US-Studio-O",
     "en-GB-Studio-B", "en-GB-Studio-C", "en-AU-Standard-B"
@@ -630,15 +630,15 @@ class SlidevUnifiedProcessor:
             # Prepare request payload (using exact format from curl example)
             payload = {
                 "input": {
-                    "markup": script  # Use markup instead of text for better control
+                    "text": script  # Use text input for standard voices
                 },
                 "voice": {
                     "languageCode": "en-US",
-                    "name": self.gcloud_voice_name,
-                    "voiceClone": {}  # Include empty voiceClone as in example
+                    "name": self.gcloud_voice_name
+                    # voiceClone removed as it causes 400 error for standard voices
                 },
                 "audioConfig": {
-                    "audioEncoding": "LINEAR16"  # Keep it simple like the curl example
+                    "audioEncoding": "LINEAR16"
                 }
             }
             
