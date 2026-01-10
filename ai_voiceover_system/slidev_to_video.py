@@ -74,17 +74,20 @@ class SlidevVideoGenerator:
         
         # 1. Setup
         self._setup_directories()
-        self._initialize_tts()
         
         # 2. Parse Content & Detect Modes
+        # We parse first to determine speaker mode (Mono/Multi)
         slides_data = self._parse_slidev_file(max_slides)
         if not slides_data:
             print("❌ No content found to process")
             return False
 
+        # 3. Initialize Services (Now dependent on detected mode)
+        self._initialize_tts()
+
         print(f"📊 Detected Modes: {self.processing_mode.upper()} Sync | {self.speaker_mode.upper()} Speaker")
         
-        # 3. Export Slides
+        # 4. Export Slides
         if not self._export_slides():
             return False
             
@@ -152,15 +155,28 @@ class SlidevVideoGenerator:
         os.makedirs(self.audio_dir, exist_ok=True)
 
     def _initialize_tts(self):
-        if self.tts_provider == 'gcloud' or self.tts_provider == 'auto': # We might need gcloud for multi
-            if GCLOUD_AVAILABLE:
-                try:
-                    credentials, project_id = google.auth.default()
-                    self.gcloud_client = texttospeech.TextToSpeechClient(credentials=credentials)
-                    self.gcloud_project_id = project_id
-                    print("☁️  GCloud TTS Initialized")
-                except Exception as e:
-                    print(f"⚠️ GCloud Init Failed: {e}")
+        # We need GCloud if explicitly requested OR matches criteria (Multi-speaker / No gTTS)
+        should_init_gcloud = (
+            self.tts_provider == 'gcloud' or 
+            (self.tts_provider == 'auto' and (not GTTS_AVAILABLE or self.speaker_mode == 'multi'))
+        )
+
+        if should_init_gcloud and GCLOUD_AVAILABLE:
+            try:
+                credentials, project_id = google.auth.default()
+                self.gcloud_client = texttospeech.TextToSpeechClient(credentials=credentials)
+                self.gcloud_project_id = project_id
+                print("☁️  GCloud TTS Initialized")
+            except Exception as e:
+                print(f"⚠️ GCloud Init Failed: {e}")
+                
+        # Fallback check for Auto: If Multi-speaker detected but GCloud failed, revert to Mono
+        if self.speaker_mode == 'multi' and not self.gcloud_client:
+            if self.tts_provider == 'auto':
+                 print("⚠️  Warning: Multi-speaker detected but GCloud not available. Falling back to MONO (gTTS).")
+                 self.speaker_mode = 'mono'
+            else:
+                 print("❌ Error: Multi-speaker detected but GCloud initialization failed.")
 
     def _export_slides(self):
         print("\n🖼️  Exporting Slides via Slidev...")
@@ -204,14 +220,7 @@ class SlidevVideoGenerator:
         if '[click]' in content and self.with_clicks:
             self.processing_mode = 'click'
 
-        # Force mono if using gTTS (multispeaker requires GCloud)
-        if self.tts_provider != 'gcloud':
-             print("   ℹ️  Forcing MONO speaker mode (Multi-speaker requires GCloud)")
-             # We rely on downstream logic to just not set 'multi' or override it?
-             # Actually detection happens in _parse_single_slide usually? 
-             # No, 'multi' is set if 'speaker_map' is populated?
-             # Let's see where 'multi' is set. 
-             pass
+
 
         # Robust split (handling frontmatter and code blocks)
         # We cannot use simple regex split because '---' can appear inside code blocks (e.g. YAML examples)
@@ -380,8 +389,8 @@ class SlidevVideoGenerator:
              
         data['narration'] = speaker_notes
         
-        # Check for Multispeaker in this slide (ONLY if using GCloud)
-        if self.tts_provider == 'gcloud' and re.search(r'(?:Dr\. James|Sarah|Speaker \d):', speaker_notes):
+        # Check for Multispeaker in this slide (ONLY if using GCloud or Auto)
+        if self.tts_provider in ['gcloud', 'auto'] and re.search(r'(?:Dr\. James|Sarah|Speaker \d):', speaker_notes):
             self.speaker_mode = 'multi'
             
         # Parse Clicks if enabled
@@ -543,7 +552,12 @@ class SlidevVideoGenerator:
 
     def _assemble_video(self, clips, duration):
         print(f"\nExample: 📼 Assembling {len(clips)} clips ({duration:.1f}s)...")
-        final = concatenate_videoclips(clips)
+        
+        if clips:
+            print(f"   ▶ Clip 0 (Start): {clips[0].duration:.2f}s, Res: {clips[0].size}")
+
+        # Use compose to handle potential resolution mismatches
+        final = concatenate_videoclips(clips, method="compose")
         final.write_videofile(
             str(self.output_video),
             fps=24,
