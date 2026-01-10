@@ -219,6 +219,7 @@ class SlidevVideoGenerator:
             if (re.search(r'^\s*theme:\s+', section, re.MULTILINE) or 
                 re.search(r'^\s*layout:\s+', section, re.MULTILINE) or
                 re.search(r'^\s*transition:\s+', section, re.MULTILINE) or
+                re.search(r'^\s*level:\s+', section, re.MULTILINE) or
                 ('background:' in section and 'title:' in section and '# ' not in section)):
                 continue
                 
@@ -241,22 +242,37 @@ class SlidevVideoGenerator:
                 data['title'] = line[2:].strip()
                 break
                 
-        # Extract Notes (Use the LAST HTML comment as speaker notes)
-        # re.findall allows us to get all matches, we take the last one
+        # Extract Notes (Find the comment that looks like speaker notes)
         notes_matches = re.findall(r'<!--\s*(.*?)\s*-->', content, re.DOTALL)
         if not notes_matches:
-            return data # Valid slide with no notes
+            return data
             
-        notes = notes_matches[-1].strip()
-        data['narration'] = notes
+        # Heuristic: The speaker notes block usually contains "[click]" or "Speaker:"
+        # or is the longest block if multiple are found.
+        # We search from the end backwards.
+        speaker_notes = ""
+        for note in reversed(notes_matches):
+            if '[click]' in note or re.search(r'(?:Dr\. James|Sarah|Speaker \d):', note):
+                speaker_notes = note.strip()
+                break
+        
+        # Fallback: If no markers, take the last comment if it's substantial (e.g., > 100 chars)
+        # effectively ignoring short config comments like <!-- step 4 -->
+        if not speaker_notes and len(notes_matches[-1].strip()) > 50:
+             speaker_notes = notes_matches[-1].strip()
+
+        if not speaker_notes: 
+             return data
+             
+        data['narration'] = speaker_notes
         
         # Check for Multispeaker in this slide
-        if re.search(r'(?:Dr\. James|Sarah|Speaker \d):', notes):
+        if re.search(r'(?:Dr\. James|Sarah|Speaker \d):', speaker_notes):
             self.speaker_mode = 'multi'
             
         # Parse Clicks if enabled
         if self.processing_mode == 'click':
-            parts = re.split(r'\[click(?::(\d+))?\]', notes)
+            parts = re.split(r'\[click(?::(\d+))?\]', speaker_notes)
             current_click = 0
             
             # Initial segment (before first click)
