@@ -111,7 +111,7 @@ class SlidevVideoGenerator:
                 # Get Image
                 img_path = self._get_image_for_segment(slide['number'], segment.get('click', 0), image_map)
                 if not img_path:
-                    print(f"      ⚠️ Missing image for Slide {slide['number']} Click {segment.get('click', 0)}")
+                    print(f"      ⚠️ Missing image for Slide {slide['number']} Click {segment.get('click', 0)} - Skipping segment")
                     continue
                 
                 # Generate Audio
@@ -206,8 +206,8 @@ class SlidevVideoGenerator:
             self.processing_mode = 'click'
         
         # Robust split (handling frontmatter and code blocks)
-        # Using the same logic as the unified processor regex split we added earlier
-        sections = re.split(r'(?m)^---$', content)
+        # We cannot use simple regex split because '---' can appear inside code blocks (e.g. YAML examples)
+        sections = self._split_content_robust(content)
         
         parsed_slides = []
         slide_number = 0
@@ -215,11 +215,23 @@ class SlidevVideoGenerator:
         for i, section in enumerate(sections):
             if i == 0: continue # Frontmatter
             
-            # Skip config/setup
-            if (re.search(r'^\s*theme:\s+', section, re.MULTILINE) or 
+            # Skip empty sections (due to regex split)
+            if not section.strip():
+                continue
+
+            # Check for title to protect content slides from over-aggressive skipping
+            has_title = re.search(r'^#\s', section, re.MULTILINE)
+
+            # Skip config/setup (ONLY if no title found)
+            if not has_title and (
+                re.search(r'^\s*theme:\s+', section, re.MULTILINE) or 
                 re.search(r'^\s*layout:\s+', section, re.MULTILINE) or
                 re.search(r'^\s*transition:\s+', section, re.MULTILINE) or
                 re.search(r'^\s*level:\s+', section, re.MULTILINE) or
+                re.search(r'^\s*src:\s+', section, re.MULTILINE) or
+                re.search(r'^\s*foo:\s+', section, re.MULTILINE) or
+                re.search(r'^\s*dragPos:\s+', section, re.MULTILINE) or
+                re.search(r'^\s*class:\s+', section, re.MULTILINE) or
                 ('background:' in section and 'title:' in section and '# ' not in section)):
                 continue
                 
@@ -233,15 +245,51 @@ class SlidevVideoGenerator:
                 
         return parsed_slides
 
+    def _split_content_robust(self, content):
+        """Split content by '---' separators, but ignore those inside code blocks."""
+        lines = content.split('\n')
+        sections = []
+        current_section = []
+        in_code_block = False
+        
+        for i, line in enumerate(lines):
+            stripped = line.strip()
+            
+            # Toggle code block state
+            if stripped.startswith('```'):
+                in_code_block = not in_code_block
+            
+            # Check for separator
+            # Must be '---', not inside code block
+            is_separator = (stripped == '---' and not in_code_block)
+            
+            if is_separator:
+                # If it's a separator, push current section
+                if current_section:
+                    sections.append('\n'.join(current_section))
+                else:
+                    sections.append('') # Empty section (e.g. frontmatter start)
+                
+                current_section = []
+            else:
+                current_section.append(line)
+        
+        # Append final section
+        if current_section:
+            sections.append('\n'.join(current_section))
+            
+        return sections
+
     def _parse_single_slide(self, content, number):
         data = {'number': number, 'raw': content, 'title': '', 'narration': '', 'click_segments': []}
         
+        data['title'] = ''
         lines = content.strip().split('\n')
         for line in lines:
             if line.startswith('# '):
                 data['title'] = line[2:].strip()
                 break
-                
+        
         # Extract Notes (Find the comment that looks like speaker notes)
         notes_matches = re.findall(r'<!--\s*(.*?)\s*-->', content, re.DOTALL)
         if not notes_matches:
