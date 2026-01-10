@@ -201,10 +201,18 @@ class SlidevVideoGenerator:
         with open(self.input_file, 'r', encoding='utf-8') as f:
             content = f.read()
 
-        # Check for [click] to enable click mode implicitly if requested
         if '[click]' in content and self.with_clicks:
             self.processing_mode = 'click'
-        
+
+        # Force mono if using gTTS (multispeaker requires GCloud)
+        if self.tts_provider != 'gcloud':
+             print("   ℹ️  Forcing MONO speaker mode (Multi-speaker requires GCloud)")
+             # We rely on downstream logic to just not set 'multi' or override it?
+             # Actually detection happens in _parse_single_slide usually? 
+             # No, 'multi' is set if 'speaker_map' is populated?
+             # Let's see where 'multi' is set. 
+             pass
+
         # Robust split (handling frontmatter and code blocks)
         # We cannot use simple regex split because '---' can appear inside code blocks (e.g. YAML examples)
         slides, _ = self._parse_items_recursive(content, os.path.dirname(self.input_file), max_slides)
@@ -372,8 +380,8 @@ class SlidevVideoGenerator:
              
         data['narration'] = speaker_notes
         
-        # Check for Multispeaker in this slide
-        if re.search(r'(?:Dr\. James|Sarah|Speaker \d):', speaker_notes):
+        # Check for Multispeaker in this slide (ONLY if using GCloud)
+        if self.tts_provider == 'gcloud' and re.search(r'(?:Dr\. James|Sarah|Speaker \d):', speaker_notes):
             self.speaker_mode = 'multi'
             
         # Parse Clicks if enabled
