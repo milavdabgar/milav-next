@@ -152,17 +152,23 @@ class PDFProcessor:
         if fitz is None:
             raise ImportError("pymupdf not installed. Please install: pip install pymupdf")
 
-    def to_images(self, output_dir: Path) -> List[Path]:
-        print(f"🖼️ Rasterizing PDF (PyMuPDF): {self.pdf_path}")
+    def to_images(self, output_dir: Path, target_width: int = 1920) -> List[Path]:
         doc = fitz.open(self.pdf_path)
+        
+        # Calculate scale factor based on first page to match target width exactly
+        page0 = doc[0]
+        # page.rect.width is in points
+        zoom = target_width / page0.rect.width
+        mat = fitz.Matrix(zoom, zoom)
+        
+        print(f"🖼️ Rasterizing PDF (PyMuPDF): {self.pdf_path}")
+        print(f"   Input Width: {page0.rect.width:.2f}pts -> Target: {target_width}px (Zoom: {zoom:.4f})")
+        
         image_paths = []
         
         for i, page in enumerate(doc):
-            # dpi=150 is usually sufficient for 1080p video (A4 size approx)
-            # Default PDF size is small points, so we need higher density.
-            # Slide size is usually 128mm x 96mm (4:3) or 160mm x 90mm (16:9)
-            # 160mm ~ 6.3 inches. 6.3 * 300 = 1900 px width. 300 DPI is good.
-            pix = page.get_pixmap(dpi=200) 
+            # Use matrix for precise scaling (avoiding integer DPI rounding errors)
+            pix = page.get_pixmap(matrix=mat) 
             
             img_path = output_dir / f"{i:04d}.png"
             pix.save(str(img_path))
@@ -262,7 +268,7 @@ class VideoStitcher:
         if not MOVIEPY_AVAILABLE:
             raise ImportError("moviepy not installed. Please install: pip install moviepy")
 
-    def stitch(self, image_paths: List[Path], audio_map: List[List[Path]]):
+    def stitch(self, image_paths: List[Path], audio_map: List[List[Path]], is_4k: bool = False):
         """
         image_paths: List of paths to images (one per visual state)
         audio_map: List of lists. audio_map[i] contains the audio clips that play *during* image[i].
@@ -299,7 +305,22 @@ class VideoStitcher:
             clips.append(video_clip)
             
         final_video = concatenate_videoclips(clips)
-        final_video.write_videofile(self.output_path, fps=24, codec='libx264', audio_codec='aac')
+        
+        # Quality Settings
+        audio_bitrate = '320k'
+        video_bitrate = '50000k' if is_4k else '8000k' # 50Mbps for 4k, 8Mbps for 1080p
+        preset = 'slow' # Better compression
+        
+        print(f"⚙️  Encoding: {video_bitrate} video, {audio_bitrate} audio, preset={preset}")
+        final_video.write_videofile(
+            self.output_path, 
+            fps=24, 
+            codec='libx264', 
+            audio_codec='aac', 
+            audio_bitrate=audio_bitrate,
+            bitrate=video_bitrate,
+            preset=preset
+        )
 
 # --- Main ---
 
@@ -310,6 +331,7 @@ def main():
     parser.add_argument("--tts", choices=['gtts', 'gcloud'], default='gtts', help="TTS Provider")
     parser.add_argument("--output", help="Output video filename")
     parser.add_argument("--force", action="store_true", help="Force regeneration of audio/images (clean cache)")
+    parser.add_argument("--resolution", choices=['720p', '1080p', '4k'], default='1080p', help="Output resolution (default: 1080p)")
     
     args = parser.parse_args()
     
@@ -347,7 +369,21 @@ def main():
     audio_dir.mkdir(exist_ok=True)
     
     pdf_proc = PDFProcessor(str(pdf_path))
-    image_paths = pdf_proc.to_images(images_dir)
+    
+    # Calculate DPI based on first page dimensions
+    # DPI = (Target Px / Width Inches)
+    # Width Inches = Width Points / 72
+    
+    # We pass target_width to PDFProcessor instead of calculating DPI here
+    target_width = 1920
+    if args.resolution == '4k':
+        target_width = 3840
+    elif args.resolution == '720p':
+        target_width = 1280
+        
+    print(f"🎯 Target Width: {target_width}px ({args.resolution})")
+    
+    image_paths = pdf_proc.to_images(images_dir, target_width=target_width)
     print(f"📸 Extracted {len(image_paths)} frames from PDF.")
     
     # 3. Generate Audio & Map
@@ -425,7 +461,9 @@ def main():
     
     # 4. Stitch
     stitcher = VideoStitcher(str(output_video))
-    stitcher.stitch(image_paths, audio_map)
+    
+    is_4k = (args.resolution == '4k')
+    stitcher.stitch(image_paths, audio_map, is_4k=is_4k)
     
     print(f"✅ Comparison Video Created: {output_video}")
 
