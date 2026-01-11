@@ -11,7 +11,7 @@ from pathlib import Path
 class AudioSegment:
     text: str
     speaker: Optional[str] = None
-    is_click: bool = False
+    new_visual: bool = False  # True if this segment triggers a new PDF slide
 
 @dataclass
 class FrameData:
@@ -28,30 +28,15 @@ class BeamerParser:
 
     def parse(self) -> List[FrameData]:
         frames = []
-        # Find all \note{...} blocks. 
-        # Since regex is bad at nested braces, we use a simple state machine to extracting the content of \note{...}
-        
-        # We iterate through the file looking for "\note{"
-        # Then we count braces to find the matching end.
-        
         cursor = 0
         frame_counter = 0
         
         while True:
-            # Simple heuristic: searching for \note{
-            # Note: This finds notes in order of appearance. 
-            # In Beamer, \note{} usually follows the frame it belongs to or is inside it.
-            # We assume logical mapping: 1st note -> 1st frame (or rather, the overlay sequence start)
-            # However, for video generation, we usually map notes sequentially to visual changes.
-            # Given the "Protocol" defined in the task:
-            # We assume the order of \note{} blocks corresponds to the order of frames/overlays in the PDF.
-            
             start_idx = self.content.find("\\note{", cursor)
             if start_idx == -1:
                 break
             
-            # Found a note start
-            content_start = start_idx + 6 # len("\\note{")
+            content_start = start_idx + 6 
             brace_balance = 1
             current_idx = content_start
             
@@ -70,8 +55,6 @@ class BeamerParser:
             
             cursor = current_idx
             
-            # Now process the note content
-            # Clean up whitespace
             note_content = note_content.strip()
             if not note_content:
                 continue
@@ -83,78 +66,78 @@ class BeamerParser:
         return frames
 
     def _parse_note_content(self, text: str) -> List[AudioSegment]:
-        # Split by [click]
-        # We use a regex to split but keep the delimiter to know where clicks are
-        # But actually, [click] marks the START of a new segment usually.
-        # "Intro text. [click] Next point."
-        # Segment 1: "Intro text."
-        # Segment 2 (Click): "Next point."
+        # Logic:
+        # 1. Split by [click] -> logical visual steps.
+        # 2. Inside each step, split by Lines/Speakers -> logical audio chunks.
         
-        raw_segments = re.split(r'(\[click\])', text, flags=re.IGNORECASE)
+        raw_visual_steps = re.split(r'\[click\]', text, flags=re.IGNORECASE)
         
         parsed_segments = []
         
-        # Helper to parse speaker from text
-        def parse_speaker_text(t: str) -> Tuple[Optional[str], str]:
-            # Regex for "Name: Text..."
-            match = re.match(r'^\s*([A-Za-z\s\.]+):\s*(.+)', t, re.DOTALL)
-            if match:
-                return match.group(1).strip(), match.group(2).strip()
-            return None, t.strip()
-
-        # Iterate
-        current_speaker = None # specific default? Or None means "Narrator"
-        
-        for segment in raw_segments:
-            segment = segment.strip()
-            if not segment:
+        for i, step in enumerate(raw_visual_steps):
+            step = step.strip()
+            if not step:
+                # Can happen if [click] is at start
                 continue
+            
+            # This step corresponds to ONE visual state (image).
+            # We assume "One Speaker Per Line" as requested by user.
+            # So we split by newlines.
+            
+            lines = step.split('\n')
+            
+            first_sub_segment = True
+            
+            current_speaker = None
+            
+            for line in lines:
+                line = line.strip()
+                if not line:
+                    continue
                 
-            if segment.lower() == "[click]":
-                # The NEXT segment corresponds to a click event (new PDF page)
-                # We flag the next added segment as 'is_click=True'
-                # Or we can treat [click] as a marker that the *following* text belongs to a new slide state.
-                # Let's model it: AudioSegment has `is_click`.
-                # If we encounter [click], the next text segment we add will have is_click=True.
-                parsed_segments.append(AudioSegment(text="", is_click=True))
-            else:
-                # Text content
-                speaker, clean_text = parse_speaker_text(segment)
-                if speaker:
-                    current_speaker = speaker
-                
-                # If the previous item was a click marker (empty segment with is_click=True),
-                # we merge this text into it? 
-                # No, [click] creates a barrier. 
-                # Wait, if `[click]` is standalone, it implies visual change.
-                # Usually: "Text 1 [click] Text 2"
-                # This maps to:
-                # Image 1 plays with Audio("Text 1")
-                # Image 2 plays with Audio("Text 2")
-                
-                # Our list should be logical audio chunks.
-                # [Audio("Text 1"), Audio("Text 2", click=True)]
-                
-                if parsed_segments and parsed_segments[-1].is_click and not parsed_segments[-1].text:
-                     # We have a pending click marker from the previous loop iteration
-                     parsed_segments[-1].text = clean_text
-                     parsed_segments[-1].speaker = current_speaker
+                # Check for "Name: Text"
+                match = re.match(r'^([A-Za-z\s\.]+):\s*(.+)', line)
+                if match:
+                    current_speaker = match.group(1).strip()
+                    content = match.group(2).strip()
                 else:
-                    parsed_segments.append(AudioSegment(text=clean_text, speaker=current_speaker, is_click=False))
-                    
+                    # Continuation of previous speaker? Or narrator?
+                    content = line
+                    # Keep current_speaker
+                
+                # New audio segment
+                # Only the VERY first segment of the `step` gets new_visual=True
+                is_visual_start = (i == 0 or (i > 0)) and first_sub_segment
+                # Wait logic check:
+                # `step` comes from `re.split([click])`.
+                # If we have `[click] Step1`, then Step1 is new visual.
+                # If we have `Start [click] Next`, Start is new (visual #0), Next is new (visual #1).
+                # So yes, every `step` iteration implies a new visual block (except maybe the very first if no click?)
+                
+                # Actually, `re.split` gives:
+                # "Text1 [click] Text2" -> ["Text1", "Text2"]
+                # Text1 is associated with image N.
+                # Text2 is associated with image N+1.
+                # So the FIRST segment of "Text1" has new_visual=True (if it's the start of the note block).
+                # The FIRST segment of "Text2" has new_visual=True (because of [click]).
+                
+                # So logic: 
+                # For each `step`: The first audio segment defined in it gets `new_visual=True`.
+                # Subsequent lines in matching `step` get `new_visual=False`.
+                
+                parsed_segments.append(AudioSegment(text=content, speaker=current_speaker, new_visual=first_sub_segment))
+                first_sub_segment = False
+
         return parsed_segments
 
-if __name__ == "__main__":
-    # Test Parser
-    # Test Parser
-    import sys
-    # if len(sys.argv) > 1:
-    #     p = BeamerParser(sys.argv[1])
-    #     frames = p.parse()
-    #     for i, f in enumerate(frames):
-    #         print(f"--- Note Block {i} ---")
-    #         for seg in f.audio_segments:
-    #             print(f"  [Click={seg.is_click}] Speaker: {seg.speaker} | Text: {seg.text[:50]}...")
+# --- PDF Processor and Audio Generator (UNCHANGED) ---
+# ... (PDFProcessor and AudioGenerator classes omitted for brevity in tool call, usually we'd keep them or use multi_replace but replace_file_content is full file or range)
+# Assuming user wants me to patch the file, I will provide the context carefully.
+# Wait, I must provide START and END line for replace_file_content.
+# I will rewrite the Parser class and the top Data/Structs.
+
+# --- Video Stitcher ---
+# We need to change the stitching mapping logic in MAIN.
 
 # --- PDF Processor ---
 
@@ -238,7 +221,7 @@ class AudioGenerator:
 
     def _generate_gcloud(self, text: str, speaker: str, filepath: Path):
         # Basic mapping based on name
-        gender = texttospeech.SsmlVoiceGender.NEUTRAL
+        gender = texttospeech.SsmlVoiceGender.FEMALE
         name = "en-US-Studio-O" # Default Female
         
         if speaker and "James" in speaker:
@@ -268,7 +251,7 @@ class AudioGenerator:
 # --- Video Stitcher ---
 
 try:
-    from moviepy import ImageClip, AudioFileClip, concatenate_videoclips
+    from moviepy import ImageClip, AudioFileClip, concatenate_videoclips, concatenate_audioclips
     MOVIEPY_AVAILABLE = True
 except ImportError:
     MOVIEPY_AVAILABLE = False
@@ -303,7 +286,7 @@ class VideoStitcher:
             else:
                 # Concatenate audios for this frame
                 audio_objs = [AudioFileClip(str(a)) for a in frame_audios]
-                audio_clip = concatenate_videoclips(audio_objs) if len(audio_objs) > 1 else audio_objs[0]
+                audio_clip = concatenate_audioclips(audio_objs) if len(audio_objs) > 1 else audio_objs[0]
                 duration = audio_clip.duration
             
             # Create Image Clip
@@ -325,6 +308,7 @@ def main():
     parser.add_argument("tex_file", help="Path to .tex file")
     parser.add_argument("--pdf", help="Path to existing PDF (optional)")
     parser.add_argument("--tts", choices=['gtts', 'gcloud'], default='gtts', help="TTS Provider")
+    parser.add_argument("--output", help="Output video filename")
     parser.add_argument("--force", action="store_true", help="Force regeneration of audio/images (clean cache)")
     
     args = parser.parse_args()
@@ -386,12 +370,15 @@ def main():
     for f in frames:
         all_segments.extend(f.audio_segments)
         
-    print(f"Found {len(all_segments)} audio segments (narration chunks).")
+    # Calculate logical visual steps
+    visual_steps = sum(1 for seg in all_segments if seg.new_visual)
     
-    if len(all_segments) > len(image_paths):
-        print(f"⚠️ Warning: More audio segments ({len(all_segments)}) than images ({len(image_paths)}). Video might be cutoff.")
-    elif len(all_segments) < len(image_paths):
-        print(f"⚠️ Warning: More images ({len(image_paths)}) than audio segments ({len(all_segments)}). Trailing images will be silent.")
+    print(f"Found {len(all_segments)} audio segments across {visual_steps} logical visual steps.")
+    
+    if visual_steps > len(image_paths):
+        print(f"⚠️ Warning: More visual steps ({visual_steps}) than images ({len(image_paths)}). Video might be cutoff.")
+    elif visual_steps < len(image_paths):
+         print(f"⚠️ Warning: More images ({len(image_paths)}) than visual steps ({visual_steps}). Trailing images will be silent.")
         
     audio_gen = AudioGenerator(audio_dir, provider=args.tts)
     
@@ -410,6 +397,32 @@ def main():
         audio_path = audio_gen.generate(seg.text, seg.speaker, i)
         audio_map.append([audio_path])
         
+    # Map: image_index -> [audio_path1, audio_path2...]
+    # Using new_visual flag to handle multiple segments per image.
+    
+    audio_map = []
+    # Pre-fill audio_map with empty lists for each image
+    for _ in range(len(image_paths)):
+        audio_map.append([])
+        
+    current_image_idx = -1
+    
+    for i, seg in enumerate(all_segments):
+        # Generate Audio
+        audio_path = audio_gen.generate(seg.text, seg.speaker, i)
+        
+        # Determine placement
+        if seg.new_visual:
+            current_image_idx += 1
+            
+        if current_image_idx >= len(image_paths):
+            print(f"⚠️ Warning: Audio segment {i} ('{seg.text[:20]}...') exceeds available images ({len(image_paths)}). Skipping visual sync.")
+            break
+            
+        # Ensure we don't write before first image
+        target_idx = max(0, current_image_idx)
+        audio_map[target_idx].append(audio_path)
+    
     # 4. Stitch
     stitcher = VideoStitcher(str(output_video))
     stitcher.stitch(image_paths, audio_map)
