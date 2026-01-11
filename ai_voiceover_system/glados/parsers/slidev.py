@@ -3,7 +3,7 @@ import re
 import os
 import subprocess
 from pathlib import Path
-from typing import List, Tuple, Dict
+from typing import List, Tuple, Dict, Optional
 from datetime import datetime
 
 from .base import BaseParser, AudioSegment
@@ -16,7 +16,7 @@ class SlidevParser(BaseParser):
 
     def parse(self) -> Tuple[List[AudioSegment], int]:
         """
-        Parses slidev markdown.
+        Parses slidev markdown (recursive).
         """
         with open(self.input_path, 'r', encoding='utf-8') as f:
             content = f.read()
@@ -26,58 +26,60 @@ class SlidevParser(BaseParser):
         if '[click]' in content:
             processing_mode = 'click'
             
-        # Parse Slides (Legacy Logic ported)
-        # Note: We are simplifying heavily here to fit the contract.
-        # We assume the legacy logic for splitting slides holds.
-        
         slides = self._split_content_robust(content)
-        
         segments = []
         visual_step_count = 0
         
-        # Skip Frontmatter logic (simplified: if start with ---, skip 0 and 1)
-        start_index = 0
-        if slides and not slides[0].strip():
-             start_index = 2 if len(slides) > 1 else 1
-             
+        # User requested no "First Slide Exception".
+        # We rely entirely on _is_metadata_only to skip config blocks.
+        
         for i, slide_content in enumerate(slides):
-            if i < start_index: continue
             if not slide_content.strip(): continue
+
+            # Filter out Metadata-only blocks
+            src_import = self._extract_src(slide_content)
             
-            # Extract Notes
-            notes_match = re.search(r'<!--\s*(.*?)\s*-->', slide_content, re.DOTALL)
-            if not notes_match:
-                # If no notes, we still have a visual slide?
-                # Yes, but no audio.
-                # Do we emit a segment with empty text?
-                # The BaseParser contract implies AudioSegments drive the flow.
-                # If there's a visual slide but no audio, we need 1 segment with empty text.
+            if not src_import and self._is_metadata_only(slide_content):
+                print(f"   (Skipping Metadata Block at chunk {i})")
+                continue
+            
+            if src_import:
+                # Recursive Parse
+                import_path = (self.input_path.parent / src_import).resolve()
+                if import_path.exists():
+                    print(f"📖 Recursive Parsing: {import_path.name}")
+                    sub_parser = SlidevParser(import_path)
+                    sub_segments, sub_visuals = sub_parser.parse()
+                    segments.extend(sub_segments)
+                    visual_step_count += sub_visuals
+                else:
+                    print(f"⚠️ Import Not Found: {import_path}")
+                continue
+            
+            # Normal Content Slide
+            notes_matches = re.findall(r'<!--\s*(.*?)\s*-->', slide_content, re.DOTALL)
+            if not notes_matches:
+                # Visual slide with no notes
+                print(f"   (Visual Hold) No notes for slide {i}")
                 segments.append(AudioSegment(text="", speaker=None, new_visual=True))
                 visual_step_count += 1
                 continue
                 
-            raw_notes = notes_match.group(1).strip()
+            raw_notes = notes_matches[-1].strip() # Use the last comment
             
-            # Helper to parse clicks in notes
+            # Helper to parse clicks AND multiple speakers
             slide_segments = self._parse_slide_notes(raw_notes, processing_mode)
             
-            for idx, seg in enumerate(slide_segments):
-                # First segment determines new visual?
-                # In Slidev:
-                # Click 0 -> Initial State (New Visual)
-                # Click 1 -> Next State (New Visual)
-                # Text continuation -> Same Visual
-                
-                # In our _parse_slide_notes, we get list of (click_id, text).
-                # Each click ID represents a visual state change in Slidev export.
-                
+            for seg in slide_segments:
                 segments.append(AudioSegment(
                     text=seg['text'],
-                    speaker=self._extract_speaker(seg['text'])[0], # Extract speaker if present
-                    new_visual=True # In slidev, generally every click is a visual change
+                    speaker=seg['speaker'],
+                    new_visual=seg['new_visual']
                 ))
             
-            visual_step_count += len(slide_segments)
+            # Estimate Visual Steps: Count unique click_ids
+            visual_states = set([s['click_id'] for s in slide_segments])
+            visual_step_count += len(visual_states)
             
         return segments, visual_step_count
 
@@ -87,14 +89,6 @@ class SlidevParser(BaseParser):
         """
         print(f"🖼️ Exporting Slidev to PNG (Resolution: {resolution})...")
         
-        # Resolution mapping for Slidev?
-        # Slidev export usually takes --width / --height or pixel density.
-        # Default is 1920x1080.
-        # We can pass --output and format.
-        
-        # Note: Slidev export is tricky with resolution. We might trust default or add args.
-        # For now, let's stick to default 1920x1080 logic unless we want to hack CLI args.
-        
         cmd = [
             "npx", "slidev", "export",
             str(self.input_path),
@@ -103,51 +97,182 @@ class SlidevParser(BaseParser):
             "--timeout", "120000"
         ]
         
-        # Check for --with-clicks
-        # If we detected clicks in parse, we should export with clicks.
-        # (Optimisation: Cache this detection)
         with open(self.input_path) as f:
             if '[click]' in f.read():
                 cmd.append("--with-clicks")
 
         print(f"   Executing: {' '.join(cmd)}")
         result = subprocess.run(cmd, cwd=self.work_dir, capture_output=True, text=True)
-        
         if result.returncode != 0:
              print(f"❌ Export Failed: {result.stderr}")
              return []
              
-        # Collect images
         images = sorted(list(output_dir.glob("*.png")))
-        # Logic to return sorted list
         return images
 
     def _split_content_robust(self, content):
-        """Simplistic split for now."""
-        return content.split("\n---\n")
+        """Split content by '---' separators, skipping those in code blocks."""
+        lines = content.split('\n')
+        sections = []
+        current_section = []
+        in_code_block = False
+        
+        for i, line in enumerate(lines):
+            stripped = line.strip()
+            if stripped.startswith('```'):
+                in_code_block = not in_code_block
+            
+            is_separator = (stripped == '---' and not in_code_block)
+            
+            if is_separator:
+                if current_section:
+                    sections.append('\n'.join(current_section))
+                else:
+                    sections.append('') 
+                current_section = []
+            elif i == len(lines) - 1:
+                current_section.append(line)
+                sections.append('\n'.join(current_section))
+            else:
+                current_section.append(line)
+            
+        return sections
+
+    def _is_metadata_only(self, content: str) -> bool:
+        """
+        Heuristic to check if a block is purely YAML metadata.
+        Logic:
+        - If it has explicit CONTENT (Plain text, HTML, List), it is a Slide.
+        - If it has KEYS and NO CONTENT, it is Metadata.
+        - If it has neither (e.g. just Comments or just a Header), assume Slide (Content).
+        """
+        lines = content.split('\n')
+        has_key = False
+        has_explicit_content = False
+        
+        for line in lines:
+            # Check indentation BEFORE stripping (YAML multiline values are indented)
+            is_indented = line.startswith(' ') or line.startswith('\t')
+            stripped = line.strip()
+            if not stripped: continue
+            if stripped.startswith('<!--'): continue
+            
+            if is_indented:
+                continue
+                
+            # Ambiguous: Headers/Comments (#)
+            if stripped.startswith('#'):
+                continue
+            
+            # Checks for Explicit Content
+            # 1. HTML
+            src_match = re.search(r'^src:\s', stripped)
+            if not src_match and stripped.startswith('<') and not stripped.startswith('<<'): 
+                has_explicit_content = True
+                break
+                
+            # 2. Lists (could be YAML list or Markdown list - tricky?)
+            # YAML: key:\n  - val.  OR top level list?
+            # Slidev Config doesn't usually use top-level lists. 
+            # Slidev Content uses lists (- Item).
+            if stripped.startswith('- ') and not ':' in stripped: 
+                 # Heuristic: Dash without colon might be list item. 
+                 # But YAML List can be "- value".
+                 # Let's count it as content if we are unsure? 
+                 # Actually, usually YAML lists are indented under a key.
+                 # Top level list in YAML is valid, but rare in Slidev Config.
+                 has_explicit_content = True
+                 break
+
+            # 3. Plain Text (No colon, no dash)
+            if ':' in stripped:
+                has_key = True
+            elif not stripped.startswith('-') and not stripped.startswith('`'):
+                has_explicit_content = True
+                break
+                
+        # Decision:
+        if has_explicit_content:
+            return False
+        if has_key:
+            return True
+            
+        # Default: If just `#` lines (Title Only) or empty -> Treat as Slide
+        return False
+
+    def _extract_src(self, content: str) -> Optional[str]:
+        """Extracts src path from metadata block."""
+        match = re.search(r'^src:\s*(.+)$', content, re.MULTILINE)
+        if match:
+            return match.group(1).strip()
+        return None
 
     def _parse_slide_notes(self, notes: str, mode: str) -> List[Dict]:
-        segments = []
+        """
+        Parses notes into segments, handling both [click] markers AND multi-speaker conversation.
+        """
+        click_blocks = []
         if mode == 'click':
             parts = re.split(r'\[click(?::(\d+))?\]', notes)
-            # Part 0 is pre-click (Click 0)
             if parts[0].strip():
-                segments.append({'click': 0, 'text': parts[0].strip()})
+                click_blocks.append({'click_id': 0, 'raw_text': parts[0].strip()})
             
             i = 1
             while i < len(parts):
-                # part[i] is click ID, part[i+1] is text
                 text = parts[i+1] if i+1 < len(parts) else ""
+                click_id = int(parts[i]) if parts[i] else (click_blocks[-1]['click_id'] + 1 if click_blocks else 1)
+                
                 if text.strip():
-                     segments.append({'click': i, 'text': text.strip()})
+                     click_blocks.append({'click_id': click_id, 'raw_text': text.strip()})
                 i += 2
         else:
-            segments.append({'click': 0, 'text': notes})
+            click_blocks.append({'click_id': 0, 'raw_text': notes})
             
-        return segments
+        final_segments = []
+        for block in click_blocks:
+            # Detect speakers: Split by (Name): 
+            # We iterate lines to be safe.
+            lines = block['raw_text'].split('\n')
+            current_speaker = None
+            current_buffer = []
+            
+            sub_segments = []
+            
+            # Helper to flush buffer
+            def flush(spk, buf):
+                if buf:
+                    sub_segments.append({'speaker': spk, 'text': ' '.join(buf)})
+
+            for line in lines:
+                line = line.strip()
+                if not line: continue
+                
+                # Check for "Name: Message" pattern
+                match = re.match(r'^([A-Za-z\s\.]+):\s*(.+)', line)
+                if match:
+                    flush(current_speaker, current_buffer)
+                    current_speaker = match.group(1).strip()
+                    current_buffer = [match.group(2).strip()]
+                else:
+                    current_buffer.append(line)
+            
+            flush(current_speaker, current_buffer)
+                
+            if not sub_segments:
+                sub_segments.append({'speaker': None, 'text': block['raw_text']})
+                
+            for j, sub in enumerate(sub_segments):
+                # new_visual is True ONLY for the FIRST sub-segment of this click block
+                is_start_of_click = (j == 0)
+                final_segments.append({
+                    'click_id': block['click_id'],
+                    'text': sub['text'],
+                    'speaker': sub['speaker'],
+                    'new_visual': is_start_of_click 
+                })
+                
+        return final_segments
 
     def _extract_speaker(self, text: str) -> Tuple[Optional[str], str]:
-        match = re.search(r'^([A-Za-z\s\.]+):\s*(.+)', text)
-        if match:
-            return match.group(1).strip(), match.group(2).strip()
+        # Redundant: Speaker extracted in _parse_slide_notes
         return None, text

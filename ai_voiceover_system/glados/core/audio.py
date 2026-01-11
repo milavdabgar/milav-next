@@ -90,6 +90,11 @@ class AudioGenerator:
                 print(f"⚠️ Fallback to gTTS for segment {index}-{section_index}")
                 use_gcloud = False
 
+        if not text or not text.strip():
+            print(f"   (Visual Hold) Generating 0.5s silence for segment {index}-{section_index}")
+            self._create_silent_mp3(filepath, duration=0.5)
+            return filepath
+            
         printable_text = text[:30].replace('\n', ' ')
         print(f"🎤 Generating ({'gCloud' if use_gcloud else 'gTTS'}): {printable_text}...")
 
@@ -104,20 +109,24 @@ class AudioGenerator:
         try:
             # Strip speaker tags if they exist in text (redundant safety)
             clean_text = re.sub(r'^[A-Za-z\s\.]+: ', '', text)
+            if not clean_text.strip():
+                 self._create_silent_mp3(filepath, duration=0.5)
+                 return
+
             tts = gTTS(text=clean_text, lang='en', tld='co.uk')
             tts.save(str(filepath))
         except Exception as e:
             print(f"❌ gTTS Error: {e}")
-            # Create silent placeholder? Or raise?
-            # For now, create 1s silence to avoid crash
             self._create_silent_mp3(filepath)
 
     def _generate_gcloud(self, text: str, speaker: Optional[str], filepath: Path):
         try:
-            # Cleaning: Start of line speaker names are usually stripped by parser, 
-            # but we double check.
+            # Cleaning
             clean_text = text
-            
+            if not clean_text.strip():
+                 self._create_silent_mp3(filepath, duration=0.5)
+                 return
+
             # Voice Selection
             voice_name = self.custom_voice
             if not voice_name:
@@ -150,11 +159,14 @@ class AudioGenerator:
             print(f"❌ GCloud Error: {e}")
             self._create_silent_mp3(filepath)
 
-    def _create_silent_mp3(self, filepath: Path):
-        # Fallback for errors: empty file or silence
-        # Minimal valid MP3 header? No, just touch file and moviepy handles silence usually
-        # Actually MoviePy might choke on empty file.
-        # Let's try to just touch it and handle it in video.
-        print("⚠️  Generating silence due to error.")
-        with open(filepath, 'wb') as f:
-            pass 
+    def _create_silent_mp3(self, filepath: Path, duration: float = 1.0):
+        # MoviePy's AudioFileClip might fail on empty files or extremely short ones.
+        # But if we want silence, we usually handle it in VideoStitcher by checking file size 
+        # OR we generate a valid silent MP3.
+        # Generating a valid silent MP3 without pydub/ffmpeg is hard.
+        # Easier strategy: Create an empty file, and update VideoStitcher to treat empty file as Silence of X seconds.
+        # We already have size check in VideoStitcher.
+        with open(filepath, 'w') as f:
+            f.write("SILENCE_MARKER") 
+        # We will update VideoStitcher to read this.
+ 
