@@ -84,7 +84,7 @@ def main():
         # We need to know WHICH segments to keep, and their original indices (for Beamer image slicing)
         all_segments = segments
         valid_indices = []
-        
+
         # Check if IDs actally exist
         has_logical_ids = any(s.slide_id > 0 for s in all_segments)
         
@@ -109,50 +109,94 @@ def main():
              print("❌ No segments in requested range.")
              return
 
-        segments = [all_segments[i] for i in valid_indices]
+             valid_indices = list(range(len(all_segments)))
+             
+        if not valid_indices:
+             print("❌ No segments in requested range.")
+             return
 
-        # 4. Rasterize Visuals
+        # 4. Map Segments to Images (Global)
+        seg_to_img_idx = {}
+        current_global_img_idx = -1
+        # Re-scan all segments to build map
+        # Note: BeamerParser segments logic: new_visual typically means "Needs a new image".
+        # Initial segment usually has new_visual=True.
+        for i, s in enumerate(all_segments):
+            if s.new_visual:
+                current_global_img_idx += 1
+            # Handle standard case where first segment might not be marked new_visual? 
+            # (Unlikely with BeamerParser logic, but safe to clamp to 0)
+            target = max(0, current_global_img_idx) 
+            seg_to_img_idx[i] = target
+
+        # 5. Filter Segments & Images
+        filtered_segments_data = [] # List of (segment, global_img_idx)
+        needed_global_img_indices = set()
+        
+        for idx in valid_indices:
+            global_img = seg_to_img_idx[idx]
+            needed_global_img_indices.add(global_img)
+            filtered_segments_data.append((all_segments[idx], global_img))
+            
+        segments = [x[0] for x in filtered_segments_data]
+            
+        # 6. Generate/Slice Images
         print(f"🖼️ Generating Visuals (Range: {range_str if range_str else 'All'})...")
+        
+        needed_sorted = sorted(list(needed_global_img_indices))
         
         if is_slidev:
              image_paths = parser_engine.generate_images(images_dir, args.resolution, range_str=range_str)
         else:
              all_image_paths = parser_engine.generate_images(images_dir, args.resolution)
-             # Slice Beamer Images using the SAME indices as segments
-             # This assumes 1 Segment = 1 Image (1 PDF Page)
+             print(f"--- DEBUG: Sync Check ---")
+             print(f"Total Segments: {len(all_segments)}")
+             print(f"Total Images: {len(all_image_paths)}")
+             
              image_paths = []
-             for idx in valid_indices:
-                 if idx < len(all_image_paths):
-                     image_paths.append(all_image_paths[idx])
+             # Map Global Img Index -> Local Img Index (0..N)
+             global_to_local_img = {}
+             
+             for local_i, global_i in enumerate(needed_sorted):
+                 if global_i < len(all_image_paths):
+                     image_paths.append(all_image_paths[global_i])
+                     global_to_local_img[global_i] = local_i
                  else:
-                     print(f"⚠️ Warning: Segment {idx} has no corresponding image.")
+                     print(f"⚠️ Warning: Image Index {global_i} out of bounds (Max {len(all_image_paths)})")
         
-        # 5. Map Audio to Images
+        # 7. Map Audio to Images
         # Pre-allocate map
         audio_map: List[List[Path]] = [[] for _ in range(len(image_paths))]
-        current_image_idx = -1
         
         audio_gen = AudioGenerator(audio_dir, provider=args.tts, custom_voice=args.voice)
         
         print(f"🎤 Synthesizing Audio ({len(segments)} segments)...")
         
-        for i, seg in enumerate(segments):
-            # Advance visual if needed
-            if seg.new_visual:
-                current_image_idx += 1
-                
-            if current_image_idx >= len(image_paths):
-                # Overflow
-                if current_image_idx == len(image_paths):
-                     # print("⚠️ Info: Audio logic suggests more steps than images. Attaching to last frame.")
-                     pass
-                current_image_idx = len(image_paths) - 1
-            
-            # Generate Audio
-            audio_path = audio_gen.generate(seg.text, seg.speaker, i)
-            
-            if current_image_idx >= 0:
-                audio_map[current_image_idx].append(audio_path)
+        if is_slidev:
+             # Legacy linear loop for Slidev (since we rely on parser range logic)
+             current_image_idx = -1
+             for i, seg in enumerate(segments):
+                 if seg.new_visual:
+                     current_image_idx += 1
+                 
+                 # Safety overflow check
+                 target_idx = current_image_idx
+                 if target_idx >= len(image_paths):
+                     target_idx = len(image_paths) - 1
+                 
+                 if target_idx >= 0:
+                      audio_map[target_idx].append(audio_gen.generate(seg.text, seg.speaker, i))
+        else:
+             # Beamer Map Loop
+             # Iterate our filtered data which has Global Indices
+             for i, (seg, global_img_idx) in enumerate(filtered_segments_data):
+                  if global_img_idx in global_to_local_img:
+                      local_idx = global_to_local_img[global_img_idx]
+                      audio_path = audio_gen.generate(seg.text, seg.speaker, i)
+                      audio_map[local_idx].append(audio_path)
+                  else:
+                      # Should typically not happen if image generation worked
+                      pass
 
         # 6. Stitch Video
         output_video = args.output
