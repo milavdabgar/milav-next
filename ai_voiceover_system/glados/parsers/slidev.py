@@ -110,15 +110,28 @@ class SlidevParser(BaseParser):
     def generate_images(self, output_dir: Path, resolution: str, range_str: Optional[str] = None) -> List[Path]:
         """
         Exports slides via npx slidev export.
+        Calculating scale factor to match request resolution (Slidev defaults to canvas size).
         """
-        print(f"🖼️ Exporting Slidev to PNG (Resolution: {resolution})...")
+        # Determine Target Width
+        # Standard Slidev Canvas is 980x552 (16:9 approx)
+        target_width = 1920 # Default 1080p
+        if resolution == '4k':
+            target_width = 3840
+        elif resolution == '720p':
+            target_width = 1280
+            
+        canvas_width = self._get_canvas_width()
+        scale_factor = target_width / canvas_width
+        
+        print(f"🖼️ Exporting Slidev to PNG (Resolution: {resolution}, Scale: {scale_factor:.2f})...")
         
         cmd = [
             "npx", "slidev", "export",
             str(self.input_path),
             "--output", str(output_dir),
             "--format", "png",
-            "--timeout", "120000"
+            "--timeout", "120000",
+            "--scale", f"{scale_factor:.4f}"
         ]
         
         if range_str:
@@ -136,6 +149,27 @@ class SlidevParser(BaseParser):
              
         images = sorted(list(output_dir.glob("*.png")))
         return images
+
+    def _get_canvas_width(self) -> float:
+        """
+        Extracts canvasWidth from frontmatter, or defaults to 980.
+        """
+        try:
+            with open(self.input_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+                
+            # Only check the first YAML block
+            if content.startswith('---'):
+                end_match = re.search(r'\n---', content[3:])
+                if end_match:
+                     frontmatter = content[3:3+end_match.start()]
+                     match = re.search(r'canvasWidth:\s*(\d+(\.\d+)?)', frontmatter)
+                     if match:
+                         return float(match.group(1))
+        except Exception as e:
+            print(f"⚠️ Warning: Could not parse canvasWidth: {e}")
+            
+        return 980.0
 
     def _split_content_robust(self, content):
         """Split content by '---' separators, skipping those in code blocks."""
