@@ -152,22 +152,26 @@ class PDFProcessor:
         if fitz is None:
             raise ImportError("pymupdf not installed. Please install: pip install pymupdf")
 
-    def to_images(self, output_dir: Path, target_width: int = 1920) -> List[Path]:
+    def to_images(self, output_dir: Path, target_size: Tuple[int, int] = (1920, 1080)) -> List[Path]:
         doc = fitz.open(self.pdf_path)
+        target_w, target_h = target_size
         
-        # Calculate scale factor based on first page to match target width exactly
+        # Calculate scale factor based on first page to match target dimensions exactly
         page0 = doc[0]
-        # page.rect.width is in points
-        zoom = target_width / page0.rect.width
-        mat = fitz.Matrix(zoom, zoom)
+        # page.rect is in points
+        zoom_x = target_w / page0.rect.width
+        zoom_y = target_h / page0.rect.height
+        
+        mat = fitz.Matrix(zoom_x, zoom_y)
         
         print(f"🖼️ Rasterizing PDF (PyMuPDF): {self.pdf_path}")
-        print(f"   Input Width: {page0.rect.width:.2f}pts -> Target: {target_width}px (Zoom: {zoom:.4f})")
+        print(f"   Input: {page0.rect.width:.2f}x{page0.rect.height:.2f}pts -> Target: {target_w}x{target_h}px")
+        print(f"   Zoom: {zoom_x:.4f} (X), {zoom_y:.4f} (Y)")
         
         image_paths = []
         
         for i, page in enumerate(doc):
-            # Use matrix for precise scaling (avoiding integer DPI rounding errors)
+            # Use matrix for precise scaling
             pix = page.get_pixmap(matrix=mat) 
             
             img_path = output_dir / f"{i:04d}.png"
@@ -370,20 +374,18 @@ def main():
     
     pdf_proc = PDFProcessor(str(pdf_path))
     
-    # Calculate DPI based on first page dimensions
-    # DPI = (Target Px / Width Inches)
-    # Width Inches = Width Points / 72
+    # Calculate dimensions based on resolution name
+    resolutions = {
+        '720p': (1280, 720),
+        '1080p': (1920, 1080),
+        '4k': (3840, 2160)
+    }
     
-    # We pass target_width to PDFProcessor instead of calculating DPI here
-    target_width = 1920
-    if args.resolution == '4k':
-        target_width = 3840
-    elif args.resolution == '720p':
-        target_width = 1280
+    target_w, target_h = resolutions.get(args.resolution, (1920, 1080))
         
-    print(f"🎯 Target Width: {target_width}px ({args.resolution})")
+    print(f"🎯 Target Resolution: {target_w}x{target_h} ({args.resolution})")
     
-    image_paths = pdf_proc.to_images(images_dir, target_width=target_width)
+    image_paths = pdf_proc.to_images(images_dir, target_size=(target_w, target_h))
     print(f"📸 Extracted {len(image_paths)} frames from PDF.")
     
     # 3. Generate Audio & Map
