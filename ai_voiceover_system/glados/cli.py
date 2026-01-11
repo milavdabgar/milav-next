@@ -76,41 +76,56 @@ def main():
             print("❌ No content found to process.")
             return
 
-        # Filter Segments (If Slidev/Logical IDs are present)
-        # Beamer segments default string slide_id=0.
-        has_logical_ids = any(s.slide_id > 0 for s in segments)
+        if not segments:
+            print("❌ No content found to process.")
+            return
+
+        # Filter Segments logic
+        # We need to know WHICH segments to keep, and their original indices (for Beamer image slicing)
+        all_segments = segments
+        valid_indices = []
         
-        if has_logical_ids and (end_slide is not None or start_slide > 1):
-            print(f"✂️ Filtering Segments: Range {start_slide}-{end_slide if end_slide else 'Max'}")
-            filtered = []
-            for s in segments:
-                if s.slide_id < start_slide: continue
-                if end_slide is not None and s.slide_id > end_slide: continue
-                filtered.append(s)
-            segments = filtered
-            if not segments:
-                print("❌ No segments in requested range.")
-                return
+        # Check if IDs actally exist
+        has_logical_ids = any(s.slide_id > 0 for s in all_segments)
+        
+        if end_slide is not None or start_slide > 1:
+            if has_logical_ids:
+                 print(f"✂️ Filtering Segments: Logical Range {start_slide}-{end_slide if end_slide else 'Max'}")
+                 for i, s in enumerate(all_segments):
+                     if s.slide_id < start_slide: continue
+                     if end_slide is not None and s.slide_id > end_slide: continue
+                     valid_indices.append(i)
+            else:
+                 # Beamer fallback if parser fails to assign IDs (unlikely now)
+                 # Or manual range logic if no IDs
+                 pass
+                 # If IDs are missing, we should probably fall back to index slicing? 
+                 # But BeamerParser assigns IDs now.
+                 valid_indices = list(range(len(all_segments)))
+        else:
+             valid_indices = list(range(len(all_segments)))
+             
+        if not valid_indices:
+             print("❌ No segments in requested range.")
+             return
+
+        segments = [all_segments[i] for i in valid_indices]
 
         # 4. Rasterize Visuals
         print(f"🖼️ Generating Visuals (Range: {range_str if range_str else 'All'})...")
         
-        # Pass range_str to generate_images if supported (SlidevParser only)
-        # BeamerParser.generate_images signature might not support it?
-        # Python allows kwargs? No, it's abstract method.
-        # I updated BaseParser? No, I only updated SlidevParser implementation.
-        # BaseParser definition in base.py still has (output_dir, resolution).
-        # Python doesn't enforce signature match strictly unless called.
-        # But cleaner way: Check isinstance(parser_engine, SlidevParser).
-        
         if is_slidev:
              image_paths = parser_engine.generate_images(images_dir, args.resolution, range_str=range_str)
         else:
-             image_paths = parser_engine.generate_images(images_dir, args.resolution)
-             # Legacy Beamer Slicing logic
-             if args.max_slides:
-                 limit = min(len(image_paths), args.max_slides)
-                 image_paths = image_paths[:limit]
+             all_image_paths = parser_engine.generate_images(images_dir, args.resolution)
+             # Slice Beamer Images using the SAME indices as segments
+             # This assumes 1 Segment = 1 Image (1 PDF Page)
+             image_paths = []
+             for idx in valid_indices:
+                 if idx < len(all_image_paths):
+                     image_paths.append(all_image_paths[idx])
+                 else:
+                     print(f"⚠️ Warning: Segment {idx} has no corresponding image.")
         
         # 5. Map Audio to Images
         # Pre-allocate map

@@ -11,23 +11,28 @@ class BeamerParser(BaseParser):
         super().__init__(input_path)
         self.IGNORED_SPEAKERS = {'Section', 'Slide', 'Frame', 'Note', 'Narrator'}
 
-    def parse(self) -> Tuple[List[AudioSegment], int]:
+    def parse(self) -> Tuple[List[AudioSegment], int, int]:
         r"""
         Parses .tex file for \note{...} blocks.
         Supports automatic recursion for \input{filename}.
+        Returns:
+            - List[AudioSegment]
+            - visual_step_count
+            - next_slide_id
         """
         segments = []
         visual_step_count = 0
         
-        # We start recursion from the main file
-        segments = self._parse_recursive(self.input_path)
+        # We start recursion from the main file. 
+        # Start ID = 0. First frame will increment to 1.
+        segments, next_id = self._parse_recursive(self.input_path, start_slide_id=0)
         
         # Count visual steps (segments where new_visual=True)
         visual_step_count = sum(1 for s in segments if s.new_visual)
         
-        return segments, visual_step_count
+        return segments, visual_step_count, next_id
         
-    def _parse_recursive(self, file_path: Path, processed_files: Set[Path] = None) -> List[AudioSegment]:
+    def _parse_recursive(self, file_path: Path, processed_files: Set[Path] = None, start_slide_id: int = 0) -> Tuple[List[AudioSegment], int]:
         if processed_files is None:
             processed_files = set()
             
@@ -40,43 +45,42 @@ class BeamerParser(BaseParser):
         
         if not file_path.exists():
             print(f"⚠️ Warning: Included file not found: {file_path}")
-            return []
+            return [], start_slide_id
             
         if file_path.resolve() in processed_files:
             print(f"⚠️ Warning: Circular input detected: {file_path}")
-            return []
+            return [], start_slide_id
             
         processed_files.add(file_path.resolve())
-        print(f"📖 Parsing: {file_path.name}")
+        print(f"📖 Parsing: {file_path.name} (Start ID: {start_slide_id})")
         
         segments = []
+        current_slide_id = start_slide_id
         
         with open(file_path, 'r', encoding='utf-8') as f:
             content = f.read()
 
-        # Regex Update: Matches \note{...} allowing nested braces using recursive pattern logic isn't trivial in Python regex.
-        # So we use a custom brace balancer logic.
-        
-        # Also need to detect \input{...} and inject it in order.
-        # This implies we scan the file linearly.
-        
-        # Simplified Linear Scan
         lines = content.split('\n')
         iterator = iter(lines)
         
         for line in iterator:
             line = line.strip()
             
+            # Check for \begin{frame}
+            # Simplistic check. Ignores commented lines logic for now (except explicit %)
+            if r'\begin{frame}' in line and not line.startswith('%'):
+                current_slide_id += 1
+            
             # Check for \input{...}
-            # Simplistic regex, might miss multiple inputs on one line or commented inputs
             input_match = re.search(r'\\input\{([^}]+)\}', line)
             if input_match and not line.startswith('%'):
                 included_filename = input_match.group(1)
                 included_path = file_path.parent / included_filename
                 
                 # Recurse
-                sub_segments = self._parse_recursive(included_path, processed_files)
+                sub_segments, next_id = self._parse_recursive(included_path, processed_files, start_slide_id=current_slide_id)
                 segments.extend(sub_segments)
+                current_slide_id = next_id # Update ID for subsequent frames
                 continue
             
             # Check for \note{
@@ -84,9 +88,21 @@ class BeamerParser(BaseParser):
                 # Extract the full note block (handling multi-line)
                 note_content = self._extract_brace_content(line, iterator)
                 if note_content:
-                    segments.extend(self._parse_note_content(note_content))
+                    # Parse note and assign current_slide_id
+                    note_segments = self._parse_note_content(note_content)
+                    # Enrich with slide_id
+                    for s in note_segments:
+                        # Re-create AudioSegment with slide_id
+                        # NamedTuple replace or new instance
+                         segments.append(AudioSegment(
+                            text=s.text,
+                            speaker=s.speaker,
+                            new_visual=s.new_visual,
+                            slide_id=current_slide_id,
+                            click_id=0 # Beamer doesn't really track clicks globally in same way, or we can just ignore
+                        ))
                     
-        return segments
+        return segments, current_slide_id
 
     def _extract_brace_content(self, first_line: str, iterator) -> str:
         """
