@@ -7,6 +7,8 @@ class AudioSegment(NamedTuple):
     text: str
     speaker: Optional[str]
     new_visual: bool # Triggers a new visual slide/overlay
+    slide_id: int = 0
+    click_id: int = 0
 
 class BaseParser(ABC):
     def __init__(self, input_path: Path):

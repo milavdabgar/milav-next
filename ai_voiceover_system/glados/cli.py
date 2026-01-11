@@ -18,7 +18,8 @@ def main():
     parser.add_argument("--output", help="Output video filename")
     parser.add_argument("--resolution", choices=['720p', '1080p', '4k'], default='1080p', help="Output resolution")
     parser.add_argument("--keep-residuals", action="store_true", help="Keep temporary files")
-    parser.add_argument("--max-slides", type=int, help="Limit processing to N slides (Preview Mode)")
+    parser.add_argument("--max-slides", type=int, help="Limit processing to first N Logical Slides")
+    parser.add_argument("--slide-range", help="Process specific slide range (e.g. '1-12' or '5-10')")
     parser.add_argument("--voice", help="Custom Voice Name (GCloud)")
 
     args = parser.parse_args()
@@ -29,10 +30,11 @@ def main():
         sys.exit(1)
 
     # 1. Select Parser
+    is_slidev = (input_path.suffix == '.md')
     if input_path.suffix == '.tex':
         print("🤖 Detected Beamer (LaTeX) project.")
         parser_engine = BeamerParser(input_path)
-    elif input_path.suffix == '.md':
+    elif is_slidev:
         print("🤖 Detected Slidev (Markdown) project.")
         parser_engine = SlidevParser(input_path)
     else:
@@ -44,30 +46,78 @@ def main():
     images_dir, audio_dir = cache.setup()
     
     try:
+        # Determine Range
+        start_slide = 1
+        end_slide = None
+        range_str = None
+        
+        if args.slide_range:
+            parts = args.slide_range.split('-')
+            if len(parts) == 2:
+                start_slide = int(parts[0])
+                end_slide = int(parts[1])
+                range_str = args.slide_range
+        elif args.max_slides:
+             end_slide = args.max_slides
+             range_str = f"1-{end_slide}"
+
         # 3. Parse Content
         print(f"📖 Parsing {input_path.name}...")
-        segments, estimated_steps = parser_engine.parse()
+        # Note: We parse ALL content to look for correct Logical IDs.
+        # Ideally we could optimize parser to stop early, but recursion makes it tricky.
+        # Parsing is fast (text). Image generation is slow.
+        result = parser_engine.parse()
+        if len(result) == 3:
+            segments, estimated_steps, _ = result
+        else:
+            segments, estimated_steps = result
         
         if not segments:
             print("❌ No content found to process.")
             return
 
+        # Filter Segments (If Slidev/Logical IDs are present)
+        # Beamer segments default string slide_id=0.
+        has_logical_ids = any(s.slide_id > 0 for s in segments)
+        
+        if has_logical_ids and (end_slide is not None or start_slide > 1):
+            print(f"✂️ Filtering Segments: Range {start_slide}-{end_slide if end_slide else 'Max'}")
+            filtered = []
+            for s in segments:
+                if s.slide_id < start_slide: continue
+                if end_slide is not None and s.slide_id > end_slide: continue
+                filtered.append(s)
+            segments = filtered
+            if not segments:
+                print("❌ No segments in requested range.")
+                return
+
         # 4. Rasterize Visuals
-        # Note: BaseParse.generate_images should return sorted paths
-        print("🖼️ Generating Visuals...")
-        image_paths = parser_engine.generate_images(images_dir, args.resolution)
+        print(f"🖼️ Generating Visuals (Range: {range_str if range_str else 'All'})...")
+        
+        # Pass range_str to generate_images if supported (SlidevParser only)
+        # BeamerParser.generate_images signature might not support it?
+        # Python allows kwargs? No, it's abstract method.
+        # I updated BaseParser? No, I only updated SlidevParser implementation.
+        # BaseParser definition in base.py still has (output_dir, resolution).
+        # Python doesn't enforce signature match strictly unless called.
+        # But cleaner way: Check isinstance(parser_engine, SlidevParser).
+        
+        if is_slidev:
+             image_paths = parser_engine.generate_images(images_dir, args.resolution, range_str=range_str)
+        else:
+             image_paths = parser_engine.generate_images(images_dir, args.resolution)
+             # Legacy Beamer Slicing logic
+             if args.max_slides:
+                 limit = min(len(image_paths), args.max_slides)
+                 image_paths = image_paths[:limit]
         
         # 5. Map Audio to Images
-        # Generic Logic: 
-        # Iterate segments. If segment.new_visual=True, advance image index.
-        # Else, append to current image.
-        
+        # Pre-allocate map
         audio_map: List[List[Path]] = [[] for _ in range(len(image_paths))]
         current_image_idx = -1
         
         audio_gen = AudioGenerator(audio_dir, provider=args.tts, custom_voice=args.voice)
-        
-        processed_visuals = 0
         
         print(f"🎤 Synthesizing Audio ({len(segments)} segments)...")
         
@@ -75,32 +125,17 @@ def main():
             # Advance visual if needed
             if seg.new_visual:
                 current_image_idx += 1
-                processed_visuals += 1
-                
-            # --max-slides logic
-            if args.max_slides and processed_visuals > args.max_slides:
-                print(f"🛑 Reached max slides limit ({args.max_slides}). Stopping.")
-                break
                 
             if current_image_idx >= len(image_paths):
-                # Overflow check
-                # For Beamer overlay logic, sometimes logic steps > PDF pages if parser is out of sync?
-                # Or if [click] counts mismatch.
-                # We log warning and skip sync, OR attach to last image?
-                # Attaching to last image is safer than dropping audio.
-                # But let's stick to safe bound.
-                if current_image_idx == len(image_paths): # Just one over
-                     print("⚠️ Warning: More logical steps than visual frames. Attaching remaining audio to last frame.")
-                     current_image_idx = len(image_paths) - 1
-                else:
-                     current_image_idx = len(image_paths) - 1
+                # Overflow
+                if current_image_idx == len(image_paths):
+                     # print("⚠️ Info: Audio logic suggests more steps than images. Attaching to last frame.")
+                     pass
+                current_image_idx = len(image_paths) - 1
             
             # Generate Audio
-            # We use `i` as primary index, but we might want `current_image_idx` as prefix?
-            # Let's use linear index `i` for unique filename.
             audio_path = audio_gen.generate(seg.text, seg.speaker, i)
             
-            # Map
             if current_image_idx >= 0:
                 audio_map[current_image_idx].append(audio_path)
 
@@ -110,13 +145,6 @@ def main():
             output_video = str(input_path.with_name(f"{input_path.stem}_video.mp4"))
             
         stitcher = VideoStitcher(output_video)
-        
-        # If max-slides used, slice image_paths and audio_map
-        if args.max_slides:
-             limit = min(len(image_paths), args.max_slides)
-             image_paths = image_paths[:limit]
-             audio_map = audio_map[:limit]
-             
         stitcher.stitch(image_paths, audio_map, resolution=args.resolution)
         
         print("✅ Done!")
@@ -124,6 +152,7 @@ def main():
     finally:
         # 7. Cleanup
         cache.cleanup()
+
 
 if __name__ == "__main__":
     main()

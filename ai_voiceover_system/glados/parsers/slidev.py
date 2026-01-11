@@ -14,9 +14,13 @@ class SlidevParser(BaseParser):
         self.work_dir = input_path.parent
         self.project_root = input_path.parent  # Simplified assumption
 
-    def parse(self) -> Tuple[List[AudioSegment], int]:
+    def parse(self, start_slide_id: int = 1) -> Tuple[List[AudioSegment], int, int]:
         """
         Parses slidev markdown (recursive).
+        Returns:
+            - List[AudioSegment]
+            - visual_step_count (total visual states)
+            - next_slide_id (ID for the next slide after this file)
         """
         with open(self.input_path, 'r', encoding='utf-8') as f:
             content = f.read()
@@ -29,9 +33,12 @@ class SlidevParser(BaseParser):
         slides = self._split_content_robust(content)
         segments = []
         visual_step_count = 0
+        current_slide_id = start_slide_id  # 1-based logical numbering
         
-        # User requested no "First Slide Exception".
-        # We rely entirely on _is_metadata_only to skip config blocks.
+        # We process chunks sequentially.
+        # Metadata chunks do NOT increment current_slide_id.
+        # Content chunks increment current_slide_id.
+        # Import chunks increment current_slide_id by the number of slides in import.
         
         for i, slide_content in enumerate(slides):
             if not slide_content.strip(): continue
@@ -47,22 +54,36 @@ class SlidevParser(BaseParser):
                 # Recursive Parse
                 import_path = (self.input_path.parent / src_import).resolve()
                 if import_path.exists():
-                    print(f"📖 Recursive Parsing: {import_path.name}")
+                    print(f"📖 Recursive Parsing: {import_path.name} (Start ID: {current_slide_id})")
                     sub_parser = SlidevParser(import_path)
-                    sub_segments, sub_visuals = sub_parser.parse()
+                    sub_segments, sub_visuals, next_id = sub_parser.parse(start_slide_id=current_slide_id)
                     segments.extend(sub_segments)
                     visual_step_count += sub_visuals
+                    
+                    # Determine how many slides were added
+                    # next_id is the ID *after* the import.
+                    current_slide_id = next_id 
                 else:
                     print(f"⚠️ Import Not Found: {import_path}")
                 continue
             
             # Normal Content Slide
+            # Only increment ID if we actually process it as a slide
+            this_slide_id = current_slide_id
+            
             notes_matches = re.findall(r'<!--\s*(.*?)\s*-->', slide_content, re.DOTALL)
             if not notes_matches:
                 # Visual slide with no notes
-                print(f"   (Visual Hold) No notes for slide {i}")
-                segments.append(AudioSegment(text="", speaker=None, new_visual=True))
+                print(f"   (Visual Hold) No notes for slide {i} (ID: {this_slide_id})")
+                segments.append(AudioSegment(
+                    text="", 
+                    speaker=None, 
+                    new_visual=True,
+                    slide_id=this_slide_id,
+                    click_id=0
+                ))
                 visual_step_count += 1
+                current_slide_id += 1
                 continue
                 
             raw_notes = notes_matches[-1].strip() # Use the last comment
@@ -74,16 +95,19 @@ class SlidevParser(BaseParser):
                 segments.append(AudioSegment(
                     text=seg['text'],
                     speaker=seg['speaker'],
-                    new_visual=seg['new_visual']
+                    new_visual=seg['new_visual'],
+                    slide_id=this_slide_id,
+                    click_id=seg['click_id']
                 ))
             
-            # Estimate Visual Steps: Count unique click_ids
             visual_states = set([s['click_id'] for s in slide_segments])
             visual_step_count += len(visual_states)
             
-        return segments, visual_step_count
+            current_slide_id += 1
+            
+        return segments, visual_step_count, current_slide_id
 
-    def generate_images(self, output_dir: Path, resolution: str) -> List[Path]:
+    def generate_images(self, output_dir: Path, resolution: str, range_str: Optional[str] = None) -> List[Path]:
         """
         Exports slides via npx slidev export.
         """
@@ -97,6 +121,9 @@ class SlidevParser(BaseParser):
             "--timeout", "120000"
         ]
         
+        if range_str:
+             cmd.extend(["--range", range_str])
+
         with open(self.input_path) as f:
             if '[click]' in f.read():
                 cmd.append("--with-clicks")
