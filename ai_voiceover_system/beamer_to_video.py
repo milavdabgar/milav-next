@@ -90,6 +90,9 @@ class BeamerParser:
             
             current_speaker = None
             
+            # Common structure markers that shouldn't be treated as speakers
+            IGNORED_SPEAKERS = {'Section', 'Slide', 'Frame', 'Note', 'Narrator'}
+            
             for line in lines:
                 line = line.strip()
                 if not line:
@@ -97,13 +100,27 @@ class BeamerParser:
                 
                 # Check for "Name: Text"
                 match = re.match(r'^([A-Za-z\s\.]+):\s*(.+)', line)
+                possible_speaker = None
+                
                 if match:
-                    current_speaker = match.group(1).strip()
+                    possible_speaker = match.group(1).strip()
+                    
+                if possible_speaker and possible_speaker not in IGNORED_SPEAKERS:
+                    current_speaker = possible_speaker
                     content = match.group(2).strip()
                 else:
-                    # Continuation of previous speaker? Or narrator?
-                    content = line
-                    # Keep current_speaker
+                    # Continuation or ignored speaker prefix
+                    # If it WAS a match but ignored (e.g. "Section: Text"), we want the content "Text"
+                    if possible_speaker: # It matched but was ignored
+                         content = match.group(2).strip()
+                         # Reset speaker to None for this line (narrator)
+                         current_speaker = None
+                    else:
+                        content = line
+                        # Keep previous current_speaker? 
+                        # If previous line was "James: Hi", and this line is "How are you?", 
+                        # it should probably belong to James.
+                        pass
                 
                 # New audio segment
                 # Only the VERY first segment of the `step` gets new_visual=True
@@ -332,9 +349,9 @@ def main():
     parser = argparse.ArgumentParser(description="Beamer to Video Converter")
     parser.add_argument("tex_file", help="Path to .tex file")
     parser.add_argument("--pdf", help="Path to existing PDF (optional)")
-    parser.add_argument("--tts", choices=['gtts', 'gcloud'], default='gtts', help="TTS Provider")
+    parser.add_argument("--tts", choices=['auto', 'gtts', 'gcloud'], default='auto', help="TTS Provider (default: auto)")
     parser.add_argument("--output", help="Output video filename")
-    parser.add_argument("--force", action="store_true", help="Force regeneration of audio/images (clean cache)")
+    parser.add_argument("--keep-residuals", action="store_true", help="Keep temporary files (audio/images) after generation")
     parser.add_argument("--resolution", choices=['720p', '1080p', '4k'], default='1080p', help="Output resolution (default: 1080p)")
     
     args = parser.parse_args()
@@ -348,29 +365,46 @@ def main():
     pdf_path = Path(args.pdf) if args.pdf else tex_path.with_suffix(".pdf")
     output_video = args.output if args.output else f"{tex_path.stem}_video.mp4"
     
-    work_dir = tex_path.parent / "video_work"
+    # Create work directory based on input filename to avoid cache collisions
+    work_dir = tex_path.parent / f"video_work_{tex_path.stem}"
     
-    if args.force and work_dir.exists():
-        print("🧹 Cleaning work directory...")
+    # Always clean start (No Caching by default)
+    if work_dir.exists():
         import shutil
+        print(f"🧹 Cleaning previous run: {work_dir}")
         shutil.rmtree(work_dir)
-    
+        
     # 1. Parse Notes
     print(f"📖 Parsing Notes from: {tex_path}")
     bp = BeamerParser(str(tex_path))
     frames = bp.parse()
     
+    # Flatten segments to check for speakers
+    all_segments = []
+    for f in frames:
+        all_segments.extend(f.audio_segments)
+
+    # Auto-Detect TTS Provider
+    if args.tts == 'auto':
+        # Check if we have any named speakers
+        unique_speakers = set(seg.speaker for seg in all_segments if seg.speaker)
+        if unique_speakers:
+            print(f"🎤 Auto-detect: Found speakers {unique_speakers}. Using Google Cloud TTS.")
+            args.tts = 'gcloud'
+        else:
+            print("🎤 Auto-detect: No named speakers. Using gTTS.")
+            args.tts = 'gtts'
+
     # 2. Rasterize PDF
     if not pdf_path.exists():
         print(f"❌ PDF not found: {pdf_path}. Please compile your latex first.")
         return
         
-    work_dir = tex_path.parent / "video_work"
-    work_dir.mkdir(exist_ok=True)
+    # Define images_dir and audio_dir RELATIVE to work_dir
     images_dir = work_dir / "images"
     audio_dir = work_dir / "audio"
-    images_dir.mkdir(exist_ok=True)
-    audio_dir.mkdir(exist_ok=True)
+    images_dir.mkdir(parents=True, exist_ok=True)
+    audio_dir.mkdir(parents=True, exist_ok=True)
     
     pdf_proc = PDFProcessor(str(pdf_path))
     
@@ -416,25 +450,10 @@ def main():
     if visual_steps > len(image_paths):
         print(f"⚠️ Warning: More visual steps ({visual_steps}) than images ({len(image_paths)}). Video might be cutoff.")
     elif visual_steps < len(image_paths):
-         print(f"⚠️ Warning: More images ({len(image_paths)}) than visual steps ({visual_steps}). Trailing images will be silent.")
+         print(f"⚠️ Warning: More images ({len(image_paths)}). than visual steps ({visual_steps}). Trailing images will be silent.")
         
     audio_gen = AudioGenerator(audio_dir, provider=args.tts)
     
-    # Map: image_index -> [audio_path1, audio_path2...]
-    # Actually, usually 1 segment = 1 image.
-    # But we might want to support multiple segments per image if [click] isn't present?
-    # No, our parser splits by [click]. If no [click], it's one big text -> 1 image.
-    # If [click] is present, it splits -> multiple segments -> multiple images.
-    
-    audio_map = []
-    
-    for i, seg in enumerate(all_segments):
-        if i >= len(image_paths):
-            break
-            
-        audio_path = audio_gen.generate(seg.text, seg.speaker, i)
-        audio_map.append([audio_path])
-        
     # Map: image_index -> [audio_path1, audio_path2...]
     # Using new_visual flag to handle multiple segments per image.
     
@@ -468,6 +487,12 @@ def main():
     stitcher.stitch(image_paths, audio_map, is_4k=is_4k)
     
     print(f"✅ Comparison Video Created: {output_video}")
+
+    # Cleanup residuals
+    if not args.keep_residuals and work_dir.exists():
+        print(f"🧹 Cleaning up residuals in {work_dir}...")
+        import shutil
+        shutil.rmtree(work_dir)
 
 if __name__ == "__main__":
     main()
