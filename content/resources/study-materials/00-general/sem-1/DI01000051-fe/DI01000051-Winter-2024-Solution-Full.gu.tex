@@ -137,8 +137,8 @@ LDR \textbf{Photoconductivity} ના સિદ્ધાંત પર કાર�
     \node at (0,-1.5) {Al Foil + Paper};
     
     % Leads
-    \draw[thick] (-0.3,0) -- (-0.3,1) node[above] {Positive (+)};
-    \draw[thick] (0.3,0) -- (0.3,1) node[above] {Negative (-)};
+    \draw[thick] (-0.8,0) -- (-0.8,1) node[above] {Positive (+)};
+    \draw[thick] (0.8,0) -- (0.8,1) node[above] {Negative (-)};
 \end{tikzpicture}
 \caption{ઈલેક્ટ્રોલાઈટ કેપેસીટરનું બંધારણ}
 \end{figure}
@@ -291,12 +291,23 @@ Silver (સિલ્વર) & - & \(10^{-2}\) & \(\pm 10\%\) \\
 \centering
 \begin{circuitikz}[scale=1]
     \draw (0,0) node[transformer core] (T) {};
-    \draw (T.A1) -- ++(-1,0) to[sV, l=AC Input] ++(0,-2) -- (T.A2);
-    \draw (T.B1) to[diode, l=D1] ++(2,0) coordinate (top);
-    \draw (T.B2) to[diode, l=D2] ++(2,0) coordinate (bot);
-    \draw (top) -- (bot) coordinate[midway] (mid);
-    \draw (T.base) -- ++(1,0) coordinate (center); 
-    \draw (mid) to[R, l=\(R_L\)] (center);
+    \draw (T.A1) -- ++(-2,0) to[sV, l=AC Input] ++(0,-2) -- (T.A2);
+    
+    % Secondary Side
+    \draw (T.B1) to[diode, l=D1] ++(2,0) coordinate (D1_cat);
+    \draw (T.B2) to[diode, l=D2] ++(2,0) coordinate (D2_cat);
+    
+    % Join Diodes (Positive Rail)
+    \draw (D1_cat) -- (D2_cat);
+    \draw ($(D1_cat)!0.5!(D2_cat)$) coordinate (mid) -- ++(2.5,0) coordinate (out_top);
+    
+    % Center Tap (Negative Rail/Ground)
+    % Start from actual center of secondary winding, go right slightly then down crossing the lower wire
+    \draw ($(T.B1)!0.5!(T.B2)$) -- ++(0.1,0) -- ++(0,-2.0) coordinate (bot_turn);
+    \draw (bot_turn) -- (bot_turn -| out_top) coordinate (out_bot);
+    
+    % Load Resistor (Vertical)
+    \draw (out_top) to[R, l=\(R_L\)] (out_bot);
 \end{circuitikz}
 \caption{સેન્ટર ટેપ્ડ ફુલ વેવ રેક્ટિફાયર}
 \end{figure}
@@ -532,17 +543,17 @@ NPN ટ્રાન્ઝિસ્ટરમાં બે N-ટાઈપ સ્�
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}[scale=1]
-    % NPN Block
-    \draw[thick] (0,0) rectangle (2,2) node[midway] {N (Emitter)};
-    \draw[thick] (2,0) rectangle (3,2) node[midway] {P};
-    \draw[thick] (3,0) rectangle (5,2) node[midway] {N (Collector)};
+    % NPN Block (Widened to 3.5 per block)
+    \draw[thick] (0,0) rectangle (3.5,2) node[midway] {N (Emitter)};
+    \draw[thick] (3.5,0) rectangle (4.5,2) node[midway] {P};
+    \draw[thick] (4.5,0) rectangle (8,2) node[midway] {N (Collector)};
     
-    % Biasing
-    \draw (0,1) -- (-1,1) -- (-1,-1) to[battery1, l=\(V_{BE}\)] (2.5,-1) -- (2.5,0);
-    \draw (5,1) -- (6,1) -- (6,-1) to[battery1, l=\(V_{CB}\)] (2.5,-1);
+    % Biasing (Center at x=4)
+    \draw (0,1) -- (-1,1) -- (-1,-1) to[battery1, l=\(V_{BE}\)] (4,-1) -- (4,0);
+    \draw (8,1) -- (9,1) -- (9,-1) to[battery1, l=\(V_{CB}\)] (4,-1);
     
     % Electron Flow
-    \draw[->, dashed] (0.5, 0.5) -- (4.5, 0.5) node[right] {Electrons};
+    \draw[->, dashed] (0.5, 0.5) -- (7.5, 0.5) node[right] {Electrons};
 \end{tikzpicture}
 \caption{NPN ટ્રાન્ઝિસ્ટર બાયસિંગ અને પ્રવાહ}
 \end{figure}
@@ -613,12 +624,12 @@ P-ટાઈપ સેમિકન્ડક્ટરના બે સ્તરો
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}[scale=1]
-    \draw[thick] (0,0) rectangle (1.5,2) node[midway] {P (Emitter)};
-    \draw[thick] (1.5,0) rectangle (2.5,2) node[midway] {N (Base)};
-    \draw[thick] (2.5,0) rectangle (4,2) node[midway] {P (Collector)};
+    \draw[thick] (0,0) rectangle (3,2) node[midway] {P (Emitter)};
+    \draw[thick] (3,0) rectangle (6,2) node[midway] {N (Base)};
+    \draw[thick] (6,0) rectangle (9,2) node[midway] {P (Collector)};
     \draw (0,1) -- (-0.5,1) node[left] {E};
-    \draw (2,1) -- (2,2.5) node[above] {B};
-    \draw (4,1) -- (4.5,1) node[right] {C};
+    \draw (4.5,2) -- (4.5,2.5) node[above] {B};
+    \draw (9,1) -- (9.5,1) node[right] {C};
 \end{tikzpicture}
 \caption{PNP ટ્રાન્ઝિસ્ટરનું બંધારણ}
 \end{figure}
@@ -723,16 +734,16 @@ V-I લાક્ષણીકતા વળાંક ડાયોડ (\(V\)) ત�
 \centering
 \begin{tikzpicture}[scale=0.8]
     % NPN
-    \draw (0,0) rectangle (1,2) node[midway] {N};
-    \draw (1,0) rectangle (2,2) node[midway] {P};
-    \draw (2,0) rectangle (3,2) node[midway] {N};
-    \node at (1.5,-0.5) {NPN Construction};
+    \draw (0,0) rectangle (2,2) node[midway] {N};
+    \draw (2,0) rectangle (4,2) node[midway] {P};
+    \draw (4,0) rectangle (6,2) node[midway] {N};
+    \node at (3,-0.5) {NPN Construction};
     
     % PNP
-    \draw (5,0) rectangle (6,2) node[midway] {P};
-    \draw (6,0) rectangle (7,2) node[midway] {N};
-    \draw (7,0) rectangle (8,2) node[midway] {P};
-    \node at (6.5,-0.5) {PNP Construction};
+    \draw (7,0) rectangle (9,2) node[midway] {P};
+    \draw (9,0) rectangle (11,2) node[midway] {N};
+    \draw (11,0) rectangle (13,2) node[midway] {P};
+    \node at (10,-0.5) {PNP Construction};
 \end{tikzpicture}
 \caption{બાંધકામ માળખું}
 \end{figure}
@@ -873,10 +884,11 @@ Step 4: \(\alpha\) મેળવવા માટે બંને બાજુ ઉ
 \begin{circuitikz}[scale=1]
     \draw (0,0) node[npn] (T) {};
     \draw (T.E) -- (0,-2) node[ground]{};
-    \draw (T.B) to[C, l=\(C_{in}\)] (-2,0) to[sV, l=\(V_{in}\)] (-2,-2) node[ground]{};
-    \draw (-2,0) to[R, l=\(R_B\)] (-2, 2) -- (0,2) -- (T.C);
+    \draw (T.B) to[short] (-2,0) coordinate (B_node);
+    \draw (B_node) to[C, l=\(C_{in}\)] (-4.5,0) to[sV, l=\(V_{in}\)] (-4.5,-2) node[ground]{};
+    \draw (0,2) to[R, l=\(R_B\)] (-2, 2) -- (B_node); % Collector Feedback Bias (connecting Collector to Base)
     \draw (0,2) to[R, l=\(R_C\)] (0,4) node[vcc]{\(V_{CC}\)}; 
-    \draw (T.C) to[C, l=\(C_{out}\), *-o] (2,0) node[right]{\(V_{out}\)};
+    \draw (T.C) to[C, l=\(C_{out}\), *-o] ++(2,0) node[right]{\(V_{out}\)};
 \end{circuitikz}
 \caption{સિંગલ સ્ટેજ CE એમ્પ્લીફાયર}
 \end{figure}
@@ -1023,35 +1035,35 @@ NE555 ટાઈમર IC ની મુખ્ય લાક્ષણિકતા�
 \begin{figure}[H]
 \centering
 \begin{circuitikz}[scale=1]
-    \draw (0,0) node[dipchip, num pins=8, hide numbers, no topmark, external pins width=0](C){IC 555};
+    % Schematic Box
+    \draw[thick] (0,0) rectangle (6,5);
+    \node at (3,2.5) {\Large \textbf{IC 555}};
     
-    % Pin Connections
-    \draw (C.pin 1) -- ++(-0.5,0) node[ground]{} node[left, pos=1]{1 (GND)};
-    \draw (C.pin 8) -- ++(0,1) node[vcc]{Vcc} node[right, pos=0.1]{8};
-    \draw (C.pin 4) -- ++(0,0.5) -- (C.pin 8); % Reset to Vcc
+    % Left: Pin 2 (Trig)
+    \draw (0,2.5) -- (-1.5,2.5) to[sV, l=Trig] (-1.5,0.5) node[ground]{};
+    \node at (0.2, 2.5) [right, font=\tiny] {2 (Trig)};
     
-    % Timing RC
-    \draw (C.pin 8) ++ (2,1.5) node[vcc]{Vcc} to[R, l=\(R_A\)] ++(0,-3) coordinate (node7) -- (C.pin 7);
-    \draw (node7) -- (C.pin 6);
-    \draw (node7) to[C, l=\(C\)] ++(0,-2) node[ground]{};
+    % Right: Pin 3 (Out)
+    \draw (6,2.5) -- (7.5,2.5) node[right]{Output};
+    \node at (5.8, 2.5) [left, font=\tiny] {3 (Out)};
     
-    % Trigger
-    \draw (C.pin 2) -- ++(-1,0) to[sV, l=Trig] ++(0,-2) node[ground]{};
+    % Top: Pin 8 (Vcc), 4 (Reset)
+    \draw (2,5) -- (2,6) node[vcc]{Vcc}; \node at (2, 4.8) [below, font=\tiny] {8};
+    \draw (4,5) -- (4,6) -- (2,6); \node at (4, 4.8) [below, font=\tiny] {4};
     
-    % Control Voltage
-    \draw (C.pin 5) to[C, l=0.01\(\mu\)F] ++(0,-1) node[ground]{};
+    % Top Right: Pin 7 (Disch), 6 (Thres)
+    % RA from Vcc to 7
+    \draw (2,6) -| (7,6) to[R, l=\(R_A\)] (7, 4.5) coordinate (p7);
+    \draw (6, 4.5) -- (p7); \node at (5.8, 4.5) [left, font=\tiny] {7};
+    \draw (6, 3.5) -- (7, 3.5) coordinate (p6); \node at (5.8, 3.5) [left, font=\tiny] {6};
     
-    % Output
-    \draw (C.pin 3) -- ++(1,0) node[right]{Output};
+    % Wiring 6 and 7 together (Monostable: 6&7 connected)
+    \draw (p7) -- (p6);
+    \draw (p6) to[C, l=\(C\)] (7, 0) node[ground]{};
     
-    \node at (C.bpin 1) [left, font=\tiny] {GND};
-    \node at (C.bpin 2) [left, font=\tiny] {TRIG};
-    \node at (C.bpin 3) [right, font=\tiny] {OUT};
-    \node at (C.bpin 4) [left, font=\tiny] {RST};
-    \node at (C.bpin 5) [right, font=\tiny] {CV};
-    \node at (C.bpin 6) [right, font=\tiny] {THR};
-    \node at (C.bpin 7) [right, font=\tiny] {DIS};
-    \node at (C.bpin 8) [left, font=\tiny] {VCC};
+    % Bottom: Pin 1 (GND), 5 (CV)
+    \draw (2,0) -- (2,-1) node[ground]{} node[right, pos=0.5]{1 (GND)}; \node at (2,0.2) [above, font=\tiny] {1};
+    \draw (4,0) to[C, l=0.01\(\mu\)F] (4,-1.5) node[ground]{}; \node at (4,0.2) [above, font=\tiny] {5 (CV)};
 \end{circuitikz}
 \caption{મોનોસ્ટેબલ મલ્ટીવાઈબ્રેટર સર્કિટ}
 \end{figure}
@@ -1183,36 +1195,34 @@ IC 555 ની વૈવિધ્યતા તેને ઘણી એપ્લિ
 \begin{figure}[H]
 \centering
 \begin{circuitikz}[scale=1]
-    \draw (0,0) node[dipchip, num pins=8, hide numbers, no topmark, external pins width=0](C){IC 555};
+    % Schematic Box
+    \draw[thick] (0,0) rectangle (6,5);
+    \node at (3,2.5) {\Large \textbf{IC 555}};
     
-    % Pin Connections
-    \draw (C.pin 1) -- ++(-0.5,0) node[ground]{} node[left, pos=1]{1 (GND)};
-    \draw (C.pin 8) -- ++(0,1) node[vcc]{Vcc} node[right, pos=0.1]{8};
-    \draw (C.pin 4) -- ++(0,0.5) -- (C.pin 8); % Reset to Vcc
+    % Left: No inputs for Astable (Self Trigger)
+    % We can visually balance by putting nothing or just Grounding
     
-    % Timing RA, RB, C
-    \draw (C.pin 8) ++ (2,1.5) node[vcc]{Vcc} to[R, l=\(R_A\)] ++(0,-1.5) coordinate (node7) -- (C.pin 7);
-    \draw (node7) to[R, l=\(R_B\)] ++(0,-1.5) coordinate (node62);
-    \draw (node62) to[C, l=\(C\)] ++(0,-1.5) node[ground]{};
+    % Right: Pin 3 (Out)
+    \draw (6,2.5) -- (7.5,2.5) node[right]{Output (Square Wave)};
+    \node at (5.8, 2.5) [left, font=\tiny] {3 (Out)};
     
-    % Connect 6 and 2 to capacitor
-    \draw (node62) -- (C.pin 6);
-    \draw (node62) -- ++(0.5,0) -- ++(0, -2.5) -- ++(-4,0) |- (C.pin 2);
+    % Top: Pin 8 (Vcc), 4 (Reset)
+    \draw (2,5) -- (2,6) node[vcc] {Vcc}; \node at (2, 4.8) [below, font=\tiny] {8};
+    \draw (4,5) -- (4,6) -- (2,6); \node at (4, 4.8) [below, font=\tiny] {4};
     
-    % Control Voltage
-    \draw (C.pin 5) to[C, l=0.01\(\mu\)F] ++(0,-1) node[ground]{};
+    % Top Right Chain: Vcc -> RA -> 7 -> RB -> 6/2 -> C -> GND
+    \draw (2,6) -| (7,6) to[R, l=\(R_A\)] (7, 4.5) coordinate (p7);
+    \draw (6, 4.5) -- (p7); \node at (5.8, 4.5) [left, font=\tiny] {7};
     
-    % Output
-    \draw (C.pin 3) -- ++(1,0) node[right]{Output (Square Wave)};
+    \draw (p7) to[R, l=\(R_B\)] (7, 2) coordinate (p62);
+    \draw (6, 3.5) -- (6.5, 3.5) -- (6.5, 2) -- (p62); \node at (5.8, 3.5) [left, font=\tiny] {6}; % Pin 6
+    \draw (6, 1.5) -- (6.5, 1.5) -- (6.5, 2); \node at (5.8, 1.5) [left, font=\tiny] {2}; % Pin 2
     
-    \node at (C.bpin 1) [left, font=\tiny] {GND};
-    \node at (C.bpin 2) [left, font=\tiny] {TRIG};
-    \node at (C.bpin 3) [right, font=\tiny] {OUT};
-    \node at (C.bpin 4) [left, font=\tiny] {RST};
-    \node at (C.bpin 5) [right, font=\tiny] {CV};
-    \node at (C.bpin 6) [right, font=\tiny] {THR};
-    \node at (C.bpin 7) [right, font=\tiny] {DIS};
-    \node at (C.bpin 8) [left, font=\tiny] {VCC};
+    \draw (p62) to[C, l=\(C\)] (7, -1) node[ground]{};
+    
+    % Bottom: Pin 1 (GND), 5 (CV)
+    \draw (2,0) -- (2,-1) node[ground]{1 (GND)}; \node at (2,0.2) [above, font=\tiny] {1};
+    \draw (4,0) to[C, l=0.01\(\mu\)F] (4,-1.5) node[ground]{}; \node at (4,0.2) [above, font=\tiny] {5 (CV)};
 \end{circuitikz}
 \caption{અસ્ટેબલ મલ્ટીવાઈબ્રેટર સર્કિટ}
 \end{figure}
