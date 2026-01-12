@@ -137,6 +137,7 @@ def check_word_counts(filename):
     print(f"\n--- Checking Word Counts vs Marks: {filename} ---")
     
     ranges = {
+        1: (30, 60),    # MCQ answers - short explanations
         3: (90, 150),
         4: (120, 180),
         7: (200, 300)
@@ -256,9 +257,10 @@ def check_question_structure(filename):
     
     for sub_line in subsection_lines:
         # Check next few lines for textbf and subsubsection{Solution}
-        next_5_lines = lines[sub_line:sub_line+5]
-        has_textbf = any(r'\textbf{' in line for line in next_5_lines)
-        has_solution = any('subsubsection{Solution}' in line or 'subsubsection{ઉકેલ}' in line for line in next_5_lines)
+        # Use 8 lines to accommodate MCQs with options
+        next_8_lines = lines[sub_line:sub_line+8]
+        has_textbf = any(r'\textbf{' in line for line in next_8_lines)
+        has_solution = any('subsubsection{Solution}' in line or 'subsubsection{ઉકેલ}' in line for line in next_8_lines)
         
         if not has_textbf:
             print(f"❌ Line {sub_line+1}: Subsection missing \\textbf{{}} question statement")
@@ -563,11 +565,15 @@ def check_subsection_labeling(filename):
     subsections = re.findall(r'\\subsection\{([^}]+)\}', content)
     
     for subsec in subsections:
-        # Check for (a), (b), (c), OR pattern and marks
+        # Check for (a), (b), (c), OR pattern OR numbered pattern for MCQs (1), (2), etc.
         has_part = re.search(r'\([a-z]\)|OR|અથવા', subsec)
+        has_numbered_mcq = re.search(r'\(\d+\)', subsec)  # Allow numbered like (1), (2) for MCQs
         has_marks = re.search(r'\[\s*\d+\s*(marks|Marks|ગુણ)\s*\]', subsec)
         
-        if not has_part:
+        # Exception: If it's a 1-mark question with numbered format, that's acceptable (MCQ pattern)
+        is_one_mark_mcq = has_numbered_mcq and re.search(r'\[\s*1\s*(marks|Marks|ગુણ)\s*\]', subsec)
+        
+        if not has_part and not is_one_mark_mcq:
             print(f"⚠️  Subsection '{subsec[:40]}' missing part label (a), (b), (c), or OR")
             warnings += 1
         if not has_marks:
