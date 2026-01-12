@@ -1,3 +1,4 @@
+% !TeX program = xelatex
 %% METADATA
 %% subject-code: DI01000051
 %% subject-name: Fundamentals of Electronics
@@ -46,38 +47,55 @@ A \textbf{Bi-stable Multivibrator} is a circuit that has \textbf{two stable stat
 \begin{figure}[H]
 \centering
 \begin{circuitikz}[scale=1]
-    \draw (0,0) node[dipchip, num pins=8, hide numbers, external pins width=0, no topmark](C) {555};
-    \node [right, font=\tiny] at (C.bpin 1) {GND};
-    \node [right, font=\tiny] at (C.bpin 2) {TRIG};
-    \node [right, font=\tiny] at (C.bpin 3) {OUT};
-    \node [right, font=\tiny] at (C.bpin 4) {RST};
-    \node [left, font=\tiny] at (C.bpin 8) {VCC};
-    \node [left, font=\tiny] at (C.bpin 7) {DIS};
-    \node [left, font=\tiny] at (C.bpin 6) {THR};
-    \node [left, font=\tiny] at (C.bpin 5) {CV};
+    % Main Box (5x6)
+    \draw[thick] (0,0) rectangle (5,6);
+    \node at (2.5, 5.0) {\textbf{555 Timer}};
 
-    % Power
-    \draw (C.bpin 8) -- ++(0,1) node[vcc]{+Vcc};
-    \draw (C.bpin 1) -- ++(0,-1) node[ground]{};
+    % Pins Nodes
+    % Left Side Inputs
+    \coordinate (trig) at (0, 4);
+    \coordinate (rst) at (0, 2);
+    \node [right, font=\scriptsize] at (trig) {2:TRIG};
+    \node [right, font=\scriptsize] at (rst) {4:RST};
 
-    % Trigger Pull up and Switch
-    \draw (C.bpin 2) -- ++(-1.5,0) coordinate(t);
-    \draw (t) -- ++(0,1) to[R, l=\(R_1\)] ++(0,1) node[vcc]{};
-    \draw (t) -- ++(0,-1) to[push button, l=Set] ++(0,-1) node[ground]{};
+    % Right Side Outputs
+    \coordinate (dis) at (5, 5);
+    \coordinate (cv) at (5, 4);
+    \coordinate (out) at (5, 3);
+    \coordinate (thr) at (5, 2);
+    \node [left, font=\scriptsize] at (dis) {7:DIS};
+    \node [left, font=\scriptsize] at (cv) {5:CV};
+    \node [left, font=\scriptsize] at (out) {3:OUT};
+    \node [left, font=\scriptsize] at (thr) {6:THR};
 
-    % Reset Pull up and Switch
-    \draw (C.bpin 4) -- ++(-2.5,0) coordinate(r);
-    \draw (r) -- ++(0,1) to[R, l=\(R_2\)] ++(0,1) node[vcc]{};
-    \draw (r) -- ++(0,-1) to[push button, l=Reset] ++(0,-1) node[ground]{};
+    % Power Connections (Centered)
+    \coordinate (vcc_pin) at (2.5, 6);
+    \node [below, font=\scriptsize] at (vcc_pin) {8:VCC};
+    \draw (vcc_pin) -- ++(0,1) node[vcc]{+Vcc};
 
-    % Output
-    \draw (C.bpin 3) -- ++(1,0) to[R, l=\(R_L\)] ++(2,0) node[ground]{};
-    \draw (C.bpin 3) ++(1,0) -- ++(0,0.5) node[above]{Output};
-    
-    % Unused pins grounded or open
-    \draw (C.bpin 6) -- ++(-0.5,0) node[ground]{};
-    \draw (C.bpin 5) -- ++(-0.5,0) to[C, l=0.01\(\mu\)F] ++(0,-1) node[ground]{};
-    \draw (C.bpin 7) -- ++(-0.5,0); % Left open
+    \coordinate (gnd_pin) at (2.5, 0);
+    \node [above, font=\scriptsize] at (gnd_pin) {1:GND};
+    \draw (gnd_pin) -- ++(0,-1) node[ground]{};
+
+    % Trigger Input (Pin 2) - Inner Loop
+    \draw (trig) -- ++(-1.5,0) coordinate(t_node);
+    \draw (t_node) -- ++(0,1.5) to[R, l=\(R_1\)] ++(0,1.5) node[vcc]{};
+    \draw (t_node) -- ++(0,-2.5) to[push button, l=Set] ++(0,-1) node[ground]{};
+
+    % Reset Input (Pin 4) - Outer Loop
+    \draw (rst) -- ++(-3.5,0) coordinate(r_node);
+    \draw (r_node) -- ++(0,3.5) to[R, l=\(R_2\)] ++(0,1.5) node[vcc]{};
+    \draw (r_node) -- ++(0,-0.5) to[push button, l=Reset] ++(0,-1) node[ground]{};
+
+    % Output (Pin 3) - Moved Right
+    \draw (out) -- ++(1,0) coordinate(o_node);
+    \draw (o_node) to[R, l=\(R_L\)] ++(1.5,0) node[ground]{};
+    \draw (o_node) -- ++(0,1) node[above]{Output};
+
+    % Unused/External Pins
+    \draw (thr) -- ++(0.5,0) node[ground]{}; % Pin 6
+    \draw (cv) -- ++(0.5,0) to[C, l_=0.01\(\mu\)F] ++(0,-1) node[ground]{}; % Pin 5
+    \draw (dis) -- ++(0.5,0); % Pin 7 Open
 \end{circuitikz}
 \caption{Bi-stable Multivibrator using 555 Timer}
 \end{figure}
@@ -108,16 +126,24 @@ The 555 Timer is an 8-pin integrated circuit used for timing and pulse generatio
 \paragraph{Pin Diagram:}
 \begin{figure}[H]
 \centering
-\begin{circuitikz}[scale=1.2]
-    \draw (0,0) node[dipchip, num pins=8, hide numbers, external pins width=0](C) {555};
-    \node [right, font=\small] at (C.bpin 1) {1: GND};
-    \node [right, font=\small] at (C.bpin 2) {2: TRIGGER};
-    \node [right, font=\small] at (C.bpin 3) {3: OUTPUT};
-    \node [right, font=\small] at (C.bpin 4) {4: RESET};
-    \node [left, font=\small] at (C.bpin 8) {8: VCC};
-    \node [left, font=\small] at (C.bpin 7) {7: DISCHARGE};
-    \node [left, font=\small] at (C.bpin 6) {6: THRESHOLD};
-    \node [left, font=\small] at (C.bpin 5) {5: CONTROL VOLT};
+\begin{circuitikz}[scale=1]
+    % Wide DIP Package Body (4 units wide, 5 units tall)
+    \draw[thick] (0,0) rectangle (4,5);
+    \node at (2, 4.5) {\textbf{IC 555}};
+    \node at (2, 4.2) {\tiny (Top View)};
+    \draw (1.5,5) arc (180:360:0.5); % Notch at top
+
+    % Left Pins (1-4)
+    \foreach \i/\num/\txt in {4/1/GND, 3/2/TRIGGER, 2/3/OUTPUT, 1/4/RESET} {
+        \draw (0, \i) -- (-0.5, \i) node[left]{\small \num};
+        \node[right, font=\scriptsize] at (0, \i) {\txt};
+    }
+
+    % Right Pins (8-5)
+    \foreach \i/\num/\txt in {4/8/VCC, 3/7/DISCHARGE, 2/6/THRESHOLD, 1/5/CONTROL VOLT} {
+        \draw (4, \i) -- (4.5, \i) node[right]{\small \num};
+        \node[left, font=\scriptsize] at (4, \i) {\txt};
+    }
 \end{circuitikz}
 \caption{Pin Diagram of IC 555}
 \end{figure}
@@ -154,54 +180,62 @@ The 555 timer internal architecture consists of key components: a voltage divide
 \paragraph{Block Diagram:}
 \begin{figure}[H]
 \centering
-\begin{tikzpicture}[auto, node distance=1.5cm, >=latex']
+\begin{tikzpicture}[auto, >=latex']
     % Styles
-    \tikzstyle{block} = [draw, rectangle, minimum height=1cm, minimum width=1.5cm]
-    \tikzstyle{comp} = [draw, regular polygon, regular polygon sides=3, shape border rotate=-90, minimum height=1cm]
+    \tikzstyle{comp} = [draw, regular polygon, regular polygon sides=3, shape border rotate=-90, minimum height=1.2cm]
+
+    % Resistor Divider Chain (Center-Left) at x=0
+    \node (vcc) at (0, 6) {Vcc (8)};
+    \node[draw, rectangle, minimum height=1cm, minimum width=0.6cm] (r1) at (0, 4.5) {5k};
+    \node[draw, rectangle, minimum height=1cm, minimum width=0.6cm] (r2) at (0, 2.5) {5k};
+    \node[draw, rectangle, minimum height=1cm, minimum width=0.6cm] (r3) at (0, 0.5) {5k};
+    \node[ground] (gnd) at (0, -1) {};
+
+    \draw (vcc) -- (r1) -- (r2) -- (r3) -- (gnd);
+
+    % Comparators (Right of divider) compressed to x=3.5
+    % C1 (Top)
+    \node[comp] (c1) at (3.5, 3.5) {};
+    \node at (c1.center) {\small C1};
+    % C2 (Bottom)
+    \node[comp] (c2) at (3.5, 1.5) {};
+    \node at (c2.center) {\small C2};
+
+    % Divider Taps to Comparators
+    % R1-R2 junction (2/3 Vcc) -> C1 (-) [Corner 3 is bottom-left]
+    \draw (0, 3.5) -- ++(1, 0) |- (c1.corner 3);
+
+    % R2-R3 junction (1/3 Vcc) -> C2 (+) [Corner 2 is top-left]
+    \draw (0, 1.5) -- ++(1, 0) |- (c2.corner 2);
+
+    % External Inputs (Far Left) pulled closer to x=-2
+    % Threshold (Pin 6) -> C1 (+) [Corner 2 is top-left]
+    \node (thresh) at (-2, 3.8) {Threshold (6)};
+    \draw[->] (thresh) -- ++(1.5, 0) |- (c1.corner 2);
+
+    % Trigger (Pin 2) -> C2 (-) [Corner 3 is bottom-left]
+    \node (trig) at (-2, 1.2) {Trigger (2)};
+    \draw[->] (trig) -- ++(1.5, 0) |- (c2.corner 3);
+
+    % SR Flip Flop at x=7 (compressed from 9)
+    \node[draw, rectangle, minimum width=2cm, minimum height=1.5cm, align=center] (sr) at (7, 2.5) {SR Flip-Flop};
+
+    % Comparator Outputs to SR
+    \draw[->] (c1.corner 1) -- node[above, font=\scriptsize] {R} (sr.north west);
+    \draw[->] (c2.corner 1) -- node[above, font=\scriptsize] {S} (sr.south west);
+
+    % Output Stage at x=10 (compressed from 12)
+    \node[draw, rectangle, minimum width=2cm, minimum height=1cm] (outstg) at (10, 2.5) {Output Stage};
+    \draw[->] (sr.east) -- node[above, font=\scriptsize] {Q} (outstg.west);
     
-    % Voltage Divider
-    \node [coordinate] (vcc) {};
-    \path (vcc) ++(0,-1) coordinate (r1top);
-    \node [draw, rectangle, minimum width=0.5cm, minimum height=1cm, below of=vcc] (R1) {5k};
-    \node [draw, rectangle, minimum width=0.5cm, minimum height=1cm, below of=R1] (R2) {5k};
-    \node [draw, rectangle, minimum width=0.5cm, minimum height=1cm, below of=R2] (R3) {5k};
-    \node [ground, below of=R3] (gnd) {};
-    
-    \draw (vcc) node[above]{Vcc (8)} -- (R1) -- (R2) -- (R3) -- (gnd);
-    
-    % Comparators
-    \node [comp, right of=R1, xshift=2cm] (C1) {C1};
-    \node [comp, right of=R3, xshift=2cm] (C2) {C2};
-    
-    % Connections to Comparators
-    \draw [->] (R1) -- node[above]{2/3 Vcc} (C1.south); % Non-inverting of C1 (roughly)
-    \draw [->] (R2) -- node[above]{1/3 Vcc} (C2.north); % Inverting of C2 (roughly)
-    
-    % Flip Flop
-    \node [block, right of=C1, xshift=2cm, yshift=-1.5cm] (FF) {SR Flip-Flop};
-    
-    \draw [->] (C1.base) -- node[above]{R} (FF.north west);
-    \draw [->] (C2.base) -- node[above]{S} (FF.south west);
-    
-    % External Inputs
-    \node [left of=C1, xshift=-3cm] (thresh) {Threshold (6)};
-    \draw [->] (thresh) -- (C1.north);
-    
-    \node [left of=C2, xshift=-3cm] (trig) {Trigger (2)};
-    \draw [->] (trig) -- (C2.south);
-    
-    % Output Stage
-    \node [block, right of=FF, xshift=2cm] (outstage) {Output Stage};
-    \draw [->] (FF.east) -- node[above]{Q} (outstage);
-    \node [right of=outstage, xshift=1cm] (outpin) {Output (3)};
-    \draw [->] (outstage) -- (outpin);
-    
-    % Discharge
-    \node [draw, circle, minimum size=0.5cm, below of=outstage] (Q1) {Q1}; 
-    \draw [->] (FF.south) |- (Q1);
-    \node [below of=Q1] (disch) {Discharge (7)};
-    \draw (Q1) -- (disch);
-    
+    \node (outpin) at (12.5, 2.5) {Output (3)};
+    \draw[->] (outstg.east) -- (outpin);
+
+    % Discharge Transistor aligned with SR at x=7
+    \node[draw, circle, minimum size=0.8cm] (q1) at (7, -1) {Q1};
+    \node (disch) at (7, -2) {Discharge (7)};
+    \draw (q1.south) -- (disch);
+    \draw[->] (sr.south) -- (q1.north); % Q bar logic simplified
 \end{tikzpicture}
 \caption{Internal Block Diagram of 555 Timer}
 \end{figure}
@@ -240,20 +274,45 @@ Generates continuous rectangular pulses without external trigger.
 
 \begin{figure}[H]
 \centering
-\begin{circuitikz}[scale=0.8]
-    \draw (0,0) node[dipchip, num pins=8, hide numbers, external pins width=0](C) {555};
-    \draw (C.bpin 8) -- ++(0,1) node[vcc]{Vcc};
-    \draw (C.bpin 1) -- ++(0,-1) node[ground]{};
-    \draw (C.bpin 4) -- ++(0,1) node[vcc]{}; % Reset to Vcc
-    
-    % Astable connections
-    \draw (C.bpin 8) ++ (-1,1) coordinate (top);
-    \draw (top) to[R, l=\(R_A\)] ++(0,-2) coordinate(mid);
-    \draw (mid) |- (C.bpin 7);
-    \draw (mid) to[R, l=\(R_B\)] ++(0,-2) coordinate(bot);
-    \draw (bot) |- (C.bpin 6);
-    \draw (bot) |- (C.bpin 2);
-    \draw (bot) to[C, l=\(C\)] ++(0,-2) node[ground]{};
+\begin{circuitikz}[scale=1]
+    % 555 Functional Block
+    \draw[thick, fill=white] (3,0) rectangle (6,5);
+    \node at (4.5, 4.5) {\textbf{555}};
+
+    % Pins Nodes
+    \node[right, font=\scriptsize] at (3,1.5) {2:TRIG};
+    \node[right, font=\scriptsize] at (3,2.5) {6:THR};
+    \node[right, font=\scriptsize] at (3,3.5) {7:DIS};
+    \node[right, font=\scriptsize] at (3,0.5) {1:GND};
+
+    \node[left, font=\scriptsize] at (6,1.5) {3:OUT};
+    \node[left, font=\scriptsize] at (6,2.5) {4:RST};
+    \node[left, font=\scriptsize] at (6,3.5) {8:VCC};
+    \node[left, font=\scriptsize] at (6,0.5) {5:CV};
+
+    % Power Vcc
+    \draw (6, 3.5) -- ++(0.5,0) node[vcc]{+Vcc};
+    % Reset to Vcc
+    \draw (6, 2.5) -- ++(0.5,0) |- (6.5, 3.5);
+
+    % GND
+    \draw (3, 0.5) -- ++(-0.5,0) node[ground]{};
+
+    % Timing Chain
+    \draw (1, 5) node[vcc]{Vcc} to[R, l=\(R_A\)] (1, 3.5) coordinate(n7);
+    \draw (n7) to[R, l=\(R_B\)] (1, 1.5) coordinate(n62);
+    \draw (n62) to[C, l=\(C\)] (1, -0.5) node[ground]{};
+
+    % Pin Connections
+    \draw (3, 3.5) -- (n7); % Pin 7
+    \draw (3, 2.5) -- ++(-0.5,0) |- (n62); % Pin 6
+    \draw (3, 1.5) -- ++(-0.5,0) |- (n62); % Pin 2
+
+    % Pin 5 Cap
+    \draw (6, 0.5) -- ++(0.5,0) to[C, l=0.01\(\mu\)F] ++(0,-1) node[ground]{};
+
+    % Output
+    \draw (6, 1.5) -- ++(1,0) node[right]{Output};
 \end{circuitikz}
 \caption{Astable Multivibrator Circuit}
 \end{figure}
@@ -266,20 +325,47 @@ Produces a single output pulse of fixed duration when triggered.
 
 \begin{figure}[H]
 \centering
-\begin{circuitikz}[scale=0.8]
-    \draw (0,0) node[dipchip, num pins=8, hide numbers, external pins width=0](C) {555};
-    \draw (C.bpin 8) -- ++(0,1) node[vcc]{Vcc};
-    \draw (C.bpin 1) -- ++(0,-1) node[ground]{};
-    
-    % Monostable connections
-    \draw (C.bpin 8) ++ (-1,1) coordinate (top);
-    \draw (top) to[R, l=\(R\)] ++(0,-2) coordinate(mid);
-    \draw (mid) |- (C.bpin 7);
-    \draw (mid) |- (C.bpin 6);
-    \draw (mid) to[C, l=\(C\)] ++(0,-2) node[ground]{};
-    
-    % Trigger
-    \draw (C.bpin 2) -- ++(-1,0) node[left]{Trigger Input};
+\begin{circuitikz}[scale=1]
+    % 555 Functional Block
+    \draw[thick, fill=white] (3,0) rectangle (6,5);
+    \node at (4.5, 4.5) {\textbf{555}};
+
+    % Pins Nodes
+    \node[right, font=\scriptsize] at (3,1.5) {2:TRIG};
+    \node[right, font=\scriptsize] at (3,2.5) {6:THR};
+    \node[right, font=\scriptsize] at (3,3.5) {7:DIS};
+    \node[right, font=\scriptsize] at (3,0.5) {1:GND};
+
+    \node[left, font=\scriptsize] at (6,1.5) {3:OUT};
+    \node[left, font=\scriptsize] at (6,2.5) {4:RST};
+    \node[left, font=\scriptsize] at (6,3.5) {8:VCC};
+    \node[left, font=\scriptsize] at (6,0.5) {5:CV};
+
+    % Power Vcc
+    \draw (6,3.5) -- ++(0.5,0) node[vcc]{+Vcc};
+    % Reset to Vcc
+    \draw (6,2.5) -- ++(0.5,0) |- (6.5, 3.5);
+
+    % GND
+    \draw (3,0.5) -- ++(-0.5,0) node[ground]{};
+
+    % Monostable Timing Chain (Left Side) - Moved to x=-1 to avoid overlap
+    \draw (-1, 5) node[vcc]{Vcc} to[R, l=\(R\)] (-1, 3) coordinate(common);
+    \draw (common) to[C, l=\(C\)] (-1, 0) node[ground]{};
+
+    % Connections
+    \draw (3, 3.5) -- ++(-1,0) |- (common); % Pin 7
+    \draw (3, 2.5) -- ++(-1,0) |- (common); % Pin 6
+
+    % Trigger Input (Pin 2)
+    % Label moved midway to stay clear of everything
+    \draw (3, 1.5) -- (0, 1.5) node[midway, above]{Trigger Input};
+
+    % Output
+    \draw (6, 1.5) -- ++(1,0) node[right]{Output};
+
+    % Pin 5 Cap
+    \draw (6, 0.5) -- ++(0.5,0) to[C, l=0.01\(\mu\)F] ++(0,-1) node[ground]{};
 \end{circuitikz}
 \caption{Monostable Multivibrator Circuit}
 \end{figure}
@@ -501,58 +587,41 @@ A \textbf{Bridge Rectifier} uses four diodes in a bridge configuration to conver
 \paragraph{Circuit Diagram:}
 \begin{figure}[H]
 \centering
+
 \begin{circuitikz}[scale=1]
     % Transformer
-    \draw (-2,0) node[transformer](T){};
-    \draw (T.A1) -- ++(-0.5,0) node[left]{AC In};
-    \draw (T.A2) -- ++(-0.5,0) node[left]{AC In};
+    \draw (0,0) node[transformer](T){};
+    \node[left] at (T.A1) {AC In};
+    \node[left] at (T.A2) {AC In};
     
-    % Bridge
-    \draw (T.B1) -- (0,1); % Top AC point
-    \draw (T.B2) -- (0,-1); % Bottom AC point
+    % Bridge Diamond Nodes
+    % Left (GND ref): (2.5, 0)
+    % Right (Output): (5.5, 0)
+    % Top (AC1): (4, 1.5)
+    % Bottom (AC2): (4, -1.5)
     
-    % Diode Bridge (Diamond shape)
-    % Top AC (0,1) connected to cathode of D4 and anode of D1
-    % Wait, standard bridge:
-    % AC inputs at Left/Right or Top/Bottom?
-    % Let's draw standard diamond
-    % Top Node: (1.5, 1.5) -> DC Positive
-    % Bottom Node: (1.5, -1.5) -> DC Negative
-    % Left Node: (0,0) -> AC1
-    % Right Node: (3,0) -> AC2
-    % No, let's stick to standard layout
-    
-    \draw (0,1) to[D*, l=\(D_1\)] (1.5,1) coordinate(pos);
-    \draw (0,-1) to[D*, l=\(D_2\)] (1.5,-1) coordinate(neg); %% Wrong config
-    
-    % Let's use predefined bridge or manual
-    % Standard:
-    % AC Top (0,1) -> Anode D1 -> Pos Rail
-    % AC Top (0,1) -> Cathode D4 -> Neg Rail
-    % AC Bot (0,-1) -> Anode D2 -> Pos Rail
-    % AC Bot (0,-1) -> Cathode D3 -> Neg Rail
-    
-    \draw (1,1.5) coordinate(ac_top);
-    \draw (1,-1.5) coordinate(ac_bot);
-    
-    \draw (T.B1) -- (ac_top);
-    \draw (T.B2) -- (ac_bot);
+    % Connect Transformer to Bridge AC inputs
+    \draw (T.B1) |- (4, 1.5);
+    \draw (T.B2) |- (4, -1.5);
     
     % Diodes
-    \draw (ac_top) to[D*, l=\(D_1\)] (3,0) coordinate(dc_pos);
-    \draw (ac_bot) to[D*, l=\(D_2\)] (dc_pos);
+    % Top -> Right (Positive Half)
+    \draw (4, 1.5) to[D*, l=\(D_1\)] (5.5, 0);
+    % Bottom -> Right (Negative Half)
+    \draw (4, -1.5) to[D*, l=\(D_2\)] (5.5, 0);
+    % Left -> Top (Return Path)
+    \draw (2.5, 0) to[D*, l=\(D_4\)] (4, 1.5);
+    % Left -> Bottom (Return Path)
+    \draw (2.5, 0) to[D*, l=\(D_3\)] (4, -1.5);
     
-    \draw (1,0) coordinate(dc_neg);
-    \draw (dc_neg) to[D*, l=\(D_4\)] (ac_top);
-    \draw (dc_neg) to[D*, l=\(D_3\)] (ac_bot);
+    % Load Connection
+    % Right (+) -> Resistor -> Ground
+    \draw (5.5, 0) -- (7,0) to[R, l=\(R_L\)] (7, -2) node[ground]{};
+    \draw (7, 0) -- (8,0) node[right]{+ \(V_{out}\)};
     
-    % Load
-    \draw (dc_pos) -- (4,0) to[R, l=\(R_L\)] (2,0) -- (dc_neg);
+    % Left (-) -> Ground
+    \draw (2.5, 0) node[ground]{};
     
-    % Ground dc_neg?
-    \draw (2,0) node[ground]{};
-    \draw (dc_pos) node[right]{+ \(V_{out}\)};
-
 \end{circuitikz}
 \caption{Full Wave Bridge Rectifier}
 \end{figure}
@@ -654,13 +723,13 @@ A \textbf{Half Wave Rectifier} uses a single diode to convert AC voltage into pu
     \draw[->] (0,2.5) -- (6.5,2.5) node[right] {\(t\)};
     \draw[->] (0,1.5) -- (0,3.5) node[above] {\(V_{in}\)};
     \draw[blue, thick] plot[domain=0:6.3, samples=100] (\x, {2.5 + 0.8*sin(deg(\x) * 3.14)});
-    \node at (7,2.5) {AC Input};
+    \node at (9,2.5) {AC Input};
 
     % Output
     \draw[->] (0,0) -- (6.5,0) node[right] {\(t\)};
     \draw[->] (0,-0.5) -- (0,1.5) node[above] {\(V_{out}\)};
     \draw[red, thick] plot[domain=0:6.3, samples=100] (\x, {max(0, 0.8*sin(deg(\x) * 3.14))});
-    \node at (7,0) {DC Output};
+    \node at (9,0) {DC Output};
 \end{tikzpicture}
 \caption{Input and Output Waveforms}
 \end{figure}
@@ -1000,7 +1069,9 @@ It is similar to a normal PN junction diode but with \textbf{heavy doping} (impu
     \draw[->] (0,-3) -- (0,3) node[above] {\(I\)};
     
     % Forward
-    \draw[blue, thick] (0,0) -- (0.7,0) .. controls (0.8,0.1) .. (1,2.5) node[right]{\(I_F\)};
+    % Forward
+    \draw[blue, thick] (0,0) -- (0.7,0) .. controls (0.8,0.1) .. (1,2.5);
+    \node[right] at (1.4, 2.5) {\(I_F\)};
     
     % Reverse
     \draw[blue, thick] (0,0) -- (-2,0) -- (-2,-2.5) node[below]{\(I_Z\)};
@@ -1167,11 +1238,22 @@ In Common Emitter configuration, the Emitter terminal is common to both input an
 \begin{figure}[H]
 \centering
 \begin{circuitikz}[scale=1]
+    % Ground to VBB to RB to Base
     \draw (0,0) node[ground]{} to[sV, l=\(V_{BB}\)] (0,2) to[R, l=\(R_B\)] (2,2) -- (2,2) node[npn, anchor=B](Q1){};
-    \draw (Q1.E) -- (2,0) node[ground]{};
-    \draw (Q1.C) -- (2,4) to[R, l=\(R_C\)] (2,6) -- (4,6) node[vcc]{\(V_{CC}\)};
-    \draw (Q1.C) to[short, -o] (4,3) node[right]{Output (\(V_{CE}\))};
-    \draw (Q1.B) to[short, -o] (1,3) node[left]{Input (\(V_{BE}\))};
+    
+    % Emitter to Ground (Vertical)
+    % Draw from Emitter straight down to ground level y=0
+    \draw (Q1.E) -- (Q1.E |- 0,0) node[ground]{};
+    
+    % Collector to RC to VCC (Vertical)
+    % Draw from Collector straight up
+    \draw (Q1.C) -- ++(0,1) to[R, l=\(R_C\)] ++(0,2) node[vcc]{\(V_{CC}\)};
+    
+    % Output (Orthogonal)
+    \draw (Q1.C) to[short, -o] ++(2,0) node[right]{Output (\(V_{CE}\))};
+    
+    % Input (Orthogonal) - Shifted to x=1.8 to avoid RB overlap
+    \draw (1.8, 2) to[short, -o] (1.8, 3) node[above]{Input (\(V_{BE}\))};
 \end{circuitikz}
 \caption{NPN Common Emitter Configuration}
 \end{figure}
@@ -1185,7 +1267,7 @@ It is the graph of Input Current (\(I_B\)) vs Input Voltage (\(V_{BE}\)) at cons
     \draw[->] (0,0) -- (4,0) node[right] {\(V_{BE}\) (V)};
     \draw[->] (0,0) -- (0,4) node[above] {\(I_B\) (\(\mu\)A)};
     \draw[blue, thick] (0.5,0) .. controls (0.7,0.1) and (1.5,1) .. (2,3.5) node[right]{\(V_{CE}=1V\)};
-    \draw[red, thick] (0.8,0) .. controls (1.0,0.1) and (1.8,1) .. (2.3,3.5) node[right]{\(V_{CE}=10V\)};
+    \draw[red, thick] (2.5,0) .. controls (2.7,0.1) and (3.5,1) .. (4.5,3.5) node[right]{\(V_{CE}=10V\)};
     \node at (0.7,-0.5) {Knee Voltage};
 \end{tikzpicture}
 \caption{Input Characteristics of CE Config}
@@ -1221,16 +1303,16 @@ An \textbf{NPN Transistor} consists of a P-type semiconductor layer sandwiched b
     \draw (Q.C) node[right]{C};
     \draw (Q.B) node[left]{B};
     
-    % Construction Block
-    \draw (4,0) rectangle (9,3);
-    \draw (5.5,0) -- (5.5,3);
+    % Construction Block (Widened Further)
+    \draw (4,0) rectangle (11.5,3);
     \draw (6.5,0) -- (6.5,3);
-    \node at (4.75, 1.5) {N (Emit)};
-    \node at (6, 1.5) {P (Base)};
-    \node at (7.75, 1.5) {N (Collect)};
-    \draw (4.75,0) -- (4.75,-0.5) node[below]{E};
-    \draw (6,0) -- (6,-0.5) node[below]{B};
-    \draw (7.75,0) -- (7.75,-0.5) node[below]{C};
+    \draw (8.5,0) -- (8.5,3);
+    \node at (5.25, 1.5) {N (Emit)};
+    \node at (7.5, 1.5) {P (Base)};
+    \node at (10, 1.5) {N (Collect)};
+    \draw (5.25,0) -- (5.25,-0.5) node[below]{E};
+    \draw (7.5,0) -- (7.5,-0.5) node[below]{B};
+    \draw (10,0) -- (10,-0.5) node[below]{C};
 \end{circuitikz}
 \caption{Symbol and Construction of NPN}
 \end{figure}
@@ -1306,19 +1388,27 @@ A Common Emitter (CE) amplifier uses a transistor in CE configuration to amplify
 \begin{figure}[H]
 \centering
 \begin{circuitikz}[scale=1]
-    \draw (0,0) node[ground]{} to[sV, l=\(V_{in}\)] (0,2) to[C, l=\(C_{in}\)] (2,2) -- (2,2) node[npn, anchor=B](Q1){};
+    % Input Stage (Left)
+    \draw (-2,0) node[ground]{} to[sV, l=\(V_{in}\)] (-2,2) to[C, l=\(C_{in}\)] (0,2);
     
-    % Biasing Resistors
-    \draw (2,2) to[short] (2,3.5) to[R, l=\(R_1\)] (2,5) -- (4,5) node[vcc]{\(V_{CC}\)};
-    \draw (2,2) to[R, l=\(R_2\)] (2,0) node[ground]{};
+    % Voltage Divider Bias Stage (x=0)
+    % Separated from Collector path to avoid overlap
+    \draw (0,2) -- (0,4.5) to[R, l=\(R_1\)] (0,6) node[vcc]{\(V_{CC}\)};
+    \draw (0,2) -- (0,-0.5) to[R, l=\(R_2\)] (0,-2) node[ground]{};
     
-    % Emitter
-    \draw (Q1.E) to[R, l=\(R_E\)] (4,0) node[ground]{};
-    \draw (Q1.E) -- (5,2) to[C, l=\(C_E\)] (5,0) node[ground]{}; % Bypass Cap
+    % Connect to Base of Transistor (x=3)
+    \draw (0,2) -- (3,2) node[npn, anchor=B](Q1){};
     
-    % Collector
-    \draw (Q1.C) to[R, l=\(R_C\)] (4,5);
-    \draw (Q1.C) to[C, l=\(C_{out}\), -o] (6,3.5) node[right]{\(V_{out}\)};
+    % Emitter Connections
+    \draw (Q1.E) -- (Q1.E |- 0,-0.5) to[R, l=\(R_E\)] (Q1.E |- 0,-2) node[ground]{};
+    % Bypass Cap
+    \draw (Q1.E) -- ++(1.5,0) to[C, l=\(C_E\)] ++(0,-2) node[ground]{};
+    
+    % Collector Connections
+    \draw (Q1.C) -- (Q1.C |- 0,4.5) to[R, l=\(R_C\)] (Q1.C |- 0,6) node[vcc]{\(V_{CC}\)};
+    
+    % Output
+    \draw (Q1.C) to[short] ++(1.5,0) to[C, l=\(C_{out}\), -o] ++(2,0) node[right]{\(V_{out}\)};
 \end{circuitikz}
 \caption{Single Stage CE Amplifier}
 \end{figure}
@@ -1349,17 +1439,23 @@ In Common Base (CB) configuration, the Base terminal is grounded and common to b
 \begin{figure}[H]
 \centering
 \begin{circuitikz}[scale=1]
-    \draw (2,0) node[npn, anchor=B, rotate=-90](Q){}; % Rotate for CB look
-    % Emitter (Input)
-    \draw (Q.E) -- (2, -2) to[R, l=\(R_E\)] (2,-3.5) to[sV, l=\(V_{EE}\)] (2,-4.5) node[ground]{};
-    \draw (Q.E) to[short, -o] (0.5, -0.6) node[left]{Input (\(I_E\))};
+    % Transistor (Upright Standard)
+    \draw (2,2) node[npn](Q){};
     
-    % Base (Common)
-    \draw (Q.B) -- (4,0) node[ground]{};
+    % Base (Left -> Down -> Ground)
+    \draw (Q.B) -- ++(-0.5,0) -- ++(0,-2) node[ground]{};
     
-    % Collector (Output)
-    \draw (Q.C) -- (6,0) to[R, l=\(R_C\)] (7.5,0) to[sV, l=\(V_{CC}\)] (9,0) node[ground]{};
-    \draw (Q.C) to[short, -o] (6,1) node[above]{Output (\(V_{CB}\))};
+    % Emitter (Input) - Downward
+    % Emitter resistor to VEE (Strictly Vertical)
+    \draw (Q.E) to[R, l=\(R_E\)] ++(0,-2) to[sV, l=\(V_{EE}\)] ++(0,-1.5) node[ground]{};
+    % Input Signal (Horizontal from Emitter line)
+    \draw (Q.E) ++(0,-0.5) to[short, -o] ++(-2, 0) node[left]{Input (\(I_E\))};
+    
+    % Collector (Output) - Upward
+    % Collector resistor to VCC (Strictly Vertical)
+    \draw (Q.C) to[R, l=\(R_C\)] ++(0,2.5) to[sV, l=\(V_{CC}\)] ++(0,1.5) node[ground, rotate=180]{};
+    % Output (Horizontal from Collector line)
+    \draw (Q.C) ++(0,0.5) to[short, -o] ++(2, 0) node[right]{Output (\(V_{CB}\))};
 \end{circuitikz}
 \caption{Common Base Configuration}
 \end{figure}
@@ -1377,7 +1473,7 @@ Graph of Input Current (\(I_E\)) vs Input Voltage (\(V_{EB}\)) at constant Outpu
     \draw[->] (0,0) -- (4,0) node[right] {\(V_{EB}\)};
     \draw[->] (0,0) -- (0,4) node[above] {\(I_E\) (mA)};
     \draw[blue, thick] (0.5,0) .. controls (0.7,1) .. (1,4) node[right]{\(V_{CB}=1V\)};
-    \draw[red, thick] (1.0,0) .. controls (1.2,1) .. (1.5,4) node[right]{\(V_{CB}=10V\)};
+    \draw[red, thick] (2.5,0) .. controls (2.7,1) .. (4,4) node[right]{\(V_{CB}=10V\)};
 \end{tikzpicture}
 \caption{CB Input Characteristics}
 \end{figure}
@@ -1399,7 +1495,7 @@ Graph of Output Current (\(I_C\)) vs Output Voltage (\(V_{CB}\)) at constant Inp
     \draw[blue, thick] (0,2) -- (5,2.1) node[right]{\(I_E=2mA\)};
     \draw[blue, thick] (0,3) -- (5,3.1) node[right]{\(I_E=3mA\)};
     % Cutoff
-    \draw[red, dashed] (0,0.1) -- (5,0.1) node[right]{Cutoff (\(I_E=0\))};
+    \draw[red, dashed] (0,0.3) -- (5,0.3) node[midway, above]{\small Cutoff (\(I_E=0\))};
 \end{tikzpicture}
 \caption{CB Output Characteristics}
 \end{figure}
