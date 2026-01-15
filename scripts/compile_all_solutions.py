@@ -61,4 +61,9 @@ def compile_all_solutions():
     print("="*30)
 
 if __name__ == "__main__":
+    import sys
+    if len(sys.argv) > 1:
+        TARGET_DIR = sys.argv[1]
+    
+    print(f"Target Directory: {TARGET_DIR}")
     compile_all_solutions()
