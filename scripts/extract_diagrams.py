@@ -252,6 +252,8 @@ def process_file(file_path):
     current_subheading = ""
     
     q_re = re.compile(r'\\questionmarks\{(\w+)\}\{(\w+)\}')
+    # Alternative format: \questionmarks{1(a)}{3}{text} or \questionmarks{2 [OR] (a)}{3}{...}
+    q_re_alt = re.compile(r'\\questionmarks\{([^}]+)\}\{(\d+)\}\{')
     env_start = re.compile(r'\\begin\{(tikzpicture|circuitikz)\}')
     env_end = re.compile(r'\\end\{(tikzpicture|circuitikz)\}')
     solutionbox_start = re.compile(r'\\begin\{solutionbox\}')
@@ -259,8 +261,9 @@ def process_file(file_path):
     while i < len(lines):
         line = lines[i]
         
-        # Update context
+        # Update context - try both formats
         m_q = q_re.search(line)
+        m_q_alt = q_re_alt.search(line)
         if m_q:
             current_q = m_q.group(1)
             current_sub = m_q.group(2)
@@ -273,6 +276,23 @@ def process_file(file_path):
                         current_text = next_l.replace(r'\textbf{', '').replace('}', '')
                         break
             # Reset subheading when new question starts
+            current_subheading = ""
+        elif m_q_alt:
+            # Parse format like "1(a)" or "2 [OR] (a)" or "2(c)(I)"
+            q_str = m_q_alt.group(1).strip()
+            # Extract question number and sub-part
+            # Pattern: digit(s) possibly followed by (letter/roman) or [OR] (letter)
+            q_parts = re.match(r'(\d+)\s*(?:\[OR\]\s*)?\(([^)]+)\)(?:\(([^)]+)\))?', q_str)
+            if q_parts:
+                current_q = q_parts.group(1)
+                current_sub = q_parts.group(2)
+                if q_parts.group(3):  # e.g., 2(c)(I)
+                    current_sub += q_parts.group(3)
+            else:
+                # Fallback: use full string cleaned
+                current_q = re.sub(r'[^\w]', '', q_str)
+                current_sub = ""
+            current_text = ""
             current_subheading = ""
         
         if solutionbox_start.search(line):
@@ -340,26 +360,24 @@ def process_file(file_path):
             context_text = f"{current_text} {current_subheading}"
             tags = generate_tags(context_text, "", subject_code)
             
-            # Write diagram file
+            # Write diagram file (for reusable library)
             header = f"% Tags: {tags}\n"
             with open(full_diag_path, 'w', encoding='utf-8') as f_diag:
                 f_diag.write(header + "".join(diagram_code))
-                
-            # Add includefigure command to main file
-            # User requested \includefigure pointing to PDF
-            # Generated PDF is expected at figures/tex-diagrams/pdf/
-            pdf_filename = diag_filename.replace('.tex', '.pdf')
-            rel_pdf_path = f"figures/tex-diagrams/pdf/{pdf_filename}"
             
-            new_lines.append(f"\\includefigure{{{rel_pdf_path}}}\n")
+            print(f"  Extracted: {diag_filename}")
+            
+            # KEEP original inline TikZ code - don't replace with includefigure
+            # This preserves working solutions while building diagram library
+            new_lines.extend(diagram_code)
             
         else:
             new_lines.append(line)
             i += 1
             
-    # Write back modified main file
-    with open(file_path, 'w', encoding='utf-8') as f:
-        f.writelines(new_lines)
+    # DON'T modify the main file - keep original inline TikZ code
+    # The extracted diagrams serve as a reusable library that can be
+    # improved independently and integrated later if needed
         
 def main():
     # Find all "GTU Solutions Short" directories
@@ -371,7 +389,7 @@ def main():
     # Let's target a specific one for testing as per request.
     # Target: content/resources/study-materials/11-ec/sem-2/4321103-eca/GTU Solutions Short
     
-    target_path = "/Users/milav/Code/milav-next/content/resources/study-materials/11-ec/sem-2/4321103-eca/GTU Solutions Short"
+    target_path = "/Users/milav/Code/milav-next/content/resources/study-materials/11-ec/sem-2/4321102-de/GTU Solutions Short"
     
     if os.path.exists(target_path):
         targets = [target_path]

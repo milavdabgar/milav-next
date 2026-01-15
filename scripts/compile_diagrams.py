@@ -58,7 +58,7 @@ def compile_diagram(tex_file):
 \usepackage{graphicx}
 \usepackage{caption}
 \pgfplotsset{compat=1.18}
-\usetikzlibrary{shapes,arrows,positioning,calc,patterns,decorations.pathmorphing,decorations.markings,arrows.meta,circuits.logic.US,shapes.geometric,fit}
+\usetikzlibrary{shapes,arrows,positioning,calc,patterns,decorations.pathmorphing,decorations.markings,arrows.meta,circuits.logic.US,shapes.geometric,fit,matrix}
 \usepackage{pgf-pie}
 
 % Register circuitikz environment for standalone cropping
@@ -189,7 +189,7 @@ def compile_diagram(tex_file):
 def main():
     # Find targets
     # Hardcoded target for now as requested
-    target_path = "/Users/milav/Code/milav-next/content/resources/study-materials/11-ec/sem-2/4321103-eca/GTU Solutions Short/figures/tex-diagrams/tex"
+    target_path = "/Users/milav/Code/milav-next/content/resources/study-materials/11-ec/sem-2/4321102-de/GTU Solutions Short/figures/tex-diagrams/tex"
     
     tex_files = glob.glob(os.path.join(target_path, "*.tex"))
     

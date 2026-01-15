@@ -3,7 +3,7 @@ import os
 import glob
 import subprocess
 
-TARGET_DIR = "/Users/milav/Code/milav-next/content/resources/study-materials/11-ec/sem-2/4321103-eca/GTU Solutions Short"
+TARGET_DIR = "/Users/milav/Code/milav-next/content/resources/study-materials/11-ec/sem-2/4321102-de/GTU Solutions Short"
 
 def compile_all_solutions():
     # Find all solution .tex files
