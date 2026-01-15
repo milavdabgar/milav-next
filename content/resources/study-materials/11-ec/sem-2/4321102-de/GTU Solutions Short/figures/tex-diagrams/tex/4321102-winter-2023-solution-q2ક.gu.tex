@@ -1,0 +1,45 @@
+% Tags: 4321102, બુલિયન, લોજિક, સમીકરણ, ટેબલનો, ફુલ
+\begin{tikzpicture}[
+    node distance=2.5cm,
+    auto,
+    block/.style={rectangle, draw, minimum width=1.5cm, minimum height=1cm, align=center}
+]
+    % Inputs
+    \node (A) at (0, 2) {A};
+    \node (B) at (0, 0) {B};
+    \node (Cin) at (0, -2) {Cin};
+
+    % Gates for Sum
+    \node[xor gate US, draw, logic gate inputs=nn] (xor1) at (3, 1) {};
+    \node[xor gate US, draw, logic gate inputs=nn] (xor2) at (6, 0) {};
+    
+    % Gates for Carry
+    \node[and gate US, draw, logic gate inputs=nn] (and1) at (3, -1) {};
+    \node[and gate US, draw, logic gate inputs=nn] (and2) at (3, -3) {};
+    \node[and gate US, draw, logic gate inputs=nn] (and3) at (4.5, 3) {};  % A.B
+    \node[or gate US, draw, logic gate inputs=nnn] (or1) at (7, -2) {};
+
+    % Connections for Sum
+    \draw (A) -| (xor1.input 1);
+    \draw (B) -| (xor1.input 2);
+    \draw (xor1.output) -- (xor2.input 1);
+    \draw (Cin) -- ++(2,0) |- (xor2.input 2);
+    \draw (xor2.output) -- ++(1,0) node[right] {Sum};
+
+    % Connections for Carry
+    \draw (A) |- (and3.input 1);
+    \draw (B) |- (and3.input 2);
+    
+    \draw (B) |- (and1.input 1);
+    \draw (Cin) |- (and1.input 2);
+    
+    \draw (A) to[out=0,in=180] ++(1,-3.5) |- (and2.input 1);
+    \draw (Cin) to[out=0,in=180] ++(1,-0.5) |- (and2.input 2);
+
+    \draw (and3.output) -| (or1.input 1);
+    \draw (and1.output) -- (or1.input 2);
+    \draw (and2.output) -| (or1.input 3);
+    
+    \draw (or1.output) -- ++(1,0) node[right] {Cout};
+
+\end{tikzpicture}

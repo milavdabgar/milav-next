@@ -1,0 +1,31 @@
+% Tags: 4321102, code, gray, binary, converter, 4-bit
+\begin{circuitikz}
+    % Inputs G3..G0
+    \foreach \i in {3,2,1,0} {
+        \draw (0, \i*2) node (G\i) {G\textsubscript{\i}};
+    }
+    
+    % XOR gates diagonal chain
+    \draw (3, 5) node[xor port, rotate=-90] (xor3) {}; 
+    \draw (3, 3) node[xor port, rotate=-90] (xor2) {};
+    \draw (3, 1) node[xor port, rotate=-90] (xor1) {};
+    
+    % B3 = G3 directly
+    \draw (G3) -- (5, 6) node[right] {B\textsubscript{3}};
+    
+    % Connections
+    % Diagram structure: B3 comes from G3. B2 = B3 XOR G2.
+    % This requires feedback from B output to next XOR input.
+    % Simplified drawing for schematic layout:
+    \draw (2,6) -- (xor3.in 1); % B3 feed
+    \draw (G2) -- (xor3.in 2);
+    \draw (xor3.out) -- (5, 4) node[right] {B\textsubscript{2}};
+    
+    \draw (2,4) -- (xor2.in 1); % B2 feed
+    \draw (G1) -- (xor2.in 2);
+    \draw (xor2.out) -- (5, 2) node[right] {B\textsubscript{1}};
+    
+    \draw (2,2) -- (xor1.in 1); % B1 feed
+    \draw (G0) -- (xor1.in 2);
+    \draw (xor1.out) -- (5, 0) node[right] {B\textsubscript{0}};
+\end{circuitikz}

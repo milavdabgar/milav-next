@@ -1,0 +1,53 @@
+% Tags: 4321102, બુલિયન, લોજિક, સમીકરણ, ટેબલનો, ફુલ
+\begin{tikzpicture}[
+    node distance=2.5cm,
+    auto,
+    block/.style={rectangle, draw, minimum width=1.5cm, minimum height=1cm, align=center}
+]
+    % Inputs
+    \node (A) at (0, 2) {A};
+    \node (B) at (0, 0) {B};
+    \node (Bin) at (0, -2) {Bin};
+
+    % Gates for Difference
+    \node[xor gate US, draw, logic gate inputs=nn] (xor1) at (3, 1) {};
+    \node[xor gate US, draw, logic gate inputs=nn] (xor2) at (6, 0) {};
+    
+    % Gates for Borrow
+    \node[not gate US, draw] (not1) at (1.5, 0.5) {}; 
+    
+    % Logic for Bout
+    \node[and gate US, draw, logic gate inputs=nn] (and1) at (4, -1.5) {}; 
+    \node[and gate US, draw, logic gate inputs=nn] (and2) at (4, -3) {};
+    \node[and gate US, draw, logic gate inputs=nn] (and3) at (4, 3) {};
+    \node[or gate US, draw, logic gate inputs=nnn] (or1) at (7, -1) {};
+    
+    % Connections
+    \draw (A) -| (xor1.input 1);
+    \draw (B) -| (xor1.input 2);
+    \draw (xor1.output) -- (xor2.input 1);
+    \draw (Bin) -- ++(2,0) |- (xor2.input 2);
+    \draw (xor2.output) -- ++(1,0) node[right] {Diff};
+    
+    \draw (A) -- ++(0.5,0) |- (not1.input);
+    \draw (not1.output) -- ++(0.5,0) coordinate (notA);
+    
+    % A'B
+    \draw (notA) |- (and3.input 1);
+    \draw (B) |- (and3.input 2);
+    
+    % A'Bin
+    \draw (notA) |- (and1.input 1);
+    \draw (Bin) |- (and1.input 2);
+    
+    % BBin
+    \draw (B) |- (and2.input 1);
+    \draw (Bin) |- (and2.input 2);
+    
+    \draw (and3.output) -| (or1.input 1);
+    \draw (and1.output) -- (or1.input 2);
+    \draw (and2.output) -| (or1.input 3);
+    
+    \draw (or1.output) -- ++(1,0) node[right] {Bout};
+
+\end{tikzpicture}

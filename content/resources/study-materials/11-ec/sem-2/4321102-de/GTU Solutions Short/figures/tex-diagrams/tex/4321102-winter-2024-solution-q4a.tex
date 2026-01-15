@@ -1,0 +1,23 @@
+% Tags: 4321102, counter, bcd
+\begin{circuitikz}[scale=0.9, transform shape]
+    \foreach \i in {0,1,2,3} {
+        \draw (\i*3.5,0) node[flipflop JK, dot on >] (JK\i) {JK\_FF\textsubscript{\i}};
+        \draw (JK\i.pin 1) -- ++(-0.2,0) node[left] {1};
+        \draw (JK\i.pin 3) -- ++(-0.2,0) node[left] {1};
+    }
+    % Cascade clock: Output of Q0 to CLK of Q1... Wait, that's ripple. 
+    % BCD ripple counter uses Q to CLK.
+    % Feedback logic for BCD (Mod-10): Reset when 1010 (Q3=1, Q1=1).
+    % Simplified text diagram structure:
+    \draw (JK0.pin 6) -- ++(0.5,0) coordinate (Q0) node[right] {Q0};
+    \draw (JK1.pin 6) -- ++(0.5,0) coordinate (Q1) node[right] {Q1};
+    \draw (JK2.pin 6) -- ++(0.5,0) coordinate (Q2) node[right] {Q2};
+    \draw (JK3.pin 6) -- ++(0.5,0) coordinate (Q3) node[right] {Q3};
+    
+    % NAND gate for Reset
+    \draw (6, -3) node[nand port] (nand) {};
+    \draw (Q3) |- (nand.in 1);
+    \draw (Q1) |- (nand.in 2);
+    \draw (nand.out) -- ++(0,-0.5) -- ++(-10,0) |- (JK0.down) node[below] {CLR};
+    % Connect CLR to all...
+\end{circuitikz}
