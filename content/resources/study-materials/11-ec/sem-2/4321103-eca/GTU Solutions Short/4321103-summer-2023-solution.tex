@@ -1,7 +1,7 @@
 \documentclass{article}
-\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions-short/preamble.tex}
-\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions-short/english-boxes.tex}
-\input{/Users/milav/Code/milav-next/latex-templates/gtu-solutions-short/commands.tex}
+\input{../../../../../../../latex-templates/gtu-solutions-short/preamble.tex}
+\input{../../../../../../../latex-templates/gtu-solutions-short/english-boxes.tex}
+\input{../../../../../../../latex-templates/gtu-solutions-short/commands.tex}
 
 \title{Electronic Circuits \& Applications (4321103) - Summer 2023 Solution}
 \date{August 09, 2023}
@@ -17,7 +17,17 @@
 Thermal runaway is a destructive mechanism in BJT transistors where increased temperature creates a self-reinforcing cycle leading to device failure.
 
 \begin{center}
-\includefigure{figures/tex-diagrams/pdf/4321103-summer-2023-solution-q1a.pdf}
+\begin{tikzpicture}[node distance=2cm, auto]
+    \node [gtu block, align=center] (A) {Increase in\\Temperature};
+    \node [gtu block, right of=A, node distance=3.5cm, align=center] (B) {Increase in\\$I_C$};
+    \node [gtu block, right of=B, node distance=3.5cm, align=center] (C) {Increase in\\Power Dissipation};
+    \node [gtu block, below of=B, node distance=2cm, align=center] (D) {Further Increase\\in Temperature};
+
+    \path [gtu arrow] (A) -- (B);
+    \path [gtu arrow] (B) -- (C);
+    \path [gtu arrow] (C) |- (D);
+    \path [gtu arrow] (D) -| (A);
+\end{tikzpicture}
 \end{center}
 
 \begin{enumerate}
@@ -38,7 +48,16 @@ Thermal runaway is a destructive mechanism in BJT transistors where increased te
 An amplifier is an electronic device that increases the power, voltage or current of an input signal.
 
 \begin{center}
-\includefigure{figures/tex-diagrams/pdf/4321103-summer-2023-solution-q1b.pdf}
+\begin{tikzpicture}[node distance=3cm, auto]
+    \node [gtu block] (amp) {AMPLIFIER};
+    \node [left of=amp] (in) {Input Signal ($V_{in}$)};
+    \node [right of=amp] (out) {Output Signal ($V_{out}$)};
+    \node [above of=amp, node distance=1.5cm] (pwr) {Power Supply};
+
+    \draw [gtu arrow] (in) -- (amp);
+    \draw [gtu arrow] (amp) -- (out);
+    \draw [gtu arrow] (pwr) -- (amp);
+\end{tikzpicture}
 \end{center}
 
 \begin{center}
@@ -76,7 +95,15 @@ Biasing is the process of establishing a stable operating point (Q-point) for a 
 \textbf{Voltage Divider Biasing:}
 
 \begin{center}
-\includefigure{figures/tex-diagrams/pdf/4321103-summer-2023-solution-q1c.pdf}
+\begin{circuitikz}[scale=0.9, transform shape]
+    \draw (0,0) node[npn] (Q) {};
+    \draw (Q.B) to[short] (-1,0) coordinate (B_node);
+    \draw (Q.C) to[short] (0,1) to[R, l=$R_C$] (0,3) coordinate (VCC_top) node[vcc]{$V_{CC}$};
+    \draw (B_node) to[short] (-1,1) to[R, l=$R_1$] (-1,3) -- (VCC_top);
+    \draw (B_node) to[R, l=$R_2$] (-1,-2) node[ground]{};
+    \draw (Q.E) to[R, l=$R_E$] (0,-2) node[ground]{};
+    \draw (0,1) to[short, -o] (1,1) node[right]{$V_{out}$};
+\end{circuitikz}
 \end{center}
 
 \begin{itemize}
@@ -97,7 +124,18 @@ Biasing is the process of establishing a stable operating point (Q-point) for a 
 A heat sink is a passive heat exchanger that transfers heat from electronic devices to the surrounding air.
 
 \begin{center}
-\includefigure{figures/tex-diagrams/pdf/4321103-summer-2023-solution-q1c-2.pdf}
+\begin{tikzpicture}[node distance=2.5cm, auto]
+    \node [gtu block, align=center] (A) {Heat Source\\(Transistor)};
+    \node [gtu block, right of=A] (B) {Interface\\Material};
+    \node [gtu block, right of=B] (C) {Heat Sink\\Base};
+    \node [gtu block, right of=C] (D) {Fins};
+    \node [gtu block, right of=D] (E) {Ambient\\Air};
+
+    \draw [gtu arrow] (A) -- (B);
+    \draw [gtu arrow] (B) -- (C);
+    \draw [gtu arrow] (C) -- (D);
+    \draw [gtu arrow] (D) -- (E);
+\end{tikzpicture}
 \end{center}
 
 \begin{center}
@@ -130,7 +168,21 @@ Types & Extruded, Bonded, Folded, Die-cast \\ \hline
 Load lines graphically represent possible operating points of a transistor on its characteristic curves.
 
 \begin{center}
-\includefigure{figures/tex-diagrams/pdf/4321103-summer-2023-solution-q2a.pdf}
+\begin{tikzpicture}[scale=0.8]
+    \draw[->] (0,0) -- (5,0) node[right] {$V_{CE}$};
+    \draw[->] (0,0) -- (0,5) node[above] {$I_C$};
+    
+    % DC Load Line
+    \draw[thick, blue] (0,4) node[left] {$V_{CC}/R_C$} -- (4,0) node[below] {$V_{CC}$};
+    \node[blue] at (3,3) {DC Load Line};
+
+    % Q-point
+    \filldraw (2,2) circle (2pt) node[right] {Q-point};
+    
+    % AC Load Line
+    \draw[thick, red, dashed] (0.5, 4.5) -- (3.5, 0.5);
+    \node[red] at (1, 4) {AC Load Line};
+\end{tikzpicture}
 \end{center}
 
 \begin{itemize}
@@ -157,7 +209,11 @@ Load lines graphically represent possible operating points of a transistor on it
 Key specifications for amplifier frequency performance.
 
 \begin{center}
-\includefigure{figures/tex-diagrams/pdf/4321103-summer-2023-solution-q2b.pdf}
+\begin{tikzpicture}
+    \node [gtu block, minimum width=3cm] (sys) {Amplifier\\Gain $\times$ Bandwidth};
+    \draw [gtu arrow] (sys.west) ++(-1,0) -- (sys.west) node[midway, above] {Input};
+    \draw [gtu arrow] (sys.east) -- ++(1,0) node[midway, above] {Output};
+\end{tikzpicture}
 \end{center}
 
 \begin{center}
@@ -188,11 +244,40 @@ Gain-Bandwidth Product & Product of gain and bandwidth, remains constant \\ \hli
 \textbf{Frequency Response of Two-Stage RC Coupled Amplifier:}
 
 \begin{center}
-\includefigure{figures/tex-diagrams/pdf/4321103-summer-2023-solution-q2c.pdf}
+\begin{tikzpicture}[node distance=3cm, auto]
+    \node [gtu block] (S1) {Stage 1};
+    \node [gtu block, right of=S1] (S2) {Stage 2};
+    \node [left of=S1, node distance=2cm] (In) {Input};
+    \node [right of=S2, node distance=2cm] (Out) {Output};
+
+    \draw [gtu arrow] (In) -- (S1);
+    \draw [gtu arrow] (S1) -- node[above] {RC Coupling} (S2);
+    \draw [gtu arrow] (S2) -- (Out);
+\end{tikzpicture}
 \end{center}
 
 \begin{center}
-\includefigure{figures/tex-diagrams/pdf/4321103-summer-2023-solution-q2c-2.pdf}
+\begin{tikzpicture}
+    \begin{semilogxaxis}[
+        width=8cm, height=5cm,
+        xlabel={Frequency (Hz)},
+        ylabel={Gain (dB)},
+        xmin=10, xmax=100000,
+        ymin=0, ymax=60,
+        xtick={100, 10000},
+        xticklabels={$f_1$, $f_2$},
+        grid=major
+    ]
+    \addplot[thick, smooth] coordinates {
+        (10, 10) (50, 40) (100, 47) (500, 50) (1000, 50) (5000, 50) (10000, 47) (50000, 20)
+    };
+    \node at (axis cs: 1000, 55) {Mid-frequency band};
+    \node at (axis cs: 30, 20) {Low Freq};
+    \node at (axis cs: 30000, 30) {High Freq};
+    \draw [dashed] (axis cs: 100, 0) -- (axis cs: 100, 47);
+    \draw [dashed] (axis cs: 10000, 0) -- (axis cs: 10000, 47);
+    \end{semilogxaxis}
+\end{tikzpicture}
 \end{center}
 
 \begin{itemize}
@@ -214,7 +299,14 @@ Gain-Bandwidth Product & Product of gain and bandwidth, remains constant \\ \hli
 Fixed bias uses a single resistor connected to the base.
 
 \begin{center}
-\includefigure{figures/tex-diagrams/pdf/4321103-summer-2023-solution-q2a-2.pdf}
+\begin{circuitikz}[scale=0.9, transform shape]
+    \draw (0,0) node[npn] (Q) {};
+    \draw (Q.E) node[ground]{};
+    \draw (Q.C) to[R, l=$R_C$] (0,2) -- (0,2.5) node[vcc]{$V_{CC}$};
+    \draw (Q.B) to[short] (-1.5,0) to[R, l=$R_B$] (-1.5,2) -- (0,2);
+    \draw (Q.B) to[short, -o] (-2,0) node[left] {$V_{in}$};
+    \draw (Q.C) to[short, -o] (1,1) node[right] {$V_{out}$};
+\end{circuitikz}
 \end{center}
 
 \begin{itemize}
@@ -236,7 +328,22 @@ Fixed bias uses a single resistor connected to the base.
 \textbf{Frequency Response of Single Stage Amplifier:}
 
 \begin{center}
-\includefigure{figures/tex-diagrams/pdf/4321103-summer-2023-solution-q2b-2.pdf}
+\begin{tikzpicture}
+    \begin{semilogxaxis}[
+        width=8cm, height=5cm,
+        xlabel={Frequency (Hz)},
+        ylabel={Gain (dB)},
+        xmin=10, xmax=100000,
+        ymin=0, ymax=60,
+        xtick={100, 10000},
+        xticklabels={$f_1$, $f_2$},
+        grid=major
+    ]
+    \addplot[thick, smooth] coordinates {
+        (10, 10) (50, 40) (100, 47) (500, 50) (1000, 50) (5000, 50) (10000, 47) (50000, 20)
+    };
+    \end{semilogxaxis}
+\end{tikzpicture}
 \end{center}
 
 \begin{center}
@@ -278,7 +385,12 @@ Application & Voltage amplification & Power amplification \\ \hline
 \end{center}
 
 \begin{center}
-\includefigure{figures/tex-diagrams/pdf/4321103-summer-2023-solution-q2c-3.pdf}
+\begin{tikzpicture}[node distance=4cm, auto]
+    \node [gtu block] (RC) {RC Coupled\\(R + C)};
+    \node [gtu block, right of=RC] (Tx) {Transformer Coupled\\(Transformer)};
+    \node [below of=RC, node distance=1.5cm] {Voltage Amp};
+    \node [below of=Tx, node distance=1.5cm] {Power Amp};
+\end{tikzpicture}
 \end{center}
 
 \mnemonicbox{RC Takes Breadth, Transformer Takes Power}
@@ -292,7 +404,16 @@ Application & Voltage amplification & Power amplification \\ \hline
 Connects stages without coupling capacitors/transformers.
 
 \begin{center}
-\includefigure{figures/tex-diagrams/pdf/4321103-summer-2023-solution-q3a.pdf}
+\begin{tikzpicture}[node distance=3cm, auto]
+    \node [gtu block] (S1) {Stage 1};
+    \node [gtu block, right of=S1] (S2) {Stage 2};
+    \node [left of=S1, node distance=2cm] (In) {Input};
+    \node [right of=S2, node distance=2cm] (Out) {Output};
+
+    \draw [gtu arrow] (In) -- (S1);
+    \draw [gtu arrow] (S1) -- node[above] {Direct Wire} (S2);
+    \draw [gtu arrow] (S2) -- (Out);
+\end{tikzpicture}
 \end{center}
 
 \begin{itemize}
@@ -321,7 +442,16 @@ Coupling Cap ($C_C$) & Blocks DC, passes AC & Determines lower cutoff frequency.
 \end{center}
 
 \begin{center}
-\includefigure{figures/tex-diagrams/pdf/4321103-summer-2023-solution-q3b.pdf}
+\begin{tikzpicture}[node distance=2.5cm, auto]
+    \node [gtu block, align=center] (A) {Without Caps};
+    \node [gtu block, right of=A, align=center] (B) {With Coupling\\Only};
+    \node [gtu block, right of=B, align=center] (C) {With Coupling\\+ Bypass};
+    \node [gtu block, right of=C, align=center] (D) {Ideal Response};
+
+    \path [gtu arrow] (A) -- node[above, scale=0.7] {Low Gain} (B);
+    \path [gtu arrow] (B) -- node[above, scale=0.7] {Med Gain} (C);
+    \path [gtu arrow] (C) -- node[above, scale=0.7] {High Gain} (D);
+\end{tikzpicture}
 \end{center}
 
 \mnemonicbox{Coupling Controls Lows, Bypass Boosts All}
@@ -334,7 +464,20 @@ Coupling Cap ($C_C$) & Blocks DC, passes AC & Determines lower cutoff frequency.
 \textbf{Two-Port Network Model:}
 
 \begin{center}
-\includefigure{figures/tex-diagrams/pdf/4321103-summer-2023-solution-q3c.pdf}
+\begin{circuitikz}[scale=1]
+    \draw (0,0) rectangle (4,2.5);
+    \node at (2,1.25) {\large Two-Port Network};
+    
+    % Port 1
+    \draw (-1.5, 2) to[short, i=$i_1$] (0, 2);
+    \draw (-1.5, 0.5) to[short, o-] (0, 0.5);
+    \draw (-1.5, 2) to[open, v=$v_1$] (-1.5, 0.5);
+    
+    % Port 2
+    \draw (5.5, 2) to[short, i_=$i_2$] (4, 2);
+    \draw (5.5, 0.5) to[short, o-] (4, 0.5);
+    \draw (5.5, 2) to[open, v^=$v_2$] (5.5, 0.5);
+\end{circuitikz}
 \end{center}
 
 \textbf{H-Parameters (Hybrid Parameters):}
@@ -362,7 +505,29 @@ Coupling Cap ($C_C$) & Blocks DC, passes AC & Determines lower cutoff frequency.
 \textbf{Frequency Response Indicators:}
 
 \begin{center}
-\includefigure{figures/tex-diagrams/pdf/4321103-summer-2023-solution-q3a-2.pdf}
+\begin{tikzpicture}
+    \begin{semilogxaxis}[
+        width=8cm, height=5cm,
+        xlabel={Frequency (Hz)},
+        ylabel={Gain (dB)},
+        xmin=10, xmax=100000,
+        ymin=0, ymax=60,
+        xtick={100, 10000},
+        xticklabels={$f_1$, $f_2$},
+        grid=major
+    ]
+    \addplot[thick, smooth] coordinates {
+        (10, 10) (50, 40) (100, 47) (500, 50) (1000, 50) (5000, 50) (10000, 47) (50000, 20)
+    };
+    
+    % Annotations
+    \draw[<->] (axis cs: 100, 30) -- (axis cs: 10000, 30) node[midway, below] {Bandwidth ($BW$)};
+    \node at (axis cs: 1000, 52) {Mid-frequency Gain ($A_{mid}$)};
+    \node at (axis cs: 100, 50) [pin=135:Lower Cutoff ($f_1$)] {};
+    \node at (axis cs: 10000, 50) [pin=45:Upper Cutoff ($f_2$)] {};
+    
+    \end{semilogxaxis}
+\end{tikzpicture}
 \end{center}
 
 \mnemonicbox{Lower Bandwidth Upper Makes Amplifier Response}
@@ -376,7 +541,16 @@ Coupling Cap ($C_C$) & Blocks DC, passes AC & Determines lower cutoff frequency.
 Uses LC resonant circuits to selectively amplify specific frequencies (e.g., radio receivers).
 
 \begin{center}
-\includefigure{figures/tex-diagrams/pdf/4321103-summer-2023-solution-q3b-2.pdf}
+\begin{tikzpicture}[node distance=3cm, auto]
+    \node [gtu block] (Amp) {Transistor Amp};
+    \node [gtu block, right of=Amp] (LC) {LC Tank Circuit};
+    \node [left of=Amp, node distance=2.5cm] (In) {Input};
+    \node [right of=LC, node distance=2.5cm] (Out) {Output};
+
+    \draw [gtu arrow] (In) -- (Amp);
+    \draw [gtu arrow] (Amp) -- (LC);
+    \draw [gtu arrow] (LC) -- (Out);
+\end{tikzpicture}
 \end{center}
 
 \begin{itemize}
@@ -397,7 +571,19 @@ Uses LC resonant circuits to selectively amplify specific frequencies (e.g., rad
 \textbf{CE Amplifier h-parameter Model:}
 
 \begin{center}
-\includefigure{figures/tex-diagrams/pdf/4321103-summer-2023-solution-q3c-2.pdf}
+\begin{circuitikz}[scale=1]
+    \draw (0,0) to[short, o-] (1,0) to[R, l=$h_{ie}$] (3,0) to[cV, l=$h_{re}V_{ce}$] (3,-2) to[short, -o] (0,-2);
+    \draw (0,0) node[left]{$B$};
+    \draw (0,-2) node[left]{$E$};
+    
+    \draw (5,0) to[cI, l=$h_{fe}I_b$, invert] (5,-2);
+    \draw (7,0) to[R, l=$\frac{1}{h_{oe}}$] (7,-2); 
+    \draw (5,0) to[short, -o] (8,0) node[right]{$C$};
+    \draw (5,-2) to[short, -o] (8,-2) node[right]{$E$};
+    
+    \draw (3,0) -- (8,0);
+    \draw (3,-2) -- (8,-2);
+\end{circuitikz}
 \end{center}
 
 \mnemonicbox{Input Resistance, Feedback Ratio, Forward Gain, Output Conductance}
@@ -411,7 +597,12 @@ Uses LC resonant circuits to selectively amplify specific frequencies (e.g., rad
 Limits/clips input signal above or below a reference level.
 
 \begin{center}
-\includefigure{figures/tex-diagrams/pdf/4321103-summer-2023-solution-q4a.pdf}
+\begin{circuitikz}
+    \draw (0,0) to[sinusoidal voltage source, l=$V_{in}$] (0,2) to[R, l=$R$] (2,2) -- (4,2) to[short, -o] (5,2) node[right]{$V_{out}$};
+    \draw (3,2) to[D*, l=$D$] (3,0);
+    \draw (0,0) -- (5,0);
+    \draw (3,0) -- (3,-0.5) node[ground]{};
+\end{circuitikz}
 \end{center}
 \textit{(Diagram: Positive Clipper - clips positive half cycle)}
 
@@ -426,7 +617,14 @@ Limits/clips input signal above or below a reference level.
 Resistance decreases as light intensity increases.
 
 \begin{center}
-\includefigure{figures/tex-diagrams/pdf/4321103-summer-2023-solution-q4b.pdf}
+\begin{tikzpicture}[node distance=2cm, auto]
+    \node [gtu block] (LDR) {LDR};
+    \node [left of=LDR, node distance=2cm] (Light) {Light $\uparrow$};
+    \node [right of=LDR, node distance=3cm] (Res) {Resistance $\downarrow$};
+
+    \draw [gtu arrow] (Light) -- (LDR);
+    \draw [gtu arrow] (LDR) -- (Res);
+\end{tikzpicture}
 \end{center}
 
 \begin{itemize}
@@ -446,7 +644,14 @@ Resistance decreases as light intensity increases.
 Two transistors connected in cascade (Super-Beta arrangement) for very high high current gain.
 
 \begin{center}
-\includefigure{figures/tex-diagrams/pdf/4321103-summer-2023-solution-q4c.pdf}
+\begin{circuitikz}
+    \draw (0,0) node[npn] (Q1) {Q1};
+    \draw (2,0) node[npn] (Q2) {Q2};
+    \draw (Q1.C) -- (Q2.C) -- ++(0,1) node[vcc]{$C (Common)$};
+    \draw (Q1.E) -- (Q2.B);
+    \draw (Q1.B) -- ++(-0.5,0) node[left]{$B (Input)$};
+    \draw (Q2.E) -- ++(0,-0.5) node[below]{$E (Output)$};
+\end{circuitikz}
 \end{center}
 
 \textbf{Characteristics:}
@@ -468,7 +673,12 @@ Two transistors connected in cascade (Super-Beta arrangement) for very high high
 Shifts the DC level of a signal (adds DC offset) without changing its shape.
 
 \begin{center}
-\includefigure{figures/tex-diagrams/pdf/4321103-summer-2023-solution-q4a-2.pdf}
+\begin{circuitikz}
+    \draw (0,0) to[sinusoidal voltage source] (0,2) to[C, l=$C$] (2,2) -- (4,2) to[short, -o] (5,2) node[right]{$V_{out}$};
+    \draw (3,2) to[D*, l=$D$] (3,0);
+    \draw (4,2) to[R, l=$R_L$] (4,0);
+    \draw (0,0) -- (5,0);
+\end{circuitikz}
 \end{center}
 
 \textit{Capacitor charges and acts as a battery, shifting the signal.}
@@ -484,7 +694,14 @@ Shifts the DC level of a signal (adds DC offset) without changing its shape.
 Display technology using organic films that emit light when current flows.
 
 \begin{center}
-\includefigure{figures/tex-diagrams/pdf/4321103-summer-2023-solution-q4b-2.pdf}
+\begin{tikzpicture}
+    % Stacked layers
+    \draw[fill=gray!20] (0,0) rectangle (4,0.5) node[midway]{Cathode (-)};
+    \draw[fill=green!20] (0,0.5) rectangle (4,1.0) node[midway]{Emissive Layer};
+    \draw[fill=blue!20] (0,1.0) rectangle (4,1.5) node[midway]{Conductive Layer};
+    \draw[fill=white] (0,1.5) rectangle (4,2.0) node[midway]{Anode (+)};
+    \draw[->, thick, orange] (2, 0.75) -- (5, 0.75) node[right]{Light};
+\end{tikzpicture}
 \end{center}
 
 \begin{itemize}
@@ -504,7 +721,19 @@ Display technology using organic films that emit light when current flows.
 Transistor acts as a switch to drive a high-current relay coil from a low-current logic signal.
 
 \begin{center}
-\includefigure{figures/tex-diagrams/pdf/4321103-summer-2023-solution-q4c-2.pdf}
+\begin{circuitikz}
+    \draw (0,0) node[npn] (Q) {};
+    \draw (Q.E) node[ground]{};
+    \draw (Q.B) to[R, l=$R_B$] (-2,0) node[left]{Input Logic};
+    
+    % Relay Coil
+    \draw (Q.C) -- (0,2) to[L, l=Relay Coil] (0,4) node[vcc]{$+V_{CC}$};
+    
+    % Flyback Diode
+    \draw (1,2) to[D*, l=Flyback Diode] (1,4);
+    \draw (0,2) -- (1,2);
+    \draw (0,4) -- (1,4);
+\end{circuitikz}
 \end{center}
 
 \begin{itemize}
@@ -522,7 +751,20 @@ Transistor acts as a switch to drive a high-current relay coil from a low-curren
 \textbf{LM317 Variable Supply:}
 
 \begin{center}
-\includefigure{figures/tex-diagrams/pdf/4321103-summer-2023-solution-q5a.pdf}
+\begin{circuitikz}
+    \draw (0,0) node[draw, rectangle, minimum width=1.5cm, minimum height=1cm] (IC) {LM317};
+    \node[left] at (IC.west) {IN};
+    \node[right] at (IC.east) {OUT};
+    \node[below] at (IC.south) {ADJ};
+    
+    \draw (IC.west) -- (-1,0) node[left]{$V_{in}$};
+    \draw (IC.east) -- (2,0) node[right]{$V_{out}$};
+    
+    \draw (IC.east) to[short] (0.5,0) to[R, l=$R_1$] (0.5,-1.5) -- (IC.south);
+    \draw (0.5,-1.5) to[vR, l=$R_2 (Pot)$] (0.5,-3) node[ground]{};
+    
+    \draw (IC.east) to[C, l=$C_2$] (2,0) -- (2,-3) node[ground]{};
+\end{circuitikz}
 \end{center}
 
 Formula: $V_{out} = 1.25(1 + \frac{R_2}{R_1})$.
@@ -538,7 +780,21 @@ Formula: $V_{out} = 1.25(1 + \frac{R_2}{R_1})$.
 Provides backup power during mains failure.
 
 \begin{center}
-\includefigure{figures/tex-diagrams/pdf/4321103-summer-2023-solution-q5b.pdf}
+\begin{tikzpicture}[node distance=2.5cm, auto]
+    \node [gtu block] (Rect) {Rectifier/\\Charger};
+    \node [left of=Rect] (AC) {Mains AC};
+    \node [gtu block, right of=Rect] (Bat) {Battery};
+    \node [gtu block, right of=Bat] (Inv) {Inverter};
+    \node [right of=Inv] (Load) {Load};
+
+    \draw [gtu arrow] (AC) -- (Rect);
+    \draw [gtu arrow] (Rect) -- (Bat);
+    \draw [gtu arrow] (Bat) -- (Inv);
+    \draw [gtu arrow] (Inv) -- (Load);
+    
+    % Bypass
+    \draw [gtu arrow, dashed] (AC) to[out=90, in=90] node[midway, above]{Bypass Switch} (Load);
+\end{tikzpicture}
 \end{center}
 
 \begin{itemize}
@@ -557,7 +813,23 @@ Provides backup power during mains failure.
 Efficient power conversion using high-frequency switching.
 
 \begin{center}
-\includefigure{figures/tex-diagrams/pdf/4321103-summer-2023-solution-q5c.pdf}
+\begin{tikzpicture}[node distance=2cm, auto, scale=0.8, transform shape]
+    \node [gtu block, align=center] (Filter1) {EMI\\Filter};
+    \node [gtu block, right of=Filter1, node distance=2.5cm] (Rect1) {Rectifier\\\& Filter};
+    \node [gtu block, right of=Rect1, node distance=2.5cm] (Switch) {HF\\Switch};
+    \node [gtu block, right of=Switch, node distance=2.5cm] (Tx) {Transformer};
+    \node [gtu block, right of=Tx, node distance=2.5cm] (Rect2) {Rectifier\\\& Filter};
+    \node [below of=Switch] (PWM) {PWM Control};
+
+    \draw [gtu arrow] (Filter1) -- (Rect1);
+    \draw [gtu arrow] (Rect1) -- (Switch);
+    \draw [gtu arrow] (Switch) -- (Tx);
+    \draw [gtu arrow] (Tx) -- (Rect2);
+    \draw [gtu arrow] (Rect2) -- ++(1.5,0) node[right]{DC Out};
+    
+    \draw [gtu arrow] (Rect2.south) |- (PWM.east);
+    \draw [gtu arrow] (PWM) -- (Switch);
+\end{tikzpicture}
 \end{center}
 
 \begin{itemize}
@@ -575,7 +847,19 @@ Efficient power conversion using high-frequency switching.
 \textbf{+15V Supply (7815 IC):}
 
 \begin{center}
-\includefigure{figures/tex-diagrams/pdf/4321103-summer-2023-solution-q5a-2.pdf}
+\begin{circuitikz}
+    \draw (0,0) node[draw, rectangle, minimum height=1cm] (IC) {7815};
+    \node[left] at (IC.west) {IN};
+    \node[right] at (IC.east) {OUT};
+    \node[below] at (IC.south) {GND};
+    
+    \draw (IC.west) -- (-2,0) node[left]{Unregulated DC};
+    \draw (IC.east) -- (2,0) node[right]{+15V Stable};
+    \draw (IC.south) -- (0,-1) node[ground]{};
+    
+    \draw (-1.5,0) to[C, l=$C_1$] (-1.5,-1) node[ground]{};
+    \draw (1.5,0) to[C, l=$C_2$] (1.5,-1) node[ground]{};
+\end{circuitikz}
 \end{center}
 
 Uses 7815 linear regulator to output fixed +15V. $C_1, C_2$ filter noise.
@@ -590,7 +874,18 @@ Uses 7815 linear regulator to output fixed +15V. $C_1, C_2$ filter noise.
 \textbf{Solar Charger:}
 
 \begin{center}
-\includefigure{figures/tex-diagrams/pdf/4321103-summer-2023-solution-q5b-2.pdf}
+\begin{tikzpicture}[node distance=3cm, auto]
+    \node [gtu block] (Solar) {Solar Panel};
+    \node [gtu block, right of=Solar] (Ctrl) {Charge\\Controller};
+    \node [gtu block, right of=Ctrl] (Bat) {Battery};
+    
+    \draw [gtu arrow] (Solar) -- node[above]{DC} (Ctrl);
+    \draw [gtu arrow] (Ctrl) -- (Bat);
+    
+    % Blocking Diode annotation
+    \node[above of=Ctrl, node distance=1.5cm] (Label) {Blocking Diode prevents reverse flow};
+    \draw[->, dotted] (Label) -- (Ctrl);
+\end{tikzpicture}
 \end{center}
 
 Regulates solar voltage to safely charge battery. Prevents overcharge.
@@ -618,7 +913,10 @@ App & Audio, Lab & PC, Adapters \\ \hline
 \end{center}
 
 \begin{center}
-\includefigure{figures/tex-diagrams/pdf/4321103-summer-2023-solution-q5c-2.pdf}
+\begin{tikzpicture}[scale=0.8, transform shape]
+    \node (L) at (0,0) [gtu block] {Linear: Drop Excess Voltage as Heat};
+    \node (S) at (5,0) [gtu block] {SMPS: Chop Power Efficiently};
+\end{tikzpicture}
 \end{center}
 
 \mnemonicbox{Linear Loves Low noise, Switching Saves Size}
