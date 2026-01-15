@@ -1,0 +1,28 @@
+% Tags: 4321103, using, supply, brief, +5v, power
+    \begin{circuitikz}[american, scale=0.8]
+        % Transformer
+        \draw (0,0) node[transformer core](T){};
+        \node[left] at (T.A1) {AC In};
+        
+        \draw (T.B1) to[short] (2,1) to[D] (3,2); % Top Left D
+        \draw (2,1) to[D, invert] (3,0); % Bot Left D
+        \draw (T.B2) to[short] (4,1) to[D] (3,2); % Top Right D
+        \draw (4,1) to[D, invert] (3,0); % Bot Right D (Invert means cathode at start?)
+        % Standard bridge:
+        % 4 diodes.
+        % Node Top (3,2) is +DC. Node Bot (3,0) is -DC (GND).
+        % AC inputs at (2,1) and (4,1).
+        
+        % Filter Cap
+        \draw (3,2) -- (5,2) to[C, l=$C_1$] (5,0) -- (3,0);
+        
+        % Regulator 7805
+        \draw (6,2) node[draw, rectangle, minimum width=1.5cm, minimum height=1cm, anchor=west] (IC) {7805};
+        \draw (5,2) -- (IC.west);
+        \draw (5,0) -- (6,0) -- (IC.south); % GND pin
+        \draw (IC.east) -- (9,2) node[right]{+5V};
+        
+        % Output Cap
+        \draw (8.5,2) to[C, l=$C_2$] (8.5,0);
+        \draw (6,0) -- (9,0) node[right]{GND};
+    \end{circuitikz}
