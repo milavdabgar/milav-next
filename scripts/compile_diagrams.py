@@ -150,9 +150,28 @@ def compile_diagram(tex_file):
         target_pdf_name = basename + ".pdf"
         target_pdf_path = os.path.join(pdf_output_dir, target_pdf_name)
         
+        # SVG output directory
+        svg_output_dir = os.path.join(os.path.dirname(file_dir), "svg")
+        if not os.path.exists(svg_output_dir):
+            os.makedirs(svg_output_dir)
+        
         if os.path.exists(generated_pdf):
             shutil.copy2(generated_pdf, target_pdf_path)
             print(f"Success: {target_pdf_path}")
+            
+            # Convert PDF to SVG using pdftocairo
+            target_svg_name = basename + ".svg"
+            target_svg_path = os.path.join(svg_output_dir, target_svg_name)
+            svg_cmd = ["pdftocairo", "-svg", generated_pdf, target_svg_path]
+            try:
+                svg_result = subprocess.run(svg_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=30)
+                if svg_result.returncode == 0:
+                    print(f"SVG: {target_svg_path}")
+                else:
+                    print(f"SVG conversion failed for {basename}")
+            except Exception as svg_e:
+                print(f"SVG conversion error: {svg_e}")
+            
             return True
         else:
             print(f"PDF not found: {generated_pdf}")
@@ -164,8 +183,8 @@ def compile_diagram(tex_file):
         
     finally:
         # Cleanup build dir
-        # shutil.rmtree(build_dir)
-        pass
+        if os.path.exists(build_dir):
+            shutil.rmtree(build_dir)
 
 def main():
     # Find targets
